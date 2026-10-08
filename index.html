@@ -412,7 +412,8 @@ function actx(){
   if(!AUD.ctx){ try{
     AUD.ctx=new (window.AudioContext||window.webkitAudioContext)();
     AUD.master=AUD.ctx.createGain(); AUD.master.gain.value=muted?0:1; AUD.master.connect(AUD.ctx.destination);
-    AUD.music=AUD.ctx.createGain(); AUD.music.gain.value=.75; AUD.music.connect(AUD.master);
+    AUD.filter=AUD.ctx.createBiquadFilter(); AUD.filter.type="lowpass"; AUD.filter.frequency.value=20000; AUD.filter.Q.value=.7; AUD.filter.connect(AUD.master);
+    AUD.music=AUD.ctx.createGain(); AUD.music.gain.value=.75; AUD.music.connect(AUD.filter);
   }catch(e){ AUD.ctx=null; } }
   return AUD.ctx;
 }
@@ -461,13 +462,26 @@ function titleAdvanceNow(){
   mkSrc("p2",false,end);
   mkSrc("p3",true,end+AUD.bufs.p2.duration);
 }
+/* Gameplay: loop Pattern 3. If the title chain is already looping Pattern 3, keep it playing seamlessly. */
 async function musicGame(){
   if(AUD.mode==="game") return;
   AUD.mode="game";
-  await loadTrack("bgm");
-  if(AUD.mode!=="game") return;
+  await loadTrack("p3");
+  if(AUD.mode!=="game"||!AUD.ctx) return;
+  const now=AUD.ctx.currentTime;
+  const live=AUD.srcs.find(o=>o.k==="p3"&&o.src.loop&&o.when<=now+.05);
+  if(live){ for(const o of AUD.srcs) if(o!==live){ try{ o.g.gain.setTargetAtTime(0,now,.15); o.src.stop(now+.6); }catch(e){} } AUD.srcs=[live]; return; }
   stopMusic(.8);
-  mkSrc("bgm",true,AUD.ctx.currentTime+.4);
+  mkSrc("p3",true,now+.4);
+}
+/* Muffled "underwater / old radio" music while a popup is open during gameplay */
+function muffleMusic(on){
+  const c=AUD.ctx; if(!c||!AUD.filter) return;
+  const f=AUD.filter.frequency, q=AUD.filter.Q, t=c.currentTime;
+  f.cancelScheduledValues(t); q.cancelScheduledValues(t);
+  f.setValueAtTime(f.value,t); q.setValueAtTime(q.value,t);
+  f.exponentialRampToValueAtTime(on?420:20000,t+(on?.35:.45));
+  q.linearRampToValueAtTime(on?6:.7,t+.35);
 }
 function snd(kind){
   if(muted) return;
@@ -993,8 +1007,8 @@ function tileHTML(t, opts={}){
 }
 
 /* ================= MODALS ================= */
-function openModal(html){ const m=$("#modal"); m.innerHTML=`<div class="box">${html}</div>`; m.hidden=false; }
-function closeModal(){ $("#modal").hidden=true; $("#modal").innerHTML=""; }
+function openModal(html){ const m=$("#modal"); m.innerHTML=`<div class="box">${html}</div>`; m.hidden=false; if(AUD.mode==="game") muffleMusic(true); }
+function closeModal(){ $("#modal").hidden=true; $("#modal").innerHTML=""; muffleMusic(false); }
 $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal" && !window._modalLocked) closeModal(); });
 function showDeck(list, title){
   const tiles = (list||G.deck).slice().sort((a,b)=>a.ch.localeCompare(b.ch));
