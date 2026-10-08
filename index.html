@@ -257,6 +257,37 @@ body.f1 .art .fr.i1{display:inline}
 .tut-row{display:flex;justify-content:flex-end}
 .tut-skip{position:absolute;left:50%;top:120px;transform:translateX(-50%);pointer-events:auto;opacity:.9}
 
+
+/* ================= WEAPON ALTAR ================= */
+.altar{position:relative;width:min(600px,100%);aspect-ratio:600/330;margin-top:240px}
+.altar-back{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;overflow:visible}
+.altar-lip{position:absolute;left:0;width:100%;height:auto;top:37%;z-index:3;pointer-events:none;overflow:visible}
+.aw{position:absolute;bottom:58%;width:30%;transform:translateX(-50%);background:none;border:none;padding:0;z-index:2;transition:transform .7s cubic-bezier(.2,.8,.3,1.2),opacity .5s}
+.aw .aw-ic{display:block;width:100%;aspect-ratio:1;margin-bottom:-6%;transition:filter .2s}
+.aw .aw-ic svg{width:100%;height:100%;overflow:visible}
+.aw.down .aw-ic svg{transform:rotate(180deg)}
+.aw:hover .aw-ic,.aw:focus-visible .aw-ic{filter:drop-shadow(0 0 14px #c48bff) drop-shadow(0 0 4px #fff);animation:wiggle .5s ease-in-out infinite}
+@keyframes wiggle{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+.altar-info{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(8px);width:280px;max-width:46vw;text-align:left;font-size:16px;line-height:1.25;
+  background:#fff8df;border:3px solid var(--ink);border-radius:var(--sketch);padding:10px 12px;box-shadow:4px 5px 0 var(--ink);display:grid;gap:5px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:5}
+.aw:hover .altar-info,.aw:focus-visible .altar-info{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (hover:none){.altar-info{opacity:1;transform:translateX(-50%)}}
+.ai-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.ai-top b{font:19px var(--f-display);font-weight:400}
+.ai-cost{width:30px;height:30px;border-radius:50%;background:#22c55e;border:3px solid var(--ink);display:grid;place-items:center;font:17px var(--f-display);color:#fff;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;flex:none}
+.ai-kind{font-size:14px;font-weight:700;border:2px solid var(--ink);border-radius:10px;padding:0 8px;justify-self:start}
+.k-atk{background:#ffb3a8}.k-def{background:#a9d4ff}.k-buff{background:#ffd09a}.k-psn{background:#c3f06b}
+.dots.dk i{border-color:var(--ink)}
+.aw.pulled{transform:translateX(-50%) translateY(-120px) rotate(-6deg);z-index:6}
+.aw.pulled .aw-ic{filter:drop-shadow(0 0 24px #ffd23f) drop-shadow(0 0 8px #fff);animation:none}
+.aw.pulled .altar-info,.aw.crumble .altar-info{opacity:0!important}
+.aw.crumble{transform:translateX(-50%) translateY(90px) rotate(18deg) scale(.6);opacity:0;transition:transform .9s ease-in,opacity .9s ease-in}
+.altar.busy .aw{pointer-events:none}
+.crack{position:absolute;top:38%;width:24%;opacity:0;z-index:4;transition:opacity .2s}
+.crack.c0{left:22%}.crack.c1{left:54%}
+.crack.show{opacity:1}
+.rubble{position:absolute;border:2.5px solid var(--ink);border-radius:4px 8px 3px 9px;z-index:7;pointer-events:none}
+.t-altar .ring2{fill:#e2c4ff}
+
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
 .mapscroll{height:min(72vh,760px);overflow-y:auto;border:2.5px solid var(--ink);border-radius:var(--sketch);background:var(--paper)}
@@ -646,6 +677,10 @@ const WICON = {
   shield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 8 L84 20 Q84 64 50 92 Q16 64 16 20 Z"`,CC.blue); sh("path",`d="M50 18 L74 27 Q74 60 50 80 Q26 60 26 27 Z"`,"#8fc1ff"); ink(`<path d="M50 24 L50 74 M34 40 L66 40"/>`); }),
   needle:()=>iconSVG("0 0 100 100",(sh,ink)=>{ ink(`<path class="thick" d="M50 4 L50 64"/>`); sh("path",`d="M34 64 Q50 78 66 64 Q58 74 50 74 Q42 74 34 64 Z"`,CC.violet); sh("rect",`x="46" y="72" width="8" height="16" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="92" r="5"`,CC.violet); }),
   bulwark:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="22" y="8" width="56" height="84" rx="10"`,"#9aa6b4"); sh("path",`d="M50 26 L64 40 L50 70 L36 40 Z"`,CC.green); ink(`<circle cx="30" cy="16" r="2" class="dark"/><circle cx="70" cy="16" r="2" class="dark"/><circle cx="30" cy="84" r="2" class="dark"/><circle cx="70" cy="84" r="2" class="dark"/>`); }),
+  lance:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="46" y="30" width="8" height="66" rx="3"`,"#8a4b24"); sh("path",`d="M50 2 Q64 16 58 30 Q54 22 50 34 Q46 22 42 30 Q36 16 50 2 Z"`,"#ff7b00"); sh("path",`d="M50 12 L56 30 L44 30 Z"`,"#ffd000"); ink(`<path class="thin" d="M42 40 L58 40 M42 46 L58 46"/>`); }),
+  drum:()=>iconSVG("0 0 100 100",(sh,ink)=>{ ink(`<path class="thick" d="M24 12 L56 44 M76 12 L44 44"/>`); sh("circle",`cx="22" cy="10" r="6"`,CC.gold); sh("circle",`cx="78" cy="10" r="6"`,CC.gold); sh("rect",`x="18" y="46" width="64" height="44" rx="6"`,CC.red); sh("ellipse",`cx="50" cy="46" rx="32" ry="10"`,"#f6e7c4"); ink(`<path class="thin" d="M18 60 L30 82 L42 60 L54 82 L66 60 L82 82"/>`); }),
+  mirror:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("circle",`cx="50" cy="52" r="40"`,"#c8a24a"); sh("circle",`cx="50" cy="52" r="31"`,"#bfefff"); ink(`<path style="stroke:#fff" class="thick" d="M34 40 Q40 30 52 28"/><path class="thin" d="M60 64 L68 56"/>`); }),
+  quill:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 70 Q20 40 46 4 Q80 30 54 70 Z"`,"#57cc4d"); ink(`<path class="thin" d="M50 70 Q48 40 46 6 M48 30 L36 22 M49 44 L36 38 M48 30 L60 22 M49 44 L62 38"/>`); sh("path",`d="M46 70 L54 70 L52 90 L50 96 L48 90 Z"`,"#3a2a4a"); sh("circle",`cx="50" cy="98" r="4"`,"#8ccf2a"); }),
   hammer:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="46" y="30" width="9" height="64" rx="3"`,"#8a4b24"); sh("rect",`x="18" y="8" width="64" height="30" rx="6"`,"#717d8c"); ink(`<path class="thin" d="M30 14 L30 32 M70 14 L70 32"/>`); }),
 };
 
@@ -658,10 +693,11 @@ function nodeIcon(type){
     case "event": return `<path d="M-4 -5 Q-4 -9 0 -9 Q5 -9 5 -5 Q5 -2 0 0 L0 3 M0 7 L0 8"/>`;
     case "treasure": return `<path d="M-8 -2 L8 -2 L8 8 L-8 8 Z M-8 -2 Q0 -11 8 -2 M-1 1 L1 1 L1 4 L-1 4 Z"/>`;
     case "boss": return `<path d="M-9 6 L-9 -6 L-4 0 L0 -9 L4 0 L9 -6 L9 6 Z"/>`;
+    case "altar": return `<path d="M-9 8 L9 8 L7 3 L-7 3 Z M-4 3 L-4 -9 M-6 -5 L-2 -5 M4 3 L4 -7 M2 -4 L6 -4"/>`;
   }
   return "";
 }
-const NODE_NAMES = {combat:"Combat",elite:"Elite",rest:"Rest Site",shop:"Shop",event:"Event (?)",treasure:"Treasure",boss:"Boss"};
+const NODE_NAMES = {altar:"Weapon Altar",combat:"Combat",elite:"Elite",rest:"Rest Site",shop:"Shop",event:"Event (?)",treasure:"Treasure",boss:"Boss"};
 
 /* crayon battlefield background, rendered once per kind as an image so zooming stays cheap */
 const BG_CACHE = {};
@@ -708,6 +744,10 @@ const WEAPONS = {
   needle:{name:"Needle Orb",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict 4 Poison.",price:110},
   bulwark:{name:"Bulwark Orb",cost:2,sigil:6,kind:"def",mult:2,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
   hammer:{name:"Hammer Orb",cost:3,sigil:7,kind:"atk",mult:3,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
+  lance:{name:"Flame Lance Orb",cost:1,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
+  drum:{name:"War Drum Orb",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
+  mirror:{name:"Mirror Ward Orb",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
+  quill:{name:"Venom Quill Orb",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
 };
 const vowelsOf = L => [...L].filter(c=>VOWELS.has(c));
 const consOf = L => [...L].filter(c=>!VOWELS.has(c));
@@ -763,6 +803,7 @@ const STATUS = {
   weaken:{n:"Weaken",d:"Shield generated is halved. Counts down each turn."},
   broken:{n:"Broken",d:"Takes +50% damage from all sources. Counts down each turn."},
   curse:{n:"Cursed",d:"At end of turn, if HP ≤ Curse stacks, you die instantly."},
+  thorns:{n:"Thorns",d:"When an enemy attacks you, it takes this much damage. Clears at the start of your turn."},
   frustrated:{n:"Frustrated",d:"Casting a word shorter than X+1 letters deals 1 self-damage. Loses 1 stack per turn."},
 };
 const ENEMIES = {
@@ -850,11 +891,12 @@ function genMap(){
   }
   for(let c=0;c<W;c++) if(nodes[F-1][c]) nodes[F-1][c].next=[3];
   const boss={f:14,c:3,type:"boss",next:[],jx:0,jy:0};
-  return {nodes, boss, visited:[]};
+  const start={f:-1,c:3,type:"altar",next:[...new Set(nodes[0].filter(Boolean).map(n=>n.c))],jx:0,jy:0};
+  return {nodes, boss, start, visited:[]};
 }
-function mapNode(f,c){ return f===14 ? G.map.boss : G.map.nodes[f][c]; }
+function mapNode(f,c){ return f===-1 ? G.map.start : f===14 ? G.map.boss : G.map.nodes[f][c]; }
 function availableNodes(){
-  if(!G.pos) return G.map.nodes[0].filter(Boolean).map(n=>[n.f,n.c]);
+  if(!G.pos) return G.map.start ? [[-1,G.map.start.c]] : G.map.nodes[0].filter(Boolean).map(n=>[n.f,n.c]);
   const cur=mapNode(G.pos[0],G.pos[1]);
   return cur.next.map(c=>[G.pos[0]+1,c]);
 }
@@ -863,20 +905,20 @@ function mapSVG(interactive){
   const avail = interactive?availableNodes():[]; const isAvail=(f,c)=>avail.some(a=>a[0]===f&&a[1]===c);
   const visited = G.map.visited;
   let edges="", nodes="";
-  const all=[]; G.map.nodes.forEach(r=>r.forEach(n=>n&&all.push(n))); all.push(G.map.boss);
+  const all=[]; if(G.map.start) all.push(G.map.start); G.map.nodes.forEach(r=>r.forEach(n=>n&&all.push(n))); all.push(G.map.boss);
   const taken=(f,c,f2,c2)=>{ for(let i=0;i<visited.length-1;i++){ const a=visited[i],b=visited[i+1]; if(a[0]===f&&a[1]===c&&b[0]===f2&&b[1]===c2) return true;} return false; };
   for(const n of all) for(const nc of n.next){ const t=mapNode(n.f+1,nc);
     edges+=`<path class="medge ${taken(n.f,n.c,n.f+1,nc)?"taken":""}" d="M${MX(n.c)+n.jx} ${MY(n.f)+n.jy} L${MX(t.c)+t.jx} ${MY(t.f)+t.jy}"/>`; }
   for(const n of all){
     const x=MX(n.c)+n.jx, y=MY(n.f)+n.jy;
     const av=isAvail(n.f,n.c), done=visited.some(v=>v[0]===n.f&&v[1]===n.c), cur=G.pos&&G.pos[0]===n.f&&G.pos[1]===n.c;
-    const r = n.type==="boss"?30:17, sc = n.type==="boss"?2.4:1;
+    const r = n.type==="boss"?30:n.type==="altar"?22:17, sc = n.type==="boss"?2.4:n.type==="altar"?1.3:1;
     nodes+=`<g class="mnode t-${n.type} ${av?"avail":""} ${done?"done":""} ${cur?"cur":""}" ${av?`onclick="enterNode(${n.f},${n.c})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')enterNode(${n.f},${n.c})"`:""} transform="translate(${x} ${y})">
-      <title>Floor ${n.f+1}: ${NODE_NAMES[n.type]}</title>
+      <title>${n.f<0?"Start":"Floor "+(n.f+1)}: ${NODE_NAMES[n.type]}</title>
       ${av?`<circle class="pulse" r="${r}"/>`:""}<circle class="ring2" r="${r}"/><g class="ico" transform="scale(${sc})">${nodeIcon(n.type)}</g></g>`;
   }
   let labels=""; for(let f=0;f<15;f++) labels+=`<text class="floorlbl" x="4" y="${MY(f)+4}">${f+1}</text>`;
-  return `<svg viewBox="0 0 420 1160">${labels}${edges}${nodes}</svg>`;
+  return `<svg viewBox="0 0 420 1240">${labels}${edges}${nodes}</svg>`;
 }
 function showMap(){
   G.screen="map"; C=null; save(); renderHUD();
@@ -885,11 +927,11 @@ function showMap(){
     <div class="mapscroll" id="mapscroll">${mapSVG(true)}</div>
     <aside class="box" style="display:grid;gap:12px">
       <h2 style="font-size:24px">Act 1 · Foot of The Tower</h2>
-      <div class="muted" style="font-size:16px">${G.pos?`Floor ${G.pos[0]+1} cleared. Pick a glowing node above.`:"Pick a glowing node on Floor 1 to begin the climb."}</div>
-      <div class="legend">${["combat","elite","event","rest","shop","treasure","boss"].map(t=>`<div><svg viewBox="-12 -12 24 24" class="mnode t-${t}"><circle class="ring2" r="11"/><g class="ico">${nodeIcon(t)}</g></svg>${NODE_NAMES[t]}</div>`).join("")}</div>
+      <div class="muted" style="font-size:16px">${!G.pos?"Your climb starts at the Weapon Altar. Choose one of two orbs.":G.pos[0]<0?"Armed and ready. Pick a node on Floor 1.":`Floor ${G.pos[0]+1} cleared. Pick a glowing node above.`}</div>
+      <div class="legend">${["altar","combat","elite","event","rest","shop","treasure","boss"].map(t=>`<div><svg viewBox="-12 -12 24 24" class="mnode t-${t}"><circle class="ring2" r="11"/><g class="ico">${nodeIcon(t)}</g></svg>${NODE_NAMES[t]}</div>`).join("")}</div>
     </aside>
   </div>`;
-  requestAnimationFrame(()=>{ const sc=$("#mapscroll"); if(!sc) return; const f = G.pos?G.pos[0]+1:0; const svg=sc.querySelector("svg"); const ratio=svg.getBoundingClientRect().height/1160; sc.scrollTop = MY(Math.min(f,14))*ratio - sc.clientHeight*0.6; });
+  requestAnimationFrame(()=>{ const sc=$("#mapscroll"); if(!sc) return; const f = G.pos?G.pos[0]+1:0; const svg=sc.querySelector("svg"); const ratio=svg.getBoundingClientRect().height/1240; sc.scrollTop = MY(Math.min(f-(G.map.start&&!G.pos?1:0),14))*ratio - sc.clientHeight*0.6; });
 }
 function enterNode(f,c){
   if(!availableNodes().some(a=>a[0]===f&&a[1]===c)) return;
@@ -904,6 +946,7 @@ function enterNode(f,c){
     case "shop": showShop(); break;
     case "treasure": showTreasure(); break;
     case "event": showEvent(); break;
+    case "altar": showAltar(); break;
   }
 }
 
@@ -1022,7 +1065,7 @@ function startCombat(group, kind, opt={}){
   const t={}; for(const tile of G.deck) t[tile.uid]={...tile,deb:null};
   C = {kind, es:group.map(id=>({id,hp:ENEMIES[id].hp,max:ENEMIES[id].hp,block:0,might:0,broken:0,poison:0,mi:0,dead:false,gone:false})), target:0,
        t, draw:shuffle(Object.keys(t).map(Number)), hand:[], disc:[], bar:[], ban:[],
-       energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0},
+       energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
   if(opt.tut) C.tut={i:0,free:false,phase:null,ready:true};
   G.screen="combat";
@@ -1039,7 +1082,7 @@ function draw(n){
 function aliveTarget(){ if(C.es[C.target] && !C.es[C.target].dead) return C.target; const i=C.es.findIndex(e=>!e.dead); C.target=Math.max(0,i); return C.target; }
 function setTarget(i){ if(!C||C.over||C.es[i].dead) return; C.target=i; snd("tap"); renderCombat(); }
 async function startPlayerTurn(){
-  C.turn++; C.p.block=0;
+  C.turn++; C.p.block=0; C.p.thorns=0;
   if(C.p.poison>0){ const d=C.p.poison; G.hp=Math.max(0,G.hp-d); C.p.poison--; log(`Poison deals ${d}.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0) return gameOver("Poison"); }
   C.energy=BASE_ENERGY; C.used=[];
   draw(HAND_SIZE - C.hand.length);
@@ -1092,7 +1135,7 @@ function evaluate(tiles, w, check){
   const letterTiles = bodyT.filter(t=>t.ch!==",");
   const sp = letterTiles.map(t=>t.ch==="?" ? (R.resolved[t.uid]?tileChip(t,R.resolved[t.uid]):0) : tileChip(t));
   R.chips = sp.reduce((a,b)=>a+b,0);
-  const statBonus = w.kind==="atk" ? C.p.might : C.p.robust;
+  const statBonus = w.kind==="atk" ? C.p.might : w.kind==="def" ? C.p.robust : 0;
   if(statBonus){ R.chips+=statBonus; R.notes.push(`+${statBonus} ${w.kind==="atk"?"Might":"Robust"}`); }
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
@@ -1166,10 +1209,25 @@ async function cast(){
       if(wid==="hammer"){ log("Critical! The hammer smashes through block."); }
     }
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
+    if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
+      for(let j=0;j<C.es.length;j++){ if(j===ti||C.es[j].dead) continue; const r2=dealToEnemy(j,dmg,{}); const c=center("e"+j); impact(c.x,c.y,r2.dmg,{colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); numPop(c.x,c.top+10,r2.dmg?`-${r2.dmg}`:"Blocked!",r2.dmg,"#ffd23f"); fEl("e"+j)?.classList.add("flash"); }
+      snd("hit"); shake(20); await sleep(T_(800)); }
+  } else if(w.kind==="buff"){
+    const gain=Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`War drums: +${gain} Might.`);
+    if(R.crit){ snd("crit"); C.p.robust+=2; log("Critical! +2 Robust."); }
+    const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(220)); fEl("p").dataset.pose="atk";
+    if(R.crit) stamp(c.x,c.top-40,"CRITICAL!"); wordPop(c.x,c.top-110,label);
+    await buffAnim("p",`+${gain} Might${R.crit?" +2 Robust":""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
+  } else if(w.kind==="psn"){
+    const amt=Math.max(1,Math.floor(R.total/3)); const ti=aliveTarget();
+    const targets=R.crit?C.es.map((e,j)=>j).filter(j=>!C.es[j].dead):[ti];
+    for(const j of targets) C.es[j].poison+=amt;
+    log(`Venom: ${amt} Poison${R.crit?" on every enemy":""}.`); if(R.crit) snd("crit");
+    await venomAnim(targets,amt,R.crit,label);
   } else {
     let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2);
     C.p.block+=sh; snd("shield");
-    if(R.crit){ snd("crit"); if(wid==="shield"){ extraDraw+=3; log("Critical! Draw 3 tiles."); } if(wid==="bulwark"){ C.p.robust+=2; log("Critical! +2 Robust."); } }
+    if(R.crit){ snd("crit"); if(wid==="shield"){ extraDraw+=3; log("Critical! Draw 3 tiles."); } if(wid==="bulwark"){ C.p.robust+=2; log("Critical! +2 Robust."); } if(wid==="mirror"){ C.p.thorns+=Math.floor(sh/2); log(`Critical! Thorns ${Math.floor(sh/2)}.`); } }
     await guardAnim("p",sh,{crit:R.crit,word:label});
   }
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
@@ -1248,6 +1306,7 @@ async function enemyTurn(){
         await strikeAnim(key,"p",res,{heavy:a.heavy});
         renderCombat();
         if(G.hp<=0) return gameOver(def.name);
+        if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; if(e.dead) break; }
       } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
       else if(a.k==="tile"){ applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); }
@@ -1305,7 +1364,7 @@ function fighterHTML(key){
   const def=e?ENEMIES[e.id]:null;
   const hp=isP?[G.hp,G.maxHp]:[e.hp,e.max]; const block=isP?C.p.block:e.block;
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&multi&&C.target===i;
-  const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","poison","weaken","broken","curse","frustrated"])}</div>`
+  const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"])}</div>`
     : `<div class="ename">${def.name}</div>${C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","broken","poison"])}</div>`;
   return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})" title="${multi?"Click to target · ":""}${def.name}"`}>
@@ -1334,7 +1393,7 @@ function renderCombat(){
   const prev = barTiles.length ? evaluate(barTiles,w,false) : null;
   const slots = Math.max(w.sigil - C.bar.length, 0);
   $("#sigilbox").innerHTML = `
-    <div class="sg-head"><b>${w.name}</b><span>Sigil ${w.sigil} = Critical · ${w.kind==="atk"?(C.es.filter(x=>!x.dead).length>1?"target: "+ENEMIES[C.es[aliveTarget()].id].name:"attack"):"shield"}</span></div>
+    <div class="sg-head"><b>${w.name}</b><span>Sigil ${w.sigil} = Critical · ${w.kind==="atk"||w.kind==="psn"?(C.es.filter(x=>!x.dead).length>1?"target: "+ENEMIES[C.es[aliveTarget()].id].name:KIND_LABEL[w.kind].toLowerCase()):KIND_LABEL[w.kind].toLowerCase()}</span></div>
     <div class="sg-tiles" id="sgtiles">${barTiles.map(t=>tileHTML(t,{click:`tapTile(${t.uid})`})).join("")}${"<span class='slot'></span>".repeat(slots)}</div>
     <div class="calc">${prev?`<span class="chip-n" title="Chips">${prev.chips}</span> × <span class="mult-n" title="Mult">${prev.mult}</span> = <b style="font:30px var(--f-display)">${prev.total}</b>
       ${prev.crit&&!prev.fallback?`<span class="crit-tag">CRITICAL</span>`:""}`:`<span class="muted">Click tiles or type a word</span>`}</div>
@@ -1517,6 +1576,20 @@ async function skillAnim(k,to,label){
   if(el) delete el.dataset.pose; const pe=fEl("p"); if(pe) delete pe.dataset.pose;
   unfocus(); await sleep(T_(250));
 }
+async function venomAnim(targets,amt,crit,word){
+  const p=center("p"); const t0=center("e"+targets[0]);
+  focusOn(["p",...targets.map(j=>"e"+j)],1.12,(p.x+t0.x)/2,(p.y+t0.y)/2-60); await sleep(T_(220));
+  const pe=fEl("p"); if(pe) pe.dataset.pose="atk"; wordPop(p.x+120,p.top-30,word);
+  for(const j of targets){ const c=center("e"+j);
+    for(let k=0;k<5;k++){ const b=fxEl("div","pt"); b.style.cssText=`left:${p.x+80}px;top:${p.y-40}px;width:20px;height:20px;background:${k%2?"#8ccf2a":"#57cc4d"}`;
+      b.animate([{transform:"translate(-50%,-50%)"},{transform:`translate(calc(-50% + ${c.x-p.x-80+(Math.random()-.5)*50}px),calc(-50% + ${c.y-p.y+40+(Math.random()-.5)*50}px)) scale(.7)`}],{duration:T_(380+k*50),easing:"ease-in"}).onfinish=()=>b.remove(); } }
+  await sleep(T_(450));
+  for(const j of targets){ const c=center("e"+j); fEl("e"+j)?.setAttribute("data-pose","hurt"); particles(c.x,c.y,14+amt,["#8ccf2a","#c3f06b","#7b3fe4","#fff"],140+amt*6,{up:true,size:16}); numPop(c.x,c.top+10,`Poison +${amt}`,amt*2,"#a6e34a"); }
+  if(crit) stamp(t0.x,t0.top-40,"CRITICAL!");
+  snd("buzz"); await sleep(T_(900));
+  if(pe) delete pe.dataset.pose; for(const j of targets) fEl("e"+j)?.removeAttribute("data-pose");
+  unfocus(); await sleep(T_(260)); renderCombat();
+}
 async function deathAnim(i){
   const el=fEl("e"+i); if(!el) return;
   const c=center("e"+i); particles(c.x,c.y,30,["#cfcabf","#8d909b","#fff",PAL[i%PAL.length]],260);
@@ -1640,6 +1713,72 @@ function showTreasure(){
   $("#app").innerHTML=`<div class="screen"><h2 style="font-size:40px">Treasure Chest</h2><div class="muted">Pick one relic. The others crumble to dust.</div>
     <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');showMap()"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${RELICS[r].sym}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
     <button class="btn small" onclick="showMap()">Skip</button></div>`;
+}
+
+/* ================= WEAPON ALTAR ================= */
+const ALTAR_POOL=["lance","drum","mirror","quill"];
+const KIND_LABEL={atk:"Attack",def:"Defense",buff:"Buff",psn:"Poison"};
+const BLADE_DOWN={lance:true,quill:true,sword:true,needle:true,hammer:true};
+function showAltar(){
+  G.screen="altar"; renderHUD();
+  if(!G.altar||G.altarDone){
+    let pool=ALTAR_POOL.filter(w=>!G.weapons.includes(w));
+    if(pool.length<2) pool=pool.concat(Object.keys(WEAPONS).filter(w=>!G.weapons.includes(w)&&!pool.includes(w)));
+    G.altar=shuffle(pool).slice(0,2); G.altarDone=false;
+  }
+  const card=id=>{ const W=WEAPONS[id]; return `<div class="altar-info" role="tooltip">
+      <div class="ai-top"><b>${W.name}</b><span class="ai-cost" title="Energy cost">${W.cost}</span></div>
+      <div class="ai-kind k-${W.kind}">${KIND_LABEL[W.kind]} · Mult ×${W.mult}</div>
+      <div><b>Effect:</b> ${W.desc}</div>
+      <div><b>Critical</b> (exactly ${W.sigil} letters <span class="dots dk">${"<i></i>".repeat(W.sigil)}</span>): ${W.crit}</div>
+      <div class="muted">Costs ${W.cost} Energy per cast · fires once per turn</div></div>`; };
+  $("#app").innerHTML=`<div class="screen altar-screen">
+    <h2 style="font-size:40px">The Weapon Altar</h2>
+    <div class="muted" style="max-width:56ch">Two orbs are sunk deep in an old nanobot shrine. Pull one free. The shrine will swallow the other.</div>
+    <div class="altar" id="altar">
+      <svg class="altar-back" viewBox="0 0 600 300" aria-hidden="true">${layer((sh,ink)=>{
+        sh("path",`d="M60 290 L90 150 L510 150 L540 290 Z"`,"#a19c94");
+        sh("path",`d="M40 160 L560 160 L548 130 L52 130 Z"`,"#b9b3aa");
+        sh("path",`d="M200 200 Q300 170 400 200 Q300 230 200 200 Z"`,"#9b5de5");
+        ink(`<path class="thin" d="M120 190 L140 220 L130 250 M470 180 L455 210 M300 250 L310 280"/>`);
+        sh("path",`d="M70 290 Q120 270 160 290 Z M420 290 Q470 268 530 290 Z"`,"#5fae4a");
+        ink(`<path class="thin" style="stroke:#c79bff" d="M250 196 L262 186 L274 196 M326 196 L338 206 L350 196"/>`);
+      })}</svg>
+      ${G.altar.map((id,i)=>`<button class="aw ${BLADE_DOWN[id]?"down":""}" id="aw${i}" style="left:${i?66:34}%" onclick="pullWeapon(${i})" aria-label="Pull ${WEAPONS[id].name}">
+          <span class="aw-ic">${WICON[id]()}</span>${card(id)}</button>`).join("")}
+      <svg class="altar-lip" viewBox="0 0 600 40" aria-hidden="true">${layer((sh,ink)=>{ sh("path",`d="M40 6 L560 6 L556 34 L44 34 Z"`,"#cfc9bf"); ink(`<path class="thin" d="M150 14 L170 26 M420 12 L436 28"/>`); })}</svg>
+      <svg class="crack c0" viewBox="0 0 200 160" aria-hidden="true"><path d="M100 0 L86 40 L110 70 L80 110 L104 160 M86 40 L50 60 M110 70 L150 84" fill="none" stroke="#1d1b22" stroke-width="6" stroke-linecap="round"/></svg>
+      <svg class="crack c1" viewBox="0 0 200 160" aria-hidden="true"><path d="M100 0 L86 40 L110 70 L80 110 L104 160 M86 40 L50 60 M110 70 L150 84" fill="none" stroke="#1d1b22" stroke-width="6" stroke-linecap="round"/></svg>
+    </div>
+    <div class="muted" id="altarhint">Hover an orb to read it. Click to pull it free.</div>
+    <div id="altardone" hidden></div>
+  </div>`;
+}
+function rubble(host,x,y,n){
+  for(let i=0;i<n;i++){ const d=document.createElement("div"); d.className="rubble"; const s=8+Math.random()*18;
+    d.style.cssText=`left:${x+(Math.random()-.5)*90}px;top:${y+(Math.random()-.5)*40}px;width:${s}px;height:${s*.8}px;background:${["#a19c94","#7d776f","#cfc9bf","#9b5de5"][i%4]}`;
+    host.appendChild(d);
+    d.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:`translate(${(Math.random()-.5)*160}px,${120+Math.random()*120}px) rotate(${Math.random()*540}deg)`,opacity:0}],{duration:T_(700+Math.random()*500),easing:"cubic-bezier(.4,0,.8,.6)"}).onfinish=()=>d.remove(); }
+}
+async function pullWeapon(i){
+  if(G.altarDone) return; G.altarDone=true;
+  const keep=G.altar[i], other=1-i, host=$("#altar");
+  const a=$("#aw"+i), b=$("#aw"+other);
+  host.classList.add("busy"); snd("crit");
+  a.classList.add("pulled");
+  await sleep(T_(650));
+  b.classList.add("crumble"); host.querySelector(".crack.c"+other).classList.add("show"); snd("hurt");
+  const hb=host.getBoundingClientRect(), bb=b.getBoundingClientRect();
+  rubble(host, bb.left-hb.left+bb.width/2, bb.top-hb.top+bb.height*.7, 26);
+  await sleep(T_(900));
+  G.weapons.push(keep);
+  const W=WEAPONS[keep];
+  $("#altarhint").hidden=true;
+  const d=$("#altardone"); d.hidden=false;
+  d.innerHTML=`<div class="box" style="max-width:520px;display:grid;gap:8px"><b style="font:24px var(--f-display)">${W.name} joins your arsenal</b>
+    <span>${W.desc} Critical at ${W.sigil} letters: ${W.crit} Costs ${W.cost} Energy.</span></div>
+    <button class="btn primary" style="margin-top:12px" onclick="G.altar=null;showMap()">Begin the climb</button>`;
+  snd("coin");
 }
 
 /* ================= SHOP ================= */
@@ -2095,6 +2234,7 @@ function start(data){
       if(G.screen==="combat"&&C){ C.busy=false; buildStage(); renderCombat(); return; }
       if(G.screen==="reward"&&G.reward){ renderReward(); return; }
       if(G.screen==="shop"&&G.shop){ renderShop(); return; }
+      if(G.screen==="altar"&&G.altar){ showAltar(); return; }
       if(G.screen==="dead"||G.screen==="won"||!G.map&&!G.tutorial){ showSplash(); return; }
       showMap(); return;
     }
