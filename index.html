@@ -1633,7 +1633,7 @@ function winCombat(){
   if(G.tutorial){ setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
   const kind=C.kind; C=null;
   if(kind==="boss"){ G.gold+=100; return showVictory(); }
-  const rw={gold: kind==="elite"? 28+rnd(13) : 12+rnd(11), paint:pick(Object.keys(PAINTS)), slots:rollPaintSlots(), extras:[]};
+  const rw={gold: kind==="elite"? 28+rnd(13) : 12+rnd(11), slots:rollPaintSlots(), extras:[]};
   G.gold+=rw.gold;
   // GDD extras are granted automatically so the reward screen stays a single choice
   if(kind==="elite"||Math.random()<.4){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<MAX_POTIONS){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
@@ -1651,16 +1651,14 @@ function gainRelic(id){
   renderHUD(); toast(`Relic gained: ${R.name}`); snd("coin");
 }
 const SLOT1="AIUEO", SLOT2="YZQXJWR", ALPHA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const LV2_REWARD_CHANCE=.12;
 function rollPaintSlots(){
   const s1=pick([...SLOT1]);
   const s2=pick([...SLOT2].filter(c=>c!==s1));
-  const pool=[...ALPHA];
-  if(G.relics.includes("wild")) pool.push("?");
-  if(G.relics.includes("bang")) pool.push("!");
-  if(G.relics.includes("comma")) pool.push(",");
-  const s3=pick(pool.filter(c=>c!==s1&&c!==s2));
-  return [s1,s2,s3];
+  const s3=pick([...ALPHA,"?","!",","].filter(c=>c!==s1&&c!==s2));
+  return [s1,s2,s3].map(ch=>({ch, paint:pick(Object.keys(PAINTS)), lvl:(ch!=="!"&&ch!==","&&Math.random()<LV2_REWARD_CHANCE)?2:1}));
 }
+function normSlots(rw){ rw.slots=rw.slots.map(x=>typeof x==="string"?{ch:x,paint:rw.paint||"red",lvl:1}:x); return rw.slots; }
 function rerollCost(){ if(!G.rerollCost) G.rerollCost=5; return G.rerollCost; }
 const EASEL_ART = (ch,p) => `<svg class="art" viewBox="0 0 140 160">${layer((sh,ink)=>{
   ink(`<path class="thick" d="M70 20 L65.6 36 M42.7 120 L34 152 M70 20 L74.4 36 M97.3 120 L106 152 M70 120 L70 150"/>`);
@@ -1668,39 +1666,44 @@ const EASEL_ART = (ch,p) => `<svg class="art" viewBox="0 0 140 160">${layer((sh,
   if(ch) sh("rect",`x="46" y="48" width="48" height="54" rx="6"`,{red:CC.red,blue:CC.blue,green:CC.green,gold:CC.gold}[p]);
   else sh("rect",`x="50" y="54" width="40" height="44"`,"#e8e4da");
 })}${ch?`<text x="72" y="88" text-anchor="middle" style="font:800 34px var(--f-tile);fill:#fff;stroke:#1d1b22;stroke-width:5;paint-order:stroke">${ch}</text>`:""}</svg>`;
+function slotInfo(t){
+  const sym={"?":"Wildcard: becomes the best letter that makes a word.","!":"Exclamation: put at the end of a word for bonus Mult (+1, +2, +3, +5…).",",":"Comma: put between two words to cast both at once."}[t.ch];
+  return `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}`}${sym?`<br><span style="font-size:16px">${sym}</span>`:""}<br>
+    <span class="muted" style="font-size:16px"><b>${PAINTS[t.paint].name}:</b> ${PAINTS[t.paint].d}</span>`;
+}
 function renderReward(){
-  const rw=G.reward; renderHUD();
-  const cost=rerollCost();
+  const rw=G.reward; renderHUD(); normSlots(rw);
+  const cost=rerollCost(), first=rw.slots[0];
   $("#app").innerHTML=`<div class="screen">
     <h2 style="font-size:40px">Victory</h2>
     <div class="muted">+${rw.gold} gold${rw.extras.length?` · Also found: ${rw.extras.join(", ")}`:""}</div>
     <div class="reward-scene">
       <div>${artSVG("cat")}</div>
-      <div id="easel">${EASEL_ART(null,rw.paint)}</div>
-      <div>${artSVG("painter",{paint:rw.paint})}</div>
+      <div id="easel">${EASEL_ART(first.ch,first.paint)}</div>
+      <div id="painter">${artSVG("painter",{paint:first.paint})}</div>
     </div>
-    <div class="box" style="max-width:520px"><b>${PAINTS[rw.paint].name}</b><br><span class="muted" style="font-size:16px">${PAINTS[rw.paint].d}</span><br>
-      <span style="font-size:16px">Pick one letter for the painter bot to coat. The colour is fixed.</span></div>
+    <div class="box" style="max-width:520px;display:grid;gap:4px"><span style="font-size:16px">The painter bot made three new tiles. Pick one to add to your deck.</span>
+      <div id="slotinfo">${slotInfo(first)}</div></div>
     <div class="row" style="justify-content:center;gap:22px">
-      ${rw.slots.map((ch,i)=>`<button class="tile p-${rw.paint} ${/[A-Z]/.test(ch)?"":"sym"} floaty" style="animation-delay:${i*-.5}s" onclick="claimPaintLetter(${i})"
-        onmouseenter="previewEasel(${i})" onfocus="previewEasel(${i})" aria-label="Paint ${ch}" title="Slot ${i+1}: ${ch}${/[A-Z]/.test(ch)?` · Spell Power ${VAL[ch]}`:""}"><b>${ch}</b>${VAL[ch]?`<span class="val">${VAL[ch]}</span>`:""}</button>`).join("")}
-      <button class="btn small" onclick="rerollPaint()" ${G.gold<cost?"disabled":""} title="Re-roll all three letters. The price rises each use and never resets this run.">↻ Re-roll · ${cost}g</button>
+      ${rw.slots.map((t,i)=>`<button class="tile p-${t.paint} ${t.lvl===2?"L2":""} ${/[A-Z]/.test(t.ch)?"":"sym"} floaty" style="animation-delay:${i*-.5}s" onclick="claimPaintLetter(${i})"
+        onmouseenter="previewEasel(${i})" onfocus="previewEasel(${i})" aria-label="Take ${t.lvl===2?"Level 2 ":""}${t.paint} ${t.ch} tile"><b>${t.ch}</b>${VAL[t.ch]?`<span class="val">${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}</span>`:""}${t.lvl===2?`<span class="lv">II</span>`:""}</button>`).join("")}
+      <button class="btn small" onclick="rerollPaint()" ${G.gold<cost?"disabled":""} title="Re-roll all three tiles. The price rises each use and never resets this run.">↻ Re-roll · ${cost}g</button>
     </div>
   </div>`;
 }
-function previewEasel(i){ const rw=G.reward; const e=$("#easel"); if(rw&&e) e.innerHTML=EASEL_ART(rw.slots[i],rw.paint); }
+function previewEasel(i){ const rw=G.reward; if(!rw) return; const t=rw.slots[i];
+  const e=$("#easel"); if(e) e.innerHTML=EASEL_ART(t.ch,t.paint);
+  const p=$("#painter"); if(p) p.innerHTML=artSVG("painter",{paint:t.paint});
+  const s=$("#slotinfo"); if(s) s.innerHTML=slotInfo(t); }
 function rerollPaint(){
   const cost=rerollCost(); if(G.gold<cost) return;
   G.gold-=cost; G.rerollCost+=5; G.reward.slots=rollPaintSlots(); snd("coin"); renderReward();
 }
 function claimPaintLetter(i){
   const rw=G.reward; if(!rw) return;
-  const ch=rw.slots[i], p=rw.paint;
-  const copies=G.deck.filter(t=>t.ch===ch);
-  let t=copies.find(t=>!t.paint)||copies.find(t=>t.paint!==p)||copies[0];
-  if(!t){ t=newTile(ch); G.deck.push(t); }
-  t.paint=p; snd("coin");
-  toast(`Your ${ch} tile is now painted ${p}.`);
+  const t=normSlots(rw)[i];
+  G.deck.push(newTile(t.ch,{lvl:t.lvl,paint:t.paint})); snd("coin");
+  toast(`New ${t.lvl===2?"Level 2 ":""}${t.paint} ${t.ch} tile added to your deck.`);
   G.reward=null; showMap();
 }
 
