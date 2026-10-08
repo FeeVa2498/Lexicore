@@ -1,4 +1,4 @@
-# Lexicon Spire — Act 1 Prototype
+# Lexicore — Act 1 Prototype
 
 Playable browser prototype of the post-apocalyptic word-building roguelike from the Lexicore GDD.
 

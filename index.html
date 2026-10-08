@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta charset="utf-8">
-<title>Lexicon Spire</title>
+<title>Lexicore</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Special+Elite&family=Sniglet:wght@400;800&display=swap">
@@ -409,17 +409,18 @@ function stopMusic(fade=.5){
   for(const s of AUD.srcs){ try{ s.g.gain.cancelScheduledValues(now); s.g.gain.setValueAtTime(s.g.gain.value,now); s.g.gain.linearRampToValueAtTime(0,now+fade); s.src.stop(now+fade+.05); }catch(e){} }
   AUD.srcs=[]; AUD.p1=null;
 }
-/* Title: loop Pattern 1 until a key is pressed; then let the current Pattern 1 finish, play Pattern 2 once, then loop Pattern 3 */
+/* Title: Pattern 1 once -> Pattern 2 once -> loop Pattern 3, starting as soon as the title screen appears */
 async function musicTitle(){
   AUD.mode="title"; AUD.wantAdv=false; AUD.advanced=false;
   stopMusic(.6);
   await Promise.all(["p1","p2","p3"].map(loadTrack));
   if(AUD.mode!=="title"||!AUD.bufs.p1) return;
-  const c=AUD.ctx, t=c.currentTime+.15;
-  AUD.p1=mkSrc("p1",true,t); AUD.p1start=t;
-  if(AUD.wantAdv) titleAdvanceNow();
+  const c=AUD.ctx, t=c.currentTime+.15, d1=AUD.bufs.p1.duration, d2=AUD.bufs.p2?AUD.bufs.p2.duration:0;
+  AUD.p1=mkSrc("p1",false,t); AUD.p1start=t;
+  if(AUD.bufs.p2) mkSrc("p2",false,t+d1);
+  if(AUD.bufs.p3) mkSrc("p3",true,t+d1+d2);
 }
-function musicTitleAdvance(){ if(AUD.mode!=="title") return; AUD.wantAdv=true; if(AUD.p1) titleAdvanceNow(); }
+function musicTitleAdvance(){ /* title music now plays P1 -> P2 -> loop P3 on its own */ }
 function titleAdvanceNow(){
   if(AUD.advanced||!AUD.p1||!AUD.bufs.p2||!AUD.bufs.p3) return; AUD.advanced=true;
   const c=AUD.ctx, d=AUD.bufs.p1.duration;
@@ -783,7 +784,7 @@ const RIDDLES = [
   ["MOUSE","The cat's oldest quarry, and an old human desk tool."],["LIGHT","I fill a whole room but take up no space."],
   ["WATER","Bots drink oil. Cats and humans need me."],["SNAKE","I travel without legs and shed my coat each season."],
   ["HEART","I beat all day without fists."],["NIGHT","I fall every day and never break."],
-  ["TOWER","Climb me floor by floor. The Spire is one of me."],["ROBOT","Ancient defenders, still marching long after their makers fell."],
+  ["TOWER","Climb me floor by floor. At the very top of me waits Lexicore."],["ROBOT","Ancient defenders, still marching long after their makers fell."],
   ["QUEEN","The strongest piece on a checkered board."],["APPLE","A fruit that fell on a thinker's head."],
   ["BLADE","Grass has one. So does a knife."],["MAGIC","Old words, spoken right, make the nanobots do this."],
   ["CRANE","A long-legged bird, and a machine that lifts."],["PLANT","Some of us learned to think after the bombs fell."],
@@ -883,7 +884,7 @@ function showMap(){
   <div class="mapwrap">
     <div class="mapscroll" id="mapscroll">${mapSVG(true)}</div>
     <aside class="box" style="display:grid;gap:12px">
-      <h2 style="font-size:24px">Act 1 · The Lower Spire</h2>
+      <h2 style="font-size:24px">Act 1 · Foot of The Tower</h2>
       <div class="muted" style="font-size:16px">${G.pos?`Floor ${G.pos[0]+1} cleared. Pick a glowing node above.`:"Pick a glowing node on Floor 1 to begin the climb."}</div>
       <div class="legend">${["combat","elite","event","rest","shop","treasure","boss"].map(t=>`<div><svg viewBox="-12 -12 24 24" class="mnode t-${t}"><circle class="ring2" r="11"/><g class="ico">${nodeIcon(t)}</g></svg>${NODE_NAMES[t]}</div>`).join("")}</div>
     </aside>
@@ -1542,7 +1543,7 @@ document.addEventListener("keydown",e=>{
 
 /* ================= AFTER COMBAT ================= */
 function winCombat(){
-  if(G.tutorial){ setTutDone(); C=null; G=null; toast("Tutorial complete! The Spire awaits."); showSplash(); return; }
+  if(G.tutorial){ setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
   const kind=C.kind; C=null;
   if(kind==="boss"){ G.gold+=100; return showVictory(); }
   const rw={gold: kind==="elite"? 28+rnd(13) : 12+rnd(11), paint:pick(Object.keys(PAINTS)), slots:rollPaintSlots(), extras:[]};
@@ -1838,7 +1839,7 @@ function showVictory(){
   $("#app").innerHTML=`<div class="screen">
     <div style="width:200px">${artSVG("cat")}</div>
     <h2 style="font-size:44px">Act 1 cleared</h2>
-    <div class="muted" style="max-width:56ch">The Ancient Stone Gargoyle crumbles into gravel. Far above, the Apex Spire hums: Lexicore is watching, measuring your command of the old tongue. Acts 2 and 3 are outside this prototype.</div>
+    <div class="muted" style="max-width:56ch">The Ancient Stone Gargoyle crumbles into gravel. Far above, The Tower hums: Lexicore is watching, measuring your command of the old tongue. Acts 2 and 3 are outside this prototype.</div>
     ${statsHTML()}
     <p class="quote">"And so the spell-cat departed, eager to absorb the endless knowledge of the stars."</p>
     <button class="btn primary" onclick="newRun()">New run</button></div>`;
@@ -1851,7 +1852,7 @@ function oldTitle(){
   $("#app").innerHTML=`<div class="screen">
     <div class="title-hero">
       <div style="width:min(220px,55vw)">${artSVG("cat")}</div>
-      <h1>Lexicon Spire</h1>
+      <h1>Lexicore</h1>
       <div class="sub">English is a lost rune-language. You are the Spell-Cat, and every word you spell commands a swarm of nanobots.</div>
     </div>
     <div class="row" style="justify-content:center">
@@ -1869,7 +1870,7 @@ function oldTitle(){
         <li>Stuck? Any single tile is always a valid cast.</li>
       </ul>
     </div>
-    <div class="muted" style="font-size:14px">Prototype built from the Lexicore / Lexicon Spire GDD · Act 1 scope</div>
+    <div class="muted" style="font-size:14px">Prototype built from the Lexicore GDD · Act 1 scope</div>
   </div>`;
 }
 function continueRun(){ const s=loadSave(); if(!s) return newRun(); G=s; C=null; musicGame(); showMap(); }
@@ -1951,8 +1952,8 @@ function showSplash(){
       <div class="sp-cat">${artSVG("catback")}</div>
     </div>
     <div class="sp-ui">
-      <h1 class="sp-title">Lexicon Spire</h1>
-      <div class="sp-sub">Far away, Lexicore waits at the top of the Apex Spire.</div>
+      <h1 class="sp-title">Lexicore</h1>
+      <div class="sp-sub">Far away, Lexicore waits at the top of The Tower.</div>
       <div class="sp-press" id="sppress">Press any key to continue</div>
       <div class="sp-menu" id="spmenu" hidden></div>
     </div>
