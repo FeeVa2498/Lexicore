@@ -1215,7 +1215,7 @@ const KW = {
   crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect."],
   energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
-  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."],
+  bang:["Exclamation !","Must go at the end of a word, or after a single letter (U!, U!!!!). It can never be cast on its own. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."],
   comma:["Comma ,","Put it between two words to cast both in one action."],
   red:["Red Paint","+1 Might each time the tile is played."], blue:["Blue Paint","+1 Robust each time the tile is played."],
   green:["Green Paint","Draw 1 extra tile when the word is cast."], gold:["Gold Paint","+1 Gold each time the tile is played."],
@@ -1381,6 +1381,9 @@ const RELICS = {
   r15:{name:"Dusk Glyph",sym:"T–Z",d:"+0.5 Arcana if word ends with T–Z.",f:c=>/[T-Z]$/.test(c.L)?.5:0},
   r16:{name:"Open Mouth",sym:"V…V",d:"+1.5 Arcana if word starts and ends with vowels.",f:c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?1.5:0},
   r17:{name:"Choir Bell",sym:"V>C",d:"+1.5 Arcana if vowels outnumber consonants.",f:c=>vowelsOf(c.L).length>consOf(c.L).length?1.5:0},
+  blood:{name:"Berserker's Blood",sym:"♥",starter:"champion",d:"Starter relic of The Champion. Heal 5 HP at the end of every combat."},
+  gloves:{name:"Quick Gloves",sym:"✋",starter:"mercenary",d:"Starter relic of The Mercenary. After the first word you cast in each combat, draw as many tiles as it used."},
+  journal:{name:"Journal",sym:"✎",starter:"scholar",d:"Starter relic of The Scholar. The second time you cast a word in this run, its output is doubled. From the third time on it scores normally."},
   wild:{name:"Jester Rune",sym:"?",d:"Adds a [ ? ] Wildcard tile to your deck. It becomes the best-scoring letter that makes a word.",gain:["?"]},
   bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +2, +4, +6, +10… Spell Power per consecutive !.",gain:["!","!"]},
   comma:{name:"Hinge Pin",sym:",",d:"Adds a [ , ] tile. Place it between two words to cast both at once (BIG,CAT).",gain:[","]},
@@ -1455,7 +1458,7 @@ function newRun(heroId){
   if(!heroId) return showCharSelect();
   musicGame();
   const H=HEROES[heroId];
-  G = {uidN:1, hero:heroId, hp:H.hp, maxHp:H.hp, gold:99, deck:[], relics:[], potions:["heal"], weapons:H.weapons.slice(),
+  G = {uidN:1, hero:heroId, hp:H.hp, maxHp:H.hp, gold:99, deck:[], relics:[H.relic], wordUses:{}, potions:["heal"], weapons:H.weapons.slice(),
        map:null, pos:null, floor:0, act:1, screen:"map", lastEnemy:null, removeCost:75,
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
@@ -1780,16 +1783,19 @@ function evaluate(tiles, w, check){
     R.valid=true; R.easter=EASTER[raw]; R.L=raw.replace(/[^A-Z]/g,""); R.words=[raw];
     const sp=tiles.map(t=>tileChip(t)); R.chips=sp.reduce((a,b)=>a+b,0)+(w.kind==="atk"?C.p.might:w.kind==="def"?C.p.robust:0);
     R.mult=w.mult; R.total=Math.floor(R.chips*R.mult); R.crit=raw.length===w.sigil; R.notes.push(R.easter==="close"?"…that was close":"Close enough!"); return R; }
-  if(tiles.length===1 && /[A-Z?]/.test(chars[0])){
-    const t=tiles[0]; const letter = t.ch==="?" ? "Q" : t.ch;
-    R.valid=true; R.fallback=true; R.L=letter; R.resolved[t.uid]=letter;
-    R.chips = tileChip(t,letter); R.mult=1; R.total=R.chips; R.notes.push("Single-letter fallback: Mult 1, no relics");
-    return R;
-  }
   let k=0; while(k<chars.length && chars[chars.length-1-k]==="!") k++;
   const bodyT = tiles.slice(0, tiles.length-k);
   if(bodyT.some(t=>t.ch==="!")){ R.reason="[ ! ] tiles must sit at the end of the word."; return R; }
-  if(!bodyT.length){ R.reason="Put letters before the [ ! ]."; return R; }
+  if(!bodyT.length){ R.reason="[ ! ] can't be cast on its own. Put a letter before it."; return R; }
+  if(bodyT.length===1 && /[A-Z?]/.test(bodyT[0].ch)){
+    // a single tile, optionally followed by ! tiles (U, U!, U!!!!!)
+    const t=bodyT[0]; const letter = t.ch==="?" ? "Q" : t.ch;
+    R.valid=true; R.fallback=true; R.L=letter; R.resolved[t.uid]=letter; R.words=[letter+"!".repeat(k)];
+    R.chips = tileChip(t,letter); R.mult=1; R.notes.push("Single tile: Mult 1, no relics");
+    if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
+    R.total=R.chips; R.crit = R.L.length===w.sigil;
+    return R;
+  }
   const parts=[[]]; for(const t of bodyT){ if(t.ch===",") parts.push([]); else parts[parts.length-1].push(t); }
   if(parts.some(p=>!p.length)){ R.reason="A comma must sit between two words."; return R; }
   const words=[];
@@ -1828,6 +1834,7 @@ function evaluate(tiles, w, check){
   R.mult=+R.mult.toFixed(2);
   R.total = Math.floor(R.chips*R.mult);
   if(parts.length>1) R.notes.push(`${parts.length} words`);
+  if(check&&typeof G!=="undefined"&&G&&G.relics.includes("journal")&&((G.wordUses||{})[words.join(",")]||0)===1){ R.total*=2; R.journal=true; R.fired.push("journal"); R.notes.push("Journal: second time ×2"); }
   R.valid = true; R.words=words;
   return R;
 }
@@ -1880,6 +1887,8 @@ async function cast(){
   if(!G.tutorial||true){ if(R.easter) achHit(R.easter); if(!R.fallback&&R.L.length>=7) achHit("long7"); if(!R.fallback&&R.L.length>=10) achHit("long10");
     if(R.crit&&!R.fallback) achHit("crit"); if(R.words&&R.words.length>1) achHit("comma"); if(tiles.filter(t=>t.ch==="?").length>=3) achHit("wild3"); }
   G.stats.words++;
+  if(!R.fallback&&R.words){ G.wordUses=G.wordUses||{}; const key=R.words.join(","); G.wordUses[key]=(G.wordUses[key]||0)+1; }
+  if(!C.firstCast){ C.firstCast=true; if(G.relics.includes("gloves")){ extraDraw+=tiles.length; R.fired.push("gloves"); log(`Quick Gloves: draw ${tiles.length}.`); } }
   const label = R.words?R.words.join(", "):R.L;
   if(R.total>G.stats.bestScore){ G.stats.bestScore=R.total; G.stats.best=label; }
   log(`${label}: ${R.chips} × ${R.mult} = ${R.total}${R.crit?" · CRIT":""}`);
@@ -2763,6 +2772,7 @@ function screenKey(e){
 function winCombat(){
   if(C&&!G.tutorial){ unlock("first_blood"); if(G.hp>=(C.hpStart??0)) unlock("untouched"); if(C.kind==="boss") unlock(["act1","act2","act3","act4"][(G.act||1)-1]); }
   if(G.tutorial){ unlock("tutorial"); setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
+  if(G.relics.includes("blood")&&G.hp>0){ const h=Math.min(5,G.maxHp-G.hp); if(h>0){ G.hp+=h; toast(`Berserker's Blood: +${h} HP.`); } }
   const kind=C.kind, got=C.goldGot||0; C=null;
   if(kind==="boss"){ return actCleared(); }
   const rw={gold:got, slots:rollPaintSlots(), extras:[]};
@@ -2773,7 +2783,7 @@ function winCombat(){
   renderReward();
 }
 function randomRelic(exclude=[]){
-  const pool=Object.keys(RELICS).filter(r=>!G.relics.includes(r)&&!exclude.includes(r));
+  const pool=Object.keys(RELICS).filter(r=>!RELICS[r].starter&&!G.relics.includes(r)&&!exclude.includes(r));
   return pool.length?pick(pool):null;
 }
 function gainRelic(id){
@@ -3114,19 +3124,19 @@ Object.assign(ARTS,{
     }},
 });
 const HEROES={
-  scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],
+  scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],relic:"journal",
     tag:"A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
     play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.","Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn.",""]},
-  champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
+  champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],relic:"blood",
     tag:"A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
     play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.","Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it.",""]},
-  mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
+  mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],relic:"gloves",
     tag:"A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect.",
     play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
