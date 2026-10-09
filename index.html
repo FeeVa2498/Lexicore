@@ -1030,8 +1030,10 @@ const TOPIC = {
 };
 function gemSVG(){ return iconSVG("0 0 126 118",(sh,ink)=>{ sh("path",`d="M63 6 L118 42 L98 110 L28 110 L8 42 Z"`,"#2e3b33"); sh("path",`d="M63 22 L102 48 L88 98 L38 98 L24 48 Z"`,"#3ddc84"); ink(`<path class="thin" d="M63 22 L63 6 M102 48 L118 42 M88 98 L98 110 M38 98 L28 110 M24 48 L8 42"/>`); }); }
 const WICON = {
-  sword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M46 6 L54 6 L56 66 L44 66 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 10 L50 62"/>`); sh("rect",`x="28" y="64" width="44" height="8" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="72" width="10" height="16" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="92" r="5"`,CC.gold); }),
-  shield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 8 L84 20 Q84 64 50 92 Q16 64 16 20 Z"`,CC.blue); sh("path",`d="M50 18 L74 27 Q74 60 50 80 Q26 60 26 27 Z"`,"#8fc1ff"); ink(`<path d="M50 24 L50 74 M34 40 L66 40"/>`); }),
+  sword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="45" y="34" width="10" height="62" rx="4" transform="rotate(18 50 65)"`,"#8a4b24"); sh("path",`d="M50 4 L58 22 L76 24 L62 36 L66 54 L50 44 L34 54 L38 36 L24 24 L42 22 Z"`,CC.gold); ink(`<path class="thin" d="M30 12 L24 6 M74 10 L80 4 M84 40 L92 40"/>`); }),
+  oldsword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M46 6 L54 6 L56 66 L44 66 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 10 L50 62"/>`); sh("rect",`x="28" y="64" width="44" height="8" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="72" width="10" height="16" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="92" r="5"`,CC.gold); }),
+  shield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("circle",`cx="50" cy="52" r="42"`,"rgba(90,170,255,.35)"); sh("path",`d="M50 14 L82 30 L74 74 L50 90 L26 74 L18 30 Z"`,"#8fc1ff"); sh("path",`d="M50 28 L68 38 L64 66 L50 76 L36 66 L32 38 Z"`,CC.blue); ink(`<path class="thin" style="stroke:#fff" d="M40 40 Q46 34 54 34"/>`); }),
+  oldshield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 8 L84 20 Q84 64 50 92 Q16 64 16 20 Z"`,CC.blue); sh("path",`d="M50 18 L74 27 Q74 60 50 80 Q26 60 26 27 Z"`,"#8fc1ff"); ink(`<path d="M50 24 L50 74 M34 40 L66 40"/>`); }),
   needle:()=>iconSVG("0 0 100 100",(sh,ink)=>{ ink(`<path class="thick" d="M50 4 L50 64"/>`); sh("path",`d="M34 64 Q50 78 66 64 Q58 74 50 74 Q42 74 34 64 Z"`,CC.violet); sh("rect",`x="46" y="72" width="8" height="16" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="92" r="5"`,CC.violet); }),
   bulwark:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="22" y="8" width="56" height="84" rx="10"`,"#9aa6b4"); sh("path",`d="M50 26 L64 40 L50 70 L36 40 Z"`,CC.green); ink(`<circle cx="30" cy="16" r="2" class="dark"/><circle cx="70" cy="16" r="2" class="dark"/><circle cx="30" cy="84" r="2" class="dark"/><circle cx="70" cy="84" r="2" class="dark"/>`); }),
   lance:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="46" y="30" width="8" height="66" rx="3"`,"#8a4b24"); sh("path",`d="M50 2 Q64 16 58 30 Q54 22 50 34 Q46 22 42 30 Q36 16 50 2 Z"`,"#ff7b00"); sh("path",`d="M50 12 L56 30 L44 30 Z"`,"#ffd000"); ink(`<path class="thin" d="M42 40 L58 40 M42 46 L58 46"/>`); }),
@@ -1134,10 +1136,10 @@ const KW = {
   condemn:["Condemned tile","If it is still in your hand at the end of turn, it is banished for the rest of this combat."],
   ctile:["Cursed tile","Using this tile gives you +1 Curse."],
   ftile:["Frustrated tile","Using this tile gives you +1 Frustrated."],
-  crit:["Critical","Cast a word whose length exactly matches the orb's sigil to trigger its bonus effect."],
-  energy:["Energy","You get 3 each turn. Every orb costs Energy to cast and fires once per turn."],
+  crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect."],
+  energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast and fires once per turn."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
-  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Mult: +1, +2, +3, +5…"],
+  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Mult: +0.5, +1, +1.5, +2.5… (with the Dagger, each ! throws another dagger instead)"],
   comma:["Comma ,","Put it between two words to cast both in one action."],
   red:["Red Paint","+1 Might each time the tile is played."], blue:["Blue Paint","+1 Robust each time the tile is played."],
   green:["Green Paint","Draw 1 extra tile when the word is cast."], gold:["Gold Paint","+1 Gold each time the tile is played."],
@@ -1246,47 +1248,47 @@ function bgActURI(kind,act){
 
 /* ================= DATA ================= */
 const WEAPONS = {
-  sword:{name:"Sword Orb",cost:2,sigil:5,kind:"atk",mult:1,desc:"Deal damage.",crit:"Broken 2 on target (+50% dmg taken)."},
-  shield:{name:"Shield Orb",cost:1,sigil:4,kind:"def",mult:1,desc:"Gain Shield.",crit:"Draw 3 tiles."},
-  needle:{name:"Needle Orb",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict 4 Poison.",price:110},
-  bulwark:{name:"Bulwark Orb",cost:2,sigil:6,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
-  hammer:{name:"Hammer Orb",cost:3,sigil:7,kind:"atk",mult:1,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
-  lance:{name:"Flame Lance Orb",cost:1,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
-  drum:{name:"War Drum Orb",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
-  mirror:{name:"Mirror Ward Orb",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
-  quill:{name:"Venom Quill Orb",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
+  sword:{name:"Wand",cost:2,sigil:5,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict Broken 2 on the target (+50% damage taken)."},
+  shield:{name:"Barrier",cost:1,sigil:4,kind:"def",mult:1,desc:"Gain Shield.",crit:"Draw 3 tiles."},
+  needle:{name:"Needle",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict 4 Poison.",price:110},
+  bulwark:{name:"Bulwark",cost:2,sigil:6,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
+  hammer:{name:"Hammer",cost:3,sigil:7,kind:"atk",mult:1,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
+  lance:{name:"Flame Lance",cost:2,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
+  drum:{name:"War Drum",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
+  mirror:{name:"Mirror Ward",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
+  quill:{name:"Venom Quill",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
 };
 const vowelsOf = L => [...L].filter(c=>VOWELS.has(c));
 const consOf = L => [...L].filter(c=>!VOWELS.has(c));
 const RELICS = {
-  r1:{name:"Twin Moons",sym:"2n",d:"+3 Arcana if word length is even.",f:c=>c.L.length%2===0?3:0},
-  r2:{name:"Odd Fang",sym:"2n+1",d:"+3 Arcana if word length is odd.",f:c=>c.L.length%2===1?3:0},
-  r3:{name:"Ouroboros Loop",sym:"∞",d:"+6 Arcana if first letter matches last letter.",f:c=>c.L.length>1&&c.L[0]===c.L[c.L.length-1]?6:0},
-  r4:{name:"Vowel Prism",sym:"AE",d:"+2 Arcana per unique vowel.",f:c=>2*new Set(vowelsOf(c.L)).size},
-  r5:{name:"Consonant Coil",sym:"BC",d:"+1.5 Arcana per unique consonant.",f:c=>1.5*new Set(consOf(c.L)).size},
-  r6:{name:"Mirror Shard",sym:"LL",d:"+5 Arcana per pair of adjacent identical letters.",f:c=>{let n=0;for(let i=1;i<c.L.length;i++)if(c.L[i]===c.L[i-1])n++;return 5*n}},
-  r7:{name:"Lone Wolf Seal",sym:"1×",d:"+4 Arcana if no letter repeats.",f:c=>c.L.length>1&&new Set(c.L).size===c.L.length?4:0},
-  r8:{name:"Triad Totem",sym:"3×",d:"+10 Arcana if one letter appears 3+ times.",f:c=>{const m={};for(const ch of c.L)m[ch]=(m[ch]||0)+1;return Object.values(m).some(v=>v>=3)?10:0}},
-  r9:{name:"Heavy Ink",sym:"≥5",d:"+3 Arcana per played tile with Spell Power ≥ 5.",f:c=>3*c.sp.filter(v=>v>=5).length},
-  r10:{name:"Pebble Charm",sym:"≤4",d:"+6 Arcana if ALL played tiles have Spell Power ≤ 4.",f:c=>c.sp.length&&c.sp.every(v=>v<=4)?6:0},
-  r11:{name:"Long Scroll",sym:"7+",d:"+12 Arcana if word is 7+ letters.",f:c=>c.L.length>=7?12:0},
-  r12:{name:"Ledger Stone",sym:"Σ",d:"+5 Arcana if total base Spell Power ≥ 10.",f:c=>c.sp.reduce((a,b)=>a+b,0)>=10?5:0},
-  r13:{name:"Heart Vowel",sym:"·V·",d:"+4 Arcana if the exact middle letter is a vowel.",f:c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?4:0},
-  r14:{name:"Dawn Glyph",sym:"A–F",d:"+3 Arcana if word starts with A–F.",f:c=>/^[A-F]/.test(c.L)?3:0},
-  r15:{name:"Dusk Glyph",sym:"T–Z",d:"+3 Arcana if word ends with T–Z.",f:c=>/[T-Z]$/.test(c.L)?3:0},
-  r16:{name:"Open Mouth",sym:"V…V",d:"+6 Arcana if word starts and ends with vowels.",f:c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?6:0},
-  r17:{name:"Choir Bell",sym:"V>C",d:"+8 Arcana if vowels outnumber consonants.",f:c=>vowelsOf(c.L).length>consOf(c.L).length?8:0},
+  r1:{name:"Twin Moons",sym:"2n",d:"+0.5 Arcana if word length is even.",f:c=>c.L.length%2===0?.5:0},
+  r2:{name:"Odd Fang",sym:"2n+1",d:"+0.5 Arcana if word length is odd.",f:c=>c.L.length%2===1?.5:0},
+  r3:{name:"Ouroboros Loop",sym:"∞",d:"+1.5 Arcana if first letter matches last letter.",f:c=>c.L.length>1&&c.L[0]===c.L[c.L.length-1]?1.5:0},
+  r4:{name:"Vowel Prism",sym:"AE",d:"+0.25 Arcana per unique vowel.",f:c=>.25*new Set(vowelsOf(c.L)).size},
+  r5:{name:"Consonant Coil",sym:"BC",d:"+0.2 Arcana per unique consonant.",f:c=>.2*new Set(consOf(c.L)).size},
+  r6:{name:"Mirror Shard",sym:"LL",d:"+1 Arcana per pair of adjacent identical letters.",f:c=>{let n=0;for(let i=1;i<c.L.length;i++)if(c.L[i]===c.L[i-1])n++;return 1*n}},
+  r7:{name:"Lone Wolf Seal",sym:"1×",d:"+0.5 Arcana if no letter repeats.",f:c=>c.L.length>1&&new Set(c.L).size===c.L.length?.5:0},
+  r8:{name:"Triad Totem",sym:"3×",d:"+2.5 Arcana if one letter appears 3+ times.",f:c=>{const m={};for(const ch of c.L)m[ch]=(m[ch]||0)+1;return Object.values(m).some(v=>v>=3)?2.5:0}},
+  r9:{name:"Heavy Ink",sym:"≥5",d:"+0.4 Arcana per played tile with Spell Power ≥ 5.",f:c=>.4*c.sp.filter(v=>v>=5).length},
+  r10:{name:"Pebble Charm",sym:"≤4",d:"+1 Arcana if ALL played tiles have Spell Power ≤ 4.",f:c=>c.sp.length&&c.sp.every(v=>v<=4)?1:0},
+  r11:{name:"Long Scroll",sym:"7+",d:"+2 Arcana if word is 7+ letters.",f:c=>c.L.length>=7?2:0},
+  r12:{name:"Ledger Stone",sym:"Σ",d:"+0.75 Arcana if total base Spell Power ≥ 15.",f:c=>c.sp.reduce((a,b)=>a+b,0)>=15?.75:0},
+  r13:{name:"Heart Vowel",sym:"·V·",d:"+0.75 Arcana if the exact middle letter is a vowel.",f:c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?.75:0},
+  r14:{name:"Dawn Glyph",sym:"A–F",d:"+0.5 Arcana if word starts with A–F.",f:c=>/^[A-F]/.test(c.L)?.5:0},
+  r15:{name:"Dusk Glyph",sym:"T–Z",d:"+0.5 Arcana if word ends with T–Z.",f:c=>/[T-Z]$/.test(c.L)?.5:0},
+  r16:{name:"Open Mouth",sym:"V…V",d:"+1.5 Arcana if word starts and ends with vowels.",f:c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?1.5:0},
+  r17:{name:"Choir Bell",sym:"V>C",d:"+1.5 Arcana if vowels outnumber consonants.",f:c=>vowelsOf(c.L).length>consOf(c.L).length?1.5:0},
   wild:{name:"Jester Rune",sym:"?",d:"Adds a [ ? ] Wildcard tile to your deck. It becomes the best-scoring letter that makes a word.",gain:["?"]},
-  bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +1, +2, +3, +5… Arcana per consecutive !.",gain:["!","!"]},
+  bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +0.5, +1, +1.5, +2.5… Arcana per consecutive !.",gain:["!","!"]},
   comma:{name:"Hinge Pin",sym:",",d:"Adds a [ , ] tile. Place it between two words to cast both at once (BIG,CAT).",gain:[","]},
 };
 const POTIONS = {
-  heal:{name:"Healing Draught",d:"Heal 15 HP. Usable anywhere.",any:true},
-  fire:{name:"Volatile Flask",d:"Deal 15 damage to the enemy."},
-  iron:{name:"Iron Tonic",d:"Gain 12 Shield."},
-  might:{name:"Mighty Brew",d:"Gain 3 Might."},
+  heal:{name:"Healing Draught",d:"Heal 20 HP (+10 per Act after the first). Usable anywhere.",any:true},
+  fire:{name:"Volatile Flask",d:"Deal 20 damage to the target (×Act number)."},
+  iron:{name:"Iron Tonic",d:"Gain 15 Shield (×Act number)."},
+  might:{name:"Mighty Brew",d:"Gain 3 Might (+2 per Act after the first)."},
   purge:{name:"Purge Salts",d:"Cleanse all tile debuffs and your Poison."},
-  ink:{name:"Ink of Plenty",d:"Draw 4 tiles."},
+  ink:{name:"Ink of Plenty",d:"Draw 5 tiles."},
 };
 const PAINTS = {
   red:{name:"Red Paint · Might",d:"+1 Might when played (+1 Spell Power to attack weapons this combat)."},
@@ -1314,13 +1316,13 @@ const STATUS = {
   frustrated:{n:"Frustrated",d:"Casting a word shorter than X+1 letters deals 1 self-damage. Loses 1 stack per turn."},
 };
 const ENEMIES = {
-  slime:{name:"Green Slime",hp:35,art:"slime",moves:[[{k:"atk",v:8},{k:"blk",v:6}],[{k:"tile",d:"poison",n:2}]]},
-  bat:{name:"Gloom Bat",hp:28,art:"bat",moves:[[{k:"atk",v:10}],[{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:14}]]},
-  goblin:{name:"Thorn Goblin",hp:42,art:"goblin",moves:[[{k:"blk",v:12},{k:"buff",s:"might",v:2}],[{k:"atk",v:12}],[{k:"tile",d:"slimy",n:3}]]},
-  arachne:{name:"Arachne Matriarch",hp:75,art:"arachne",elite:true,moves:[[{k:"tile",d:"poison",n:4},{k:"blk",v:10}],[{k:"atk",v:15}],[{k:"pdeb",s:"weaken",v:2}]]},
-  quartz:{name:"Quartz Punisher",hp:90,art:"quartz",elite:true,moves:[[{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:18}],[{k:"blk",v:15},{k:"tile",d:"lock",n:2}],[{k:"atk",v:22,heavy:true}]]},
+  slime:{name:"Green Slime",hp:40,art:"slime",moves:[[{k:"atk",v:7},{k:"blk",v:6}],[{k:"tile",d:"poison",n:2}],[{k:"atk",v:10}]]},
+  bat:{name:"Gloom Bat",hp:32,art:"bat",moves:[[{k:"atk",v:9}],[{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:12}]]},
+  goblin:{name:"Thorn Goblin",hp:46,art:"goblin",moves:[[{k:"blk",v:10},{k:"buff",s:"might",v:2}],[{k:"atk",v:11}],[{k:"tile",d:"slimy",n:3}]]},
+  arachne:{name:"Arachne Matriarch",hp:85,art:"arachne",elite:true,moves:[[{k:"tile",d:"poison",n:4},{k:"blk",v:10}],[{k:"atk",v:16}],[{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:12}]]},
+  quartz:{name:"Quartz Punisher",hp:100,art:"quartz",elite:true,moves:[[{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:16}],[{k:"blk",v:15},{k:"tile",d:"lock",n:2}],[{k:"atk",v:22,heavy:true}]]},
   tslime:{name:"Training Slime",hp:80,art:"slime",moves:[[{k:"atk",v:8}],[{k:"blk",v:8},{k:"atk",v:6}],[{k:"atk",v:10}]]},
-  gargoyle:{name:"Ancient Stone Gargoyle",hp:160,art:"gargoyle",boss:true,moves:[
+  gargoyle:{name:"Ancient Stone Gargoyle",hp:155,art:"gargoyle",boss:true,moves:[
     [{k:"tile",d:"curse",n:2},{k:"tile",d:"condemn",n:2}],[{k:"atk",v:16},{k:"blk",v:15}],[{k:"pdeb",s:"frustrated",v:3},{k:"atk",v:12}],[{k:"atk",v:24,heavy:true}]],
     names:["Chant of Decay","Stone Slam","Gaze of Frustration","Execute"]},
 };
@@ -1355,7 +1357,8 @@ function newRun(heroId){
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
   for(const ch of "AIUEO") { G.deck.push(newTile(ch)); G.deck.push(newTile(ch)); }
-  for(let i=0;i<3;i++) G.deck.push(newTile("?"));
+  if(heroId==="mercenary"){ G.deck.push(newTile("?")); G.deck.push(newTile("!")); G.deck.push(newTile("!")); }
+  else for(let i=0;i<3;i++) G.deck.push(newTile("?"));
   G.map = genMap();
   C = null;
   showMap();
@@ -1571,8 +1574,8 @@ function pickTile(title, filter, cb, cancelable=true){
 function showHelp(){
   openModal(`<h2>Rules &amp; glossary</h2>
   <div class="howto">
-  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Pick a weapon orb, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Each orb fires once per turn.</div>
-  <div><b>Score:</b> <span class="chip-n">Chips</span> (sum of tile Spell Power) × <span class="mult-n">Mult</span> (orb base + relic Arcana). Word length equal to the orb's sigil length = <b>Critical</b>.</div>
+  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Pick a weapon, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Each weapon fires once per turn.</div>
+  <div><b>Score:</b> <span class="chip-n">Chips</span> (sum of tile Spell Power) × <span class="mult-n">Mult</span> (1 + relic Arcana, rare and precious). Word length equal to the weapon's sigil length = <b>Critical</b>.</div>
   <div><b>Invalid word:</b> the bar shakes, no Energy spent. <b>A single tile</b> is always valid (Mult 1, no relics) so you never soft-lock.</div>
   </div>
   <h3>Entity statuses</h3>
@@ -1593,16 +1596,16 @@ async function usePotion(i){
   if(C && (C.busy||C.over)) return;
   if(C && !tg("potion")) return;
   G.potions.splice(i,1); snd("shield");
-  if(!C){ G.hp=Math.min(G.maxHp,G.hp+15); toast("Healed 15 HP."); renderHUD(); return; }
+  if(!C){ const h=20+10*((G.act||1)-1); G.hp=Math.min(G.maxHp,G.hp+h); toast(`Healed ${h} HP.`); renderHUD(); return; }
   C.busy=true; renderCombat(); log(`Used ${P.name}.`);
   const t=aliveTarget();
   switch(id){
-    case "heal": G.hp=Math.min(G.maxHp,G.hp+15); await healAnim("p",15); break;
-    case "fire": { const r=dealToEnemy(t,15,{}); await strikeAnim("p","e"+t,r,{noLunge:true,colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); break; }
-    case "iron": C.p.block+=12; await guardAnim("p",12); break;
-    case "might": C.p.might+=3; await buffAnim("p","+3 Might"); break;
+    case "heal": { const h=20+10*((G.act||1)-1); G.hp=Math.min(G.maxHp,G.hp+h); await healAnim("p",h); break; }
+    case "fire": { const r=dealToEnemy(t,20*(G.act||1),{}); await strikeAnim("p","e"+t,r,{noLunge:true,colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); break; }
+    case "iron": { const b=15*(G.act||1); C.p.block+=b; await guardAnim("p",b); break; }
+    case "might": { const m=3+2*((G.act||1)-1); C.p.might+=m; await buffAnim("p",`+${m} Might`); break; }
     case "purge": for(const u in C.t) if(C.t[u].deb) C.t[u].deb=null; C.p.poison=0; await healAnim("p",0,"Cleansed!"); break;
-    case "ink": draw(4); break;
+    case "ink": draw(5); break;
   }
   C.busy=false; renderCombat();
   await resolveDeaths();
@@ -1624,7 +1627,8 @@ function pickEncounter(kind){
 function startCombat(group, kind, opt={}){
   if(typeof group==="string") group=[group];
   const t={}; for(const tile of G.deck) t[tile.uid]={...tile,deb:null};
-  C = {kind, es:group.map(id=>({id,hp:ENEMIES[id].hp,max:ENEMIES[id].hp,block:0,might:0,broken:0,poison:0,mi:0,dead:false,gone:false})), target:0,
+  const gsc = kind==="normal" ? [1,1,.75,.62,.55,.5][group.length]||.5 : 1;
+  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,broken:0,poison:0,mi:0,dead:false,gone:false}; }), target:0,
        t, draw:shuffle(Object.keys(t).map(Number)), hand:[], disc:[], bar:[], ban:[],
        energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
@@ -1706,11 +1710,12 @@ function evaluate(tiles, w, check){
   if(statBonus){ R.chips+=statBonus; R.notes.push(`+${statBonus} ${w.kind==="atk"?"Might":"Robust"}`); }
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
-  for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${v}`);} }
+  for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
   if(k&&w.id==="dagger"){ R.bang=Math.min(k,8); R.notes.push(`${"!".repeat(R.bang)} → ${R.bang} extra throw${R.bang>1?"s":""}`); }
-  else if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
+  else if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*.5; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
   R.crit = R.L.length===w.sigil;
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
+  R.mult=+R.mult.toFixed(2);
   R.total = Math.floor(R.chips*R.mult);
   if(parts.length>1) R.notes.push(`${parts.length} words`);
   R.valid = true; R.words=words;
@@ -1788,8 +1793,8 @@ async function cast(){
     let dealt=res.dmg;
     if(wid==="dagger"&&R.bang){ updateBar("e"+ti); dealt+=await throwDaggers(ti,R.bang,label); }
     if(wid==="dagger"&&R.crit){ const t={uid:G.uidN++,ch:"!",lvl:1,paint:null,deb:null,fragile:true}; C.t[t.uid]=t; C.disc.push(t.uid); log("Critical! A Fragile [ ! ] tile is forged into your discard pile."); renderCombat(); await tileFlyFx([t.uid],"Forged!","#2f7d3e"); }
-    if(G.hero==="champion"&&dealt>=10){ const h=Math.floor(dealt/10); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
-    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-5); log("The Greatsword bites back: −5 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-5",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
+    if(G.hero==="champion"&&dealt>=6){ const h=Math.floor(dealt/6); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
+    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
       for(let j=0;j<C.es.length;j++){ if(j===ti||C.es[j].dead) continue; const full2=C.es[j].hp===C.es[j].max; const r2=dealToEnemy(j,dmg,{}); updateBar("e"+j); if(full2&&C.es[j].hp<=0) achOneShot(); const c=center("e"+j); impact(c.x,c.y,r2.dmg,{colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); numPop(c.x,c.top+10,r2.dmg?`-${r2.dmg}`:"Blocked!",r2.dmg,"#ffd23f"); fEl("e"+j)?.classList.add("flash"); }
       snd("hit"); shake(20); await sleep(T_(800)); }
@@ -2007,13 +2012,13 @@ function renderCombat(){
       ${prev.crit&&!prev.fallback?`<span class="crit-tag">CRITICAL</span>`:""}`:`<span class="muted">Click tiles or type a word</span>`}</div>
     <div class="notes">${prev?prev.notes.join(" · "):`Turn ${C.turn} · <kbd>Enter</kbd> cast · <kbd>⌫</kbd> undo`}</div>
     <div class="sg-btns"><button class="cbtn" onclick="clearBar()" ${C.bar.length&&!C.busy?"":"disabled"}>Clear</button>
-      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""}>Cast ${w.name.split(" ")[0]}</button></div>`;
+      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""}>Cast ${w.name}</button></div>`;
   // bottom shelf
   const ws = Array.from({length:MAX_WEAPONS},(_,i)=>{ const id=G.weapons[i];
     if(!id) return `<div class="wslot emptyw" title="Empty weapon slot"></div>`;
     const W=WEAPONS[id], used=C.used.includes(i);
     return `<button class="wslot ${i===C.wi?"sel":""} ${used?"used":""}" data-i="${i}" onclick="selWeapon(${i})" ${tipAttr(`<b>${W.name}</b> · ${KIND_LABEL[W.kind]} · ${W.cost} Energy · Mult ×${W.mult}<br>${W.desc}<br><b>Critical (exactly ${W.sigil} letters):</b> ${W.crit}`,["crit","energy"].concat(W.kind==="psn"?["poison"]:W.kind==="buff"?["might","robust"]:id==="mirror"?["thorns"]:id==="sword"?["broken"]:[]))} aria-pressed="${i===C.wi}">
-      <span class="cost">${W.cost}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name.replace(" Orb","")}</span>
+      <span class="cost">${W.cost}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
   const pots = Array.from({length:MAX_POTIONS},(_,i)=>{ const p=G.potions[i];
     return p?`<button class="pslot" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})">${potionIcon(p)}</button>`:`<span class="pslot" title="Empty potion slot"></span>`; }).join("");
@@ -2064,10 +2069,10 @@ function showControls(){
       <tr><th colspan="2">Combat</th></tr>
       ${r("<kbd>A</kbd>–<kbd>Z</kbd> <kbd>?</kbd> <kbd>!</kbd> <kbd>,</kbd>","Place a matching tile from your hand on the sigil bar")}
       ${r("<kbd>Backspace</kbd>","Take back the last tile")}
-      ${r("<kbd>Enter</kbd>","Cast the word with the selected orb")}
-      ${r("<kbd>1</kbd>–<kbd>5</kbd>","Select a weapon orb")}
+      ${r("<kbd>Enter</kbd>","Cast the word with the selected weapon")}
+      ${r("<kbd>1</kbd>–<kbd>5</kbd>","Select a weapon")}
       ${r("<kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd>","Switch target enemy")}
-      ${r("<kbd>Space</kbd>","End turn (asks first if an orb can still be cast)")}
+      ${r("<kbd>Space</kbd>","End turn (asks first if a weapon can still be cast)")}
       ${r("<kbd>A</kbd> / <kbd>D</kbd> then <kbd>Space</kbd>","In a Yes / No popup: choose, then confirm")}
       ${r("<kbd>Alt</kbd>+<kbd>1</kbd>–<kbd>3</kbd>","Drink the potion in that slot")}
       ${r("<kbd>Esc</kbd>","Clear the sigil bar; if it's empty, open Settings (Map, Deck, Rules)")}
@@ -2253,21 +2258,21 @@ function mushroomBoom(host,x,y){
 
 /* ================= ACTS 2 & 3 ================= */
 Object.assign(ENEMIES,{
-  rat:{name:"Scrap Rat",hp:46,art:"rat",moves:[[{k:"atk",v:9}],[{k:"blk",v:8},{k:"atk",v:6}],[{k:"tile",d:"lock",n:2}]]},
-  hound:{name:"Riot Hound",hp:52,art:"hound",moves:[[{k:"atk",v:13}],[{k:"buff",s:"might",v:3}],[{k:"atk",v:9},{k:"pdeb",s:"weaken",v:1}]]},
-  crow:{name:"Wrench Crow",hp:40,art:"crow",moves:[[{k:"atk",v:7},{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:12}],[{k:"pdeb",s:"broken",v:1}]]},
-  knight:{name:"Junkyard Knight",hp:125,art:"knight",elite:true,moves:[[{k:"blk",v:20},{k:"buff",s:"might",v:2}],[{k:"atk",v:22}],[{k:"tile",d:"condemn",n:2},{k:"atk",v:10}],[{k:"atk",v:28,heavy:true}]]},
-  mantis:{name:"Hazmat Mantis",hp:105,art:"mantis",elite:true,moves:[[{k:"atk",v:16}],[{k:"tile",d:"poison",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:24,heavy:true}]]},
-  titan:{name:"The Titan",hp:300,art:"titan",boss:true,giant:true,moves:[[{k:"atk",v:26}],[{k:"tile",d:"lock",n:3},{k:"blk",v:20}],[{k:"atk",v:34,heavy:true}],[{k:"pdeb",s:"broken",v:2},{k:"pdeb",s:"frustrated",v:3}]],
+  rat:{name:"Scrap Rat",hp:80,art:"rat",moves:[[{k:"atk",v:15}],[{k:"blk",v:14},{k:"atk",v:9}],[{k:"tile",d:"lock",n:2},{k:"atk",v:8}]]},
+  hound:{name:"Riot Hound",hp:88,art:"hound",moves:[[{k:"atk",v:18}],[{k:"buff",s:"might",v:3},{k:"blk",v:10}],[{k:"atk",v:13},{k:"pdeb",s:"weaken",v:1}]]},
+  crow:{name:"Wrench Crow",hp:70,art:"crow",moves:[[{k:"atk",v:11},{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:17}],[{k:"pdeb",s:"broken",v:1},{k:"atk",v:8}]]},
+  knight:{name:"Junkyard Knight",hp:190,art:"knight",elite:true,moves:[[{k:"blk",v:28},{k:"buff",s:"might",v:3}],[{k:"atk",v:26}],[{k:"tile",d:"condemn",n:2},{k:"atk",v:14}],[{k:"atk",v:34,heavy:true}]]},
+  mantis:{name:"Hazmat Mantis",hp:170,art:"mantis",elite:true,moves:[[{k:"atk",v:22}],[{k:"tile",d:"poison",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:30,heavy:true}]]},
+  titan:{name:"The Titan",hp:380,art:"titan",boss:true,giant:true,moves:[[{k:"atk",v:30}],[{k:"tile",d:"lock",n:3},{k:"blk",v:35}],[{k:"atk",v:42,heavy:true}],[{k:"pdeb",s:"broken",v:2},{k:"pdeb",s:"frustrated",v:3}]],
     names:["Stomp","Rumble","Mega Kick","Earthquake"]},
-  twinA:{name:"Gemini Left",hp:150,art:"twin",artO:{tint:"#e63946"},boss:true,moves:[[{k:"atk",v:14}],[{k:"blk",v:12}],[{k:"atk",v:18,heavy:true}]],names:["Pinch","Brace","Crush"]},
-  twinB:{name:"Gemini Right",hp:150,art:"twin",artO:{tint:"#3a86ff"},boss:true,moves:[[{k:"blk",v:12}],[{k:"atk",v:16}],[{k:"tile",d:"curse",n:2}]],names:["Brace","Pinch","Hex"]},
-  prisoner:{name:"Prisoner 0451",hp:70,art:"prisoner",moves:[[{k:"atk",v:14}],[{k:"tile",d:"frustrate",n:3},{k:"blk",v:10}],[{k:"tile",d:"curse",n:2},{k:"atk",v:8}]]},
-  drone:{name:"Sentry Drone",hp:62,art:"drone",moves:[[{k:"atk",v:10},{k:"pdeb",s:"broken",v:1}],[{k:"tile",d:"lock",n:2}],[{k:"atk",v:18}]]},
-  moth:{name:"Cyber Moth",hp:58,art:"moth",moves:[[{k:"tile",d:"slimy",n:3}],[{k:"atk",v:12},{k:"pdeb",s:"poison",v:3}],[{k:"atk",v:16}]]},
-  warden:{name:"Warden Unit",hp:165,art:"warden",elite:true,moves:[[{k:"blk",v:25}],[{k:"atk",v:30}],[{k:"tile",d:"lock",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:36,heavy:true}]]},
-  alpha:{name:"Escaped Prisoner Alpha",hp:150,art:"alpha",elite:true,moves:[[{k:"buff",s:"might",v:4}],[{k:"atk",v:20}],[{k:"tile",d:"condemn",n:3},{k:"atk",v:12}]]},
-  lexicore:{name:"LEXICORE",hp:420,art:"lexicore",boss:true,moves:[[{k:"tile",d:"curse",n:2},{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:30},{k:"blk",v:25}],[{k:"tile",d:"condemn",n:3},{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:40,heavy:true}]],
+  twinA:{name:"Gemini Left",hp:190,art:"twin",artO:{tint:"#e63946"},boss:true,moves:[[{k:"atk",v:17}],[{k:"blk",v:18}],[{k:"atk",v:23,heavy:true}]],names:["Pinch","Brace","Crush"]},
+  twinB:{name:"Gemini Right",hp:190,art:"twin",artO:{tint:"#3a86ff"},boss:true,moves:[[{k:"blk",v:18}],[{k:"atk",v:19}],[{k:"tile",d:"curse",n:2},{k:"atk",v:10}]],names:["Brace","Pinch","Hex"]},
+  prisoner:{name:"Prisoner 0451",hp:150,art:"prisoner",moves:[[{k:"atk",v:26}],[{k:"tile",d:"frustrate",n:3},{k:"blk",v:22}],[{k:"tile",d:"curse",n:2},{k:"atk",v:16}]]},
+  drone:{name:"Sentry Drone",hp:130,art:"drone",moves:[[{k:"atk",v:18},{k:"pdeb",s:"broken",v:1}],[{k:"tile",d:"lock",n:2},{k:"blk",v:18}],[{k:"atk",v:30}]]},
+  moth:{name:"Cyber Moth",hp:120,art:"moth",moves:[[{k:"tile",d:"slimy",n:3},{k:"atk",v:12}],[{k:"atk",v:20},{k:"pdeb",s:"poison",v:4}],[{k:"atk",v:28}]]},
+  warden:{name:"Warden Unit",hp:320,art:"warden",elite:true,moves:[[{k:"blk",v:45}],[{k:"atk",v:40}],[{k:"tile",d:"lock",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:50,heavy:true}]]},
+  alpha:{name:"Escaped Prisoner Alpha",hp:290,art:"alpha",elite:true,moves:[[{k:"buff",s:"might",v:5},{k:"blk",v:20}],[{k:"atk",v:32}],[{k:"tile",d:"condemn",n:3},{k:"atk",v:20}]]},
+  lexicore:{name:"LEXICORE",hp:600,art:"lexicore",boss:true,moves:[[{k:"tile",d:"curse",n:2},{k:"tile",d:"frustrate",n:2},{k:"blk",v:30}],[{k:"atk",v:45},{k:"blk",v:40}],[{k:"tile",d:"condemn",n:3},{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:60,heavy:true}]],
     names:["Parse","Compile","Overwrite","Delete"]},
 });
 Object.assign(ENC_W,{rat:215,hound:240,crow:200,knight:270,mantis:255,titan:430,twinA:230,twinB:230,prisoner:210,drone:200,moth:230,warden:275,alpha:270,lexicore:400});
@@ -2519,7 +2524,7 @@ function winCombat(){
   if(G.tutorial){ unlock("tutorial"); setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
   const kind=C.kind; C=null;
   if(kind==="boss"){ return actCleared(); }
-  const rw={gold: kind==="elite"? 28+rnd(13) : 12+rnd(11), slots:rollPaintSlots(), extras:[]};
+  const act=G.act||1; const rw={gold: kind==="elite"? 30+rnd(16)+10*(act-1) : 14+rnd(10)+5*(act-1), slots:rollPaintSlots(), extras:[]};
   G.gold+=rw.gold;
   // GDD extras are granted automatically so the reward screen stays a single choice
   if(kind==="elite"||Math.random()<.4){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<MAX_POTIONS){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
@@ -2625,7 +2630,7 @@ function showAltar(){
       <div class="muted">Costs ${W.cost} Energy per cast · fires once per turn</div></div>`; };
   $("#app").innerHTML=`<div class="screen altar-screen">
     <h2 style="font-size:40px">The Weapon Altar</h2>
-    <div class="muted" style="max-width:56ch">Two orbs are sunk deep in an old nanobot shrine. Pull one free. The shrine will swallow the other.</div>
+    <div class="muted" style="max-width:56ch">Two weapons are sunk deep in an old nanobot shrine. Pull one free. The shrine will swallow the other.</div>
     <div class="altar" id="altar">
       <svg class="altar-back" viewBox="0 0 600 300" aria-hidden="true">${layer((sh,ink)=>{
         sh("path",`d="M60 290 L90 150 L510 150 L540 290 Z"`,"#a19c94");
@@ -2641,7 +2646,7 @@ function showAltar(){
       <svg class="crack c0" viewBox="0 0 200 160" aria-hidden="true"><path d="M100 0 L86 40 L110 70 L80 110 L104 160 M86 40 L50 60 M110 70 L150 84" fill="none" stroke="#1d1b22" stroke-width="6" stroke-linecap="round"/></svg>
       <svg class="crack c1" viewBox="0 0 200 160" aria-hidden="true"><path d="M100 0 L86 40 L110 70 L80 110 L104 160 M86 40 L50 60 M110 70 L150 84" fill="none" stroke="#1d1b22" stroke-width="6" stroke-linecap="round"/></svg>
     </div>
-    <div class="muted" id="altarhint">Hover an orb to read it. Click to pull it free.</div>
+    <div class="muted" id="altarhint">Hover a weapon to read it. Click to pull it free.</div>
     <div id="altardone" hidden></div>
   </div>`;
 }
@@ -2786,17 +2791,17 @@ Object.assign(ARTS,{
 });
 const HEROES={
   scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],
-    play:"Balanced spell-caster. Shines with medium and long words: the Sword crits at 5 letters, the Shield at 4.",
+    play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. Whatever waits at the top of The Tower must know everything the old world knew.",
     ending:["The great eye dims, then opens again, softer. <i>\"Candidate accepted.\"</i>","Lexicore copies The Scholar's mind into a fleet of nanobots and fires the old missiles at the alien headquarters on the Moon.","\"And so the spell-cat departed, eager to absorb the endless knowledge of the stars.\""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
-    play:"Berserker with no shield. Short brutal words: the Greatsword costs 5 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might and heals on a 2-letter crit. Heals 1 HP for every 10 damage dealt.",
+    play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might and heals on a 2-letter crit. Heals 1 HP for every 6 damage dealt.",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
-    play:"Fragile combo assassin. The Dagger crits at just 2 letters and forges Fragile [ ! ] tiles; every ! at the end of a word throws another dagger, each one harder than the last (1, 2, 3, 5, 8…). The Utility Belt draws extra tiles and shields on a 5-letter crit.",
+    play:"Fragile combo assassin. The Dagger crits at just 2 letters and forges Fragile [ ! ] tiles (and starts with two permanent ! tiles); every ! at the end of a word throws another dagger, each one harder than the last (1, 2, 3, 5, 8…). The Utility Belt draws extra tiles and shields on a 5-letter crit.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
     ending:["The Mercenary stands over the sparking sphere. \"Huh. The master of The Tower… is a computer.\"","Lexicore makes a counter-offer: a fortune in pre-war gold and a seat on the fleet to the Moon. The rat checks the contract, tears it up and grins.","\"Business is business. And the Moon looks rich.\""]},
@@ -2806,7 +2811,7 @@ const STARTERS=HERO_ORDER.flatMap(h=>HEROES[h].weapons);
 const hero = () => HEROES[(G&&G.hero)||"scholar"];
 const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
-  greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 5 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
+  greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 3 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
   dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
   dagger:{name:"Dagger",cost:2,sigil:2,kind:"atk",mult:1,desc:"Deal damage. Each [ ! ] at the end of the word throws another dagger (1, 2, 3, 5, 8… Spell Power).",crit:"Forge a Fragile [ ! ] tile into your discard pile."},
   belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Draw tiles equal to output ÷ 5 (min 1).",crit:"Gain Shield equal to the output."},
@@ -2883,13 +2888,13 @@ async function throwDaggers(ti,n,word){
 const SHOP_LETTERS="AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ";
 function genShopTile(){ const ch=Math.random()<.1?pick(["?","!",","]):pick([...SHOP_LETTERS]); const lvl=/[A-Z]/.test(ch)&&Math.random()<.22?2:1;
   return {ch,paint:pick(Object.keys(PAINTS)),lvl}; }
-function shopTilePrice(t){ return 35+(VAL[t.ch]||4)*3+(t.lvl===2?30:0); }
+function shopTilePrice(t){ return Math.round((30+(VAL[t.ch]||4)*3+(t.lvl===2?30:0))*(1+.15*((G.act||1)-1))); }
 function showShop(){
   G.screen="shop";
   const relics=[]; for(let i=0;i<3;i++){ const r=randomRelic(relics); if(r) relics.push(r); }
-  G.shop={relics:relics.map(r=>({id:r,price:120+rnd(50),sold:false})),
+  G.shop={relics:relics.map(r=>({id:r,price:Math.round((130+rnd(50))*(1+.15*((G.act||1)-1))),sold:false})),
           tiles:[0,1,2].map(()=>{ const t=genShopTile(); return {t,price:shopTilePrice(t),sold:false}; }),
-          potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:45+rnd(25),sold:false})),
+          potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:Math.round((45+rnd(20))*(1+.15*((G.act||1)-1))),sold:false})),
           tossed:false};
   renderShop();
 }
@@ -3214,9 +3219,9 @@ function oldTitle(){
       <h3>How to play this prototype</h3>
       <ul>
         <li>Climb 15 floors of Act 1. Pick a path on the map: combat, elites, events, campfires, shops, treasure, then the boss.</li>
-        <li>In combat, choose a <b>weapon orb</b>, click tiles from your hand (or just type) to spell a word on the sigil bar, then press <kbd>Enter</kbd>.</li>
+        <li>In combat, choose a <b>weapon</b>, click tiles from your hand (or just type) to spell a word on the sigil bar, then press <kbd>Enter</kbd>.</li>
         <li>Output = <span class="chip-n">Chips</span> × <span class="mult-n">Mult</span>. Relics add Arcana to Mult when their condition is met.</li>
-        <li>Match the orb's sigil length exactly for a <b>Critical</b>: Sword (5 letters) Breaks the enemy, Shield (4 letters) draws 3 tiles.</li>
+        <li>Match the weapon's sigil length exactly for a <b>Critical</b>: the Wand (5 letters) Breaks the enemy, the Barrier (4 letters) draws 3 tiles.</li>
         <li>Stuck? Any single tile is always a valid cast.</li>
       </ul>
     </div>
@@ -3357,19 +3362,19 @@ function tutDone(){ try{ return localStorage.getItem(TUT_KEY)==="1"; }catch(e){ 
 function setTutDone(){ try{ localStorage.setItem(TUT_KEY,"1"); }catch(e){} }
 const TUT=[
   {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and your nanobots turn them into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
-  {t:"Pick a weapon first. Tap the <b>Sword Orb</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
+  {t:"Pick a weapon first. Tap the <b>Wand</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
-  {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult comes from the orb and your relics. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
-  {t:"The Sword cost <b>2 Energy</b>. You get 3 Energy each turn, and each orb can fire once per turn.", sel:["#energy"], next:"OK"},
+  {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics (and ! tiles) raise it, so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
+  {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn, and each weapon can fire once per turn.", sel:["#energy"], next:"OK"},
   {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 8 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
-  {t:"Block it! Tap the <b>Shield Orb</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
+  {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
   {t:"Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.", wait:2, next:"Play", done:ev=>ev==="endTurn"},
-  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Sword? Cast a word with exactly that many letters and the Sword makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
-  {t:"Select the Sword and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
-  {t:"Critical! The Shield Orb has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
+  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Wand? Cast a word with exactly that many letters and the Wand makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
+  {t:"Select the Wand and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
+  {t:"Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
 ];
 function startTutorial(){
   closeSplash();
@@ -3402,7 +3407,7 @@ function tg(act,arg){
   if(al===true) return true;
   if(Array.isArray(al)&&al.includes(arg)) return true;
   if(al==="crit5"){
-    if(C.wi!==0){ toast("Select the Sword Orb first."); return false; }
+    if(C.wi!==0){ toast("Select the Wand first."); return false; }
     const n=C.bar.map(u=>C.t[u].ch).filter(c=>/[A-Z?]/.test(c)).length;
     if(n!==5){ toast(`That's ${n} letters. Use exactly 5 for this lesson.`); sigilShake(); snd("buzz"); return false; }
     return true;
