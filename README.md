@@ -2,13 +2,18 @@
 
 Playable browser prototype of the post-apocalyptic word-building roguelike from the Lexicore GDD.
 
-**Play:** open `index.html` in any modern browser, or visit the GitHub Pages URL of this repo.
+**Play:** open `index.html` in a modern browser, or visit this repo's GitHub Pages URL.
+
+## Story & world (roadmap)
+- Humanity was wiped out in a war against alien invaders. Mutated animals, thinking plants and old defense robots roam the Earth.
+- The Spell-Cat finds an ancient Tablet: English words become commands for a nanobot swarm.
+- **Act 1 — The Outskirts** (this build): overgrown nature at the edge of the ruins. Enemies are animals and plants that evolved after the war.
+- **Act 2 — The Ruined City** (planned): enemies carry scavenged tools, weapons and armor.
+- **Act 3 — The Tower** (planned): the heart of the ruined city, where Lexicore waits on the top floor. Enemies mix old-world and alien technology, including the **Prisoners** — captured aliens the Tower still holds for interrogation and research.
+- Each act has its own background map; shop and rest scenes use the current act's backdrop.
+
+## Music
+- Main menu: `audio/pattern3.mp3` (loop) · Run: `audio/gameplay.mp3` · Shop: `audio/shop.mp3` · Rest site: `audio/rest.mp3`.
 
 ## Controls
-- Pick a weapon orb (`1`–`4`), click tiles or type letters onto the sigil bar, press `Enter` to cast.
-- `Backspace` removes the last tile, `Esc` clears the bar.
-
-## Scope
-Act 1: 15-floor map, 3 normal enemies, 2 elites, the Ancient Stone Gargoyle boss, 17 Arcana relics + 3 symbol-tile relics, paint reward screen with re-roll, rest sites, shop, and three events (Wordle riddle, claw machine, wheel of fortune).
-
-Single self-contained file; the English dictionary (~193k words) is embedded.
+Open **Settings → Controls** in game for the full list (the game is fully playable by keyboard).

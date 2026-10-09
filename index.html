@@ -381,6 +381,49 @@ canvas.claw{width:min(560px,100%)}
 .puff{position:absolute;border-radius:50%;background:#d8d2c8;border:2.5px solid var(--ink);z-index:7;pointer-events:none}
 .boomflash{position:absolute;inset:-40px;background:radial-gradient(circle,#fff 0,#fff8 40%,transparent 70%);z-index:9;pointer-events:none}
 
+
+/* ================= SCENES ================= */
+.scene{position:relative;width:min(100%,calc((100vh - 70px)*16/9));aspect-ratio:16/9;margin:0 auto;overflow:hidden;border:4px solid var(--ink);border-radius:14px;box-shadow:6px 7px 0 var(--ink);background:#a7dcf5}
+.scene-in{position:absolute;left:0;top:0;width:1600px;height:900px;transform:scale(var(--k,.6));transform-origin:0 0}
+.scene-bg{position:absolute;inset:0;width:1600px;height:900px}
+.shop-title{position:absolute;left:0;right:0;top:26px;text-align:center;font:64px var(--f-display);color:#ffd23f;-webkit-text-stroke:9px var(--ink);paint-order:stroke fill;transform:rotate(-2deg)}
+.caravan{position:absolute;top:300px;width:420px;height:320px}
+.caravan>svg{width:420px;height:320px}
+.sitems{position:absolute;left:62px;right:62px;top:118px;height:84px;display:flex;justify-content:space-around;align-items:center}
+.sitem{position:relative;background:none;border:none;padding:0;display:grid;justify-items:center;gap:2px;transition:transform .12s}
+.sitem:hover:not(:disabled){transform:translateY(-8px) rotate(-3deg)}
+.sitem .tile{width:62px;height:66px}.sitem .tile b{font-size:34px}
+.sitem .relic.big{width:64px;height:64px;min-width:64px;border-radius:32px;font-size:20px}
+.sitem .gart.sm svg{width:64px;height:64px}
+.ptag{font:22px var(--f-display);color:#fff;-webkit-text-stroke:5px var(--ink);paint-order:stroke fill;background:none;white-space:nowrap}
+.sitem.poor .ptag{color:#ff8a80}
+.sitem.sold{opacity:.35;filter:grayscale(1)}
+.brother{position:absolute;top:540px;width:190px;cursor:help}
+.brother svg{width:100%;height:auto}
+.note{position:absolute;top:0;font:34px var(--f-display);color:#fff;-webkit-text-stroke:5px var(--ink);paint-order:stroke fill;animation:notefloat 2.4s ease-out infinite;pointer-events:none}
+.note.n1{left:120px}.note.n2{left:150px;animation-delay:1.2s}
+@keyframes notefloat{0%{transform:translate(0,30px) rotate(-10deg);opacity:0}20%{opacity:1}100%{transform:translate(30px,-50px) rotate(14deg);opacity:0}}
+.trash{position:absolute;left:1440px;top:640px;width:130px;background:none;border:none;padding:0;display:grid;justify-items:center}
+.trash svg{width:120px;height:150px}
+.trash:hover:not(:disabled) svg{animation:wiggle .4s ease-in-out infinite}
+.trash.used{opacity:.6;filter:grayscale(.6)}
+.leave-sign{position:absolute;left:40px;top:790px;font:34px var(--f-display);background:#f6e7c4;border:4px solid var(--ink);border-radius:var(--sketch);padding:6px 24px;box-shadow:4px 5px 0 var(--ink);transform:rotate(-3deg)}
+.leave-sign:hover{transform:rotate(-1deg) scale(1.05)}
+.tent{position:absolute;left:180px;top:330px;width:400px}
+.tent svg{width:100%;height:auto}
+.fire{position:absolute;left:640px;top:450px;width:230px;z-index:2}
+.fire svg{width:100%;height:auto}
+.fireglow{position:absolute;left:520px;top:330px;width:470px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,80,.55),rgba(255,140,0,.18) 45%,transparent 70%);animation:glow 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes glow{50%{transform:scale(1.06);opacity:.8}}
+.restcat{position:absolute;left:470px;top:440px;width:220px;z-index:3}
+.restcat svg{width:100%;height:auto}
+.restopts{position:absolute;left:1020px;top:300px;display:grid;gap:26px;width:440px}
+.restbtn{display:grid;gap:4px;text-align:left;background:#fff8df;border:5px solid var(--ink);border-radius:var(--sketch);padding:18px 26px;box-shadow:6px 7px 0 var(--ink);transform:rotate(-1.5deg)}
+.restbtn.up{transform:rotate(1.5deg)}
+.restbtn b{font:44px var(--f-display);font-weight:400}
+.restbtn span{font-size:24px;color:var(--ink2)}
+.restbtn:hover{background:#ffe9a8}
+
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
 .mapscroll{height:min(72vh,760px);overflow-y:auto;border:2.5px solid var(--ink);border-radius:var(--sketch);background:var(--paper)}
@@ -502,8 +545,9 @@ let muted=false;
 const VOL=(()=>{ try{ const v=JSON.parse(localStorage.getItem("lexicore-vol")); if(v&&v.music>=0&&v.sfx>=0) return v; }catch(e){} return {music:7,sfx:8}; })();
 function setVolume(kind,v){ VOL[kind]=Math.max(0,Math.min(10,v)); try{ localStorage.setItem("lexicore-vol",JSON.stringify(VOL)); }catch(e){}
   if(kind==="music"&&AUD.music&&AUD.ctx) AUD.music.gain.setTargetAtTime(.75*VOL.music/10,AUD.ctx.currentTime,.05); if(kind==="sfx") snd("tap"); }
-const AUD={ctx:null,master:null,music:null,bufs:{},loading:{},srcs:[],mode:null,p1:null,wantAdv:false,advanced:false};
-const TRACKS={p1:"audio/pattern1.mp3",p2:"audio/pattern2.mp3",p3:"audio/pattern3.mp3",bgm:"audio/bgm_gameplay.mp3"};
+const AUD={loops:{},cur:null,ctx:null,master:null,music:null,bufs:{},loading:{},srcs:[],mode:null,p1:null,wantAdv:false,advanced:false};
+const TRACKS={menu:"audio/pattern3.mp3",game:"audio/gameplay.mp3",shop:"audio/shop.mp3",rest:"audio/rest.mp3"};
+const TRIM={game:1,shop:1,rest:1};
 function actx(){
   if(!AUD.ctx){ try{
     AUD.ctx=new (window.AudioContext||window.webkitAudioContext)();
@@ -521,55 +565,35 @@ function loadTrack(k){
   const c=actx(); if(!c) return Promise.resolve(null);
   return AUD.loading[k]=fetch(TRACKS[k]).then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
     .then(b=>new Promise((res,rej)=>c.decodeAudioData(b,res,rej))).then(buf=>{ AUD.bufs[k]=buf;
-      if(k==="bgm"){ const d=buf.getChannelData(0); let i=0; while(i<d.length&&Math.abs(d[i])<1e-4) i++; let j=d.length-1; while(j>i&&Math.abs(d[j])<1e-4) j--; AUD.bgmLoop=[i/buf.sampleRate,(j+1)/buf.sampleRate]; }
+      if(TRIM[k]){ const d=buf.getChannelData(0); let i=0; while(i<d.length&&Math.abs(d[i])<1e-4) i++; let j=d.length-1; while(j>i&&Math.abs(d[j])<1e-4) j--; AUD.loops[k]=[i/buf.sampleRate,(j+1)/buf.sampleRate]; }
       return buf; }).catch(()=>null);
 }
-function mkSrc(k,loop,when){
+function mkSrc(k,loop,when,fadeIn=0){
   const c=AUD.ctx, buf=AUD.bufs[k]; if(!c||!buf) return null;
   const src=c.createBufferSource(); src.buffer=buf; src.loop=loop;
-  if(loop&&k==="bgm"&&AUD.bgmLoop){ src.loopStart=AUD.bgmLoop[0]; src.loopEnd=AUD.bgmLoop[1]; }
+  const lp=AUD.loops[k]; if(loop&&lp){ src.loopStart=lp[0]; src.loopEnd=lp[1]; }
   const g=c.createGain(); src.connect(g).connect(AUD.music);
-  src.start(when, k==="bgm"&&AUD.bgmLoop?AUD.bgmLoop[0]:0);
+  if(fadeIn){ g.gain.setValueAtTime(0,when); g.gain.linearRampToValueAtTime(1,when+fadeIn); }
+  src.start(when, lp?lp[0]:0);
   const o={src,g,k,when}; AUD.srcs.push(o); return o;
 }
 function stopMusic(fade=.5){
   const c=AUD.ctx; if(!c) return; const now=c.currentTime;
   for(const s of AUD.srcs){ try{ s.g.gain.cancelScheduledValues(now); s.g.gain.setValueAtTime(s.g.gain.value,now); s.g.gain.linearRampToValueAtTime(0,now+fade); s.src.stop(now+fade+.05); }catch(e){} }
-  AUD.srcs=[]; AUD.p1=null;
+  AUD.srcs=[];
 }
-/* Title: Pattern 1 once -> Pattern 2 once -> loop Pattern 3, starting as soon as the title screen appears */
-async function musicTitle(){
-  AUD.mode="title"; AUD.wantAdv=false; AUD.advanced=false;
-  stopMusic(.6);
-  await Promise.all(["p1","p2","p3"].map(loadTrack));
-  if(AUD.mode!=="title"||!AUD.bufs.p1) return;
-  const c=AUD.ctx, t=c.currentTime+.15, d1=AUD.bufs.p1.duration, d2=AUD.bufs.p2?AUD.bufs.p2.duration:0;
-  AUD.p1=mkSrc("p1",false,t); AUD.p1start=t;
-  if(AUD.bufs.p2) mkSrc("p2",false,t+d1);
-  if(AUD.bufs.p3) mkSrc("p3",true,t+d1+d2);
-}
-function musicTitleAdvance(){ /* title music now plays P1 -> P2 -> loop P3 on its own */ }
-function titleAdvanceNow(){
-  if(AUD.advanced||!AUD.p1||!AUD.bufs.p2||!AUD.bufs.p3) return; AUD.advanced=true;
-  const c=AUD.ctx, d=AUD.bufs.p1.duration;
-  const played=Math.max(0,c.currentTime-AUD.p1start);
-  const end=AUD.p1start+Math.max(1,Math.ceil((played+.03)/d))*d;
-  AUD.p1.src.stop(end);
-  mkSrc("p2",false,end);
-  mkSrc("p3",true,end+AUD.bufs.p2.duration);
-}
-/* Gameplay: loop Pattern 3. If the title chain is already looping Pattern 3, keep it playing seamlessly. */
-async function musicGame(){
-  if(AUD.mode==="game") return;
-  AUD.mode="game";
-  await loadTrack("p3");
-  if(AUD.mode!=="game"||!AUD.ctx) return;
-  const now=AUD.ctx.currentTime;
-  const live=AUD.srcs.find(o=>o.k==="p3"&&o.src.loop&&o.when<=now+.05);
-  if(live){ for(const o of AUD.srcs) if(o!==live){ try{ o.g.gain.setTargetAtTime(0,now,.15); o.src.stop(now+.6); }catch(e){} } AUD.srcs=[live]; return; }
+/* one looping track per screen: menu = Pattern 3, run = Gameplay BGM, shop = Shop BGM, rest = Rest BGM */
+async function setMusic(k){
+  if(AUD.cur===k) return;
+  AUD.cur=k; AUD.mode=k==="menu"?"title":"game";
+  await loadTrack(k);
+  if(AUD.cur!==k||!AUD.ctx) return;
   stopMusic(.8);
-  mkSrc("p3",true,now+.4);
+  mkSrc(k,true,AUD.ctx.currentTime+.25,.6);
 }
+function musicTitle(){ setMusic("menu"); }
+function musicGame(){ setMusic("game"); }
+function musicForScreen(){ if(!G) return; setMusic(G.screen==="shop"?"shop":G.screen==="rest"?"rest":"game"); }
 /* Muffled "underwater / old radio" music while a popup is open during gameplay */
 function muffleMusic(on){
   const c=AUD.ctx; if(!c||!AUD.filter) return;
@@ -612,37 +636,42 @@ function iconSVG(vb, drawFn, cls=""){ return `<svg viewBox="${vb}" class="${cls}
 
 const ARTS = {
   cat:{vb:[200,220], v:["i0","i1","atk","hurt","guard"],
-    tf:{i0:"",i1:"translate(0 3)",atk:"rotate(7 100 208)",hurt:"rotate(-12 100 208) translate(-6 4)",guard:"rotate(-3 100 208) translate(0 3)"},
+    tf:{i0:"",i1:"translate(0 3)",atk:"rotate(6 100 210)",hurt:"rotate(-10 100 210) translate(-6 4)",guard:"rotate(-3 100 210) translate(0 2)"},
     draw(v,sh,ink,fo){
-      const P={i0:{hat:0,arm:"idle",eye:"o",tail:0,m:"w"},i1:{hat:5,arm:"idle",eye:"o",tail:1,m:"w"},atk:{hat:-8,arm:"cast",eye:"a",tail:1,m:"o"},
-               hurt:{hat:16,arm:"hurt",eye:"x",tail:0,m:"o"},guard:{hat:2,arm:"guard",eye:"o",tail:0,m:"f"}}[v];
-      ink(`<path class="thick" d="M104 154 C132 164 152 152 ${P.tail?158:148} ${P.tail?118:128}"/>`);
-      ink(`<path class="thick" d="M100 160 L86 205 L75 206 M100 160 L116 205 L128 206"/>`);
-      if(P.arm==="idle"||P.arm==="guard"){ ink(`<path class="thick" d="M72 100 L77 206"/>`); sh("circle",`cx="71" cy="91" r="12"`,CC.gold);
-        ink(`<path class="thin" d="M71 72 L71 64 M53 88 L46 86 M89 86 L96 83"/>`); }
-      if(P.arm==="hurt"){ ink(`<path class="thick" d="M54 110 L84 206"/>`); sh("circle",`cx="51" cy="100" r="11"`,CC.gold); }
-      sh("path",`d="M100 110 L72 168 Q100 180 128 168 Z"`,CC.violet);
-      fo(`<circle cx="92" cy="150" r="4" style="fill:${CC.gold}"/><circle cx="110" cy="160" r="3" style="fill:${CC.gold}"/><circle cx="104" cy="136" r="3" style="fill:${CC.gold}"/>`);
-      if(P.arm==="idle"){ ink(`<path class="thick" d="M100 124 L75 138 M100 124 L126 142"/>`); sh("rect",`x="121" y="128" width="28" height="36" rx="4"`,CC.orange);
-        ink(`<path class="thin" d="M127 137 L143 137 M127 145 L140 145 M127 153 L143 153"/>`); }
-      if(P.arm==="cast"){ ink(`<path class="thick" d="M100 124 L146 114 M100 126 L114 148"/><path class="thick" d="M118 128 L190 100"/>`);
-        sh("circle",`cx="196" cy="97" r="16"`,CC.gold); ink(`<path d="M196 70 L196 58 M220 84 L232 78 M222 110 L234 116 M172 80 L164 70 M196 124 L198 134"/>`);
-        sh("rect",`x="104" y="142" width="20" height="26" rx="3"`,CC.orange); }
-      if(P.arm==="guard"){ ink(`<path class="thick" d="M100 124 L75 138 M100 124 L134 110"/>`); sh("rect",`x="126" y="72" width="46" height="60" rx="7"`,CC.blue);
-        ink(`<path class="thin" d="M134 88 L164 88 M134 101 L158 101 M134 114 L164 114"/>`); }
-      if(P.arm==="hurt"){ ink(`<path class="thick" d="M100 124 L72 110 M100 124 L132 108"/>`); sh("rect",`x="132" y="182" width="26" height="18" rx="3" transform="rotate(-20 145 191)"`,CC.orange); }
-      sh("path",`d="M83 86 L78 61 L97 76 Z"`,CC.char); sh("path",`d="M117 86 L122 61 L103 76 Z"`,CC.char);
-      sh("circle",`cx="100" cy="95" r="23"`,CC.char);
-      if(P.eye==="x") ink(`<path style="stroke:#ffd23f" d="M87 89 L96 98 M96 89 L87 98 M104 89 L113 98 M113 89 L104 98"/>`);
-      else { ink(`<circle cx="91" cy="94" r="6" style="fill:#ffd23f"/><circle cx="109" cy="94" r="6" style="fill:#ffd23f"/><circle cx="${v==="atk"?93:91}" cy="95" r="2.6" class="dark"/><circle cx="${v==="atk"?111:109}" cy="95" r="2.6" class="dark"/>`);
-        if(P.eye==="a") ink(`<path style="stroke:#ffd23f" d="M84 85 L96 89 M116 85 L104 89"/>`); }
-      if(P.m==="w") ink(`<path class="thin" style="stroke:#fff" d="M95 105 Q97.5 108 100 105 Q102.5 108 105 105"/>`);
-      if(P.m==="o") ink(`<ellipse cx="100" cy="107" rx="4" ry="5" style="fill:#ff8fab;stroke:#fff"/>`);
-      if(P.m==="f") ink(`<path class="thin" style="stroke:#fff" d="M95 106 L105 106"/>`);
-      ink(`<path class="thin" d="M78 100 L64 98 M78 105 L64 107 M122 100 L136 98 M122 105 L136 107"/>`);
-      sh("path",`d="M72 80 Q100 90 130 78 L${112+P.hat} 16 Q${107+P.hat} 9 ${103+P.hat} 18 Z"`,CC.blue);
-      ink(`<path class="thick" d="M66 82 Q100 95 136 77"/>`);
-      sh("circle",`cx="${104+P.hat*.5}" cy="50" r="5"`,CC.gold);
+      const P={i0:{tip:0,scarf:0,eye:"o",pose:"idle"},i1:{tip:6,scarf:1,eye:"o",pose:"idle"},atk:{tip:-6,scarf:1,eye:"a",pose:"cast"},
+               hurt:{tip:10,scarf:0,eye:"x",pose:"hurt"},guard:{tip:2,scarf:0,eye:"o",pose:"guard"}}[v];
+      const hatT = v==="hurt" ? ` transform="rotate(-14 104 84)"` : v==="atk" ? ` transform="rotate(5 104 84)"` : "";
+      // staff behind / tail
+      if(P.pose==="idle"||P.pose==="guard"){ ink(`<path class="thick" d="M152 212 L172 98"/>`); sh("circle",`cx="174" cy="88" r="12"`,CC.gold); ink(`<path class="thin" d="M174 66 L174 59 M194 84 L201 82 M156 74 L150 70"/>`); }
+      if(P.pose==="hurt"){ ink(`<path class="thick" d="M70 206 L42 104"/>`); sh("circle",`cx="40" cy="95" r="11"`,CC.gold); }
+      ink(`<path class="thick" d="M62 198 Q24 200 26 170 Q28 152 44 158"/>`);
+      // cloak body
+      sh("path",`d="M58 212 Q52 152 102 124 Q150 152 144 212 Z"`,CC.char);
+      // scarf
+      sh("path",`d="M78 130 Q102 144 126 130 L124 142 Q102 154 80 142 Z"`,CC.orange);
+      sh("path",P.scarf?`d="M82 136 L40 140 L52 154 Z"`:`d="M82 136 L44 124 L50 142 Z"`,CC.orange);
+      // front paws + props
+      if(P.pose==="idle"){ sh("rect",`x="88" y="152" width="32" height="38" rx="4"`,CC.orange); ink(`<path class="thin" d="M94 162 L114 162 M94 170 L110 170 M94 178 L114 178"/>`);
+        sh("circle",`cx="92" cy="186" r="7"`,CC.char); sh("circle",`cx="158" cy="154" r="7"`,CC.char); }
+      if(P.pose==="cast"){ ink(`<path class="thick" d="M120 152 L194 112"/>`); sh("circle",`cx="198" cy="110" r="17"`,CC.gold);
+        ink(`<path d="M198 80 L198 68 M224 96 L236 90 M226 124 L238 130 M174 92 L166 82 M198 140 L200 150"/>`); sh("circle",`cx="128" cy="148" r="7"`,CC.char);
+        sh("rect",`x="80" y="160" width="24" height="30" rx="3"`,CC.orange); }
+      if(P.pose==="guard"){ sh("rect",`x="118" y="92" width="52" height="66" rx="8"`,CC.blue); ink(`<path class="thin" d="M126 108 L160 108 M126 122 L154 122 M126 136 L160 136"/>`);
+        sh("circle",`cx="118" cy="150" r="7"`,CC.char); }
+      if(P.pose==="hurt"){ sh("rect",`x="126" y="190" width="28" height="18" rx="3" transform="rotate(-18 140 199)"`,CC.orange); sh("circle",`cx="84" cy="168" r="7"`,CC.char); }
+      // head
+      sh("path",`d="M84 94 L76 70 L98 84 Z"`,CC.char); sh("path",`d="M126 94 L134 70 L112 84 Z"`,CC.char);
+      sh("circle",`cx="104" cy="106" r="28"`,CC.char);
+      if(P.eye==="x") ink(`<path class="thick" style="stroke:#ffb000" d="M92 100 L102 110 M102 100 L92 110 M112 100 L122 110 M122 100 L112 110"/>`);
+      else { ink(`<circle cx="97" cy="106" r="8.5" style="fill:#ffb000"/><circle cx="119" cy="106" r="8.5" style="fill:#ffb000"/><ellipse cx="${P.eye==="a"?100:99}" cy="107" rx="2.6" ry="5" class="dark"/><ellipse cx="${P.eye==="a"?122:121}" cy="107" rx="2.6" ry="5" class="dark"/>`);
+        if(P.eye==="a") ink(`<path style="stroke:#ffb000" class="thick" d="M88 95 L102 99 M128 95 L114 99"/>`); }
+      sh("path",`d="M108 116 L114 116 L111 120 Z"`,"#ff8fab");
+      ink(`<path class="thin" d="M80 114 L66 112 M80 119 L66 121 M130 114 L144 112 M130 119 L144 121"/>`);
+      if(v==="atk"||v==="hurt") ink(`<ellipse cx="111" cy="125" rx="3.5" ry="4" style="fill:#ff8fab;stroke:#fff"/>`);
+      // big floppy hat (same design as the title screen)
+      sh("path",`d="M128 88 Q130 46 104 28 Q86 14 ${62+P.tip} ${24+P.tip*.5} Q86 26 86 44 L76 90 Z"${hatT}`,CC.blue);
+      sh("path",`d="M36 92 Q104 66 174 90 Q166 106 106 104 Q46 108 36 92 Z"${hatT}`,CC.blue);
+      fo(`<path d="M78 88 Q104 98 130 88 L130 82 Q104 92 78 82 Z" style="fill:#1d4fb8"${hatT}/>`);
     }},
   slime:{vb:[200,220], v:["i0","i1","atk","hurt"],
     tf:{i0:"",i1:"translate(100 208) scale(1.06 .93) translate(-100 -208)",atk:"translate(-16 0) translate(100 208) scale(1.12 .94) translate(-100 -208)",hurt:"translate(12 0) translate(100 208) scale(1.15 .8) translate(-100 -208)"},
@@ -1046,7 +1075,7 @@ function newTile(ch, o={}){ return {uid:G.uidN++, ch, lvl:o.lvl||1, paint:o.pain
 function newRun(){
   musicGame();
   G = {uidN:1, hp:70, maxHp:70, gold:99, deck:[], relics:[], potions:["heal"], weapons:["sword","shield"],
-       map:null, pos:null, floor:0, screen:"map", lastEnemy:null, removeCost:75,
+       map:null, pos:null, floor:0, act:1, screen:"map", lastEnemy:null, removeCost:75,
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
   for(const ch of "AIUEO") { G.deck.push(newTile(ch)); G.deck.push(newTile(ch)); }
@@ -1157,7 +1186,7 @@ function enterNode(f,c){
 
 /* ================= HUD ================= */
 function renderHUD(){
-  closeStage(); closeSplash();
+  closeStage(); closeSplash(); musicForScreen();
   const hud=$("#hud"); hud.hidden=false;
   $("#hudin").innerHTML = `
     <span class="hstat" title="Health">${IC.heart}<b>${G.hp}</b>/${G.maxHp}</span>
@@ -1542,6 +1571,7 @@ async function enemyTurn(){
 
 /* ================= STAGE RENDER ================= */
 function buildStage(){
+  setMusic("game");
   $("#hud").hidden=true; $("#app").innerHTML="";
   let root=$("#combat-root");
   if(!root){ root=document.createElement("div"); root.id="combat-root"; document.body.appendChild(root); }
@@ -1675,6 +1705,7 @@ function showControls(){
       ${r("<kbd>1</kbd>–<kbd>7</kbd>","Map: travel to the glowing node (left to right)")}
       ${r("<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>R</kbd>","Reward: take a tile / re-roll")}
       ${r("<kbd>1</kbd> <kbd>2</kbd>","Weapon Altar and Rest Site: choose an option")}
+      ${r("<kbd>1</kbd>–<kbd>9</kbd> · <kbd>T</kbd> · <kbd>L</kbd>","Shop: buy relics 1–3, tiles 4–6, potions 7–9 · toss a tile · leave")}
       ${r("<kbd>Tab</kbd> + <kbd>Enter</kbd>","Move between and press any button (shop, events, menus)")}
       ${r("<kbd>Esc</kbd>","Close a popup · open Settings on the map")}
       <tr><th colspan="2">Claw machine</th></tr>
@@ -1807,11 +1838,11 @@ function glossaryTab(tab){
       <h3>${W.name} <span class="gtag k-${W.kind}">${KIND_LABEL[W.kind]}</span></h3>
       <div class="gstat">Energy <b>${W.cost}</b> · Mult <b>×${W.mult}</b> · Sigil <b>${W.sigil}</b> letters</div>
       <div>${W.desc}</div><div><b>Critical (${W.sigil} letters):</b> ${W.crit}</div>
-      <div class="muted">${id==="sword"||id==="shield"?"Starter weapon":ALTAR_POOL.includes(id)?`Weapon Altar · Shop ${W.price}g`:`Shop ${W.price}g`}${G&&G.weapons&&G.weapons.includes(id)?" · <b>Equipped</b>":""}</div></div></div>`).join("");
+      <div class="muted">${id==="sword"||id==="shield"?"Starter weapon":ALTAR_POOL.includes(id)?"Weapon Altar":"Not available in this build"}${G&&G.weapons&&G.weapons.includes(id)?" · <b>Equipped</b>":""}</div></div></div>`).join("");
   if(tab==="relics") return Object.entries(RELICS).map(([id,R])=>`<div class="gcard small"><span class="relic big">${R.sym}</span><div>
       <h3>${R.name}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`).join("");
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
-      <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.any?"Usable anywhere":"Combat only"} · Shop 45–70g · 3 slots max</div></div></div>`).join("");
+      <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · 3 slots max</div></div></div>`).join("");
   if(tab==="keywords") return Object.entries(KW).map(([k,v])=>`<div class="gcard small">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]?`<div class="gart sm">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`).join("");
 }
 function showGlossary(tab="monsters"){
@@ -2040,6 +2071,7 @@ function screenKey(e){
   if(scr==="reward"&&G.reward){ if(n>=1&&n<=3){ e.preventDefault(); claimPaintLetter(n-1); } else if(k.toLowerCase()==="r"){ rerollPaint(); } return; }
   if(scr==="altar"&&G.altar&&!G.altarDone&&(n===1||n===2)){ e.preventDefault(); pullWeapon(n-1); return; }
   if(scr==="rest"&&(n===1||n===2)){ e.preventDefault(); (n===1?restHeal:restUpgrade)(); return; }
+  if(scr==="shop"&&G.shop){ if(n>=1&&n<=9){ e.preventDefault(); shopBuy(["relics","tiles","potions"][Math.floor((n-1)/3)],(n-1)%3); } else if(k.toLowerCase()==="t") shopToss(); else if(k.toLowerCase()==="l"){ G.shop=null; showMap(); } return; }
 }
 
 /* ================= AFTER COMBAT ================= */
@@ -2123,18 +2155,6 @@ function claimPaintLetter(i){
 }
 
 /* ================= REST ================= */
-function showRest(){
-  G.screen="rest"; renderHUD();
-  const heal=Math.floor(G.maxHp*0.2);
-  $("#app").innerHTML=`<div class="screen">
-    <svg viewBox="0 0 160 110" style="width:220px" class="ink"><g filter="url(#wob)"><path d="M40 100 L120 100 M50 100 L80 40 L110 100 M65 100 L80 70 L95 100"/><path class="glow" d="M80 40 Q70 20 80 6 Q90 22 80 40"/><path d="M30 104 L60 92 M130 104 L100 92"/></g></svg>
-    <h2 style="font-size:40px">Campfire</h2>
-    <div class="muted">The nanobots hum quietly. Choose one.</div>
-    <div class="cards">
-      <div class="card btnlike" role="button" tabindex="0" onclick="restHeal()"><h3>Rest</h3><div class="big">+${heal} HP</div><div class="muted" style="font-size:15px">Restore 20% of max HP.</div></div>
-      <div class="card btnlike" role="button" tabindex="0" onclick="restUpgrade()"><h3>Inscribe</h3><div class="big">Lv 2</div><div class="muted" style="font-size:15px">Upgrade one tile: +${LV2_BONUS} Spell Power permanently.</div></div>
-    </div></div>`;
-}
 function restHeal(){ G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.2)); snd("shield"); showMap(); }
 function restUpgrade(){ pickTile("Upgrade a tile to Level 2", t=>/[A-Z]/.test(t.ch)&&t.lvl===1, t=>{ t.lvl=2; snd("coin"); toast(`${t.ch} upgraded to Level 2.`); showMap(); }); }
 
@@ -2214,43 +2234,137 @@ async function pullWeapon(i){
   snd("coin");
 }
 
-/* ================= SHOP ================= */
+/* ================= SCENES (shop & rest use the current act's background) ================= */
+const ACT_BG = act => bgURI("normal");   /* Act 1: the overgrown outskirts. Acts 2 (ruined city) and 3 (The Tower) come later. */
+function sceneWrap(inner,cls=""){ return `<div class="scene ${cls}" id="scene"><div class="scene-in" id="scenein"><img class="scene-bg" src="${ACT_BG(G.act||1)}" alt="">${inner}</div></div>`; }
+function fitScene(){ const sc=$("#scene"), si=$("#scenein"); if(!sc||!si) return; si.style.setProperty("--k", sc.clientWidth/1600); }
+addEventListener("resize",fitScene);
+
+/* --- art: raccoon merchant brothers, caravans, trash can, tent, campfire --- */
+ARTS.raccoon={vb:[200,200], v:["i0","i1"], tf:{i0:"",i1:"translate(0 2)"},
+  draw(v,sh,ink,fo,o){
+    const f=v==="i1", inst=o.inst||"flute", hat=o.hat||CC.red;
+    sh("path",`d="M138 178 Q194 172 188 128 Q186 110 170 114 Q174 150 134 160 Z"`,"#8d8a94");
+    ink(`<path class="thin" d="M176 120 L184 128 M180 140 L190 142 M168 160 L176 166"/>`);
+    sh("ellipse",`cx="100" cy="150" rx="44" ry="42"`,"#a19ea8"); sh("ellipse",`cx="100" cy="158" rx="26" ry="26"`,"#d9d6dc");
+    sh("ellipse",`cx="76" cy="190" rx="16" ry="8"`,"#5d5a66"); sh("ellipse",`cx="124" cy="190" rx="16" ry="8"`,"#5d5a66");
+    sh("path",`d="M76 70 L70 44 L92 60 Z"`,"#a19ea8"); sh("path",`d="M124 70 L130 44 L108 60 Z"`,"#a19ea8");
+    sh("circle",`cx="100" cy="90" r="32"`,"#a19ea8");
+    sh("path",`d="M68 88 Q100 70 132 88 Q122 104 100 98 Q78 104 68 88 Z"`,"#3d3a44");
+    ink(`<circle cx="88" cy="88" r="4.5" class="eye"/><circle cx="112" cy="88" r="4.5" class="eye"/><circle cx="89" cy="89" r="2" class="dark"/><circle cx="113" cy="89" r="2" class="dark"/>`);
+    sh("circle",`cx="100" cy="104" r="4"`,"#1d1b22"); ink(`<path class="thin" d="M94 112 Q100 116 106 112"/>`);
+    if(inst==="flute"){ sh("path",`d="M70 66 Q100 50 130 66 Q100 58 70 66 Z"`,hat); sh("circle",`cx="100" cy="56" r="10"`,hat);
+      sh("rect",`x="60" y="${f?110:112}" width="96" height="9" rx="4" transform="rotate(-12 108 116)"`,"#c8a24a");
+      ink(`<circle cx="${f?118:122}" cy="${f?110:111}" r="2" class="dark"/><circle cx="${f?132:134}" cy="${f?107:108}" r="2" class="dark"/>`);
+      sh("circle",`cx="74" cy="122" r="8"`,"#a19ea8"); sh("circle",`cx="${f?134:138}" cy="${f?112:114}" r="8"`,"#a19ea8"); }
+    if(inst==="lute"){ sh("path",`d="M56 66 Q100 34 144 66 Q100 58 56 66 Z"`,"#e9c46a"); sh("path",`d="M80 62 Q100 40 120 62 Z"`,"#e9c46a");
+      sh("rect",`x="118" y="100" width="12" height="62" rx="4" transform="rotate(40 124 131)"`,"#8a4b24");
+      sh("ellipse",`cx="96" cy="150" rx="28" ry="32"`,CC.wood); ink(`<circle cx="96" cy="146" r="8" class="dark"/><path class="thin" d="M84 170 L140 100 M90 172 L146 104"/>`);
+      sh("circle",`cx="${f?92:100}" cy="${f?150:160}" r="8"`,"#a19ea8"); sh("circle",`cx="140" cy="104" r="8"`,"#a19ea8"); }
+    if(inst==="drum"){ sh("path",`d="M70 72 Q100 52 130 72 L132 80 Q100 70 68 80 Z"`,hat); sh("path",`d="M128 74 L146 66 L140 82 Z"`,hat);
+      sh("rect",`x="52" y="150" width="40" height="40" rx="6"`,CC.orange); sh("ellipse",`cx="72" cy="150" rx="20" ry="6"`,"#f6e7c4");
+      sh("rect",`x="108" y="154" width="40" height="36" rx="6"`,CC.red); sh("ellipse",`cx="128" cy="154" rx="20" ry="6"`,"#f6e7c4");
+      sh("circle",`cx="72" cy="${f?140:130}" r="8"`,"#a19ea8"); sh("circle",`cx="128" cy="${f?126:144}" r="8"`,"#a19ea8");
+      ink(`<path class="thin" d="M${f?60:62} ${f?128:120} L${f?54:56} ${f?122:112} M${f?140:140} ${f?118:134} L${f?146:148} ${f?110:128}"/>`); }
+  }};
+ARTS.campfire={vb:[200,200], v:["i0","i1"], tf:{i0:"",i1:""},
+  draw(v,sh,ink){
+    const f=v==="i1";
+    sh("path",`d="M30 182 L170 156 L172 168 L32 194 Z"`,"#8a4b24"); sh("path",`d="M30 156 L170 182 L168 194 L28 168 Z"`,"#7a3e14");
+    sh("path",f?`d="M60 166 Q50 120 82 96 Q80 120 98 120 Q92 74 120 50 Q118 92 140 100 Q150 130 140 166 Z"`:`d="M62 166 Q46 124 78 104 Q82 126 96 124 Q96 80 112 56 Q124 90 142 96 Q154 136 140 166 Z"`,"#ff7b00");
+    sh("path",f?`d="M80 166 Q72 136 92 120 Q96 138 106 136 Q106 112 120 98 Q130 126 124 166 Z"`:`d="M82 166 Q70 140 88 124 Q98 140 104 132 Q110 112 118 104 Q132 130 122 166 Z"`,"#ffd000");
+    ink(`<path class="thin" d="M${f?150:156} ${f?60:70} l6 -8 M${f?52:48} ${f?70:62} l-6 -8 M100 ${f?30:24} l0 -8"/>`);
+  }};
+function caravanSVG(body,trim,label){ return `<svg viewBox="0 0 420 320" class="art" style="overflow:visible">${layer((sh,ink)=>{
+  sh("path",`d="M30 250 L30 110 Q30 40 210 34 Q390 40 390 110 L390 250 Z"`,body);
+  sh("path",`d="M60 120 L360 120 L360 200 L60 200 Z"`,"#3d2617");
+  sh("path",`d="M44 120 L376 120 L364 92 L56 92 Z"`,trim);
+  ink(`<path class="thin" d="M100 92 L92 120 M150 92 L146 120 M200 92 L200 120 M250 92 L254 120 M300 92 L308 120"/>`);
+  sh("path",`d="M50 200 L370 200 L370 214 L50 214 Z"`,"#c27a3a");
+  sh("circle",`cx="100" cy="262" r="40"`,"#8a4b24"); sh("circle",`cx="320" cy="262" r="40"`,"#8a4b24");
+  ink(`<circle cx="100" cy="262" r="10" class="dark"/><circle cx="320" cy="262" r="10" class="dark"/><path class="thin" d="M100 222 L100 302 M60 262 L140 262 M320 222 L320 302 M280 262 L360 262"/>`);
+  sh("path",`d="M120 6 L300 6 L304 50 L116 50 Z"`,"#f6e7c4"); ink(`<path class="thin" d="M150 50 L150 34 M270 50 L270 34"/>`);
+})}<text x="210" y="38" text-anchor="middle" style="font:30px var(--f-display);fill:#1d1b22">${label}</text></svg>`; }
+const TRASH_SVG = ()=>`<svg viewBox="0 0 120 150" class="art" style="overflow:visible">${layer((sh,ink)=>{
+  sh("path",`d="M18 40 L102 40 L92 146 L28 146 Z"`,"#9aa6b4"); ink(`<path class="thin" d="M40 56 L44 134 M60 56 L60 134 M80 56 L76 134"/>`);
+  sh("rect",`x="8" y="26" width="104" height="16" rx="5" class="lid"`,"#7d8794"); sh("rect",`x="48" y="16" width="24" height="12" rx="4"`,"#7d8794");
+  sh("path",`d="M30 40 Q36 20 50 30 Q56 14 70 28"`,"#57cc4d");
+})}</svg>`;
+const TENT_SVG = ()=>`<svg viewBox="0 0 360 260" class="art" style="overflow:visible">${layer((sh,ink)=>{
+  sh("path",`d="M20 250 L180 20 L340 250 Z"`,"#e76f51"); sh("path",`d="M180 20 L140 250 L220 250 Z"`,"#3d2617");
+  sh("path",`d="M180 20 L120 250 L148 250 Z"`,"#f4a261"); ink(`<path d="M180 20 L180 4 M10 252 L350 252"/>`); sh("path",`d="M180 4 L206 12 L180 20 Z"`,CC.gold);
+})}</svg>`;
+
+/* ================= SHOP: the Caravan Brothers ================= */
+const SHOP_LETTERS="AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ";
+function genShopTile(){ const ch=Math.random()<.1?pick(["?","!",","]):pick([...SHOP_LETTERS]); const lvl=/[A-Z]/.test(ch)&&Math.random()<.22?2:1;
+  return {ch,paint:pick(Object.keys(PAINTS)),lvl}; }
+function shopTilePrice(t){ return 35+(VAL[t.ch]||4)*3+(t.lvl===2?30:0); }
 function showShop(){
   G.screen="shop";
   const relics=[]; for(let i=0;i<3;i++){ const r=randomRelic(relics); if(r) relics.push(r); }
-  const wpool=Object.keys(WEAPONS).filter(w=>WEAPONS[w].price&&!G.weapons.includes(w));
   G.shop={relics:relics.map(r=>({id:r,price:120+rnd(50),sold:false})),
-          potions:shuffle(Object.keys(POTIONS)).slice(0,2).map(p=>({id:p,price:45+rnd(25),sold:false})),
-          weapon: wpool.length?{id:pick(wpool),sold:false}:null, upgradeUsed:false, removeUsed:false};
+          tiles:[0,1,2].map(()=>{ const t=genShopTile(); return {t,price:shopTilePrice(t),sold:false}; }),
+          potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:45+rnd(25),sold:false})),
+          tossed:false};
   renderShop();
+}
+const CARAVANS=[{x:290,body:"#e63946",trim:"#ffd166",label:"RELICS",inst:"flute",hat:"#3a86ff",name:"Pip, the eldest"},
+                {x:800,body:"#3a86ff",trim:"#f1faee",label:"TILES",inst:"lute",hat:"#e9c46a",name:"Rocco, the middle one"},
+                {x:1310,body:"#57cc4d",trim:"#ffbe0b",label:"POTIONS",inst:"drum",hat:"#e63946",name:"Bo, the youngest"}];
+function shopItemHTML(kind,i,it){
+  const can=!it.sold&&G.gold>=it.price, key=kind==="relics"?i+1:kind==="tiles"?i+4:i+7;
+  let face="", tip="", kws=[];
+  if(kind==="relics"){ const R=RELICS[it.id]; face=`<span class="relic big">${R.sym}</span>`; tip=`<b>${R.name}</b><br>${R.d}`; }
+  if(kind==="tiles"){ const t={...it.t,uid:-1,deb:null}; face=tileHTML(t,{noTip:true}); tip=`<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${VAL[t.ch]?` · Spell Power ${tileChip(t)}`:""}<br>${PAINTS[t.paint].name}: ${PAINTS[t.paint].d}`; kws=[t.paint]; if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma"); }
+  if(kind==="potions"){ const P=POTIONS[it.id]; face=`<span class="gart sm">${potionIcon(it.id)}</span>`; tip=`<b>${P.name}</b><br>${P.d}`; }
+  return `<button class="sitem ${it.sold?"sold":""} ${can?"":"poor"}" onclick="shopBuy('${kind}',${i})" ${it.sold?"disabled":""} ${tipAttr(tip+(it.sold?"":`<br><i>Press ${key} or click to buy for ${it.price} gold.</i>`),kws)}>
+    ${face}<span class="ptag">${it.sold?"SOLD":`${it.price}g`}</span></button>`;
 }
 function renderShop(){
   renderHUD(); const S=G.shop;
-  const buy=(price)=>G.gold>=price;
-  $("#app").innerHTML=`<div class="screen"><h2 style="font-size:40px">Scrap Merchant</h2><div class="muted">A rusted vending bot with a cracked smile. Gold only.</div>
-  <h3>Relics</h3><div class="cards">${S.relics.map((r,i)=>`<div class="card"><div class="relic" style="width:50px;height:50px;margin:0 auto">${RELICS[r.id].sym}</div><h3>${RELICS[r.id].name}</h3><div class="muted" style="font-size:15px">${RELICS[r.id].d}</div>
-    <button class="btn small" ${r.sold||!buy(r.price)?"disabled":""} onclick="shopBuy('relic',${i})">${r.sold?"Sold":`Buy · ${r.price}g`}</button></div>`).join("")}</div>
-  <h3>Weapons &amp; potions</h3><div class="cards">
-    ${S.weapon?(()=>{const W=WEAPONS[S.weapon.id];return `<div class="card"><h3>${W.name}</h3><div class="muted" style="font-size:15px">Cost ${W.cost} · Sigil ${W.sigil} · Mult ${W.mult}<br>${W.desc} Crit: ${W.crit}</div>
-      <button class="btn small" ${S.weapon.sold||!buy(W.price)||G.weapons.length>=MAX_WEAPONS?"disabled":""} onclick="shopBuy('weapon')">${S.weapon.sold?"Sold":`Buy · ${W.price}g`}</button></div>`})():""}
-    ${S.potions.map((p,i)=>`<div class="card"><div style="width:40px;margin:0 auto">${potionIcon(p.id)}</div><h3>${POTIONS[p.id].name}</h3><div class="muted" style="font-size:15px">${POTIONS[p.id].d}</div>
-      <button class="btn small" ${p.sold||!buy(p.price)?"disabled":""} onclick="shopBuy('potion',${i})">${p.sold?"Sold":`Buy · ${p.price}g`}</button></div>`).join("")}
-  </div>
-  <h3>Services</h3><div class="cards">
-    <div class="card"><h3>Remove a tile</h3><div class="muted" style="font-size:15px">Thin your deck.</div><button class="btn small" ${S.removeUsed||!buy(G.removeCost)?"disabled":""} onclick="shopRemove()">${S.removeUsed?"Done":`${G.removeCost}g`}</button></div>
-    <div class="card"><h3>Upgrade a tile</h3><div class="muted" style="font-size:15px">Level 2: +${LV2_BONUS} Spell Power.</div><button class="btn small" ${S.upgradeUsed||!buy(60)?"disabled":""} onclick="shopUpgrade()">${S.upgradeUsed?"Done":"60g"}</button></div>
-  </div>
-  <button class="btn primary" onclick="G.shop=null;showMap()">Leave shop</button></div>`;
+  const kinds=["relics","tiles","potions"];
+  $("#app").innerHTML=sceneWrap(`
+    <div class="shop-title">The Caravan Brothers</div>
+    ${CARAVANS.map((c,ci)=>`<div class="caravan" style="left:${c.x-210}px">${caravanSVG(c.body,c.trim,c.label)}
+        <div class="sitems">${S[kinds[ci]].map((it,i)=>shopItemHTML(kinds[ci],i,it)).join("")}</div></div>
+      <div class="brother" style="left:${c.x-250}px" ${tipAttr(`<b>${c.name}</b><br>${["“Shiny old things! Each one hums with Arcana.”","“Fresh letters, hand-painted on the road.”","“Bottled courage. Mostly safe.”"][ci]}`)}>${artSVG("raccoon",{inst:c.inst,hat:c.hat})}<span class="note n1">♪</span><span class="note n2">♫</span></div>`).join("")}
+    <button class="trash ${S.tossed?"used":""}" onclick="shopToss()" ${S.tossed?"disabled":""} ${tipAttr(S.tossed?"<b>Trash can</b><br>You already tossed a tile on this visit.":`<b>Trash can</b><br>Throw one tile out of your deck for <b>${G.removeCost} gold</b>. Once per visit; the price rises each time this run. (Press T)`)}>
+      ${TRASH_SVG()}<span class="ptag">${S.tossed?"Used":`Toss · ${G.removeCost}g`}</span></button>
+    <button class="leave-sign" onclick="G.shop=null;showMap()" ${tipAttr("Back to the map (press L)")}>Leave →</button>`,"shopscene");
+  fitScene();
 }
 function shopBuy(kind,i){
-  const S=G.shop;
-  if(kind==="relic"){ const r=S.relics[i]; if(r.sold||G.gold<r.price) return; G.gold-=r.price; r.sold=true; gainRelic(r.id); }
-  if(kind==="potion"){ const p=S.potions[i]; if(p.sold||G.gold<p.price) return; if(!addPotion(p.id)) return; G.gold-=p.price; p.sold=true; }
-  if(kind==="weapon"){ const W=WEAPONS[S.weapon.id]; if(G.gold<W.price) return; G.gold-=W.price; S.weapon.sold=true; G.weapons.push(S.weapon.id); toast(`${W.name} equipped.`); }
+  const S=G.shop, it=S[kind][i]; if(!it||it.sold) return;
+  if(G.gold<it.price){ toast(`Not enough gold (need ${it.price}).`); snd("buzz"); return; }
+  if(kind==="potions"&&G.potions.length>=MAX_POTIONS){ toast("Your potion slots are full."); snd("buzz"); return; }
+  G.gold-=it.price; it.sold=true;
+  if(kind==="relics") gainRelic(it.id);
+  if(kind==="tiles"){ G.deck.push(newTile(it.t.ch,{paint:it.t.paint,lvl:it.t.lvl})); toast(`${it.t.ch} tile added to your deck.`); }
+  if(kind==="potions") addPotion(it.id);
   snd("coin"); renderShop();
 }
-function shopRemove(){ pickTile("Remove a tile from your deck", t=>true, t=>{ G.gold-=G.removeCost; G.removeCost+=25; G.deck=G.deck.filter(x=>x.uid!==t.uid); G.shop.removeUsed=true; toast(`${t.ch} removed.`); renderShop(); }); }
-function shopUpgrade(){ pickTile("Upgrade a tile to Level 2", t=>/[A-Z]/.test(t.ch)&&t.lvl===1, t=>{ G.gold-=60; t.lvl=2; G.shop.upgradeUsed=true; toast(`${t.ch} upgraded.`); renderShop(); }); }
+function shopToss(){
+  if(G.shop.tossed) return;
+  if(G.gold<G.removeCost){ toast(`Tossing a tile costs ${G.removeCost} gold.`); snd("buzz"); return; }
+  pickTile(`Throw a tile in the trash (${G.removeCost} gold)`, t=>true, t=>{ G.gold-=G.removeCost; G.removeCost+=25; G.deck=G.deck.filter(x=>x.uid!==t.uid); G.shop.tossed=true; toast(`${t.ch} tile tossed. Next toss: ${G.removeCost} gold.`); snd("hurt"); renderShop(); });
+}
+
+/* ================= REST SITE ================= */
+function showRest(){
+  G.screen="rest"; renderHUD();
+  const heal=Math.floor(G.maxHp*0.2);
+  $("#app").innerHTML=sceneWrap(`
+    <div class="shop-title">Campsite</div>
+    <div class="tent">${TENT_SVG()}</div>
+    <div class="fire">${artSVG("campfire")}</div><div class="fireglow"></div>
+    <div class="restcat">${artSVG("cat")}</div>
+    <div class="restopts">
+      <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>Sleep by the fire and recover ${heal} HP (20% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
+      <button class="restbtn up" onclick="restUpgrade()" ${tipAttr(`<b>Upgrade</b><br>Carve one letter tile into Level 2: +${LV2_BONUS} Spell Power forever. Wildcards can't be upgraded. Press 2.`)}><b>2 · Upgrade</b><span>One tile → Level 2</span></button>
+    </div>`,"restscene");
+  fitScene();
+}
 
 /* ================= EVENTS ================= */
 function showEvent(){ const ev=pick(["wordle","claw","wheel"]); ({wordle:startWordle,claw:startClaw,wheel:startWheel})[ev](); }
@@ -2616,7 +2730,7 @@ function showSplash(){
 function openGate(){ if(!SPL.gate) return; SPL.gate=false; unlockAudio(); $("#spgate")?.remove(); const p=$("#sppress"); if(p) p.hidden=false; }
 function splashContinue(){
   if(!SPL.active||SPL.menu) return;
-  SPL.menu=true; unlockAudio(); musicTitleAdvance();
+  SPL.menu=true; unlockAudio();
   const saved=loadSave();
   $("#sppress").hidden=true;
   const m=$("#spmenu"); m.hidden=false;
