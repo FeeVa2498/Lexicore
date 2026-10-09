@@ -1711,6 +1711,7 @@ function evaluate(tiles, w, check){
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
   if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
+  if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
   R.crit = R.L.length===w.sigil;
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
   R.mult=+R.mult.toFixed(2);
@@ -1789,8 +1790,7 @@ async function cast(){
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
     let dealt=res.dmg;
     if(wid==="dagger"&&R.crit){ let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Parry! +${sh} Shield.`); await guardAnim("p",sh,{}); }
-    if(G.hero==="champion"&&dealt>=6){ const h=Math.floor(dealt/6); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
-    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
+    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0&&!undying()){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
       for(let j=0;j<C.es.length;j++){ if(j===ti||C.es[j].dead) continue; const full2=C.es[j].hp===C.es[j].max; const r2=dealToEnemy(j,dmg,{}); updateBar("e"+j); if(full2&&C.es[j].hp<=0) achOneShot(); const c=center("e"+j); impact(c.x,c.y,r2.dmg,{colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); numPop(c.x,c.top+10,r2.dmg?`-${r2.dmg}`:"Blocked!",r2.dmg,"#ffd23f"); fEl("e"+j)?.classList.add("flash"); }
       snd("hit"); shake(20); await sleep(T_(800)); }
@@ -1804,11 +1804,11 @@ async function cast(){
     await sleep(T_(500)); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(200)); renderCombat(); await tileFlyFx(made,"Forged!","#2f7d3e");
   } else if(w.kind==="buff"){
     const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total*0.1)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
-    if(R.crit&&wid==="dumbbell"){ snd("crit"); G.hp=Math.min(G.maxHp,G.hp+5); log("Critical! Heal 5."); updateBar("p"); }
+    let healDB=0; if(R.crit&&wid==="dumbbell"){ snd("crit"); healDB=2*C.p.might; G.hp=Math.min(G.maxHp,G.hp+healDB); log(`Critical! Heal ${healDB} (2 × Might).`); updateBar("p"); }
     else if(R.crit){ snd("crit"); C.p.robust+=2; log("Critical! +2 Robust."); }
     const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(220)); fEl("p").dataset.pose="atk";
     if(R.crit) stamp(c.x,c.top-40,"CRITICAL!"); wordPop(c.x,c.top-110,label);
-    await buffAnim("p",`+${gain} Might${R.crit?(wid==="dumbbell"?" · +5 HP":" +2 Robust"):""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
+    await buffAnim("p",`+${gain} Might${R.crit?(wid==="dumbbell"?` · +${healDB} HP`:" +2 Robust"):""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
   } else if(w.kind==="psn"){
     const amt=Math.max(1,Math.floor(R.total/3)); const ti=aliveTarget();
     const targets=R.crit?C.es.map((e,j)=>j).filter(j=>!C.es[j].dead):[ti];
@@ -1823,7 +1823,7 @@ async function cast(){
   }
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
   if(extraDraw) draw(extraDraw);
-  if(G.hp<=0) return gameOver("your own frustration");
+  if(G.hp<=0&&!undying()) return gameOver("your own frustration");
   const next=WEAPONS[G.weapons[C.wi]].cost<=C.energy?C.wi:G.weapons.findIndex(x=>WEAPONS[x].cost<=C.energy);
   if(next>=0) C.wi=next;
   renderCombat();
@@ -1900,9 +1900,9 @@ async function endTurn(){
   C.disc.push(...C.hand); C.hand=[];
   for(const u in C.t){ const d=C.t[u].deb; if(d&&d.t==="lock"){ d.n--; if(d.n<=0) C.t[u].deb=null; } }
   const p=C.p;
-  if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0) return gameOver("Poison"); }
+  if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0&&!undying()) return gameOver("Poison"); }
   if(p.weaken>0) p.weaken--; if(p.broken>0) p.broken--; if(p.frustrated>0) p.frustrated--;
-  if(p.curse>0 && G.hp<=p.curse){ G.hp=0; renderCombat(); return gameOver("the Curse"); }
+  if(p.curse>0 && G.hp<=p.curse){ G.hp=0; if(!undying()){ renderCombat(); return gameOver("the Curse"); } }
   renderCombat();
   await sleep(T_(300));
   await enemyTurn();
@@ -1922,7 +1922,7 @@ async function enemyTurn(){
         snd("hurt");
         await strikeAnim(key,"p",res,{heavy:a.heavy});
         renderCombat();
-        if(G.hp<=0) return gameOver(def.name);
+        if(G.hp<=0&&!undying()) return gameOver(def.name);
         if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; if(e.dead) break; }
       } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
@@ -2819,7 +2819,7 @@ const HEROES={
     why:"Hungry for knowledge. Whatever waits at the top of The Tower must know everything the old world knew.",
     ending:["The great eye dims, then opens again, softer. <i>\"Candidate accepted.\"</i>","Lexicore copies The Scholar's mind into a fleet of nanobots and fires the old missiles at the alien headquarters on the Moon.","\"And so the spell-cat departed, eager to absorb the endless knowledge of the stars.\""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
-    play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might and heals on a 2-letter crit. Heals 1 HP for every 6 damage dealt.",
+    play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
@@ -2835,7 +2835,7 @@ const hero = () => HEROES[(G&&G.hero)||"scholar"];
 const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
   greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 3 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
-  dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
+  dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal HP equal to 2 × your Might."},
   dagger:{name:"Parrying Dagger",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
   belt:{name:"Utility Belt",cost:1,sigil:4,kind:"util",mult:1,desc:"Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power.",crit:"Refund 1 Energy."},
 });
@@ -3193,6 +3193,14 @@ function spinWheel(){
 }
 
 /* ================= END SCREENS ================= */
+function undying(){
+  if(!G||G.hero!=="champion"||G.hp>0) return false;
+  const a=G.act||1; if(G.undyingAct===a) return false;
+  G.undyingAct=a; G.hp=Math.min(G.maxHp,1+15);
+  log("Undying! The Champion refuses to fall: back up with 16 HP.");
+  try{ const pc=center("p"); stamp(pc.x,pc.top-40,"UNDYING!"); numPop(pc.x,pc.top+20,"+15",12,"#7ae582"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
+  return true;
+}
 function gameOver(cause){
   if(C){ C.over=true; C.busy=true; }
   if(G.tutorial){ setTutDone(); setTimeout(()=>{ C=null; G=null; showSplash(); },900); return; }
