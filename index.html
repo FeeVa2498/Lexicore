@@ -2828,7 +2828,7 @@ const HEROES={
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
-    play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at just 2 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for big bonus Mult, and a 5-letter Belt crit refunds its Energy.",
+    play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for big bonus Mult, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
     ending:["The Mercenary stands over the sparking sphere. \"Huh. The master of The Tower… is a computer.\"","Lexicore makes a counter-offer: a fortune in pre-war gold and a seat on the fleet to the Moon. The rat checks the contract, tears it up and grins.","\"Business is business. And the Moon looks rich.\""]},
@@ -2840,8 +2840,8 @@ const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
   greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 3 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
   dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
-  dagger:{name:"Parrying Dagger",cost:2,sigil:2,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
-  belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Mult.",crit:"Refund 1 Energy."},
+  dagger:{name:"Parrying Dagger",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
+  belt:{name:"Utility Belt",cost:1,sigil:4,kind:"util",mult:1,desc:"Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Mult.",crit:"Refund 1 Energy."},
 });
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
 KIND_LABEL.util="Utility";
