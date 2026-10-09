@@ -424,6 +424,52 @@ canvas.claw{width:min(560px,100%)}
 .restbtn span{font-size:24px;color:var(--ink2)}
 .restbtn:hover{background:#ffe9a8}
 
+
+/* ================= ACTS / MAP / SPLASH v2 ================= */
+body.actbg{background:var(--actbg) center/cover fixed,#a7dcf5}
+body.actbg #app{position:relative}
+body.actbg .screen>h2,.pagetitle{color:#fff;-webkit-text-stroke:7px var(--ink);paint-order:stroke fill;font-size:44px}
+body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.paper{background:#fff8dff0;color:var(--ink);padding:6px 14px;border-radius:12px;border:2.5px solid var(--ink);max-width:640px}
+.sp-tower{position:absolute;left:1226px;top:24px;width:110px;height:620px;cursor:pointer;border-radius:30px}
+.sp-tower i{position:absolute;left:-60px;right:-60px;top:-40px;height:300px;border-radius:50%;background:radial-gradient(ellipse at 50% 45%,rgba(243,217,255,.95),rgba(190,140,255,.45) 35%,transparent 70%);opacity:0;pointer-events:none}
+.sp-tower.lit i{animation:towerlit 2.4s ease-out}
+@keyframes towerlit{0%{opacity:0;transform:scale(.6)}15%{opacity:1;transform:scale(1.1)}60%{opacity:.85}100%{opacity:0;transform:scale(1.3)}}
+.sp-cloud{cursor:pointer}
+.sp-cloud.popped{opacity:0;transform:scale(1.5);transition:opacity .25s,transform .25s}
+.sp-cat{cursor:pointer}
+.sp-cat[data-pose] .art .fr{display:none!important}
+.sp-cat[data-pose="cheer"] .art .fr.cheer{display:inline!important}
+#spscene .puff{position:absolute;border-radius:50%;border:2.5px solid var(--ink);pointer-events:none;z-index:5}
+/* treasure map */
+.mapframe{display:grid;gap:10px}
+.mapscroll2{overflow:auto;cursor:grab;border-radius:16px;touch-action:pan-y;user-select:none;-webkit-user-select:none;max-height:min(78vh,720px)}
+.mapscroll2.grab{cursor:grabbing}
+.mapscroll2 svg.tmap{display:block;height:min(74vh,700px);width:auto;max-width:none}
+.medge2{fill:none;stroke:#9a6a3e;stroke-width:4;stroke-dasharray:10 9;stroke-linecap:round}
+.medge2.taken{stroke:#5a3010;stroke-dasharray:none;stroke-width:6}
+.mnode2 .sq{fill:#7a4a24;stroke:#3d2617;stroke-width:3}
+.mnode2 .ico *{stroke:#f6e7c4;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mnode2.t-elite .sq{fill:#6b2a5e}.mnode2.t-boss .sq{fill:#8b1e2a}.mnode2.t-altar .sq{fill:#4a3a7a}.mnode2.t-shop .sq{fill:#2f6b4a}.mnode2.t-rest .sq{fill:#a0522d}.mnode2.t-treasure .sq{fill:#a07a1a}.mnode2.t-event .sq{fill:#2f5f8a}
+.mnode2.done .sq{opacity:.45}
+.mnode2.avail{cursor:pointer}
+.mnode2.avail .pulse{fill:none;stroke:#ffbe0b;stroke-width:5;animation:mp 1.2s infinite;transform-box:fill-box;transform-origin:center}
+.mnode2.sel .sq{stroke:#ffbe0b;stroke-width:6}
+.mnode2.sel{filter:drop-shadow(0 0 8px #ffbe0b)}
+.mnode2 .tick{fill:none;stroke:#2f7d3e;stroke-width:5;stroke-linecap:round}
+.mapdeco *{fill:none;stroke:#9a6a3e;stroke-width:3}
+.mapdeco text{fill:#9a6a3e;stroke:none;font:28px var(--f-display)}
+.banner{fill:#c27a3a;stroke:#3d2617;stroke-width:4}
+.bannertxt{font:30px var(--f-display);fill:#fff8df;letter-spacing:1px}
+.maplegend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;background:#f1dcaeee;border:3px solid #7a4a24;border-radius:12px;padding:8px 12px;font-size:16px}
+.mlhint{flex-basis:100%}
+.mlitem{display:inline-flex;align-items:center;gap:4px}
+.mlitem svg{width:26px;height:26px}
+/* twins + giant */
+#stage.twin #sigilbox{bottom:auto;top:118px}
+.fighter.flip .art{transform:scaleX(-1)}
+.fighter.giant .over{bottom:auto;top:28%;left:-30%;transform:none}
+.behind{color:#ff3b30;font:16px var(--f-display);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
+
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
 .mapscroll{height:min(72vh,760px);overflow-y:auto;border:2.5px solid var(--ink);border-radius:var(--sketch);background:var(--paper)}
@@ -586,12 +632,13 @@ function stopMusic(fade=.5){
 async function setMusic(k){
   if(AUD.cur===k) return;
   AUD.cur=k; AUD.mode=k==="menu"?"title":"game";
-  await loadTrack(k);
+  if(!AUD.bufs[k]) await loadTrack(k);
   if(AUD.cur!==k||!AUD.ctx) return;
-  stopMusic(.8);
-  mkSrc(k,true,AUD.ctx.currentTime+.25,.6);
+  stopMusic(.35);
+  mkSrc(k,true,AUD.ctx.currentTime+.02,.3);
 }
 function musicTitle(){ setMusic("menu"); }
+function preloadMusic(){ if(actx()) Object.keys(TRACKS).forEach(loadTrack); }
 function musicGame(){ setMusic("game"); }
 function musicForScreen(){ if(!G) return; setMusic(G.screen==="shop"?"shop":G.screen==="rest"?"rest":"game"); }
 /* Muffled "underwater / old radio" music while a popup is open during gameplay */
@@ -785,6 +832,156 @@ const ARTS = {
       ink(`<path class="thin" d="M90 100 Q116 84 142 100"/>`);
     }},
 };
+/* ================= ACT 2 & 3 ENEMY ART ================= */
+const GEN_TF = (ax=100,ay=208)=>({i0:"",i1:"translate(0 3)",atk:`translate(-16 0) rotate(-6 ${ax} ${ay})`,hurt:`translate(12 0) rotate(9 ${ax} ${ay})`});
+const eyesX=(ink,pts,col="#1d1b22")=>ink(`<path class="thick" style="stroke:${col}" d="${pts.map(([x,y])=>`M${x-5} ${y-5} L${x+5} ${y+5} M${x+5} ${y-5} L${x-5} ${y+5}`).join(" ")}"/>`);
+Object.assign(ARTS,{
+  rat:{vb:[200,220],v:["i0","i1","atk","hurt"],tf:GEN_TF(),draw(v,sh,ink){
+    ink(`<path class="thick" d="M150 196 Q196 204 192 168 Q190 150 176 156"/>`);
+    ink(`<path class="thick" d="M96 188 L90 208 M136 188 L142 208"/>`);
+    sh("ellipse",`cx="116" cy="166" rx="50" ry="36"`,"#8d8f99");
+    sh("path",`d="M86 138 Q122 122 158 138 L154 160 Q122 150 90 160 Z"`,"#c27a3a");
+    ink(`<path class="thin" d="M100 136 L104 156 M122 131 L122 152 M142 134 L140 155"/>`);
+    sh("path",`d="M80 146 Q40 156 32 170 Q60 178 88 172 Z"`,"#a19ea8"); sh("circle",`cx="84" cy="150" r="24"`,"#a19ea8");
+    sh("circle",`cx="96" cy="128" r="11"`,"#f4a7b9"); sh("circle",`cx="32" cy="168" r="5"`,"#f06aa8");
+    sh("path",`d="M62 140 Q84 108 110 130 Q86 126 62 140 Z"`,"#6b7a90");
+    if(v==="hurt") eyesX(ink,[[74,150]]); else ink(`<circle cx="72" cy="150" r="5" style="fill:#ff4d4d"/>`);
+    if(v==="atk"){ ink(`<path class="thick" style="stroke:#6b7a90;stroke-width:9" d="M96 168 L22 150"/>`); }
+    else if(v==="hurt"){ ink(`<path class="thick" style="stroke:#6b7a90;stroke-width:9" d="M140 200 L190 180"/>`); }
+    else ink(`<path class="thick" style="stroke:#6b7a90;stroke-width:9" d="M104 176 L${v==="i1"?82:86} 112"/>`);
+  }},
+  hound:{vb:[220,220],v:["i0","i1","atk","hurt"],tf:GEN_TF(110,208),draw(v,sh,ink){
+    ink(`<path class="thick" d="M170 150 Q200 132 196 112"/><path class="thick" d="M84 184 L78 208 M108 186 L106 208 M150 186 L152 208 M172 182 L180 208"/>`);
+    sh("ellipse",`cx="130" cy="160" rx="56" ry="32"`,"#7a5230");
+    sh("path",`d="M92 136 L168 136 L172 172 L88 172 Z"`,"#3a4a5e"); ink(`<path class="thin" style="stroke:#ffd23f" d="M100 150 L160 150"/>`);
+    sh("path",`d="M86 132 Q50 120 30 140 Q36 160 70 162 Q92 160 100 146 Z"`,"#8b5e34");
+    sh("path",`d="M74 120 L64 96 L88 114 Z"`,"#5b3a1e");
+    ink(`<path d="M88 136 L96 132 L92 142 L102 140 L96 148" style="stroke:#c0c4cc"/>`);
+    if(v==="hurt") eyesX(ink,[[60,136]]); else ink(`<circle cx="60" cy="136" r="5" style="fill:#ffd23f"/><circle cx="58" cy="137" r="2" class="dark"/>`);
+    if(v==="atk"){ sh("path",`d="M30 146 Q50 172 76 158 Z"`,"#8b1e2a"); ink(`<path style="stroke:#fff" d="M38 150 L42 158 M50 154 L52 162 M62 156 L64 162"/>`); }
+    else ink(`<path d="M34 150 Q50 156 66 152"/>`);
+  }},
+  crow:{vb:[200,220],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 -6)",atk:"translate(-20 6) rotate(-10 100 120)",hurt:"translate(12 -2) rotate(14 100 120)"},draw(v,sh,ink){
+    const up=v==="i0"||v==="atk";
+    sh("path",up?`d="M100 110 L150 50 L160 90 L190 80 L150 130 Z"`:`d="M100 116 L160 140 L150 160 L180 176 L130 156 Z"`,"#2b2733");
+    sh("ellipse",`cx="100" cy="128" rx="34" ry="30"`,"#2b2733");
+    sh("circle",`cx="72" cy="100" r="22"`,"#2b2733");
+    sh("path",`d="M54 98 L20 108 L54 110 Z"`,"#f2b705");
+    sh("rect",`x="56" y="88" width="34" height="14" rx="6"`,"#6b7a90");
+    if(v==="hurt") eyesX(ink,[[66,95],[82,95]],"#fff"); else ink(`<circle cx="66" cy="95" r="5" style="fill:#7fd3f7"/><circle cx="82" cy="95" r="5" style="fill:#7fd3f7"/>`);
+    ink(`<path class="thick" d="M92 156 L88 176 M108 156 L112 176"/>`);
+    if(v==="atk"){ ink(`<path class="thick" style="stroke:#9aa6b4;stroke-width:8" d="M86 150 L20 160"/>`); sh("circle",`cx="16" cy="160" r="10"`,"#9aa6b4"); }
+    else { ink(`<path class="thick" style="stroke:#9aa6b4;stroke-width:8" d="M96 160 L66 196"/>`); sh("path",`d="M56 190 L76 204 L68 210 L50 200 Z"`,"#9aa6b4"); }
+  }},
+  knight:{vb:[240,240],v:["i0","i1","atk","hurt"],tf:GEN_TF(120,228),draw(v,sh,ink){
+    ink(`<path class="thick" d="M110 176 L96 226 L80 227 M140 176 L152 226 L168 227"/>`);
+    sh("path",`d="M80 100 L170 100 L162 184 L88 184 Z"`,"#8a8f99");
+    ink(`<path class="thin" d="M90 124 L160 124 M92 150 L158 150"/><circle cx="104" cy="112" r="3" class="dark"/><circle cx="146" cy="112" r="3" class="dark"/>`);
+    sh("circle",`cx="124" cy="78" r="30"`,"#d8d4cc"); sh("path",`d="M100 70 Q124 54 150 70 L150 78 Q124 66 100 78 Z"`,"#2b2733");
+    sh("path",`d="M94 60 Q124 30 156 60 L150 66 Q124 44 100 66 Z"`,"#c27a3a");
+    if(v==="hurt") eyesX(ink,[[112,82],[136,82]]); else ink(`<circle cx="112" cy="82" r="4" class="dark"/><circle cx="136" cy="82" r="4" class="dark"/>`);
+    sh("path",`d="M${v==="atk"?40:56} 108 L${v==="atk"?84:100} 108 L${v==="atk"?96:112} 140 L${v==="atk"?84:100} 172 L${v==="atk"?40:56} 172 L${v==="atk"?28:44} 140 Z"`,"#e63946");
+    ink(`<text x="${v==="atk"?62:78}" y="146" text-anchor="middle" style="font:800 15px var(--f-tile);fill:#fff;stroke:none">STOP</text>`);
+    if(v==="atk") ink(`<path class="thick" style="stroke:#a0602e;stroke-width:7" d="M170 120 L4 132"/>`);
+    else ink(`<path class="thick" style="stroke:#a0602e;stroke-width:7" d="M170 130 L200 ${v==="i1"?10:16}"/>`);
+  }},
+  mantis:{vb:[220,240],v:["i0","i1","atk","hurt"],tf:GEN_TF(110,228),draw(v,sh,ink){
+    ink(`<path class="thick" d="M100 170 L80 226 M120 172 L130 226 M140 168 L170 226"/>`);
+    sh("path",`d="M90 110 Q120 96 150 120 L152 176 Q120 190 92 174 Z"`,"#f2b705");
+    ink(`<path class="thin" d="M96 140 L148 140 M100 160 L146 158"/>`);
+    sh("ellipse",`cx="96" cy="74" rx="30" ry="26"`,"#57cc4d"); sh("circle",`cx="96" cy="78" r="34"`,"rgba(200,240,255,.5)");
+    if(v==="hurt") eyesX(ink,[[84,70],[106,70]]); else ink(`<ellipse cx="84" cy="70" rx="7" ry="10" style="fill:#1d1b22"/><ellipse cx="106" cy="70" rx="7" ry="10" style="fill:#1d1b22"/>`);
+    ink(`<path class="thin" d="M84 52 Q70 20 50 18 M104 50 Q112 20 130 14"/>`);
+    const s=v==="atk"?`M92 118 L40 96 L6 132`:v==="i1"?`M92 120 L60 110 L52 72`:`M92 120 L58 120 L54 80`;
+    ink(`<path class="thick" style="stroke:#57cc4d;stroke-width:8" d="${s}"/>`);
+    ink(`<path class="thick" style="stroke:#57cc4d;stroke-width:8" d="M150 124 L178 118 L182 82"/>`);
+  }},
+  titan:{vb:[320,460],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 4)",atk:"translate(0 -110)",hurt:"translate(14 -10) rotate(4 160 440)"},draw(v,sh,ink){
+    sh("path",`d="M90 -260 L230 -260 L238 300 L84 300 Z"`,"#8d7b68");
+    ink(`<path class="thin" d="M96 -40 L232 -40 M92 120 L236 120 M120 200 Q160 214 200 200"/>`);
+    sh("path",`d="M80 280 L250 280 L262 340 Q300 360 304 410 Q300 440 270 444 L20 444 Q-6 440 4 410 Q20 370 80 350 Z"`,"#a08c76");
+    for(const [x,r] of [[30,22],[78,24],[126,24],[176,22],[222,20]]){ sh("circle",`cx="${x}" cy="${430-r*.3}" r="${r}"`,"#b59f88"); ink(`<path class="thin" d="M${x-8} ${420-r*.3} Q${x} ${410-r*.3} ${x+8} ${420-r*.3}"/>`); }
+    sh("path",`d="M86 300 L246 300 L250 324 L82 324 Z"`,"#6b4f2e");
+    if(v==="hurt") ink(`<path class="thick" style="stroke:#e63946" d="M150 360 L170 380 M170 360 L150 380"/>`);
+  }},
+  twin:{vb:[200,230],v:["i0","i1","atk","hurt"],tf:GEN_TF(100,220),draw(v,sh,ink,fo,o){
+    const c=o.tint||CC.red;
+    ink(`<path class="thick" d="M88 168 L76 220 L62 221 M116 168 L126 220 L140 221"/>`);
+    sh("path",`d="M62 94 L140 94 L134 172 L68 172 Z"`,c);
+    ink(`<path class="thin" d="M70 120 L132 120"/>`); sh("circle",`cx="101" cy="140" r="12"`,"#ffd23f");
+    sh("path",`d="M66 56 Q101 26 136 56 L134 92 L68 92 Z"`,"#9aa6b4"); sh("rect",`x="74" y="66" width="54" height="10" rx="3"`,"#1d1b22");
+    if(v==="hurt") eyesX(ink,[[88,71],[114,71]],"#ff4d4d"); else ink(`<circle cx="88" cy="71" r="4" style="fill:#ff4d4d"/><circle cx="114" cy="71" r="4" style="fill:#ff4d4d"/>`);
+    if(v==="atk"){ sh("rect",`x="-10" y="96" width="80" height="22" rx="8"`,"#717d8c"); }
+    else sh("rect",`x="32" y="${v==="i1"?92:96}" width="34" height="62" rx="8"`,"#717d8c");
+  }},
+  prisoner:{vb:[200,230],v:["i0","i1","atk","hurt"],tf:GEN_TF(100,220),draw(v,sh,ink){
+    ink(`<path class="thick" d="M88 170 L80 220 L66 221 M114 170 L120 220 L134 221"/>`);
+    sh("path",`d="M68 108 L134 108 L128 176 L74 176 Z"`,CC.orange); ink(`<text x="101" y="148" text-anchor="middle" style="font:800 14px var(--f-tile);fill:#1d1b22;stroke:none">0451</text>`);
+    sh("ellipse",`cx="100" cy="66" rx="40" ry="44"`,"#8fd3a8");
+    if(v==="hurt") eyesX(ink,[[84,64],[116,64],[100,48]]);
+    else ink(`<ellipse cx="84" cy="64" rx="9" ry="12" class="dark"/><ellipse cx="116" cy="64" rx="9" ry="12" class="dark"/><ellipse cx="100" cy="44" rx="6" ry="8" class="dark"/><circle cx="82" cy="60" r="3" class="eye"/><circle cx="114" cy="60" r="3" class="eye"/>`);
+    ink(`<path d="M92 92 Q100 98 108 92"/>`);
+    const a=v==="atk";
+    ink(`<path class="thick" d="M70 120 L${a?30:54} ${a?118:150} M132 120 L${a?60:148} ${a?118:150}"/>`);
+    sh("rect",`x="${a?20:44}" y="${a?110:144}" width="20" height="14" rx="4"`,"#9aa6b4"); sh("rect",`x="${a?52:140}" y="${a?110:144}" width="20" height="14" rx="4"`,"#9aa6b4");
+    ink(`<path class="thin" style="stroke-dasharray:6 4" d="M${a?40:64} ${a?118:152} Q100 ${a?140:176} ${a?52:140} ${a?118:152}"/>`);
+  }},
+  drone:{vb:[200,200],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 -8)",atk:"translate(-24 0)",hurt:"translate(12 -6) rotate(18 100 100)"},draw(v,sh,ink){
+    ink(`<path class="thick" d="M100 40 L100 64"/>`);
+    sh("path",v==="i1"?`d="M40 36 L160 44 L160 36 L40 44 Z"`:`d="M50 30 L150 50 L150 30 L50 50 Z"`,"#c0c4cc");
+    sh("circle",`cx="100" cy="104" r="44"`,"#717d8c"); sh("path",`d="M60 104 Q100 124 140 104 Q100 156 60 104 Z"`,"#4a5361");
+    sh("circle",`cx="84" cy="100" r="16"`,"#1d1b22");
+    ink(`<circle cx="84" cy="100" r="${v==="hurt"?3:8}" style="fill:${v==="atk"?"#ff3b30":"#ff6b5e"}"/>`);
+    if(v==="atk") ink(`<path style="stroke:#ff3b30;stroke-width:6" d="M70 100 L-40 116"/>`);
+    ink(`<path class="thin" d="M80 150 L74 170 M120 150 L126 170"/>`);
+  }},
+  moth:{vb:[220,220],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 -6)",atk:"translate(-22 4) rotate(-8 110 110)",hurt:"translate(12 0) rotate(12 110 110)"},draw(v,sh,ink){
+    const up=v!=="i1";
+    const W=up?"M106 100 L30 40 L18 110 L60 130 L104 116 Z":"M106 104 L24 100 L30 160 L70 150 L104 120 Z";
+    sh("path",`d="${W}"`,"#9b5de5"); sh("path",`d="${mir(W,220)}"`,"#9b5de5");
+    ink(`<path class="thin" style="stroke:#5fd4c4" d="${up?"M40 60 L70 90 L50 110 M180 60 L150 90 L170 110":"M40 120 L70 120 L60 140 M180 120 L150 120 L160 140"}"/>`);
+    sh("ellipse",`cx="110" cy="120" rx="16" ry="40"`,"#4a3a5e");
+    sh("circle",`cx="110" cy="78" r="18"`,"#4a3a5e");
+    if(v==="hurt") eyesX(ink,[[102,76],[118,76]],"#5fd4c4"); else ink(`<circle cx="102" cy="76" r="6" style="fill:#5fd4c4"/><circle cx="118" cy="76" r="6" style="fill:#5fd4c4"/>`);
+    ink(`<path class="thin" d="M102 62 Q90 30 76 30 M118 62 Q130 30 144 30"/>`);
+  }},
+  warden:{vb:[240,260],v:["i0","i1","atk","hurt"],tf:GEN_TF(120,250),draw(v,sh,ink){
+    ink(`<path class="thick" d="M104 196 L94 248 L76 249 M140 196 L150 248 L168 249"/>`);
+    sh("path",`d="M70 92 L170 92 L160 200 L80 200 Z"`,"#3a4a5e");
+    ink(`<path class="thin" style="stroke:#c79bff" d="M84 120 L156 120 M88 150 L152 150 M92 176 L148 176"/>`);
+    sh("rect",`x="88" y="22" width="64" height="66" rx="12"`,"#717d8c"); sh("rect",`x="94" y="44" width="52" height="16" rx="6"`,v==="hurt"?"#444":"#c79bff");
+    ink(`<path d="M120 22 L120 6"/>`); sh("circle",`cx="120" cy="6" r="5"`,"#ff3b30");
+    if(v==="atk"){ ink(`<path class="thick" d="M74 110 L30 104"/><path class="thick" style="stroke:#c79bff;stroke-width:10" d="M30 104 L-30 96"/>`); }
+    else ink(`<path class="thick" d="M74 110 L52 150"/><path class="thick" style="stroke:#c79bff;stroke-width:10" d="M52 150 L48 ${v==="i1"?84:90}"/>`);
+    ink(`<path class="thick" d="M166 110 L190 160"/>`);
+  }},
+  alpha:{vb:[230,250],v:["i0","i1","atk","hurt"],tf:GEN_TF(115,240),draw(v,sh,ink){
+    sh("circle",`cx="115" cy="120" r="${v==="i1"?104:98}"`,"rgba(199,155,255,.35)");
+    ink(`<path class="thick" d="M98 186 L86 238 L70 239 M132 186 L142 238 L158 239"/>`);
+    sh("path",`d="M74 116 L156 116 L148 192 L82 192 Z"`,CC.orange);
+    sh("ellipse",`cx="115" cy="70" rx="48" ry="52"`,"#7ccfa0");
+    if(v==="hurt") eyesX(ink,[[96,66],[134,66],[115,44]]);
+    else ink(`<ellipse cx="96" cy="66" rx="11" ry="14" style="fill:#c79bff"/><ellipse cx="134" cy="66" rx="11" ry="14" style="fill:#c79bff"/><ellipse cx="115" cy="42" rx="7" ry="9" style="fill:#c79bff"/>`);
+    ink(`<path d="M100 96 L106 102 L112 96 L118 102 L124 96 L130 102"/>`);
+    const a=v==="atk";
+    ink(`<path class="thick" d="M78 128 L${a?20:44} ${a?108:168} M152 128 L${a?96:186} ${a?96:168}"/>`);
+    sh("rect",`x="${a?8:34}" y="${a?100:160}" width="22" height="14" rx="4"`,"#9aa6b4"); ink(`<path class="thin" d="M${a?8:34} ${a?114:174} L${a?0:26} ${a?126:186}"/>`);
+  }},
+  lexicore:{vb:[360,380],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 -8)",atk:"translate(-14 0) scale(1.03)",hurt:"translate(10 0) rotate(5 180 180)"},draw(v,sh,ink){
+    const wob=v==="i1"?8:0;
+    for(const [d,c] of [["M110 250 Q80 320 40 330 Q10 340 20 380","#3a4a5e"],["M150 270 Q150 330 120 360","#4a5361"],["M230 260 Q260 330 310 340 Q350 350 340 380","#3a4a5e"],["M200 280 Q210 340 240 372","#5b2a9e"],["M90 150 Q30 120 0 150","#4a5361"],["M270 150 Q330 110 360 140","#5b2a9e"]]){
+      ink(`<path style="stroke:${c};stroke-width:12" d="${d}"/><path class="thin" d="${d}"/>`); }
+    sh("circle",`cx="180" cy="${170+wob*.3}" r="128"`,"#4a5361");
+    for(let i=0;i<8;i++){ const a=i*Math.PI/4; ink(`<path class="thin" d="M${180+Math.cos(a)*128} ${170+Math.sin(a)*128} L${180+Math.cos(a)*100} ${170+Math.sin(a)*100}"/>`); }
+    sh("circle",`cx="180" cy="170" r="98"`,"#e9f7ff");
+    sh("circle",`cx="${v==="atk"?160:180}" cy="170" r="58"`,v==="atk"?"#ff3b30":v==="hurt"?"#8d909b":"#9b5de5");
+    sh("circle",`cx="${v==="atk"?160:180}" cy="170" r="26"`,"#1d1b22");
+    ink(`<circle cx="${v==="atk"?150:170}" cy="158" r="8" class="eye"/>`);
+    if(v==="hurt") ink(`<path class="thick" d="M120 100 L150 140 L130 170 M230 230 L210 200 L240 180"/>`);
+    ink(`<path class="thin" style="stroke:#5fd4c4" d="M86 120 L110 126 M264 120 L240 128 M100 236 L124 222 M258 236 L236 222"/>`);
+  }},
+});
+
 function artSVG(name,o={}){
   const A=ARTS[name]; const vs=o.only?[o.only]:A.v;
   return `<svg class="art" viewBox="0 0 ${A.vb[0]} ${A.vb[1]}" aria-hidden="true">${vs.map(v=>{
@@ -840,7 +1037,9 @@ const NODE_NAMES = {altar:"Weapon Altar",combat:"Combat",elite:"Elite",rest:"Res
 
 /* crayon battlefield background, rendered once per kind as an image so zooming stays cheap */
 const BG_CACHE = {};
-function bgURI(kind){
+function bgURI(kind,act){
+  if(act===undefined) act=(typeof G!=="undefined"&&G&&G.act)||1;
+  if(act>1) return bgActURI(kind,act);
   if(BG_CACHE[kind]) return BG_CACHE[kind];
   const sky = kind==="boss"?["#3e3470","#8b78c4"]:kind==="elite"?["#f4845f","#f9c784"]:["#9fd8f6","#dff3fb"];
   const sun = kind==="boss"?`<circle cx="1240" cy="150" r="60" fill="#f4f1de"/>`:`<circle cx="1260" cy="150" r="70" fill="${kind==="elite"?"#ffd166":"#ffe066"}"/>`;
@@ -903,7 +1102,7 @@ const KW = {
   might:["Might","Each stack adds +1 Spell Power to attack words (for enemies: +1 damage per attack). Lasts this combat."],
   robust:["Robust","Each stack adds +1 Spell Power to shield words. Lasts this combat."],
   thorns:["Thorns","When an enemy attacks you, it takes this much damage back. Clears at the start of your turn."],
-  poison:["Poison","Deals damage equal to its stacks at the start of the turn, then loses 1 stack."],
+  poison:["Poison","At the end of its owner's turn, deals damage equal to its stacks, then loses 1 stack."],
   weaken:["Weaken","Shield gained is halved. Counts down at the end of each turn."],
   broken:["Broken","Takes 50% more damage from every source. Counts down each turn."],
   curse:["Cursed","At the end of turn, if HP is at or below the Curse stacks, the target dies instantly."],
@@ -948,7 +1147,7 @@ addEventListener("scroll",hideTip,true);
 function statusText(k,v,isP){
   return ({block:`Blocks the next ${v} damage.`, might:isP?`Your attack words gain +${v} Spell Power.`:`Attacks deal +${v} damage.`,
     robust:`Your shield words gain +${v} Spell Power.`, thorns:`Enemies that attack you take ${v} damage.`,
-    poison:`Takes ${v} damage at the start of ${isP?"your":"its"} turn, then 1 less each turn.`,
+    poison:`Takes ${v} damage at the end of ${isP?"your":"its"} turn, then 1 less each turn.`,
     weaken:`Shield gained is halved for ${v} more turn${v>1?"s":""}.`, broken:`Takes 50% more damage for ${v} more turn${v>1?"s":""}.`,
     curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`})[k];
 }
@@ -959,7 +1158,7 @@ function intentHTML(e){
   const def=ENEMIES[e.id]; const mi=e.mi%def.moves.length; const move=def.moves[mi];
   const lines=[], kws=[];
   const parts = move.map(a=>{
-    if(a.k==="atk"){ let d=a.v+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); lines.push(`deal <b>${d}</b> damage${a.heavy?" with a heavy blow":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}</b></span>`; }
+    if(a.k==="atk"){ let d=a.v+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}</b></span>`; }
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
@@ -968,6 +1167,60 @@ function intentHTML(e){
   const nm = def.names ? `<b>${def.names[mi]}</b><br>` : "";
   const txt = `${nm}This enemy intends to ${lines.join(", then ")} next turn.`;
   return `<div class="intent" ${tipAttr(txt,kws)}>${parts.join("")}</div>`;
+}
+
+/* ================= ACT 2 & 3 BACKGROUNDS ================= */
+function bgActURI(kind,act){
+  const key=kind+"@"+act; if(BG_CACHE[key]) return BG_CACHE[key];
+  const defs=`<filter id="c" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8 0.12" numOctaves="2" seed="${act*7}" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 0 0 0 2.05" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="t"/><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="8" result="w"/><feDisplacementMap in="t" in2="w" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>
+   <filter id="w"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="5"/></filter>`;
+  let body="";
+  if(act===2){
+    const sky = kind==="boss"?["#4b2c5e","#d9735b"]:kind==="elite"?["#8a4b6e","#f4a261"]:["#f4a261","#ffd6a5"];
+    let blds="", ink="";
+    const B=[[40,260,150],[200,190,120],[330,300,140],[480,230,110],[600,160,150],[770,280,130],[910,210,120],[1040,320,160],[1210,240,120],[1340,180,140],[1490,290,110]];
+    for(const [x,h,w] of B){ const top=520-h;
+      blds+=`<path d="M${x} 520 L${x} ${top+10} L${x+w*.2} ${top} L${x+w*.35} ${top+26} L${x+w*.55} ${top+4} L${x+w*.7} ${top+18} L${x+w} ${top+12} L${x+w} 520 Z" fill="${["#7d8597","#8d8f99","#6c7385"][x%3]}"/>`;
+      for(let r=top+40;r<500;r+=36) for(let c=x+14;c<x+w-18;c+=28) blds+=`<rect x="${c}" y="${r}" width="14" height="18" fill="${(r+c)%5?"#3d3a44":"#ffd166"}"/>`;
+      ink+=`<path d="M${x} 520 L${x} ${top+10} L${x+w*.2} ${top} L${x+w} ${top+12} L${x+w} 520"/>`; }
+    body=`<g filter="url(#c)">
+      <rect width="1600" height="560" fill="url(#sk)"/>
+      <rect x="1160" y="10" width="44" height="520" fill="#5b5466"/><path d="M1150 20 L1182 -10 L1214 20 Z" fill="#5b5466"/>
+      ${blds}
+      <rect x="0" y="500" width="1600" height="400" fill="#8b8f99"/>
+      <path d="M0 640 Q400 560 800 590 T1600 560 L1600 900 L0 900 Z" fill="#6c7180"/>
+      <path d="M0 740 L1600 700 L1600 716 L0 756 Z" fill="#f2b705"/>
+      <path d="M120 520 Q160 480 200 520 Z M560 530 Q620 470 690 530 Z M1300 525 Q1360 480 1420 525 Z" fill="#a19ea8"/>
+      <path d="M40 520 Q50 420 70 400 Q80 440 60 520 Z M910 520 Q930 430 960 410 Q960 460 940 520 Z" fill="#57a64a"/>
+      <path d="M420 470 L520 470 L540 510 L400 510 Z" fill="#c27a3a"/>
+    </g>
+    <g filter="url(#w)" fill="none" stroke="#1d1b22" stroke-width="4" stroke-linecap="round" opacity=".85">${ink}
+      <path d="M0 640 Q400 560 800 590 T1600 560"/><path d="M1080 520 L1080 380 Q1080 360 1110 360 L1130 360"/><circle cx="1136" cy="364" r="8"/>
+      <path d="M300 600 l60 -10 l30 20 M700 640 l40 -20 l40 10 M1200 610 l50 -14" stroke-width="3"/></g>`;
+    BG_CACHE[key]="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900"><defs>${defs}<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset="1" stop-color="${sky[1]}"/></linearGradient></defs><rect width="1600" height="900" fill="#fffdf7"/>${body}</svg>`);
+    return BG_CACHE[key];
+  }
+  /* act 3: inside The Tower */
+  const wall = kind==="boss"?"#2a1f3d":kind==="elite"?"#33284a":"#3d3352";
+  let cells="";
+  for(let i=0;i<5;i++){ const x=80+i*300; cells+=`<rect x="${x}" y="170" width="200" height="260" rx="10" fill="#1f1830"/><circle cx="${x+70}" cy="270" r="7" fill="#7ccfa0"/><circle cx="${x+100}" cy="268" r="7" fill="#7ccfa0"/><circle cx="${x+85}" cy="248" r="5" fill="#7ccfa0"/>`; }
+  let bars=""; for(let i=0;i<5;i++){ const x=80+i*300; for(let b=x+20;b<x+200;b+=30) bars+=`<path d="M${b} 170 L${b} 430"/>`; }
+  body=`<g filter="url(#c)">
+    <rect width="1600" height="900" fill="${wall}"/>
+    <rect x="0" y="0" width="1600" height="90" fill="#2a2238"/>
+    ${cells}
+    <path d="M0 120 Q400 100 800 130 T1600 110" stroke="#9b5de5" stroke-width="10" fill="none"/>
+    <path d="M0 470 Q300 440 600 480 T1200 460 T1600 470" stroke="#5fd4c4" stroke-width="8" fill="none"/>
+    <rect x="0" y="500" width="1600" height="400" fill="#4a4560"/>
+    <path d="M0 640 L1600 600 L1600 900 L0 900 Z" fill="#3a3550"/>
+    <rect x="660" y="40" width="280" height="60" rx="8" fill="#5fd4c4" opacity=".7"/>
+  </g>
+  <g filter="url(#w)" fill="none" stroke="#120d1c" stroke-width="5" stroke-linecap="round" opacity=".9">${bars}
+    <path d="M0 500 L1600 500"/>${Array.from({length:16},(_,i)=>`<path d="M${i*110} 520 L${i*110-60} 900"/>`).join("")}
+    <path d="M0 640 L1600 600"/></g>
+  <text x="800" y="82" text-anchor="middle" font-family="monospace" font-size="30" fill="#1d1b22">FLOOR ${kind==="boss"?"∞":"??"} · DETAINMENT</text>`;
+  BG_CACHE[key]="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900"><defs>${defs}</defs><rect width="1600" height="900" fill="#fffdf7"/>${body}</svg>`);
+  return BG_CACHE[key];
 }
 
 /* ================= DATA ================= */
@@ -980,7 +1233,7 @@ const WEAPONS = {
   lance:{name:"Flame Lance Orb",cost:1,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
   drum:{name:"War Drum Orb",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
   mirror:{name:"Mirror Ward Orb",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
-  quill:{name:"Venom Quill Orb",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
+  quill:{name:"Venom Quill Orb",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
 };
 const vowelsOf = L => [...L].filter(c=>VOWELS.has(c));
 const consOf = L => [...L].filter(c=>!VOWELS.has(c));
@@ -1032,7 +1285,7 @@ const STATUS = {
   block:{n:"Shield",d:"Blocks incoming damage. Clears at the start of the owner's turn."},
   might:{n:"Might",d:"+1 Spell Power to attack weapons per stack. Resets after combat."},
   robust:{n:"Robust",d:"+1 Spell Power to defense weapons per stack. Resets after combat."},
-  poison:{n:"Poisoned",d:"Takes X damage at the start of turn, then loses 1 stack."},
+  poison:{n:"Poisoned",d:"Takes X damage at the end of its turn, then loses 1 stack."},
   weaken:{n:"Weaken",d:"Shield generated is halved. Counts down each turn."},
   broken:{n:"Broken",d:"Takes +50% damage from all sources. Counts down each turn."},
   curse:{n:"Cursed",d:"At end of turn, if HP ≤ Curse stacks, you die instantly."},
@@ -1135,38 +1388,84 @@ function availableNodes(){
   return cur.next.map(c=>[G.pos[0]+1,c]);
 }
 const MX = c => 38 + c*57, MY = f => 1120 - f*74;
+/* ================= TREASURE MAP (horizontal, drag to pan) ================= */
+const MX2 = f => 150 + (f+1)*118, MY2 = c => 120 + c*78;
+const MAP_W = 2140, MAP_H = 700;
+function parchmentPath(){
+  if(window._parch) return window._parch;
+  const pts=[]; const jag=(x0,y0,x1,y1,n)=>{ for(let i=0;i<=n;i++){ const t=i/n; pts.push([x0+(x1-x0)*t+(i%2?(Math.random()-.5)*14:0), y0+(y1-y0)*t+(i%2?(Math.random()-.5)*14:0)]); } };
+  jag(24,30,MAP_W-24,22,40); jag(MAP_W-24,22,MAP_W-14,MAP_H-30,12); jag(MAP_W-14,MAP_H-30,20,MAP_H-20,40); jag(20,MAP_H-20,24,30,12);
+  return window._parch="M"+pts.map(p=>p.map(v=>v.toFixed(1)).join(" ")).join(" L")+" Z";
+}
+function mapIcon2(type){ return `<g class="ico">${nodeIcon(type)}</g>`; }
 function mapSVG(interactive){
   const avail = interactive?availableNodes():[]; const isAvail=(f,c)=>avail.some(a=>a[0]===f&&a[1]===c);
   const visited = G.map.visited;
   let edges="", nodes="";
   const all=[]; if(G.map.start) all.push(G.map.start); G.map.nodes.forEach(r=>r.forEach(n=>n&&all.push(n))); all.push(G.map.boss);
   const taken=(f,c,f2,c2)=>{ for(let i=0;i<visited.length-1;i++){ const a=visited[i],b=visited[i+1]; if(a[0]===f&&a[1]===c&&b[0]===f2&&b[1]===c2) return true;} return false; };
-  for(const n of all) for(const nc of n.next){ const t=mapNode(n.f+1,nc);
-    edges+=`<path class="medge ${taken(n.f,n.c,n.f+1,nc)?"taken":""}" d="M${MX(n.c)+n.jx} ${MY(n.f)+n.jy} L${MX(t.c)+t.jx} ${MY(t.f)+t.jy}"/>`; }
+  const P=n=>[MX2(n.f)+n.jy, MY2(n.c)+n.jx*.6];
+  for(const n of all) for(const nc of n.next){ const t=mapNode(n.f+1,nc); const [x1,y1]=P(n),[x2,y2]=P(t);
+    edges+=`<path class="medge2 ${taken(n.f,n.c,n.f+1,nc)?"taken":""}" d="M${x1} ${y1} Q${(x1+x2)/2} ${(y1+y2)/2+((n.c+nc)%2?10:-10)} ${x2} ${y2}"/>`; }
+  const sel = G.mapSel||0;
+  const availSorted = avail.slice().sort((a,b)=>a[1]-b[1]);
   for(const n of all){
-    const x=MX(n.c)+n.jx, y=MY(n.f)+n.jy;
+    const [x,y]=P(n);
     const av=isAvail(n.f,n.c), done=visited.some(v=>v[0]===n.f&&v[1]===n.c), cur=G.pos&&G.pos[0]===n.f&&G.pos[1]===n.c;
-    const r = n.type==="boss"?30:n.type==="altar"?22:17, sc = n.type==="boss"?2.4:n.type==="altar"?1.3:1;
-    nodes+=`<g class="mnode t-${n.type} ${av?"avail":""} ${done?"done":""} ${cur?"cur":""}" ${av?`onclick="enterNode(${n.f},${n.c})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')enterNode(${n.f},${n.c})"`:""} transform="translate(${x} ${y})">
-      <title>${n.f<0?"Start":"Floor "+(n.f+1)}: ${NODE_NAMES[n.type]}</title>
-      ${av?`<circle class="pulse" r="${r}"/>`:""}<circle class="ring2" r="${r}"/><g class="ico" transform="scale(${sc})">${nodeIcon(n.type)}</g></g>`;
+    const isSel = av && availSorted[sel%Math.max(1,availSorted.length)]?.[0]===n.f && availSorted[sel%Math.max(1,availSorted.length)]?.[1]===n.c;
+    const big = n.type==="boss"?1.9:n.type==="altar"?1.35:1;
+    const s=22*big;
+    nodes+=`<g class="mnode2 t-${n.type} ${av?"avail":""} ${done?"done":""} ${cur?"cur":""} ${isSel?"sel":""}" ${av?`data-node="${n.f},${n.c}" role="button" tabindex="0" onkeydown="if(event.key==='Enter')enterNode(${n.f},${n.c})"`:""} transform="translate(${x} ${y})">
+      <title>${n.f<0?"Start":"Floor "+(n.f+1)}: ${NODE_NAMES[n.type]}${n.type==="boss"?" · "+bossPreview():""}</title>
+      ${av?`<rect class="pulse" x="${-s-6}" y="${-s-6}" width="${2*s+12}" height="${2*s+12}" rx="12"/>`:""}
+      <rect class="sq" x="${-s}" y="${-s}" width="${2*s}" height="${2*s}" rx="${8*big}" transform="rotate(${((n.f*7+n.c*3)%7)-3})"/>
+      <g transform="scale(${1.25*big})">${mapIcon2(n.type)}</g>
+      ${done&&!cur?`<path class="tick" d="M${s-8} ${-s-2} l6 8 l12 -16"/>`:""}
+      ${cur?`<g transform="translate(0 ${-s-34}) scale(.42)">${artSVG("cat",{only:"i0"}).replace('<svg class="art" viewBox="0 0 200 220"','<svg class="art" viewBox="0 0 200 220" x="-100" y="-110" width="200" height="220"')}</g>`:""}
+    </g>`;
   }
-  let labels=""; for(let f=0;f<15;f++) labels+=`<text class="floorlbl" x="4" y="${MY(f)+4}">${f+1}</text>`;
-  return `<svg viewBox="0 0 420 1240">${labels}${edges}${nodes}</svg>`;
+  const act=G.act||1;
+  return `<svg class="tmap" viewBox="0 0 ${MAP_W} ${MAP_H}" width="${MAP_W}" height="${MAP_H}">
+    <g filter="url(#cray)"><path d="${parchmentPath()}" fill="#f1dcae"/></g>
+    <path d="${parchmentPath()}" fill="none" stroke="#7a4a24" stroke-width="5" filter="url(#wobA)"/>
+    <g class="mapdeco" filter="url(#wobB)">
+      <path d="M70 640 q30 -40 60 0 q30 -40 60 0" /><path d="M1980 90 l20 20 m0 -20 l-20 20"/>
+      <g transform="translate(2010 600)"><circle r="44"/><path d="M0 -60 L10 0 L0 60 L-10 0 Z M-60 0 L0 -10 L60 0 L0 10 Z"/><text y="-66" text-anchor="middle">N</text></g>
+      <path d="M300 660 Q360 640 420 660 M900 670 Q980 640 1060 668 M1500 664 Q1580 640 1660 664"/>
+    </g>
+    <g transform="translate(330 60)"><path class="banner" d="M-260 -30 L260 -30 L240 0 L260 30 L-260 30 L-240 0 Z"/><text class="bannertxt" y="12" text-anchor="middle">ACT ${act} · ${ACTS[act].name.toUpperCase()}</text></g>
+    ${edges}${nodes}</svg>`;
 }
 function showMap(){
   G.screen="map"; C=null; save(); renderHUD();
+  const av=availableNodes();
   $("#app").innerHTML = `
-  <div class="mapwrap">
-    <div class="mapscroll" id="mapscroll">${mapSVG(true)}</div>
-    <aside class="box" style="display:grid;gap:12px">
-      <h2 style="font-size:24px">Act 1 · Foot of The Tower</h2>
-      <div class="muted" style="font-size:16px">${!G.pos?"Your climb starts at the Weapon Altar. Choose one of two orbs.":G.pos[0]<0?"Armed and ready. Pick a node on Floor 1.":`Floor ${G.pos[0]+1} cleared. Pick a glowing node above.`}</div>
-      <div class="legend">${["altar","combat","elite","event","rest","shop","treasure","boss"].map(t=>`<div><svg viewBox="-12 -12 24 24" class="mnode t-${t}"><circle class="ring2" r="11"/><g class="ico">${nodeIcon(t)}</g></svg>${NODE_NAMES[t]}</div>`).join("")}</div>
-    </aside>
+  <div class="mapframe">
+    <div class="mapscroll2" id="mapscroll">${mapSVG(true)}</div>
+    <div class="maplegend">
+      <span class="mlhint">${!G.pos?"Start at the Weapon Altar.":G.pos[0]<0?"Armed and ready. Choose a path.":`Floor ${G.pos[0]+1} cleared.`} Drag or scroll to pan · <kbd>W</kbd><kbd>S</kbd> choose · <kbd>Enter</kbd> go · Boss: <b>${bossPreview()}</b></span>
+      ${["altar","combat","elite","event","rest","shop","treasure","boss"].map(t=>`<span class="mlitem"><svg viewBox="-16 -16 32 32" class="mnode2 t-${t}"><rect class="sq" x="-13" y="-13" width="26" height="26" rx="6"/><g transform="scale(.9)">${mapIcon2(t)}</g></svg>${NODE_NAMES[t]}</span>`).join("")}
+    </div>
   </div>`;
-  requestAnimationFrame(()=>{ const sc=$("#mapscroll"); if(!sc) return; const f = G.pos?G.pos[0]+1:0; const svg=sc.querySelector("svg"); const ratio=svg.getBoundingClientRect().height/1240; sc.scrollTop = MY(Math.min(f-(G.map.start&&!G.pos?1:0),14))*ratio - sc.clientHeight*0.6; });
+  const sc=$("#mapscroll");
+  // centre on the next nodes
+  const target=av.length?av[0][0]:(G.pos?G.pos[0]:-1);
+  requestAnimationFrame(()=>{ sc.scrollLeft=Math.max(0, MX2(target)*(sc.querySelector("svg").getBoundingClientRect().width/MAP_W) - sc.clientWidth*.4); });
+  // drag to pan
+  sc.addEventListener("pointerdown",e=>{ if(e.button!==0) return; MAPDRAG.down={x:e.clientX,y:e.clientY,l:sc.scrollLeft,t:sc.scrollTop,sc}; MAPDRAG.moved=false; sc.classList.add("grab"); });
+  sc.addEventListener("wheel",e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); sc.scrollLeft+=e.deltaY; } },{passive:false});
 }
+function mapSelMove(d){
+  const av=availableNodes().sort((a,b)=>a[1]-b[1]); if(!av.length) return;
+  G.mapSel=((G.mapSel||0)+d+av.length)%av.length; snd("tap");
+  const sc=$("#mapscroll"), l=sc?.scrollLeft||0; const svg=sc?.querySelector("svg"); if(svg) svg.outerHTML=mapSVG(true); if(sc) sc.scrollLeft=l;
+}
+function mapSelGo(){ const av=availableNodes().sort((a,b)=>a[1]-b[1]); const n=av[(G.mapSel||0)%av.length]; if(n){ G.mapSel=0; enterNode(n[0],n[1]); } }
+const MAPDRAG={down:null,moved:false};
+addEventListener("pointermove",e=>{ const d=MAPDRAG.down; if(!d) return; const dx=e.clientX-d.x, dy=e.clientY-d.y; if(Math.abs(dx)+Math.abs(dy)>6) MAPDRAG.moved=true; d.sc.scrollLeft=d.l-dx; d.sc.scrollTop=d.t-dy; });
+addEventListener("pointerup",e=>{ const d=MAPDRAG.down; if(!d) return; MAPDRAG.down=null; d.sc.classList.remove("grab");
+  if(!MAPDRAG.moved){ const g=e.target.closest?.("[data-node]"); if(g&&d.sc.contains(g)){ const [f,c]=g.dataset.node.split(",").map(Number); enterNode(f,c); } } });
+
 function enterNode(f,c){
   if(!availableNodes().some(a=>a[0]===f&&a[1]===c)) return;
   snd("tap");
@@ -1187,11 +1486,13 @@ function enterNode(f,c){
 /* ================= HUD ================= */
 function renderHUD(){
   closeStage(); closeSplash(); musicForScreen();
+  document.body.classList.toggle("actbg", !!G);
+  if(G) document.body.style.setProperty("--actbg", `url("${ACT_BG(G.act||1)}")`);
   const hud=$("#hud"); hud.hidden=false;
   $("#hudin").innerHTML = `
     <span class="hstat" title="Health">${IC.heart}<b>${G.hp}</b>/${G.maxHp}</span>
     <span class="hstat" title="Gold">${IC.coin}<b>${G.gold}</b></span>
-    <span class="hstat" title="Floor">Floor <b>${G.floor||"–"}</b>/15</span>
+    <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/15</span>
     <span class="row" style="gap:4px" title="Potions">${Array.from({length:MAX_POTIONS},(_,i)=>{const p=G.potions[i];
       return p?`<button class="pot full" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" title="Empty potion slot"></span>`}).join("")}</span>
     <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" title="${RELICS[r].name}: ${RELICS[r].d}">${RELICS[r].sym}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
@@ -1305,6 +1606,7 @@ function startCombat(group, kind, opt={}){
        energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
   if(opt.tut) C.tut={i:0,free:false,phase:null,ready:true};
+  C.twin=group.includes("twinA");
   C.hpStart=G.hp;
   G.screen="combat";
   buildStage();
@@ -1321,7 +1623,6 @@ function aliveTarget(){ if(C.es[C.target] && !C.es[C.target].dead) return C.targ
 function setTarget(i){ if(!C||C.over||C.es[i].dead) return; C.target=i; snd("tap"); renderCombat(); }
 async function startPlayerTurn(){
   C.turn++; C.p.block=0; C.p.thorns=0;
-  if(C.p.poison>0){ const d=C.p.poison; G.hp=Math.max(0,G.hp-d); C.p.poison--; log(`Poison deals ${d}.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0) return gameOver("Poison"); }
   C.energy=BASE_ENERGY; C.used=[];
   draw(HAND_SIZE - C.hand.length);
   if(C.tut&&C.turn===1) ensureLetters("CATDOG");
@@ -1532,6 +1833,7 @@ async function endTurn(){
   C.disc.push(...C.hand); C.hand=[];
   for(const u in C.t){ const d=C.t[u].deb; if(d&&d.t==="lock"){ d.n--; if(d.n<=0) C.t[u].deb=null; } }
   const p=C.p;
+  if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0) return gameOver("Poison"); }
   if(p.weaken>0) p.weaken--; if(p.broken>0) p.broken--; if(p.frustrated>0) p.frustrated--;
   if(p.curse>0 && G.hp<=p.curse){ G.hp=0; renderCombat(); return gameOver("the Curse"); }
   renderCombat();
@@ -1543,12 +1845,12 @@ async function enemyTurn(){
     const e=C.es[i]; if(e.dead) continue;
     const def=ENEMIES[e.id], key="e"+i;
     e.block=0; renderCombat();
-    if(e.poison>0){ const d=e.poison; e.hp=Math.max(0,e.hp-d); e.poison--; renderCombat(); await poisonAnim(key,d); if(await resolveDeaths()) return; if(e.dead) continue; }
     const mi=e.mi%def.moves.length, move=def.moves[mi];
     if(def.names){ log(`${def.name} uses ${def.names[mi]}.`); banner(def.names[mi],1100); await sleep(T_(500)); }
     for(const a of move){
       if(a.k==="atk"){
         let dmg=a.v+e.might; if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
+        const behind=C.twin&&C.target!==i; if(behind){ dmg*=2; banner("Hit from behind! ×2",900); }
         const res=hurtPlayer(dmg); log(`${def.name} attacks for ${dmg}${res.absorbed?` (${res.absorbed} blocked)`:""}.`);
         snd("hurt");
         await strikeAnim(key,"p",res,{heavy:a.heavy});
@@ -1561,6 +1863,7 @@ async function enemyTurn(){
       else if(a.k==="pdeb"){ C.p[a.s]+=a.v; log(`You are ${STATUS[a.s].n} (${a.v}).`); await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); }
       renderCombat();
     }
+    if(!e.dead&&e.poison>0){ const d=e.poison; e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-d); e.poison--; log(`${def.name} takes ${d} Poison.`); renderCombat(); await poisonAnim(key,d); if(await resolveDeaths()) return; if(e.dead) continue; }
     if(e.broken>0) e.broken--;
     e.mi++;
     renderCombat();
@@ -1577,18 +1880,19 @@ function buildStage(){
   if(!root){ root=document.createElement("div"); root.id="combat-root"; document.body.appendChild(root); }
   root.hidden=false;
   root.innerHTML=`<div id="stage" class="cs">
-    <div id="shake"><div id="world"><img class="bg" src="${bgURI(C.kind)}" alt=""><div id="fighters"></div><div id="dim"></div><div class="fxl" id="fxl"></div></div></div>
+    <div id="shake"><div id="world"><img class="bg" src="${bgURI(C.kind,G.act||1)}" alt=""><div id="fighters"></div><div id="dim"></div><div class="fxl" id="fxl"></div></div></div>
     <div class="ui" id="topbar"></div><div class="ui" id="energy"></div><div class="ui" id="sigilbox"></div><div class="ui" id="bottom"></div>
     <div class="ui" id="banner"></div><div id="flash"></div></div>
     <div id="rotate-hint"><span>Turn your phone sideways for a bigger battlefield.</span><button class="btn small" onclick="this.parentNode.remove()">OK</button></div>`;
+  if(C.twin) $("#stage").classList.add("twin");
   computeLayout(); fitStage();
 }
 function fitStage(){ const st=$("#stage"); if(!st) return; st.style.setProperty("--s", Math.min(innerWidth/1600, innerHeight/900)); }
 addEventListener("resize",fitStage);
 function closeStage(){ const r=$("#combat-root"); if(r){ r.remove(); } }
 function computeLayout(){
-  const L={}; const pw=235; L.p={x:330,y:580,w:pw,h:pw*220/200};
-  const pos=SLOTS[Math.min(C.es.length,5)-1];
+  const L={}; const pw=235; L.p={x:C.twin?800:330,y:580,w:pw,h:pw*220/200};
+  const pos=C.twin?[[330,580],[1270,580]]:SLOTS[Math.min(C.es.length,5)-1];
   C.es.forEach((e,i)=>{ const A=ARTS[ENEMIES[e.id].art]; const w=ENC_W[e.id]*(C.es.length>=3?.82:1); L["e"+i]={x:pos[i][0],y:pos[i][1],w,h:w*A.vb[1]/A.vb[0]}; });
   C.lay=L;
 }
@@ -1602,9 +1906,11 @@ function fighterHTML(key){
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&!e.dead&&!C.over&&C.target===i;
   const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"],true)}</div>`
     : `<div class="ename">${def.name}</div>${C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","broken","poison"],false)}</div>`;
-  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
+  const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
+  const inover = !isP && (L.y-L.h<230);
+  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})"`}>
-    <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?"cat":def.art)}
+    <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?"cat":def.art,isP?{}:(def.artO||{}))}
     <div class="under"><div class="hpbar">${hpBarInner(key)}${block>0?`<em class="blk" ${tipAttr(`<b>Shield ${block}</b><br>Blocks the next ${block} damage.`,["block"])}>${block}</em>`:""}<span>${hp[0]}/${hp[1]}</span></div></div></div>`;
 }
 function renderCombat(){
@@ -1666,7 +1972,7 @@ function renderCombat(){
   tutRender();
 }
 function flashRelics(ids){ for(const id of ids){ document.querySelectorAll(`[data-r="${id}"]`).forEach(el=>{ el.classList.remove("fire"); void el.offsetWidth; el.classList.add("fire"); }); } }
-function showMapModal(){ if(!G.map){ toast("The map opens once your run begins."); return; } openModal(`<h2>Act 1 map</h2><div class="mapscroll" style="height:62vh">${mapSVG(false)}</div><div><button class="btn" onclick="closeModal()">Close</button></div>`); }
+function showMapModal(){ if(!G.map){ toast("The map opens once your run begins."); return; } openModal(`<h2>Act ${G.act||1} map</h2><div class="mapscroll2" style="max-height:62vh">${mapSVG(false)}</div><div><button class="btn" onclick="closeModal()">Close</button></div>`); $("#modal .box").classList.add("wide"); }
 function volRow(kind,label){
   return `<div class="volrow"><span>${label}</span><button class="btn small" onclick="setVolume('${kind}',VOL.${kind}-1);showSettings()" aria-label="Lower ${label}">−</button>
     <span class="volbar" role="meter" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${VOL[kind]}">${Array.from({length:10},(_,i)=>`<i class="${i<VOL[kind]?"on":""}" onclick="setVolume('${kind}',${i+1});showSettings()"></i>`).join("")}</span>
@@ -1702,7 +2008,7 @@ function showControls(){
       ${r("<kbd>Alt</kbd>+<kbd>1</kbd>–<kbd>3</kbd>","Drink the potion in that slot")}
       ${r("<kbd>Esc</kbd>","Clear the sigil bar; if it's empty, open Settings (Map, Deck, Rules)")}
       <tr><th colspan="2">Map &amp; screens</th></tr>
-      ${r("<kbd>1</kbd>–<kbd>7</kbd>","Map: travel to the glowing node (left to right)")}
+      ${r("<kbd>W</kbd><kbd>S</kbd> / <kbd>↑</kbd><kbd>↓</kbd> · <kbd>Enter</kbd>","Map: pick the next node, then travel (drag with the mouse or scroll to pan)")}
       ${r("<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>R</kbd>","Reward: take a tile / re-roll")}
       ${r("<kbd>1</kbd> <kbd>2</kbd>","Weapon Altar and Rest Site: choose an option")}
       ${r("<kbd>1</kbd>–<kbd>9</kbd> · <kbd>T</kbd> · <kbd>L</kbd>","Shop: buy relics 1–3, tiles 4–6, potions 7–9 · toss a tile · leave")}
@@ -1781,6 +2087,8 @@ const ACH = {
   untouched:{n:"Untouchable",d:"Win a fight without losing any HP.",c:"#8ccf2a"},
   claw_relic:{n:"Claw Master",d:"Win a relic from the claw machine.",c:"#ffd166"},
   act1:{n:"Foot of The Tower",d:"Defeat the Ancient Stone Gargoyle.",c:"#76706a"},
+  act2:{n:"City Lights",d:"Defeat the boss of the Ruined City.",c:"#f4a261"},
+  act3:{n:"Worthy",d:"Defeat LEXICORE at the top of The Tower.",c:"#9b5de5"},
   close:{n:"That Was Close",d:"Cast NIGERIA.",c:"#2fa84f",secret:true},
   close_enough:{n:"Close Enough",d:"Cast a censored swear word, like FVCK or SH!T.",c:"#ff5d8f",secret:true},
 };
@@ -1877,6 +2185,66 @@ function mushroomBoom(host,x,y){
   fl.animate([{opacity:.9},{opacity:0}],{duration:T_(350)}).onfinish=()=>fl.remove();
   if(!RM) host.animate([{transform:"translate(0,0)"},{transform:"translate(-9px,5px)"},{transform:"translate(8px,-6px)"},{transform:"translate(-6px,3px)"},{transform:"translate(4px,-2px)"},{transform:"none"}],{duration:500});
   setTimeout(()=>d.remove(),T_(2300));
+}
+
+/* ================= ACTS 2 & 3 ================= */
+Object.assign(ENEMIES,{
+  rat:{name:"Scrap Rat",hp:46,art:"rat",moves:[[{k:"atk",v:9}],[{k:"blk",v:8},{k:"atk",v:6}],[{k:"tile",d:"lock",n:2}]]},
+  hound:{name:"Riot Hound",hp:52,art:"hound",moves:[[{k:"atk",v:13}],[{k:"buff",s:"might",v:3}],[{k:"atk",v:9},{k:"pdeb",s:"weaken",v:1}]]},
+  crow:{name:"Wrench Crow",hp:40,art:"crow",moves:[[{k:"atk",v:7},{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:12}],[{k:"pdeb",s:"broken",v:1}]]},
+  knight:{name:"Junkyard Knight",hp:125,art:"knight",elite:true,moves:[[{k:"blk",v:20},{k:"buff",s:"might",v:2}],[{k:"atk",v:22}],[{k:"tile",d:"condemn",n:2},{k:"atk",v:10}],[{k:"atk",v:28,heavy:true}]]},
+  mantis:{name:"Hazmat Mantis",hp:105,art:"mantis",elite:true,moves:[[{k:"atk",v:16}],[{k:"tile",d:"poison",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:24,heavy:true}]]},
+  titan:{name:"The Titan",hp:300,art:"titan",boss:true,giant:true,moves:[[{k:"atk",v:26}],[{k:"tile",d:"lock",n:3},{k:"blk",v:20}],[{k:"atk",v:34,heavy:true}],[{k:"pdeb",s:"broken",v:2},{k:"pdeb",s:"frustrated",v:3}]],
+    names:["Stomp","Rumble","Mega Kick","Earthquake"]},
+  twinA:{name:"Gemini Left",hp:150,art:"twin",artO:{tint:"#e63946"},boss:true,moves:[[{k:"atk",v:14}],[{k:"blk",v:12}],[{k:"atk",v:18,heavy:true}]],names:["Pinch","Brace","Crush"]},
+  twinB:{name:"Gemini Right",hp:150,art:"twin",artO:{tint:"#3a86ff"},boss:true,moves:[[{k:"blk",v:12}],[{k:"atk",v:16}],[{k:"tile",d:"curse",n:2}]],names:["Brace","Pinch","Hex"]},
+  prisoner:{name:"Prisoner 0451",hp:70,art:"prisoner",moves:[[{k:"atk",v:14}],[{k:"tile",d:"frustrate",n:3},{k:"blk",v:10}],[{k:"tile",d:"curse",n:2},{k:"atk",v:8}]]},
+  drone:{name:"Sentry Drone",hp:62,art:"drone",moves:[[{k:"atk",v:10},{k:"pdeb",s:"broken",v:1}],[{k:"tile",d:"lock",n:2}],[{k:"atk",v:18}]]},
+  moth:{name:"Cyber Moth",hp:58,art:"moth",moves:[[{k:"tile",d:"slimy",n:3}],[{k:"atk",v:12},{k:"pdeb",s:"poison",v:3}],[{k:"atk",v:16}]]},
+  warden:{name:"Warden Unit",hp:165,art:"warden",elite:true,moves:[[{k:"blk",v:25}],[{k:"atk",v:30}],[{k:"tile",d:"lock",n:3},{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:36,heavy:true}]]},
+  alpha:{name:"Escaped Prisoner Alpha",hp:150,art:"alpha",elite:true,moves:[[{k:"buff",s:"might",v:4}],[{k:"atk",v:20}],[{k:"tile",d:"condemn",n:3},{k:"atk",v:12}]]},
+  lexicore:{name:"LEXICORE",hp:420,art:"lexicore",boss:true,moves:[[{k:"tile",d:"curse",n:2},{k:"tile",d:"frustrate",n:2}],[{k:"atk",v:30},{k:"blk",v:25}],[{k:"tile",d:"condemn",n:3},{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:40,heavy:true}]],
+    names:["Parse","Compile","Overwrite","Delete"]},
+});
+Object.assign(ENC_W,{rat:215,hound:240,crow:200,knight:270,mantis:255,titan:430,twinA:230,twinB:230,prisoner:210,drone:200,moth:230,warden:275,alpha:270,lexicore:400});
+Object.assign(MON_LORE,{rat:"Wears a cooking pot as a helmet and swings a lead pipe. Jams your tiles shut.",hound:"A former police dog in a riot vest. Gets angrier every turn.",
+  crow:"Steals wrenches, goggles and your patience.",knight:"Scrap-armored badger with a STOP sign shield. Condemns the weak.",mantis:"Wears a hazmat suit so the poison stays on the outside.",
+  titan:"Something enormous walks the ruined city. All you can see is its foot.",twinA:"One half of the Gemini brutes. They fight back to back… or front to back.",twinB:"The other half. Whichever twin you turn your back on hits twice as hard.",
+  prisoner:"An alien kept in the Tower for interrogation. It wants out, and you are in the way.",drone:"Old-world security, still patrolling the Tower's halls.",moth:"A moth with circuit-board wings. Its dust turns tiles to slime.",
+  warden:"Keeper of the cells. Locks letters like it locks doors.",alpha:"The strongest escaped prisoner, chains still hanging from its wrists.",
+  lexicore:"The supercomputer at the top of The Tower. It wants to know if you are worthy of the old language."});
+const ACTS={
+  1:{name:"The Outskirts",singles:[["slime"],["bat"],["goblin"]],pairs:[["slime","bat"],["bat","bat"],["slime","slime"],["goblin","bat"]],trios:[["bat","slime","bat"],["slime","goblin","slime"]],elites:["arachne","quartz"],bosses:[["gargoyle"]]},
+  2:{name:"The Ruined City",singles:[["rat"],["hound"],["crow"]],pairs:[["rat","crow"],["hound","rat"],["crow","crow"]],trios:[["rat","crow","rat"],["crow","hound","crow"]],elites:["knight","mantis"],bosses:[["titan"],["twinA","twinB"]]},
+  3:{name:"The Tower",singles:[["prisoner"],["drone"],["moth"]],pairs:[["drone","moth"],["prisoner","drone"],["moth","moth"]],trios:[["drone","prisoner","drone"],["moth","drone","moth"]],elites:["warden","alpha"],bosses:[["lexicore"]]},
+};
+function pickEncounter(kind){
+  const A=ACTS[G.act||1];
+  if(kind==="elite") return [pick(A.elites)];
+  if(kind==="boss"){ if(!G.bossPick) G.bossPick=pick(A.bosses); return G.bossPick; }
+  const f=G.floor;
+  const pool = f<=3 ? A.singles : f<=8 ? A.singles.concat(A.pairs) : A.pairs.concat(A.trios);
+  const opts = pool.filter(g=>g.join()!==G.lastEnemy); const g=pick(opts.length?opts:pool); G.lastEnemy=g.join(); return g;
+}
+function bossPreview(){ if(!G.bossPick) G.bossPick=pick(ACTS[G.act||1].bosses); return G.bossPick.map(id=>ENEMIES[id].name).join(" & "); }
+
+const actPage = inner => inner;
+/* act transition after a boss */
+function actCleared(){
+  const act=G.act||1;
+  G.gold+=100;
+  if(act>=3) return showVictory();
+  G.screen="actclear"; renderHUD();
+  const opts=[]; for(let i=0;i<3;i++){ const r=randomRelic(opts); if(r) opts.push(r); }
+  $("#app").innerHTML=actPage(`<div class="screen">
+    <h2 class="pagetitle">Act ${act} cleared!</h2>
+    <div class="paper">${act===1?"The Gargoyle crumbles. Beyond the outskirts lie the broken streets of <b>The Ruined City</b>.":"The city shakes and falls quiet. Ahead, the doors of <b>The Tower</b> stand open."} You rest to full health. +100 gold. Take a boss relic.</div>
+    <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');nextAct()" onkeydown="if(event.key==='Enter'){gainRelic('${r}');nextAct()}"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${RELICS[r].sym}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
+    <button class="btn" onclick="nextAct()">Skip relic</button></div>`);
+}
+function nextAct(){
+  G.act=(G.act||1)+1; G.hp=G.maxHp; G.map=genMap(); G.pos=null; G.floor=0; G.bossPick=null; G.lastEnemy=null;
+  toast(`Act ${G.act}: ${ACTS[G.act].name}`); showMap();
 }
 
 /* ================= COMBAT FX ================= */
@@ -2036,8 +2404,10 @@ async function venomAnim(targets,amt,crit,word){
 }
 async function deathAnim(i){
   const el=fEl("e"+i); if(!el) return;
-  const c=center("e"+i); particles(c.x,c.y,30,["#cfcabf","#8d909b","#fff",PAL[i%PAL.length]],260);
-  el.dataset.pose="hurt"; el.classList.add("dying"); await sleep(T_(750));
+  const c=center("e"+i), L=C.lay["e"+i]; particles(c.x,c.y,30,["#cfcabf","#8d909b","#fff",PAL[i%PAL.length]],260);
+  el.dataset.pose="hurt"; snd("hit"); snd("hurt"); shake(40);
+  mushroomBoom($("#fxl"), c.x, Math.min(L.y-20, 600));
+  await sleep(T_(180)); el.classList.add("dying"); await sleep(T_(1100));
 }
 
 document.addEventListener("keydown",e=>{
@@ -2067,7 +2437,12 @@ function screenKey(e){
   const k=e.key, scr=G.screen;
   if(k==="Escape"&&(scr==="map"||scr==="reward"||scr==="shop"||scr==="rest"||scr==="altar")){ showSettings(); return; }
   const n=/^[1-9]$/.test(k)?+k:0;
-  if(scr==="map"&&n){ const av=availableNodes().sort((a,b)=>a[1]-b[1]); if(av[n-1]){ e.preventDefault(); enterNode(av[n-1][0],av[n-1][1]); } return; }
+  if(scr==="map"){ const kl=k.toLowerCase();
+    if(n){ const av=availableNodes().sort((a,b)=>a[1]-b[1]); if(av[n-1]){ e.preventDefault(); enterNode(av[n-1][0],av[n-1][1]); } return; }
+    if(kl==="w"||kl==="arrowup"||kl==="a"||kl==="arrowleft"){ e.preventDefault(); mapSelMove(-1); return; }
+    if(kl==="s"||kl==="arrowdown"||kl==="d"||kl==="arrowright"){ e.preventDefault(); mapSelMove(1); return; }
+    if(k==="Enter"||k===" "){ e.preventDefault(); mapSelGo(); return; }
+    return; }
   if(scr==="reward"&&G.reward){ if(n>=1&&n<=3){ e.preventDefault(); claimPaintLetter(n-1); } else if(k.toLowerCase()==="r"){ rerollPaint(); } return; }
   if(scr==="altar"&&G.altar&&!G.altarDone&&(n===1||n===2)){ e.preventDefault(); pullWeapon(n-1); return; }
   if(scr==="rest"&&(n===1||n===2)){ e.preventDefault(); (n===1?restHeal:restUpgrade)(); return; }
@@ -2076,10 +2451,10 @@ function screenKey(e){
 
 /* ================= AFTER COMBAT ================= */
 function winCombat(){
-  if(C&&!G.tutorial){ unlock("first_blood"); if(G.hp>=(C.hpStart??0)) unlock("untouched"); if(C.kind==="boss") unlock("act1"); }
+  if(C&&!G.tutorial){ unlock("first_blood"); if(G.hp>=(C.hpStart??0)) unlock("untouched"); if(C.kind==="boss") unlock(["act1","act2","act3"][(G.act||1)-1]); }
   if(G.tutorial){ unlock("tutorial"); setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
   const kind=C.kind; C=null;
-  if(kind==="boss"){ G.gold+=100; return showVictory(); }
+  if(kind==="boss"){ return actCleared(); }
   const rw={gold: kind==="elite"? 28+rnd(13) : 12+rnd(11), slots:rollPaintSlots(), extras:[]};
   G.gold+=rw.gold;
   // GDD extras are granted automatically so the reward screen stays a single choice
@@ -2235,7 +2610,7 @@ async function pullWeapon(i){
 }
 
 /* ================= SCENES (shop & rest use the current act's background) ================= */
-const ACT_BG = act => bgURI("normal");   /* Act 1: the overgrown outskirts. Acts 2 (ruined city) and 3 (The Tower) come later. */
+const ACT_BG = act => bgURI("normal",act||1);   /* Act 1: the overgrown outskirts. Acts 2 (ruined city) and 3 (The Tower) come later. */
 function sceneWrap(inner,cls=""){ return `<div class="scene ${cls}" id="scene"><div class="scene-in" id="scenein"><img class="scene-bg" src="${ACT_BG(G.act||1)}" alt="">${inner}</div></div>`; }
 function fitScene(){ const sc=$("#scene"), si=$("#scenein"); if(!sc||!si) return; si.style.setProperty("--k", sc.clientWidth/1600); }
 addEventListener("resize",fitScene);
@@ -2369,11 +2744,12 @@ function showRest(){
 /* ================= EVENTS ================= */
 function showEvent(){ const ev=pick(["wordle","claw","wheel"]); ({wordle:startWordle,claw:startClaw,wheel:startWheel})[ev](); }
 
+const WORDLE_WORDS="APPLE BEACH BLADE BRAIN BREAD BRICK BRUSH CANDY CHAIR CHALK CHARM CHEST CHILL CLOCK CLOUD CORAL CRANE CROWN DANCE DREAM DRINK EAGLE EARTH FEAST FIELD FLAME FLOOR FRUIT GHOST GIANT GLASS GLOVE GRAPE GRASS HEART HONEY HORSE HOUSE JUICE KNIFE LEMON LIGHT MAGIC MAPLE MONEY MOUSE MUSIC NIGHT NOISE OCEAN OLIVE PAINT PAPER PEACH PEARL PIANO PLANT PLATE POWER QUEEN QUIET RIVER ROBOT ROUND SALAD SHARK SHEEP SHELL SHIRT SMILE SNAKE SPACE SPOON STAIR STONE STORM SUGAR SWORD TABLE TIGER TOAST TOOTH TORCH TOWER TRAIN TRUCK VOICE WATER WHALE WHEEL WITCH WORLD".split(" ");
 /* --- Wordle --- */
 let W5=null;
 function startWordle(){
-  const [ans,riddle]=pick(RIDDLES);
-  W5={ans,riddle,rows:[],cur:"",done:false,keys:{}};
+  const pool=WORDLE_WORDS.filter(w=>DICT.has(w.toLowerCase()));
+  W5={ans:pick(pool),rows:[],cur:"",done:false,keys:{}};
   G.screen="wordle"; renderHUD(); renderWordle();
 }
 function renderWordle(){
@@ -2384,8 +2760,8 @@ function renderWordle(){
     else rows.push(`<div class="wrow">${"<div class='wcell'></div>".repeat(5)}</div>`);
   }
   const kb=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((r,i)=>`<div class="krow">${i===2?`<button onclick="wordleIn('Enter')">Enter</button>`:""}${[...r].map(ch=>`<button class="${W5.keys[ch]||""}" onclick="wordleIn('${ch}')">${ch}</button>`).join("")}${i===2?`<button onclick="wordleIn('Backspace')" aria-label="Delete">⌫</button>`:""}</div>`).join("");
-  $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Riddle Terminal</h2>
-    <div class="box" style="max-width:520px"><b>A cracked screen flickers:</b><br>"${W5.riddle}"<div class="muted" style="font-size:15px">Five letters. Six tries. Solve it for a Major Relic; fail and you get a consolation potion.</div></div>
+  $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Word Terminal</h2>
+    <div class="paper">A cracked terminal flickers: <b>guess the 5-letter word</b> in six tries. Solve it for a Major Relic; fail and you get a consolation potion.</div>
     <div class="wgrid">${rows.join("")}</div>
     ${W5.done?`<div class="box" style="max-width:520px">${W5.msg}</div><button class="btn primary" onclick="W5=null;showMap()">Continue</button>`:`<div class="kb">${kb}</div>`}
   </div>`;
@@ -2416,18 +2792,17 @@ const CLW={W:560,H:440,TOP:34,WALL:104,FLOOR:424,CHUTE_Y:200};
 function startClaw(){
   G.screen="claw"; renderHUD();
   const letters=Object.keys(VAL), bodies=[];
-  const pastel=["#ffc8dd","#bde0fe","#caffbf","#ffd6a5","#e4c1f9","#fdffb6","#a0e7e5"];
-  for(let i=0;i<20;i++) bodies.push({kind:"fluff",r:22+Math.random()*7,col:pastel[i%pastel.length]});
-  for(let i=0;i<5;i++){ const ch=Math.random()<.12?pick(["?","!",","]):pick(letters); bodies.push({kind:"tile",r:20,t:{ch,paint:Math.random()<.65?pick(Object.keys(PAINTS)):null,lvl:/[A-Z]/.test(ch)&&Math.random()<.25?2:1}}); }
-  const rel=randomRelic(); if(rel) bodies.push({kind:"relic",r:21,rel});
-  shuffle(bodies).forEach((b,i)=>{ b.x=CLW.WALL+30+Math.random()*(CLW.W-CLW.WALL-60); b.y=40+i*12; b.vx=0; b.vy=0; b.rot=Math.random()*6; });
-  CL={bodies,X:330,vX:0,aX:0,L:70,th:0,om:0,state:"move",grabs:3,held:null,open:1,keys:{},won:[],t:0,msg:""};
+  for(let i=0;i<42;i++) bodies.push({kind:"coin",r:10+Math.random()*3});
+  for(let i=0;i<6;i++){ const ch=Math.random()<.12?pick(["?","!",","]):pick(letters); bodies.push({kind:"tile",r:18,t:{ch,paint:Math.random()<.65?pick(Object.keys(PAINTS)):null,lvl:ch!=="!"&&ch!==","&&Math.random()<.25?2:1}}); }
+  const rel=randomRelic(); if(rel) bodies.push({kind:"relic",r:19,rel});
+  shuffle(bodies).forEach((b,i)=>{ b.x=CLW.WALL+30+Math.random()*(CLW.W-CLW.WALL-60); b.y=40+i*8; b.vx=0; b.vy=0; b.rot=Math.random()*6; });
+  CL={bodies,X:330,vX:0,aX:0,L:70,th:0,om:0,state:"move",grabs:5,held:[],open:1,keys:{},won:[],gold:0,t:0,msg:""};
   for(let i=0;i<500;i++) clawPhysics(1/60);
   $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">Claw Machine</h2>
-    <div class="muted" id="clawmsg"><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> to move · <kbd>Space</kbd> to drop. The claw swings, so time your drop.</div>
+    <div class="muted" id="clawmsg"><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> to move · <kbd>Space</kbd> to drop. The claw swings, so time your drop. Coins are worth 1 gold each.</div>
     <canvas class="claw" id="clawc" width="${CLW.W}" height="${CLW.H}"></canvas>
     <div class="row" style="justify-content:center">
-      <button class="btn" id="cl-l" aria-label="Move left">◀</button><button class="btn primary" id="cl-drop">Drop · <span id="clawtries">3</span> left</button><button class="btn" id="cl-r" aria-label="Move right">▶</button></div>
+      <button class="btn" id="cl-l" aria-label="Move left">◀</button><button class="btn primary" id="cl-drop">Drop · <span id="clawtries">5</span> left</button><button class="btn" id="cl-r" aria-label="Move right">▶</button></div>
     <div class="row" id="clawwon" style="justify-content:center;min-height:48px"></div>
     <button class="btn" id="cl-leave" onclick="clawLeave()">Leave</button></div>`;
   const hold=(id,k)=>{ const b=$("#"+id); b.addEventListener("pointerdown",e=>{e.preventDefault(); CL.keys[k]=true;}); ["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>{ if(CL) CL.keys[k]=false; })); };
@@ -2446,7 +2821,7 @@ function clawLeave(){ if(!CL) return; CL=null; showMap(); }
 function clawTip(){ return {x:CL.X+CL.L*Math.sin(CL.th), y:CLW.TOP+CL.L*Math.cos(CL.th)}; }
 function clawPhysics(dt){
   const B=CL.bodies;
-  for(const b of B){ if(b===CL.held) continue;
+  for(const b of B){ if(CL.held.includes(b)) continue;
     b.vy+=900*dt; b.vx*=.996; b.vy*=.998; b.x+=b.vx*dt; b.y+=b.vy*dt; b.rot+=b.vx*dt*.03;
     const inChute=b.x<CLW.WALL-4;
     const minX = inChute?12+b.r:(b.y>CLW.CHUTE_Y-b.r?CLW.WALL+6+b.r:12+b.r), maxX=inChute&&b.y>CLW.CHUTE_Y?CLW.WALL-6-b.r:CLW.W-12-b.r;
@@ -2454,7 +2829,7 @@ function clawPhysics(dt){
     if(b.y>CLW.FLOOR-b.r){ b.y=CLW.FLOOR-b.r; b.vy=-Math.abs(b.vy)*.15; b.vx*=.9; }
   }
   for(let it=0;it<3;it++) for(let i=0;i<B.length;i++) for(let j=i+1;j<B.length;j++){
-    const a=B[i], c=B[j]; if(a===CL.held||c===CL.held) continue;
+    const a=B[i], c=B[j]; if(CL.held.includes(a)||CL.held.includes(c)) continue;
     const dx=c.x-a.x, dy=c.y-a.y, d=Math.hypot(dx,dy)||.01, m=a.r+c.r; if(d>=m) continue;
     const nx=dx/d, ny=dy/d, o=(m-d)/2; a.x-=nx*o; a.y-=ny*o; c.x+=nx*o; c.y+=ny*o;
     const rv=(c.vx-a.vx)*nx+(c.vy-a.vy)*ny; if(rv<0){ const imp=-rv*.6; a.vx-=imp*nx; a.vy-=imp*ny; c.vx+=imp*nx; c.vy+=imp*ny; }
@@ -2478,31 +2853,32 @@ function clawStep(dt){
     if(tx<lo||tx>hi){ const lim=tx<lo?lo:hi; S.th=Math.asin(Math.max(-1,Math.min(1,(lim-S.X)/S.L))); S.om*=-.25; } }
   const tip=clawTip();
   if(S.state==="drop"){ S.L+=250*dt; S.open=1;
-    const hit=S.bodies.find(b=>Math.hypot(b.x-tip.x,b.y-(tip.y+16))<b.r+10);
+    const hit=S.bodies.find(b=>Math.hypot(b.x-tip.x,b.y-(tip.y+24))<b.r+14);
     if(hit||tip.y>CLW.FLOOR-24||S.L>CLW.FLOOR-20){ S.state="grab"; S.t=0; } }
   else if(S.state==="grab"){ S.t+=dt; S.open=Math.max(0,1-S.t/0.3);
     if(S.t>=0.3){
-      let best=null,bd=1e9; for(const b of S.bodies){ const d=Math.hypot(b.x-tip.x,b.y-(tip.y+20)); if(d<b.r+18&&d<bd){bd=d;best=b;} }
-      if(best){ const base={fluff:.88,tile:.72,relic:.55}[best.kind]; const angleP=Math.max(.35,1-Math.abs(S.th)*1.6); const centre=Math.max(.5,1-bd/(best.r+18)*.6);
-        if(Math.random()<base*angleP*centre){ S.held=best; S.msg=""; } else { S.msg="It slipped through the claw!"; best.vx+=(Math.random()-.5)*160; } }
-      else S.msg="Nothing to grab there.";
+      const near=S.bodies.map(b=>({b,d:Math.hypot(b.x-tip.x,b.y-(tip.y+30))})).filter(o=>o.d<o.b.r+30).sort((a,b)=>a.d-b.d).slice(0,7);
+      const angleP=Math.max(.6,1-Math.abs(S.th)*1.1);
+      for(const o of near){ const base={coin:.9,tile:.88,relic:.75}[o.b.kind]; if(Math.random()<base*angleP*Math.max(.65,1-o.d/(o.b.r+30)*.4)) S.held.push(o.b); else o.b.vx+=(Math.random()-.5)*120; }
+      S.msg = S.held.length?"":(near.length?"It slipped through the claw!":"Nothing to grab there.");
       S.state="lift"; } }
-  else if(S.state==="lift"){ S.L-=220*dt; if(S.L<=70){ S.L=70; S.state=S.held?"carry":"return"; if(!S.held) clawMsg(S.msg||"Missed."); } }
-  if(S.held&&(S.state==="lift"||S.state==="carry")){
-    const slip={fluff:.05,tile:.12,relic:.22}[S.held.kind]*Math.abs(S.om)*dt;
-    if(Math.random()<slip){ const b=S.held; S.held=null; b.vx=S.vX+S.om*S.L; b.vy=0; clawMsg("Oops, it shook loose!"); snd("buzz"); if(S.state==="carry") S.state="return"; } }
-  if(S.held){ const b=S.held, t2=clawTip(); b.vx=(t2.x-b.x)/dt*.5; b.vy=(t2.y+22-b.y)/dt*.5; b.x=t2.x; b.y=t2.y+22; }
-  if(S.state==="release"){ S.t+=dt; S.open=Math.min(1,S.t/0.25); if(S.held&&S.t>0.12){ S.held.vx=0; S.held.vy=0; S.held=null; } if(S.t>0.8){ S.state="return"; } }
+  else if(S.state==="lift"){ S.L-=220*dt; if(S.L<=70){ S.L=70; S.state=S.held.length?"carry":"return"; if(!S.held.length) clawMsg(S.msg||"Missed."); } }
+  if(S.held.length&&(S.state==="lift"||S.state==="carry")){
+    for(const b of S.held.slice()){ const slip={coin:.03,tile:.05,relic:.1}[b.kind]*Math.abs(S.om)*dt;
+      if(Math.random()<slip){ S.held.splice(S.held.indexOf(b),1); b.vx=S.vX+S.om*S.L; b.vy=0; clawMsg("Oops, something shook loose!"); snd("buzz"); } }
+    if(!S.held.length&&S.state==="carry") S.state="return"; }
+  { const t2=clawTip(); S.held.forEach((b,i)=>{ const ox=((i%3)-1)*16, oy=26+Math.floor(i/3)*16; b.vx=(t2.x+ox-b.x)/dt*.5; b.vy=(t2.y+oy-b.y)/dt*.5; b.x=t2.x+ox; b.y=t2.y+oy; }); }
+  if(S.state==="release"){ S.t+=dt; S.open=Math.min(1,S.t/0.25); if(S.held.length&&S.t>0.12){ S.held.forEach(b=>{b.vx=0;b.vy=0;}); S.held=[]; } if(S.t>0.8){ S.state="return"; } }
   clawPhysics(dt);
   // collect anything that fell into the chute
-  for(const b of S.bodies.slice()){ if(b!==S.held&&b.x<CLW.WALL-4&&b.y>CLW.FLOOR-b.r-6){ S.bodies.splice(S.bodies.indexOf(b),1); clawCollect(b); } }
+  for(const b of S.bodies.slice()){ if(!S.held.includes(b)&&b.x<CLW.WALL-4&&b.y>CLW.FLOOR-b.r-6){ S.bodies.splice(S.bodies.indexOf(b),1); clawCollect(b); } }
 }
 function clawCollect(b){
   const S=CL; let label="";
-  if(b.kind==="fluff"){ G.gold+=3; label="Fluff ball · +3 gold"; S.won.push(`<span class="clawprize" style="background:${b.col}">+3g</span>`); }
+  if(b.kind==="coin"){ G.gold+=1; S.gold++; label=`+1 gold (${S.gold} total)`; }
   if(b.kind==="tile"){ const t=newTile(b.t.ch,{paint:b.t.paint,lvl:b.t.lvl}); G.deck.push(t); label=`${t.lvl===2?"Level 2 ":""}${t.paint?t.paint+" ":""}${t.ch} tile added to your deck`; S.won.push(tileHTML(t,{mini:true})); }
   if(b.kind==="relic"){ gainRelic(b.rel); unlock("claw_relic"); label=`Relic: ${RELICS[b.rel].name}`; S.won.push(`<span class="relic" ${tipAttr(`<b>${RELICS[b.rel].name}</b><br>${RELICS[b.rel].d}`)}>${RELICS[b.rel].sym}</span>`); }
-  snd("coin"); clawMsg(`Prize! ${label}.`); $("#clawwon").innerHTML=S.won.join(""); renderHUD(); keepClawUI();
+  snd("coin"); clawMsg(`Prize! ${label}.`); $("#clawwon").innerHTML=(S.gold?`<span class="clawprize">+${S.gold}g</span>`:"")+S.won.join(""); renderHUD(); keepClawUI();
 }
 function keepClawUI(){ /* renderHUD re-renders only the HUD, the canvas stays */ }
 function clawMsg(m){ const el=$("#clawmsg"); if(el) el.textContent=m; }
@@ -2525,8 +2901,8 @@ function clawLoop(now){
   const pc={red:"#e63946",blue:"#3a86ff",green:"#57cc4d",gold:"#ffbe0b"};
   for(const b of CL.bodies){
     g.save(); g.translate(b.x,b.y); g.rotate(b.kind==="fluff"?b.rot:b.rot*.3);
-    if(b.kind==="fluff"){ g.fillStyle=b.col; g.beginPath(); for(let k=0;k<14;k++){ const a=k/14*Math.PI*2, rr=b.r*(k%2?.86:1); g.lineTo(Math.cos(a)*rr,Math.sin(a)*rr); } g.closePath(); g.fill(); g.lineWidth=2.5; g.strokeStyle=ink; g.stroke();
-      g.fillStyle=ink; g.beginPath(); g.arc(-6,-3,2.2,0,7); g.arc(6,-3,2.2,0,7); g.fill(); }
+    if(b.kind==="coin"){ g.fillStyle="#ffbe0b"; g.beginPath(); g.arc(0,0,b.r,0,7); g.fill(); g.lineWidth=2.5; g.strokeStyle=ink; g.stroke();
+      g.strokeStyle="#c98a00"; g.lineWidth=2; g.beginPath(); g.arc(0,0,b.r*.6,0,7); g.stroke(); g.fillStyle="#fff6"; g.beginPath(); g.arc(-b.r*.35,-b.r*.35,b.r*.25,0,7); g.fill(); g.strokeStyle=ink; }
     else if(b.kind==="tile"){ g.fillStyle=b.t.paint?pc[b.t.paint]:"#f8bb75"; g.fillRect(-19,-19,38,38); g.lineWidth=3; g.strokeStyle=ink; g.strokeRect(-19,-19,38,38);
       if(b.t.lvl===2){ g.strokeRect(-14,-14,28,28); } g.fillStyle=b.t.paint&&b.t.paint!=="gold"?"#fff":"#3a1d08"; g.font="800 22px Sniglet, sans-serif"; g.textAlign="center"; g.textBaseline="middle"; g.fillText(b.t.ch,0,1); }
     else { g.fillStyle="#ffbe0b"; g.beginPath(); for(let k=0;k<10;k++){ const a=k/10*Math.PI*2-Math.PI/2, rr=k%2?b.r*.5:b.r; g.lineTo(Math.cos(a)*rr,Math.sin(a)*rr); } g.closePath(); g.fill(); g.lineWidth=3; g.strokeStyle=ink; g.stroke(); }
@@ -2538,9 +2914,9 @@ function clawLoop(now){
   const tip=clawTip();
   g.lineWidth=3; g.beginPath(); g.moveTo(CL.X,CLW.TOP-4); g.lineTo(tip.x,tip.y); g.stroke();
   g.save(); g.translate(tip.x,tip.y); g.rotate(-CL.th);
-  g.fillStyle="#ffbe0b"; g.beginPath(); g.arc(0,0,9,0,7); g.fill(); g.stroke();
+  g.fillStyle="#ffbe0b"; g.beginPath(); g.arc(0,0,12,0,7); g.fill(); g.stroke();
   const sp=.35+CL.open*.55;
-  for(const s of [-1,1]){ g.save(); g.rotate(s*sp); g.beginPath(); g.moveTo(0,4); g.lineTo(s*6,26); g.lineTo(s*1,36); g.lineWidth=5; g.strokeStyle=ink; g.stroke(); g.restore(); }
+  for(const s of [-1,1]){ g.save(); g.rotate(s*sp); g.beginPath(); g.moveTo(0,6); g.lineTo(s*12,34); g.lineTo(s*2,50); g.lineWidth=7; g.strokeStyle=ink; g.stroke(); g.lineWidth=3; g.strokeStyle="#9aa6b4"; g.stroke(); g.restore(); }
   g.restore();
   requestAnimationFrame(clawLoop);
 }
@@ -2600,13 +2976,16 @@ function statsHTML(){
 function showVictory(){
   clearSave(); G.screen="won"; renderHUD();
   $("#app").innerHTML=`<div class="screen">
-    <div style="width:200px">${artSVG("cat")}</div>
-    <h2 style="font-size:44px">Act 1 cleared</h2>
-    <div class="muted" style="max-width:56ch">The Ancient Stone Gargoyle crumbles into gravel. Far above, The Tower hums: Lexicore is watching, measuring your command of the old tongue. Acts 2 and 3 are outside this prototype.</div>
+    <div style="width:220px">${artSVG("cat")}</div>
+    <h2 class="pagetitle">LEXICORE is defeated</h2>
+    <div class="paper" style="max-width:60ch;text-align:left;display:grid;gap:8px">
+      <span>The great eye dims, then opens again, softer. <i>"Candidate accepted."</i></span>
+      <span>Lexicore copies the Spell-Cat's mind into a fleet of nanobots and fires the old missiles at the alien headquarters on the Moon.</span></div>
     ${statsHTML()}
-    <p class="quote">"And so the spell-cat departed, eager to absorb the endless knowledge of the stars."</p>
+    <p class="quote" style="color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill">"And so the spell-cat departed, eager to absorb the endless knowledge of the stars."</p>
     <button class="btn primary" onclick="newRun()">New run</button></div>`;
 }
+
 
 /* ================= TITLE ================= */
 function oldTitle(){
@@ -2643,76 +3022,93 @@ function showTitle(){ showSplash(); }
 setInterval(()=>document.body.classList.toggle("f1"), 420);
 
 /* ================= SPLASH: the Spell-Cat looks toward Lexicore ================= */
-ARTS.catback={vb:[220,230], v:["i0","i1"], tf:{i0:"",i1:"translate(0 2)"},
+const SPL={active:false,menu:false};
+const CLOUD_SVG=iconSVG("0 0 200 80",(sh)=>sh("path",`d="M10 70 Q-4 40 30 36 Q40 6 80 14 Q110 -6 140 18 Q190 14 192 50 Q196 72 170 72 Z"`,"#ffffff"));
+let SPLASH_URI=null;
+ARTS.catback={vb:[220,230], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)",cheer:"translate(0 -6)"},
   draw(v,sh,ink,fo){
-    const t=v==="i1";
-    ink(`<path class="thick" d="M150 222 L176 96"/>`); sh("circle",`cx="178" cy="86" r="12"`,CC.gold);
-    ink(`<path class="thin" d="M178 64 L178 58 M198 82 L204 80 M160 72 L154 68"/>`);
-    ink(`<path class="thick" d="M128 214 Q170 220 176 196 Q${t?184:180} ${t?176:180} ${t?168:164} ${t?172:176}"/>`);
+    const t=v==="i1", ch=v==="cheer";
+    if(!ch){ ink(`<path class="thick" d="M150 222 L176 96"/>`); sh("circle",`cx="178" cy="86" r="12"`,CC.gold); ink(`<path class="thin" d="M178 64 L178 58 M198 82 L204 80 M160 72 L154 68"/>`); }
+    ink(`<path class="thick" d="M128 214 Q170 220 176 196 Q${t||ch?184:180} ${t||ch?176:180} ${t||ch?168:164} ${t||ch?172:176}"/>`);
     sh("path",`d="M62 218 Q56 160 104 128 Q152 160 146 218 Z"`,CC.char);
-    sh("path",`d="M${t?118:116} 136 L${t?164:160} ${t?130:120} L${t?156:154} ${t?146:136} L${t?124:122} 148 Z"`,CC.orange);
+    sh("path",`d="M${t?118:116} 136 L${t||ch?164:160} ${t||ch?130:120} L${t||ch?156:154} ${t||ch?146:136} L${t?124:122} 148 Z"`,CC.orange);
     sh("path",`d="M78 130 Q104 144 130 130 L128 142 Q104 154 80 142 Z"`,CC.orange);
+    if(ch){ ink(`<path class="thick" d="M84 150 L70 60 M124 150 L138 60"/>`);
+      sh("path",`d="M64 30 L104 40 L144 30 L144 66 L104 76 L64 66 Z"`,CC.orange); ink(`<path class="thin" d="M104 40 L104 76 M74 44 L98 50 M110 50 L134 44"/>`);
+      ink(`<path style="stroke:#ffd23f" d="M104 20 L104 6 M70 18 L62 8 M138 18 L146 8 M50 40 L38 36 M158 40 L170 36"/>`); }
     sh("path",`d="M80 104 L72 78 L94 92 Z"`,CC.char); sh("path",`d="M128 104 L136 78 L114 92 Z"`,CC.char);
     sh("circle",`cx="104" cy="110" r="27"`,CC.char);
     sh("path",`d="M40 92 Q104 70 170 88 Q160 104 104 102 Q50 104 40 92 Z"`,CC.blue);
     sh("path",`d="M74 90 Q76 46 104 26 Q126 12 ${t?146:144} ${t?36:30} Q124 28 120 46 L132 88 Z"`,CC.blue);
     fo(`<path d="M76 86 Q104 96 132 86 L132 80 Q104 90 76 80 Z" style="fill:#1d4fb8"/>`);
   }};
-const SPL={active:false,menu:false};
-const CLOUD_SVG=iconSVG("0 0 200 80",(sh)=>sh("path",`d="M10 70 Q-4 40 30 36 Q40 6 80 14 Q110 -6 140 18 Q190 14 192 50 Q196 72 170 72 Z"`,"#ffffff"));
-let SPLASH_URI=null;
 function splashURI(){
   if(SPLASH_URI) return SPLASH_URI;
   const cloud=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 40 Q-10 10 30 8 Q50 -20 90 0 Q130 -18 150 14 Q190 14 180 44 Z" fill="#ffffff"/></g>`;
-  const spire=(x,y,h,w)=>`<rect x="${x-w/2}" y="${y-h}" width="${w}" height="${h}" fill="#8f7f99"/><path d="M${x-w/2-6} ${y-h} L${x} ${y-h-w*1.6} L${x+w/2+6} ${y-h} Z" fill="#7b3f6e"/>`;
-  let pines=""; for(let i=0;i<34;i++){ const x=880+i*22+((i*37)%14), y=650+((i*29)%26); pines+=`<path d="M${x} ${y} L${x+11} ${y-40-((i*13)%18)} L${x+22} ${y} Z" fill="${i%3?"#2f6b4a":"#24563c"}"/>`; }
+  let city="", cityInk="";
+  const B=[[990,170,90],[1075,120,70],[1140,210,80],[1350,230,86],[1430,150,76],[1500,200,90],[1560,120,60],[930,110,60]];
+  for(const [x,h,w] of B){ const top=650-h;
+    city+=`<path d="M${x} 650 L${x} ${top+12} L${x+w*.3} ${top} L${x+w*.5} ${top+20} L${x+w*.7} ${top+6} L${x+w} ${top+16} L${x+w} 650 Z" fill="${x%2?"#7f879a":"#6f7689"}"/>`;
+    for(let r=top+30;r<630;r+=26) for(let c=x+10;c<x+w-12;c+=20) city+=`<rect x="${c}" y="${r}" width="10" height="13" fill="${(r*c)%7?"#3d3a44":"#ffd166"}"/>`;
+    cityInk+=`<path d="M${x} 650 L${x} ${top+12} L${x+w*.3} ${top} L${x+w*.5} ${top+20} L${x+w*.7} ${top+6} L${x+w} ${top+16} L${x+w} 650"/>`; }
+  let tw=""; for(let y=180;y<620;y+=34){ tw+=`<rect x="1262" y="${y}" width="10" height="16" fill="${y<260?"#f3d9ff":"#2b2733"}"/><rect x="1288" y="${y+8}" width="10" height="16" fill="${y<240?"#f3d9ff":"#2b2733"}"/>`; }
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
   <defs>
    <filter id="c" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8 0.12" numOctaves="2" seed="11" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.7 0 0 0 1.85" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="t"/><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="5" result="w"/><feDisplacementMap in="t" in2="w" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>
    <filter id="w"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="5"/></filter>
    <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a63c9"/><stop offset=".65" stop-color="#7cc0ec"/><stop offset="1" stop-color="#bfe5f7"/></linearGradient>
-   <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#d6a4ff" stop-opacity=".8"/><stop offset="1" stop-color="#d6a4ff" stop-opacity="0"/></radialGradient>
   </defs>
   <rect width="1600" height="900" fill="#fffdf7"/>
   <g filter="url(#c)">
    <rect width="1600" height="900" fill="url(#sk)"/>
-   ${cloud(120,90,1.4)}${cloud(560,50,1)}${cloud(980,120,.8)}${cloud(1380,40,1.1)}
+   ${cloud(1380,40,1.1)}
    <path d="M0 560 Q160 420 330 470 Q520 330 720 470 Q900 380 1080 470 Q1300 400 1600 470 L1600 700 L0 700 Z" fill="#6aa7c4"/>
    <path d="M0 600 Q260 500 520 560 Q760 600 1000 540 Q1300 500 1600 560 L1600 900 L0 900 Z" fill="#79b98c"/>
-   <path d="M700 900 Q900 760 1200 740 Q1400 730 1600 700 L1600 900 Z" fill="#5f9e5a"/>
-   <circle cx="1280" cy="160" r="120" fill="url(#glow)"/>
-   <rect x="1236" y="200" width="88" height="470" fill="#8a8597"/>
-   <path d="M1226 214 L1236 200 L1324 200 L1334 214 L1280 236 Z" fill="#9b5de5"/>
-   <path d="M1252 300 L1268 300 L1268 330 L1252 330 Z M1292 380 L1306 380 L1306 408 L1292 408 Z" fill="#c9a6ff"/>
-   ${spire(1120,640,120,40)}${spire(1180,610,170,36)}${spire(1380,600,190,40)}${spire(1440,640,130,34)}${spire(1510,650,110,30)}${spire(1080,650,80,30)}
-   <rect x="1060" y="560" width="500" height="110" fill="#8f7f99"/>
-   ${pines}
+   <path d="M1240 640 L1246 150 L1314 150 L1320 640 Z" fill="#8f8a9c"/>
+   <path d="M1232 158 L1328 158 L1322 132 L1238 132 Z" fill="#6f6a7c"/>
+   <path d="M1250 132 L1310 132 L1296 96 L1264 96 Z" fill="#8f8a9c"/>
+   <rect x="1276" y="30" width="8" height="70" fill="#5b5466"/>
+   ${tw}
+   ${city}
+   <path d="M900 660 Q1000 630 1100 660 Q1250 640 1600 660 L1600 700 L900 700 Z" fill="#a19ea8"/>
    <path d="M0 900 L0 640 Q180 560 420 590 Q640 620 760 760 Q820 840 840 900 Z" fill="#7cc242"/>
    <path d="M0 900 L0 760 Q200 700 420 740 Q560 780 620 900 Z" fill="#62a834"/>
+   <path d="M700 900 Q900 760 1200 740 Q1400 730 1600 700 L1600 900 Z" fill="#5f9e5a"/>
    <rect x="20" y="0" width="70" height="900" fill="#7a4a24"/>
    <circle cx="60" cy="60" r="160" fill="#2f7d3e"/><circle cx="240" cy="20" r="130" fill="#3f9d4b"/><circle cx="0" cy="260" r="120" fill="#2f7d3e"/>
    <circle cx="1560" cy="880" r="120" fill="#2f7d3e"/><circle cx="1440" cy="900" r="90" fill="#3f9d4b"/>
   </g>
   <g filter="url(#w)" fill="none" stroke="#1d1b22" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".85">
-   <path d="M1236 670 L1236 200 L1324 200 L1324 670 M1226 214 L1280 236 L1334 214"/>
+   <path d="M1240 640 L1246 158 M1320 640 L1314 158 M1232 158 L1328 158 L1322 132 L1238 132 Z M1250 132 L1264 96 L1296 96 L1310 132 M1280 96 L1280 30"/>
+   <path d="M1246 300 L1314 300 M1246 460 L1314 460" stroke-width="2.5"/>
+   ${cityInk}
    <path d="M0 640 Q180 560 420 590 Q640 620 760 760 Q820 840 840 900"/>
    <path d="M20 900 L20 120 M90 900 L90 140 M90 300 Q150 280 200 300"/>
-   <path d="M1060 560 L1560 560"/>
    <path d="M300 620 l-6 -18 M300 620 l4 -22 M520 640 l-6 -18 M520 640 l6 -20 M650 720 l-8 -16 M650 720 l4 -20" stroke-width="3"/>
   </g></svg>`;
   return SPLASH_URI="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
 }
-function closeSplash(){ const s=$("#splash"); if(s) s.remove(); SPL.active=false; }
-function fitSplash(){ const sc=$("#spscene"); if(!sc) return; const portrait=innerWidth/innerHeight<1.2; sc.style.setProperty("--cs", portrait?Math.min(innerWidth/1600, innerHeight/900)*1.35:Math.max(innerWidth/1600, innerHeight/900)); }
-addEventListener("resize",fitSplash);
+function splashFx(host,x,y,n,cols){ for(let i=0;i<n;i++){ const p=document.createElement("div"); p.className="puff"; const s=18+Math.random()*26;
+  p.style.cssText=`left:${x-s/2}px;top:${y-s/2}px;width:${s}px;height:${s}px;background:${cols[i%cols.length]}`; host.appendChild(p);
+  const a=Math.random()*Math.PI*2, r=40+Math.random()*90; p.animate([{transform:"translate(0,0) scale(.4)",opacity:1},{transform:`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(1.1)`,opacity:0}],{duration:700+Math.random()*400,easing:"ease-out"}).onfinish=()=>p.remove(); } }
+function popCloud(el){
+  if(el.classList.contains("popped")) return; el.classList.add("popped"); snd("hit");
+  const sc=$("#spscene"), x=el.offsetLeft+el.offsetWidth/2, y=el.offsetTop+el.offsetHeight/2;
+  splashFx(sc,x,y,14,["#ffffff","#e8f6ff","#ffd6e8"]);
+  setTimeout(()=>{ el.style.left=(150+Math.random()*900)+"px"; el.style.top=(160+Math.random()*180)+"px"; el.classList.remove("popped"); },2600);
+}
+function glowTower(){ const g=$("#sptower"); if(!g) return; g.classList.remove("lit"); void g.offsetWidth; g.classList.add("lit"); snd("crit"); }
+function cheerCat(){ const c=$(".sp-cat"); if(!c) return; c.dataset.pose="cheer"; snd("win"); clearTimeout(window._cheerT); window._cheerT=setTimeout(()=>{ delete c.dataset.pose; },1500); }
 function showSplash(){
-  closeStage(); closeSplash(); C=null; $("#hud").hidden=true; $("#app").innerHTML="";
+  closeStage(); closeSplash(); C=null; document.body.classList.remove("actbg"); $("#hud").hidden=true; $("#app").innerHTML="";
   const el=document.createElement("div"); el.id="splash"; document.body.appendChild(el);
   el.innerHTML=`<div id="spscene" class="sp-scene">
       <img class="sp-bg" src="${splashURI()}" alt="">
-      <div class="sp-cloud" style="left:300px;top:210px">${CLOUD_SVG}</div><div class="sp-cloud s2" style="left:860px;top:250px">${CLOUD_SVG}</div>
-      <div class="sp-star"><svg viewBox="0 0 100 120" width="100" height="120">${layer((sh,ink)=>{ sh("path",`d="M50 4 L62 48 L96 60 L62 72 L50 116 L38 72 L4 60 L38 48 Z"`,"#a35cff"); sh("path",`d="M50 26 L56 52 L74 60 L56 68 L50 94 L44 68 L26 60 L44 52 Z"`,"#e2c4ff"); })}</svg></div>
-      <div class="sp-cat">${artSVG("catback")}</div>
+      <div class="sp-cloud sp-int" style="left:260px;top:210px" onpointerdown="event.stopPropagation();popCloud(this)" ${tipAttr("Pop!")}>${CLOUD_SVG}</div>
+      <div class="sp-cloud s2 sp-int" style="left:820px;top:250px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
+      <div class="sp-cloud sp-int" style="left:560px;top:120px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
+      <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()" ${tipAttr("The Tower. Lexicore waits somewhere near the top.")}><i></i></div>
+      <div class="sp-cat sp-int" onpointerdown="event.stopPropagation();cheerCat()">${artSVG("catback")}</div>
     </div>
     <div class="sp-ui">
       <h1 class="sp-title">Lexicore</h1>
@@ -2723,10 +3119,14 @@ function showSplash(){
     <button class="sp-snd btn small" onclick="event.stopPropagation();showSettings()">Settings</button>`;
   fitSplash();
   SPL.active=true; SPL.menu=false; SPL.gate=false;
-  el.addEventListener("pointerdown",e=>{ if(e.target.closest("button")) return; if(SPL.gate){ openGate(); return; } splashContinue(); });
+  el.addEventListener("pointerdown",e=>{ if(e.target.closest("button")||e.target.closest(".sp-int")) return; splashContinue(); });
   musicTitle();
   const c=actx(); if(c&&c.state!=="running") c.resume().catch(()=>{});
 }
+
+function closeSplash(){ const s=$("#splash"); if(s) s.remove(); SPL.active=false; }
+function fitSplash(){ const sc=$("#spscene"); if(!sc) return; const portrait=innerWidth/innerHeight<1.2; sc.style.setProperty("--cs", portrait?Math.min(innerWidth/1600, innerHeight/900)*1.35:Math.max(innerWidth/1600, innerHeight/900)); }
+addEventListener("resize",fitSplash);
 function openGate(){ if(!SPL.gate) return; SPL.gate=false; unlockAudio(); $("#spgate")?.remove(); const p=$("#sppress"); if(p) p.hidden=false; }
 function splashContinue(){
   if(!SPL.active||SPL.menu) return;
@@ -2866,6 +3266,7 @@ function start(data){
       showMap(); return;
     }
   }catch(e){}
+  preloadMusic();
   if(tutDone()) showSplash(); else startTutorial();
 }
 try{ window.claude?.hot?.snapshot?.(()=>({G,C})); }catch(e){}
