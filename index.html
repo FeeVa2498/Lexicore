@@ -484,6 +484,13 @@ body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.pap
 .tile.fragile{border-style:dashed}
 .tile.fragile::before{content:"✦";position:absolute;right:2px;top:0;font-size:12px;color:#8b3fd9;z-index:3}
 
+
+.tflylayer{position:absolute;inset:0;z-index:45;pointer-events:none}
+.tflylayer::before{content:"";position:absolute;inset:0;background:rgba(14,10,24,.35)}
+.tfly{position:absolute}
+.tfly .tile{width:72px;height:78px}.tfly .tile b{font-size:40px}
+.tflylabel{position:absolute;left:0;right:0;top:150px;text-align:center;font:48px var(--f-display);-webkit-text-stroke:7px var(--ink);paint-order:stroke fill;animation:popin .3s ease-out}
+
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
 .mapscroll{height:min(72vh,760px);overflow-y:auto;border:2.5px solid var(--ink);border-radius:var(--sketch);background:var(--paper)}
@@ -1239,11 +1246,11 @@ function bgActURI(kind,act){
 
 /* ================= DATA ================= */
 const WEAPONS = {
-  sword:{name:"Sword Orb",cost:2,sigil:5,kind:"atk",mult:2,desc:"Deal damage.",crit:"Broken 2 on target (+50% dmg taken)."},
+  sword:{name:"Sword Orb",cost:2,sigil:5,kind:"atk",mult:1,desc:"Deal damage.",crit:"Broken 2 on target (+50% dmg taken)."},
   shield:{name:"Shield Orb",cost:1,sigil:4,kind:"def",mult:1,desc:"Gain Shield.",crit:"Draw 3 tiles."},
   needle:{name:"Needle Orb",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict 4 Poison.",price:110},
-  bulwark:{name:"Bulwark Orb",cost:2,sigil:6,kind:"def",mult:2,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
-  hammer:{name:"Hammer Orb",cost:3,sigil:7,kind:"atk",mult:3,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
+  bulwark:{name:"Bulwark Orb",cost:2,sigil:6,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
+  hammer:{name:"Hammer Orb",cost:3,sigil:7,kind:"atk",mult:1,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
   lance:{name:"Flame Lance Orb",cost:1,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
   drum:{name:"War Drum Orb",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
   mirror:{name:"Mirror Ward Orb",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
@@ -1780,7 +1787,7 @@ async function cast(){
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
     let dealt=res.dmg;
     if(wid==="dagger"&&R.bang){ updateBar("e"+ti); dealt+=await throwDaggers(ti,R.bang,label); }
-    if(wid==="dagger"&&R.crit){ const t={uid:G.uidN++,ch:"!",lvl:1,paint:null,deb:null,fragile:true}; C.t[t.uid]=t; C.disc.push(t.uid); log("Critical! A Fragile [ ! ] tile is forged into your discard pile."); }
+    if(wid==="dagger"&&R.crit){ const t={uid:G.uidN++,ch:"!",lvl:1,paint:null,deb:null,fragile:true}; C.t[t.uid]=t; C.disc.push(t.uid); log("Critical! A Fragile [ ! ] tile is forged into your discard pile."); renderCombat(); await tileFlyFx([t.uid],"Forged!","#2f7d3e"); }
     if(G.hero==="champion"&&dealt>=10){ const h=Math.floor(dealt/10); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
     if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-5); log("The Greatsword bites back: −5 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-5",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
@@ -1843,6 +1850,30 @@ async function resolveDeaths(){
   if(C.es.every(e=>e.dead)){ C.over=true; C.busy=true; snd("win"); renderCombat(); banner("Victory!",1200); await sleep(T_(1100)); winCombat(); return true; }
   aliveTarget(); renderCombat(); return false;
 }
+
+/* ---- tiles appear, then fly to their pile ---- */
+function pileRect(where){
+  const st=$("#stage"); if(!st) return null; const s=parseFloat(st.style.getPropertyValue("--s"))||1, sr=st.getBoundingClientRect();
+  const el = where==="hand" ? $("#handgrid") : document.querySelectorAll(".pilebtn")[where==="draw"?0:1];
+  if(!el) return {x:800,y:800}; const r=el.getBoundingClientRect();
+  return {x:(r.left-sr.left+r.width/2)/s, y:(r.top-sr.top+r.height/2)/s};
+}
+async function tileFlyFx(uids,label,col="#8b3fd9"){
+  const st=$("#stage"); if(!st||!uids.length) return;
+  const where=u=>C.draw.includes(u)?"draw":C.hand.includes(u)?"hand":"disc";
+  const layer=document.createElement("div"); layer.className="tflylayer"; st.appendChild(layer);
+  const n=uids.length, gap=84, x0=800-(n-1)*gap/2;
+  if(label){ const b=document.createElement("div"); b.className="tflylabel"; b.style.color=col; b.textContent=label; layer.appendChild(b); }
+  const els=uids.map((u,i)=>{ const d=document.createElement("div"); d.className="tfly"; d.innerHTML=tileHTML(C.t[u],{noTip:true});
+    d.style.left=(x0+i*gap)+"px"; d.style.top="250px"; layer.appendChild(d);
+    d.animate([{transform:"translate(-50%,-50%) scale(.2) rotate(-25deg)",opacity:0},{transform:"translate(-50%,-50%) scale(1.25) rotate(4deg)",opacity:1,offset:.6},{transform:"translate(-50%,-50%) scale(1.1)",opacity:1}],{duration:T_(380),delay:i*70,fill:"both",easing:"ease-out"});
+    return d; });
+  snd("tap"); await sleep(T_(380+n*70+650));
+  await Promise.all(els.map((d,i)=>{ const p=pileRect(where(uids[i])); const dx=p.x-(x0+i*gap), dy=p.y-250;
+    return d.animate([{transform:"translate(-50%,-50%) scale(1.1)",opacity:1},{transform:`translate(calc(-50% + ${dx*.5}px),calc(-50% + ${dy*.5-80}px)) scale(.8) rotate(${i%2?14:-14}deg)`,opacity:1,offset:.5},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.3) rotate(${i%2?30:-30}deg)`,opacity:.3}],{duration:T_(520),delay:i*60,fill:"both",easing:"ease-in"}).finished.catch(()=>{}); }));
+  layer.remove(); snd("coin");
+  for(const w of ["draw","disc"]){ const el=document.querySelectorAll(".pilebtn")[w==="draw"?0:1]; if(el&&uids.some(u=>where(u)===w)) el.animate([{transform:"scale(1.15)"},{transform:"none"}],{duration:250}); }
+}
 function applyTileDebuff(type,n){
   const fresh = ids => ids.filter(u=>C.t[u]&&!C.t[u].deb);
   let pool = shuffle(fresh(C.draw));
@@ -1852,6 +1883,7 @@ function applyTileDebuff(type,n){
   for(const u of chosen){ C.t[u].deb = {t:type, n: type==="lock"?2: type==="condemn"?1:0}; }
   C.draw = C.draw.filter(u=>!chosen.includes(u)).concat(chosen.filter(u=>C.draw.includes(u)));
   log(`${chosen.length} tile(s) became ${TILE_DEBUFFS[type].name}: ${chosen.map(u=>C.t[u].ch).join(" ")}`);
+  return chosen;
 }
 async function endTurn(){
   if(!C||C.busy||C.over) return;
@@ -1891,7 +1923,7 @@ async function enemyTurn(){
         if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; if(e.dead) break; }
       } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
-      else if(a.k==="tile"){ applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); }
+      else if(a.k==="tile"){ const ch=applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); renderCombat(); await tileFlyFx(ch,`${TILE_DEBUFFS[a.d].name}!`); }
       else if(a.k==="pdeb"){ C.p[a.s]+=a.v; log(`You are ${STATUS[a.s].n} (${a.v}).`); await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); }
       renderCombat();
     }
@@ -2774,9 +2806,9 @@ const STARTERS=HERO_ORDER.flatMap(h=>HEROES[h].weapons);
 const hero = () => HEROES[(G&&G.hero)||"scholar"];
 const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
-  greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:2,desc:"Deal damage. Each swing costs you 5 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
+  greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 5 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
   dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
-  dagger:{name:"Dagger",cost:2,sigil:2,kind:"atk",mult:2,desc:"Deal damage. Each [ ! ] at the end of the word throws another dagger (1, 2, 3, 5, 8… Spell Power).",crit:"Forge a Fragile [ ! ] tile into your discard pile."},
+  dagger:{name:"Dagger",cost:2,sigil:2,kind:"atk",mult:1,desc:"Deal damage. Each [ ! ] at the end of the word throws another dagger (1, 2, 3, 5, 8… Spell Power).",crit:"Forge a Fragile [ ! ] tile into your discard pile."},
   belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Draw tiles equal to output ÷ 5 (min 1).",crit:"Gain Shield equal to the output."},
 });
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
