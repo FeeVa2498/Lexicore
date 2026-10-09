@@ -187,7 +187,7 @@ body.f1 .art .fr.i1{display:inline}
 .wslot .cost{position:absolute;left:4px;top:4px;width:30px;height:30px;border-radius:50%;background:#22c55e;border:3px solid var(--ink);display:grid;place-items:center;font:18px var(--f-display);color:#fff;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
 .wslot.sel{background:rgba(255,210,63,.24);border-color:#ffd23f;box-shadow:0 0 0 3px var(--ink),0 0 18px #ffd23f}
 .wslot.used{opacity:.4}
-.wslot.used::after{content:"USED";position:absolute;top:40px;left:50%;transform:translateX(-50%) rotate(-14deg);font:24px var(--f-display);color:#fff;background:var(--red);border:3px solid var(--ink);padding:0 8px}
+.wslot.used::after{content:"NO ENERGY";font-size:18px!important;position:absolute;top:40px;left:50%;transform:translateX(-50%) rotate(-14deg);font:24px var(--f-display);color:#fff;background:var(--red);border:3px solid var(--ink);padding:0 8px}
 .wslot.emptyw{border:3px dashed rgba(255,255,255,.18);cursor:default}
 .dots{display:inline-flex;gap:3px;vertical-align:middle}.dots i{width:10px;height:10px;border:2px solid #fff;border-radius:2px;display:inline-block}
 .potshelf{display:grid;grid-template-rows:repeat(3,1fr);gap:0;padding:4px}
@@ -1138,9 +1138,9 @@ const KW = {
   ctile:["Cursed tile","Using this tile gives you +1 Curse."],
   ftile:["Frustrated tile","Using this tile gives you +1 Frustrated."],
   crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect."],
-  energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast and fires once per turn."],
+  energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
-  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Mult: +0.5, +1, +1.5, +2.5… (with the Dagger, each ! throws another dagger instead)"],
+  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Mult: +0.5, +1, +1.5, +2.5… "],
   comma:["Comma ,","Put it between two words to cast both in one action."],
   red:["Red Paint","+1 Might each time the tile is played."], blue:["Blue Paint","+1 Robust each time the tile is played."],
   green:["Green Paint","Draw 1 extra tile when the word is cast."], gold:["Gold Paint","+1 Gold each time the tile is played."],
@@ -1358,8 +1358,7 @@ function newRun(heroId){
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
   for(const ch of "AIUEO") { G.deck.push(newTile(ch)); G.deck.push(newTile(ch)); }
-  if(heroId==="mercenary"){ G.deck.push(newTile("?")); G.deck.push(newTile("!")); G.deck.push(newTile("!")); }
-  else for(let i=0;i<3;i++) G.deck.push(newTile("?"));
+  for(let i=0;i<3;i++) G.deck.push(newTile("?"));
   G.map = genMap();
   C = null;
   showMap();
@@ -1575,7 +1574,7 @@ function pickTile(title, filter, cb, cancelable=true){
 function showHelp(){
   openModal(`<h2>Rules &amp; glossary</h2>
   <div class="howto">
-  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Pick a weapon, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Each weapon fires once per turn.</div>
+  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Pick a weapon, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Weapons can be reused as long as you have Energy.</div>
   <div><b>Score:</b> <span class="chip-n">Chips</span> (sum of tile Spell Power) × <span class="mult-n">Mult</span> (1 + relic Arcana, rare and precious). Word length equal to the weapon's sigil length = <b>Critical</b>.</div>
   <div><b>Invalid word:</b> the bar shakes, no Energy spent. <b>A single tile</b> is always valid (Mult 1, no relics) so you never soft-lock.</div>
   </div>
@@ -1712,8 +1711,7 @@ function evaluate(tiles, w, check){
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
-  if(k&&w.id==="dagger"){ R.bang=Math.min(k,8); R.notes.push(`${"!".repeat(R.bang)} → ${R.bang} extra throw${R.bang>1?"s":""}`); }
-  else if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*.5; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
+  if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*.5; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
   R.crit = R.L.length===w.sigil;
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
   R.mult=+R.mult.toFixed(2);
@@ -1745,7 +1743,6 @@ async function cast(){
   const wid=G.weapons[C.wi], w=WEAPONS[wid];
   if(!C.bar.length){ toast("Place tiles on the sigil bar first."); return; }
   if(!tg("cast")) return;
-  if(C.used.includes(C.wi)){ toast(`${w.name} has already fired this turn.`); snd("buzz"); sigilShake(); return; }
   if(C.energy<w.cost){ toast(`Not enough Energy for ${w.name} (needs ${w.cost}).`); snd("buzz"); sigilShake(); return; }
   const tiles=C.bar.map(u=>C.t[u]);
   const R=evaluate(tiles,w,true);
@@ -1792,8 +1789,7 @@ async function cast(){
     }
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
     let dealt=res.dmg;
-    if(wid==="dagger"&&R.bang){ updateBar("e"+ti); dealt+=await throwDaggers(ti,R.bang,label); }
-    if(wid==="dagger"&&R.crit){ const t={uid:G.uidN++,ch:"!",lvl:1,paint:null,deb:null,fragile:true}; C.t[t.uid]=t; C.disc.push(t.uid); log("Critical! A Fragile [ ! ] tile is forged into your discard pile."); renderCombat(); await tileFlyFx([t.uid],"Forged!","#2f7d3e"); }
+    if(wid==="dagger"&&R.crit){ let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Parry! +${sh} Shield.`); await guardAnim("p",sh,{}); }
     if(G.hero==="champion"&&dealt>=6){ const h=Math.floor(dealt/6); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
     if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
@@ -1803,8 +1799,8 @@ async function cast(){
     const n=Math.max(1,Math.floor(R.total/5)); extraDraw+=n; log(`Utility Belt: draw ${n}.`);
     const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(200)); fEl("p").dataset.pose="atk"; wordPop(c.x,c.top-110,label);
     numPop(c.x,c.top+10,`Draw ${n}`,10,"#c3f06b");
-    if(R.crit){ snd("crit"); let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Critical! +${sh} Shield.`); stamp(c.x,c.top-40,"CRITICAL!"); delete fEl("p").dataset.pose; unfocus(); await guardAnim("p",sh,{}); }
-    else { await sleep(T_(700)); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(200)); }
+    if(R.crit){ snd("crit"); C.energy+=1; log("Critical! +1 Energy refunded."); stamp(c.x,c.top-40,"+1 ENERGY!"); renderCombat(); }
+    await sleep(T_(700)); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(200));
   } else if(w.kind==="buff"){
     const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total*0.1)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
     if(R.crit&&wid==="dumbbell"){ snd("crit"); G.hp=Math.min(G.maxHp,G.hp+5); log("Critical! Heal 5."); updateBar("p"); }
@@ -1827,7 +1823,7 @@ async function cast(){
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
   if(extraDraw) draw(extraDraw);
   if(G.hp<=0) return gameOver("your own frustration");
-  const next=G.weapons.findIndex((x,i)=>!C.used.includes(i)&&WEAPONS[x].cost<=C.energy);
+  const next=WEAPONS[G.weapons[C.wi]].cost<=C.energy?C.wi:G.weapons.findIndex(x=>WEAPONS[x].cost<=C.energy);
   if(next>=0) C.wi=next;
   renderCombat();
   if(await resolveDeaths()) return;
@@ -2017,7 +2013,7 @@ function renderCombat(){
   // bottom shelf
   const ws = Array.from({length:MAX_WEAPONS},(_,i)=>{ const id=G.weapons[i];
     if(!id) return `<div class="wslot emptyw" title="Empty weapon slot"></div>`;
-    const W=WEAPONS[id], used=C.used.includes(i);
+    const W=WEAPONS[id], used=W.cost>C.energy;
     return `<button class="wslot ${i===C.wi?"sel":""} ${used?"used":""}" data-i="${i}" onclick="selWeapon(${i})" ${tipAttr(`<b>${W.name}</b> · ${KIND_LABEL[W.kind]} · ${W.cost} Energy · Mult ×${W.mult}<br>${W.desc}<br><b>Critical (exactly ${W.sigil} letters):</b> ${W.crit}`,["crit","energy"].concat(W.kind==="psn"?["poison"]:W.kind==="buff"?["might","robust"]:id==="mirror"?["thorns"]:id==="sword"?["broken"]:[]))} aria-pressed="${i===C.wi}">
       <span class="cost">${W.cost}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
@@ -2112,11 +2108,11 @@ function confirmKey(e){
   else if(k===" "||k==="enter"){ confirmPick(window._confirm.sel); }
   else if(k==="escape"){ confirmPick(1); }
 }
-function usableWeaponLeft(){ return C && G.weapons.some((id,i)=>!C.used.includes(i)&&WEAPONS[id].cost<=C.energy); }
+function usableWeaponLeft(){ return C && G.weapons.some(id=>WEAPONS[id].cost<=C.energy); }
 function requestEndTurn(){
   if(!C||C.busy||C.over) return;
   if(C.tut&&!C.tut.free&&C.tut.phase!=="play") return endTurn();
-  if(usableWeaponLeft()){ const left=G.weapons.filter((id,i)=>!C.used.includes(i)&&WEAPONS[id].cost<=C.energy).map(id=>WEAPONS[id].name);
+  if(usableWeaponLeft()){ const left=G.weapons.filter(id=>WEAPONS[id].cost<=C.energy).map(id=>WEAPONS[id].name);
     return confirmBox(`You still have <b>${C.energy} Energy</b> and can cast: <b>${left.join(", ")}</b>.<br>End your turn anyway?`,()=>endTurn()); }
   endTurn();
 }
@@ -2653,7 +2649,7 @@ function showAltar(){
       <div class="ai-kind k-${W.kind}">${KIND_LABEL[W.kind]} · Mult ×${W.mult}</div>
       <div><b>Effect:</b> ${W.desc}</div>
       <div><b>Critical</b> (exactly ${W.sigil} letters <span class="dots dk">${"<i></i>".repeat(W.sigil)}</span>): ${W.crit}</div>
-      <div class="muted">Costs ${W.cost} Energy per cast · fires once per turn</div></div>`; };
+      <div class="muted">Costs ${W.cost} Energy per cast · reusable while you have Energy</div></div>`; };
   $("#app").innerHTML=`<div class="screen altar-screen">
     <h2 style="font-size:40px">The Weapon Altar</h2>
     <div class="muted" style="max-width:56ch">Two weapons are sunk deep in an old nanobot shrine. Pull one free. The shrine will swallow the other.</div>
@@ -2827,7 +2823,7 @@ const HEROES={
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
-    play:"Fragile combo assassin. The Dagger crits at just 2 letters and forges Fragile [ ! ] tiles (and starts with two permanent ! tiles); every ! at the end of a word throws another dagger, each one harder than the last (1, 2, 3, 5, 8…). The Utility Belt draws extra tiles and shields on a 5-letter crit.",
+    play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at just 2 letters and turns the hit into Shield too. The Utility Belt draws extra tiles, and a 5-letter crit refunds its Energy, so a good hand can keep the combo going.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
     ending:["The Mercenary stands over the sparking sphere. \"Huh. The master of The Tower… is a computer.\"","Lexicore makes a counter-offer: a fortune in pre-war gold and a seat on the fleet to the Moon. The rat checks the contract, tears it up and grins.","\"Business is business. And the Moon looks rich.\""]},
@@ -2839,8 +2835,8 @@ const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
   greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 3 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
   dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
-  dagger:{name:"Dagger",cost:2,sigil:2,kind:"atk",mult:1,desc:"Deal damage. Each [ ! ] at the end of the word throws another dagger (1, 2, 3, 5, 8… Spell Power).",crit:"Forge a Fragile [ ! ] tile into your discard pile."},
-  belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Draw tiles equal to output ÷ 5 (min 1).",crit:"Gain Shield equal to the output."},
+  dagger:{name:"Parrying Dagger",cost:2,sigil:2,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
+  belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Draw tiles equal to output ÷ 5 (min 1).",crit:"Refund 1 Energy."},
 });
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
 KIND_LABEL.util="Utility";
@@ -3392,7 +3388,7 @@ const TUT=[
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
   {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics (and ! tiles) raise it, so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
-  {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn, and each weapon can fire once per turn.", sel:["#energy"], next:"OK"},
+  {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
   {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 8 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
   {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
