@@ -681,7 +681,9 @@ function setMuted(m){ muted=m; try{ const c=actx(); if(c) AUD.master.gain.setTar
 function loadTrack(k){
   if(AUD.loading[k]) return AUD.loading[k];
   const c=actx(); if(!c) return Promise.resolve(null);
-  return AUD.loading[k]=fetch(TRACKS[k]).then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+  const emb=window.EMBED_AUDIO&&window.EMBED_AUDIO[k];
+  const get=emb?Promise.resolve(Uint8Array.from(atob(emb),ch=>ch.charCodeAt(0)).buffer):fetch(TRACKS[k]).then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+  return AUD.loading[k]=get
     .then(b=>new Promise((res,rej)=>c.decodeAudioData(b,res,rej))).then(buf=>{ AUD.bufs[k]=buf;
       if(TRIM[k]){ const d=buf.getChannelData(0); let i=0; while(i<d.length&&Math.abs(d[i])<1e-4) i++; let j=d.length-1; while(j>i&&Math.abs(d[j])<1e-4) j--; AUD.loops[k]=[i/buf.sampleRate,(j+1)/buf.sampleRate]; }
       return buf; }).catch(()=>null);
