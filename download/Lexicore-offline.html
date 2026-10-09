@@ -1222,7 +1222,7 @@ const KW = {
   condemn:["Condemned tile","If it is still in your hand at the end of turn, it is banished for the rest of this combat."],
   ctile:["Cursed tile","Using this tile gives you +1 Curse."],
   ftile:["Frustrated tile","Using this tile gives you +1 Frustrated."],
-  crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect."],
+  crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect. [ ! ] tiles count as letters for this: with a 3-sigil weapon, SAW crits but SAW! does not, and HI! does."],
   energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
   bang:["Exclamation !","Must go at the end of a word, or after a single letter (U!, U!!!!). It can never be cast on its own. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."],
@@ -1863,7 +1863,7 @@ function evaluate(tiles, w, check){
     R.valid=true; R.fallback=true; R.L=letter; R.resolved[t.uid]=letter; R.words=[letter+"!".repeat(k)];
     R.chips = tileChip(t,letter); R.mult=1; R.notes.push("Single tile: Mult 1, no relics");
     if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
-    R.total=R.chips; R.crit = R.L.length===w.sigil;
+    R.total=R.chips; R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
     return R;
   }
   const parts=[[]]; for(const t of bodyT){ if(t.ch===",") parts.push([]); else parts[parts.length-1].push(t); }
@@ -1899,7 +1899,7 @@ function evaluate(tiles, w, check){
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
   if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
   if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
-  R.crit = R.L.length===w.sigil;
+  R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
   R.mult=+R.mult.toFixed(2);
   R.total = Math.floor(R.chips*R.mult);
