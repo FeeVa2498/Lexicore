@@ -1724,7 +1724,7 @@ function pickTile(title, filter, cb, cancelable=true){
 function showHelp(){
   openModal(`<h2>Rules &amp; glossary</h2>
   <div class="howto">
-  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Pick a weapon, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Weapons can be reused as long as you have Energy.</div>
+  <div><b>Turn:</b> you get ${BASE_ENERGY} Energy and draw to ${HAND_SIZE} tiles. Your hand holds at most 16 tiles: anything you would draw beyond that goes to the discard pile. Pick a weapon, click tiles (or type letters) onto the sigil bar, press <kbd>Enter</kbd> / Cast. Weapons can be reused as long as you have Energy.</div>
   <div><b>Score:</b> <span class="chip-n">Chips</span> (sum of tile Spell Power) × <span class="mult-n">Mult</span> (1 + relic Arcana, rare and precious). Word length equal to the weapon's sigil length = <b>Critical</b>.</div>
   <div><b>Invalid word:</b> the bar shakes, no Energy spent. <b>A single tile</b> is always valid (Mult 1, no relics) so you never soft-lock.</div>
   </div>
@@ -1764,7 +1764,7 @@ async function usePotion(i){
     case "venom": { const n=8+4*((G.act||1)-1); C.es[t].poison+=n; await venomAnim([t],n,false,"Venom"); break; }
     case "bomb": { const n=12+6*((G.act||1)-1); for(let j=0;j<C.es.length;j++){ if(C.es[j].dead) continue; const r=dealToEnemy(j,n,{}); updateBar("e"+j); const c=center("e"+j); impact(c.x,c.y,r.dmg,{colors:["#ff7b00","#ffd000","#3d3a44","#fff"]}); numPop(c.x,c.top+10,`-${r.dmg}`,r.dmg,"#ffd000"); } snd("hit"); shake(18); await sleep(T_(700)); break; }
     case "brittle": C.es.forEach(e=>{ if(!e.dead) e.broken+=3; }); await skillAnim("p","e"+t,"Broken 3 to all"); break;
-    case "jester": case "shout": { const ch=id==="jester"?"?":"!", n=id==="jester"?2:3; for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; C.hand.push(nt.uid); C.fresh.push(nt.uid); } await buffAnim("p",`+${n} [ ${ch} ]`); break; }
+    case "jester": case "shout": { const ch=id==="jester"?"?":"!", n=id==="jester"?2:3; for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; toHand(nt.uid); } flushOverflow(); await buffAnim("p",`+${n} [ ${ch} ]`); break; }
     case "smoke": C.over=true; C.busy=false; log("You vanish in a puff of smoke."); toast("You escaped!"); C=null; closeStage(); showMap(); return;
     case "fruit": G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); await healAnim("p",5); break;
     case "echo": C.echo=true; await buffAnim("p","Next word ×2"); break;
@@ -1805,11 +1805,15 @@ function startCombat(group, kind, opt={}){
   startPlayerTurn();
 }
 function log(s){ C.log.push(s); if(C.log.length>6) C.log.shift(); }
+/* the hand holds at most 16 tiles: anything beyond that goes straight to the discard pile */
+function toHand(u){ if(C.hand.length<HAND_SIZE){ C.hand.push(u); C.fresh.push(u); return true; } C.disc.push(u); C.overflow=(C.overflow||0)+1; return false; }
+function flushOverflow(){ if(C&&C.overflow){ log(`Hand full (16): ${C.overflow} tile${C.overflow>1?"s":""} discarded.`); toast(`Hand full: ${C.overflow} tile${C.overflow>1?"s":""} sent to discard.`); C.overflow=0; } }
 function draw(n){
   for(let i=0;i<n;i++){
     if(!C.draw.length){ if(!C.disc.length) break; C.draw=shuffle(C.disc); C.disc=[]; log("Discard pile reshuffled."); }
-    const u=C.draw.pop(); C.hand.push(u); C.fresh.push(u);
+    toHand(C.draw.pop());
   }
+  flushOverflow();
 }
 function aliveTarget(){ if(C.es[C.target] && !C.es[C.target].dead) return C.target; const i=C.es.findIndex(e=>!e.dead); C.target=Math.max(0,i); return C.target; }
 function setTarget(i){ if(!C||C.over||C.es[i].dead) return; C.target=i; snd("tap"); renderCombat(); }
@@ -1822,7 +1826,6 @@ async function startPlayerTurn(){
     if(hasR("anchor")){ C.p.block+=10; fired.push("anchor"); }
     if(hasR("knuckle")){ C.p.might+=2; fired.push("knuckle"); }
     if(hasR("scales")){ C.baseThorns=3; fired.push("scales"); }
-    if(hasR("pouch")){ extra+=4; fired.push("pouch"); }
   }
   if(!C.tut&&hasR("flower")&&C.turn%3===0){ C.energy++; fired.push("flower"); log("Wind-up Key: +1 Energy."); }
   C.p.thorns=C.baseThorns||0;
@@ -1947,7 +1950,7 @@ async function cast(){
     }
   }
   C.hand=C.hand.filter(u=>!C.bar.includes(u));
-  for(const u of C.bar){ if(C.t[u].fragile) C.ban.push(u); else if(wid==="boomerang") C.hand.push(u); else C.disc.push(u); }
+  for(const u of C.bar){ if(C.t[u].fragile) C.ban.push(u); else if(wid==="boomerang") toHand(u); else C.disc.push(u); }
   C.bar=[];
   if(!G.tutorial||true){ if(R.easter) achHit(R.easter); if(!R.fallback&&R.L.length>=7) achHit("long7"); if(!R.fallback&&R.L.length>=10) achHit("long10");
     if(R.crit&&!R.fallback) achHit("crit"); if(R.words&&R.words.length>1) achHit("comma"); if(tiles.filter(t=>t.ch==="?").length>=3) achHit("wild3"); }
@@ -2015,7 +2018,8 @@ async function cast(){
     const c=center("p"); wordPop(c.x,c.top-110,label); await buffAnim("p",`Draw ${got.length}${R.crit?" · Lv 2":""}`);
   } else if(w.kind==="forge"){
     const n=Math.min(3,Math.max(1,Math.floor(R.total/8))); const ch=R.L[R.L.length-1]||"E"; const made=[];
-    for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:R.crit?2:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; C.hand.push(nt.uid); C.fresh.push(nt.uid); made.push(nt.uid); }
+    for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:R.crit?2:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; toHand(nt.uid); made.push(nt.uid); }
+    flushOverflow();
     if(R.crit) snd("crit"); log(`Rune Chisel: carved ${n} Fragile ${ch} tile${n>1?"s":""}${R.crit?" (Level 2)":""} into your hand.`);
     const c=center("p"); wordPop(c.x,c.top-110,label); await buffAnim("p",`+${n} ${ch}${R.crit?" Lv 2":""}`);
   } else if(w.kind==="cleanse"){
@@ -2036,6 +2040,7 @@ async function cast(){
   }
   if(thirdCast){ if(hasR("shuriken")){ C.p.might++; log("Metronome: +1 Might."); flashRelics(["shuriken"]); } if(hasR("opener")&&C.es.some(e=>e.hp>0)) await relicHitAll(5,"Rubber Stamp","opener"); }
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
+  if(hasR("pouch")&&C.turn===1&&!C.tut){ extraDraw=Math.max(extraDraw,HAND_SIZE-C.hand.length); if(extraDraw) flashRelics(["pouch"]); }
   if(extraDraw) draw(extraDraw);
   if(G.hp<=0&&!undying()) return gameOver("your own frustration");
   const next=WEAPONS[G.weapons[C.wi]].cost<=C.energy?C.wi:G.weapons.findIndex(x=>WEAPONS[x].cost<=C.energy);
@@ -2968,10 +2973,10 @@ const BLADE_DOWN={lance:true,quill:true,sword:true,needle:true,hammer:true};
 Object.assign(WEAPONS,{
   censer:{name:"Healing Censer",cost:2,sigil:5,kind:"heal",mult:1,desc:"Heal HP equal to output ÷ 4 (min 1).",crit:"Heal twice as much.",price:110},
   lantern2:{name:"Seeker's Lantern",cost:1,sigil:3,kind:"draw",mult:1,desc:"Draw 1 tile per 6 output (min 1, max 5).",crit:"The drawn tiles become Level 2 for this combat.",price:110},
-  chisel:{name:"Rune Chisel",cost:1,sigil:4,kind:"forge",mult:1,desc:"Carve Fragile copies of the word's LAST letter into your hand: 1 per 8 output (min 1, max 3). Fragile tiles vanish after one use.",crit:"The copies are Level 2.",price:110},
+  chisel:{name:"Rune Chisel",cost:1,sigil:4,kind:"forge",mult:1,desc:"Carve Fragile copies of the word's LAST letter into your hand: 1 per 8 output (min 1, max 3). Fragile tiles vanish after one use. If your hand is full (16), they go to your discard pile.",crit:"The copies are Level 2.",price:110},
   bell:{name:"Cleansing Bell",cost:1,sigil:4,kind:"cleanse",mult:1,desc:"Remove every debuff from the tiles in your hand, and gain Shield equal to output ÷ 2.",crit:"Also remove all of YOUR debuffs (Poison, Weaken, Broken, Frustrated, Curse).",price:110},
   hourglass:{name:"Sand Hourglass",cost:1,sigil:5,kind:"store",mult:1,desc:"Store time: next turn you get +1 Energy, +1 more per 12 output (max +3).",crit:"Next turn you also draw 3 extra tiles.",price:110},
-  boomerang:{name:"Boomerang",cost:2,sigil:4,kind:"atk",mult:1,desc:"Deal damage. The tiles you used fly back into your hand.",crit:"It hits a second time for half damage.",price:110},
+  boomerang:{name:"Boomerang",cost:2,sigil:4,kind:"atk",mult:1,desc:"Deal damage. The tiles you used fly back into your hand. Your hand holds at most 16 tiles; extra tiles you would draw are discarded.",crit:"It hits a second time for half damage.",price:110},
 });
 ALTAR_POOL.push("censer","lantern2","chisel","bell","hourglass","boomerang");
 Object.assign(KIND_LABEL,{heal:"Heal",draw:"Draw",forge:"Forge",cleanse:"Cleanse",store:"Store",util:"Utility"});
@@ -2990,8 +2995,8 @@ Object.assign(POTIONS,{
   venom:{name:"Venom Vial",d:"Inflict 8 Poison on the target (+4 per Act after the first)."},
   bomb:{name:"Blast Jar",d:"Deal 12 damage to ALL enemies (+6 per Act after the first)."},
   brittle:{name:"Shatter Draught",d:"Inflict Broken 3 on ALL enemies (+50% damage taken)."},
-  jester:{name:"Jester's Brew",d:"Add 2 Fragile [ ? ] Wildcard tiles to your hand."},
-  shout:{name:"Battle Cry",d:"Add 3 Fragile [ ! ] tiles to your hand."},
+  jester:{name:"Jester's Brew",d:"Add 2 Fragile [ ? ] Wildcard tiles to your hand (or your discard pile if your hand is full)."},
+  shout:{name:"Battle Cry",d:"Add 3 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full)."},
   smoke:{name:"Vanishing Powder",d:"Escape a normal or Elite fight. You get no reward. Doesn't work on bosses."},
   fruit:{name:"Ancient Fruit",d:"Raise your Max HP by 5 and heal 5. Usable anywhere.",any:true},
   echo:{name:"Echo Draught",d:"The next word you cast this turn has its output doubled."},
@@ -3002,7 +3007,7 @@ Object.assign(RELICS,{
   coupon:{name:"Haggler's Badge",sym:"%",d:"Everything in the shop costs 25% less."},
   nib:{name:"Chalk Tally",sym:"10",d:"Every 10th attack you cast deals double damage."},
   anchor:{name:"Scrap Plating",sym:"⚓",d:"Start each combat with 10 Shield."},
-  pouch:{name:"Pencil Case",sym:"+4",d:"Draw 4 extra tiles on the first turn of each combat."},
+  pouch:{name:"Pencil Case",sym:"+4",d:"On the first turn of each combat, after every word you cast, draw back up to 16 tiles."},
   lantern:{name:"Spark Plug",sym:"+1",d:"Gain 1 extra Energy on the first turn of each combat."},
   knuckle:{name:"Iron Knuckles",sym:"M",d:"Start each combat with 2 Might."},
   scales:{name:"Potted Cactus",sym:"T",d:"Start each combat with 3 Thorns that last the whole fight."},
