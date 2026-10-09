@@ -373,6 +373,12 @@ canvas.claw{width:min(560px,100%)}
 .gstat{font-size:15px;color:var(--ink2)}
 .gmoves{margin:4px 0 0;padding-left:20px;font-size:15px}
 .relic.big{min-width:46px;height:46px;font-size:16px;border-radius:23px}
+.relic .ricon{width:26px;height:26px}.relic.big .ricon{width:40px;height:40px}
+.rel .ricon{width:52px;height:52px}
+.relicrow.small .rel{width:46px;height:46px;border-radius:10px}.relicrow.small .rel .ricon{width:36px;height:36px}
+.relicrow.tiny .rel{width:34px;height:34px;border-radius:8px;box-shadow:2px 2px 0 var(--ink)}.relicrow.tiny .rel .ricon{width:26px;height:26px}
+.relicrow{max-height:150px;overflow:hidden}
+.card .relic .ricon{width:44px;height:44px}
 .tile.wild-on b{opacity:.42}
 .tile.wild-on::before{content:"?";position:absolute;left:3px;top:0;font:12px var(--f-tile);font-weight:800;color:#3a1d08;opacity:.8;z-index:2}
 .mushroom{position:absolute;z-index:8;pointer-events:none}
@@ -1360,7 +1366,7 @@ const WEAPONS = {
   bulwark:{name:"Bulwark",cost:2,sigil:6,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
   hammer:{name:"Hammer",cost:3,sigil:7,kind:"atk",mult:1,desc:"Deal damage.",crit:"Ignore Block, double damage.",price:150},
   lance:{name:"Flame Lance",cost:2,sigil:6,kind:"atk",mult:1,desc:"Deal damage to the target.",crit:"The flames hit ALL enemies.",price:110},
-  drum:{name:"War Drum",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Also gain 2 Robust.",price:110},
+  drum:{name:"War Drum",cost:1,sigil:4,kind:"buff",mult:1,desc:"Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat.",crit:"Gain double the Might.",price:110},
   mirror:{name:"Mirror Ward",cost:1,sigil:5,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage.",price:110},
   quill:{name:"Venom Quill",cost:1,sigil:4,kind:"psn",mult:1,desc:"Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1.",crit:"Poison ALL enemies.",price:110},
 };
@@ -1391,6 +1397,36 @@ const RELICS = {
   bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +2, +4, +6, +10… Spell Power per consecutive !.",gain:["!","!"]},
   comma:{name:"Hinge Pin",sym:",",d:"Adds a [ , ] tile. Place it between two words to cast both at once (BIG,CAT).",gain:[","]},
 };
+/* ================= RELIC ICONS ================= */
+const RELIC_DRAW={
+  r1:(sh,ink)=>{ sh("path",`d="M10 8 A10 10 0 1 0 18 26 A8 8 0 1 1 10 8 Z"`,"#f6e7c4"); sh("path",`d="M24 14 A10 10 0 1 0 32 32 A8 8 0 1 1 24 14 Z"`,"#c79bff"); },
+  r2:(sh,ink)=>{ sh("path",`d="M12 6 Q20 2 28 6 L24 30 Q20 38 16 30 Z"`,"#fff8df"); ink(`<path class="thin" d="M16 10 L18 26"/>`); },
+  r3:(sh,ink)=>{ ink(`<circle cx="20" cy="21" r="12" style="stroke:#57cc4d;stroke-width:7"/><circle cx="20" cy="21" r="15.5"/><circle cx="20" cy="21" r="8.5"/>`); sh("path",`d="M26 6 L36 10 L30 16 Z"`,"#3f9d4b"); ink(`<circle cx="31" cy="10" r="1.5" class="dark"/>`); },
+  r4:(sh,ink)=>{ ink(`<path style="stroke:#e63946;stroke-width:3" d="M24 20 L38 14"/><path style="stroke:#ffbe0b;stroke-width:3" d="M24 21 L38 21"/><path style="stroke:#3a86ff;stroke-width:3" d="M24 22 L38 28"/><path class="thin" style="stroke:#fff" d="M2 24 L14 21"/>`); sh("path",`d="M18 6 L30 32 L6 32 Z"`,"#bfe0ff"); },
+  r5:(sh,ink)=>{ ink(`<path style="stroke:#717d8c;stroke-width:5" d="M8 30 Q20 36 32 30 Q20 24 8 24 Q20 30 32 24 Q20 18 8 18 Q20 24 32 18 Q20 12 8 12 Q20 18 32 12"/><path class="thin" d="M8 30 Q20 36 32 30 M8 12 Q20 6 32 12"/>`); },
+  r6:(sh,ink)=>{ sh("path",`d="M14 4 L30 10 L26 36 L8 28 Z"`,"#bfefff"); ink(`<path class="thin" style="stroke:#fff" d="M15 12 L24 15 M14 18 L20 20"/>`); },
+  r7:(sh,ink)=>{ sh("circle",`cx="20" cy="22" r="14"`,"#c1272d"); sh("path",`d="M13 28 L13 16 L16 20 L20 13 L24 20 L27 16 L27 28 Z"`,"#8d929b"); ink(`<circle cx="18" cy="22" r="1.5" class="dark"/><circle cx="23" cy="22" r="1.5" class="dark"/>`); },
+  r8:(sh,ink)=>{ for(const [y,c] of [[4,"#e63946"],[15,"#57cc4d"],[26,"#3a86ff"]]){ sh("rect",`x="12" y="${y}" width="16" height="11" rx="2"`,c); ink(`<path class="thin" d="M16 ${y+4} L18 ${y+4} M22 ${y+4} L24 ${y+4} M17 ${y+8} L23 ${y+8}"/>`); } },
+  r9:(sh,ink)=>{ sh("path",`d="M12 16 L28 16 L30 34 L10 34 Z"`,"#1d1b22"); sh("rect",`x="15" y="8" width="10" height="8" rx="2"`,"#c27a3a"); sh("path",`d="M30 4 Q34 10 30 13 Q26 10 30 4 Z"`,"#3a2b8a"); ink(`<path class="thin" style="stroke:#fff" d="M14 22 L14 30"/>`); },
+  r10:(sh,ink)=>{ ink(`<path class="thin" d="M6 10 Q20 24 34 10"/>`); for(const [x,y,c] of [[11,18,"#aaa39b"],[20,23,"#76706a"],[29,18,"#c9c3ad"]]) sh("ellipse",`cx="${x}" cy="${y}" rx="6" ry="5"`,c); },
+  r11:(sh,ink)=>{ sh("rect",`x="8" y="8" width="24" height="26" rx="2"`,"#f6e7c4"); sh("rect",`x="5" y="5" width="30" height="6" rx="3"`,"#c27a3a"); sh("rect",`x="5" y="31" width="30" height="6" rx="3"`,"#c27a3a"); ink(`<path class="thin" d="M12 16 L28 16 M12 21 L28 21 M12 26 L24 26"/>`); },
+  r12:(sh,ink)=>{ sh("path",`d="M8 34 L8 12 Q20 2 32 12 L32 34 Z"`,"#aaa39b"); ink(`<path class="thin" d="M13 16 L13 28 M17 16 L17 28 M21 16 L21 28 M25 16 L25 28 M11 26 L28 18"/>`); },
+  r13:(sh,ink)=>{ sh("path",`d="M20 34 C6 24 4 16 8 10 C12 5 18 7 20 12 C22 7 28 5 32 10 C36 16 34 24 20 34 Z"`,"#ff5d8f"); ink(`<text x="20" y="25" text-anchor="middle" style="font:800 11px var(--f-tile);fill:#fff;stroke:none">A</text>`); },
+  r14:(sh,ink)=>{ ink(`<path class="thin" style="stroke:#fb8b24" d="M20 6 L20 11 M8 12 L11 15 M32 12 L29 15 M4 22 L9 22 M36 22 L31 22"/>`); sh("path",`d="M8 28 A12 12 0 0 1 32 28 Z"`,"#ffbe0b"); ink(`<path d="M4 30 L36 30"/>`); },
+  r15:(sh,ink)=>{ sh("circle",`cx="20" cy="18" r="11"`,"#9b5de5"); sh("rect",`x="4" y="24" width="32" height="12"`,"#3a2b5e"); ink(`<path d="M4 24 L36 24"/>`); for(const [x,y] of [[8,8],[32,10],[28,4]]) ink(`<circle cx="${x}" cy="${y}" r="1.4" style="fill:#fff;stroke:none"/>`); },
+  r16:(sh,ink)=>{ sh("path",`d="M6 16 Q20 8 34 16 Q30 34 20 34 Q10 34 6 16 Z"`,"#7a2a2a"); sh("path",`d="M12 28 Q20 22 28 28 Q24 34 20 34 Q16 34 12 28 Z"`,"#ff8fab"); sh("path",`d="M8 16 Q20 12 32 16 L30 19 Q20 16 10 19 Z"`,"#fff"); },
+  r17:(sh,ink)=>{ sh("path",`d="M10 28 Q10 10 20 8 Q30 10 30 28 L34 32 L6 32 Z"`,"#ffbe0b"); sh("circle",`cx="20" cy="35" r="3"`,"#c27a3a"); ink(`<path class="thin" d="M20 8 L20 4 M2 18 Q4 14 6 18 M38 18 Q36 14 34 18"/>`); },
+  blood:(sh,ink)=>{ sh("path",`d="M20 4 Q32 18 30 26 Q28 36 20 36 Q12 36 10 26 Q8 18 20 4 Z"`,"#c1272d"); ink(`<path class="thin" style="stroke:#fff" d="M15 22 Q14 28 18 31"/>`); sh("path",`d="M14 10 L17 16 L19 11 Z"`,"#fff8df"); },
+  gloves:(sh,ink)=>{ sh("path",`d="M10 36 L10 18 Q10 14 13 14 L13 8 Q13 5 16 5 Q19 5 19 8 L19 6 Q19 3 22 3 Q25 3 25 6 L25 9 Q25 6 28 6 Q31 6 31 9 L31 26 Q31 36 22 36 Z"`,"#57cc4d"); sh("rect",`x="8" y="30" width="24" height="6" rx="2"`,"#2f6b3e"); ink(`<path class="thin" style="stroke:#ffd166" d="M4 12 L8 14 M3 20 L8 20"/>`); },
+  journal:(sh,ink)=>{ sh("rect",`x="8" y="5" width="24" height="30" rx="3"`,"#2b59c3"); sh("rect",`x="11" y="5" width="3" height="30"`,"#1d4fb8"); sh("path",`d="M24 5 L24 18 L27 15 L30 18 L30 5 Z"`,"#e63946"); sh("path",`d="M18 14 L20 18 L24 19 L20 21 L19 25 L17 21 L14 20 L17 18 Z"`,"#ffd166"); },
+  wild:(sh,ink)=>{ sh("path",`d="M6 30 Q4 12 12 6 Q16 18 20 20 Q24 18 28 6 Q36 12 34 30 Z"`,"#9b5de5"); sh("path",`d="M20 20 Q18 10 20 4 Q22 10 20 20 Z"`,"#ffbe0b"); for(const x of [12,20,28]) sh("circle",`cx="${x===20?20:x}" cy="${x===20?4:6}" r="3"`,"#ffd166"); sh("rect",`x="5" y="28" width="30" height="6" rx="3"`,"#e63946"); },
+  bang:(sh,ink)=>{ sh("path",`d="M4 30 Q14 26 20 16 L34 6 Q38 16 30 22 Q20 30 6 34 Z"`,"#c27a3a"); sh("ellipse",`cx="33" cy="12" rx="4" ry="7" transform="rotate(35 33 12)"`,"#f6e7c4"); ink(`<path class="thin" d="M12 28 L14 32 M18 24 L21 28"/>`); },
+  comma:(sh,ink)=>{ sh("rect",`x="5" y="8" width="13" height="24" rx="2"`,"#9aa6b4"); sh("rect",`x="22" y="8" width="13" height="24" rx="2"`,"#9aa6b4"); sh("rect",`x="17" y="6" width="6" height="28" rx="3"`,"#c8a24a"); ink(`<circle class="thin" cx="11" cy="14" r="1.6"/><circle class="thin" cx="11" cy="26" r="1.6"/><circle class="thin" cx="29" cy="14" r="1.6"/><circle class="thin" cx="29" cy="26" r="1.6"/>`); },
+};
+const RELIC_ICON_CACHE={};
+function relicIcon(id){ if(RELIC_ICON_CACHE[id]) return RELIC_ICON_CACHE[id]; const f=RELIC_DRAW[id];
+  return RELIC_ICON_CACHE[id] = f ? iconSVG("0 0 40 40",f,"ricon") : `<span>${RELICS[id]?RELICS[id].sym:"?"}</span>`; }
+
 const POTIONS = {
   heal:{name:"Healing Draught",d:"Heal 20 HP (+10 per Act after the first). Usable anywhere.",any:true},
   fire:{name:"Volatile Flask",d:"Deal 20 damage to the target (×Act number)."},
@@ -1637,7 +1673,7 @@ function renderHUD(){
     <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/${((G.map&&G.map.F)??MAP_FLOORS)+1}</span>
     <span class="row" style="gap:4px" title="Potions">${Array.from({length:MAX_POTIONS},(_,i)=>{const p=G.potions[i];
       return p?`<button class="pot full" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" title="Empty potion slot"></span>`}).join("")}</span>
-    <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" title="${RELICS[r].name}: ${RELICS[r].d}">${RELICS[r].sym}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
+    <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)}>${relicIcon(r)}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
     <span class="spacer"></span>
     <button class="btn small" onclick="showDeck()" title="View deck">${G.deck.length} tiles</button>
     <button class="btn small" onclick="showGlossary()">Glossary</button><button class="btn small" onclick="showAchievements()">Achievements</button>
@@ -1928,10 +1964,10 @@ async function cast(){
   } else if(w.kind==="buff"){
     const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total*0.1)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
     let healDB=0; if(R.crit&&wid==="dumbbell"){ snd("crit"); healDB=2*C.p.might; G.hp=Math.min(G.maxHp,G.hp+healDB); log(`Critical! Heal ${healDB} (2 × Might).`); updateBar("p"); }
-    else if(R.crit){ snd("crit"); C.p.robust+=2; log("Critical! +2 Robust."); }
+    else if(R.crit){ snd("crit"); C.p.might+=gain; log(`Critical! Might doubled: +${gain} more.`); }
     const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(220)); fEl("p").dataset.pose="atk";
     if(R.crit) stamp(c.x,c.top-40,"CRITICAL!"); wordPop(c.x,c.top-110,label);
-    await buffAnim("p",`+${gain} Might${R.crit?(wid==="dumbbell"?` · +${healDB} HP`:" +2 Robust"):""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
+    await buffAnim("p",`+${R.crit&&wid!=="dumbbell"?gain*2:gain} Might${R.crit&&wid==="dumbbell"?` · +${healDB} HP`:""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
   } else if(w.kind==="psn"){
     const amt=Math.max(1,Math.floor(R.total/3)); const ti=aliveTarget();
     const targets=R.crit?C.es.map((e,j)=>j).filter(j=>!C.es[j].dead):[ti];
@@ -2110,9 +2146,9 @@ function renderCombat(){
   $("#fighters").innerHTML = keys.map(fighterHTML).join("");
   for(const k of keys){ const e=k==="p"?null:C.es[+k.slice(1)]; if(e&&e.gone) continue; if(trailOf(k)>hpOf(k)[0]) scheduleTrail(k); }
   // top bar
-  const rel = G.relics.length ? G.relics.map(r=>`<button class="rel" data-r="${r}" title="${RELICS[r].name}: ${RELICS[r].d}" onclick="toast('${RELICS[r].name}: ${RELICS[r].d.replace(/'/g,"")}')">${RELICS[r].sym}</button>`).join("")
-    : `<span class="rslot"></span><span class="rslot"></span><span class="rslot"></span><span class="rslot"></span>`;
-  $("#topbar").innerHTML = `<div class="relicbox"><div class="relicrow">${rel}</div><span class="lbl">Relics</span></div>
+  const rel = G.relics.length ? G.relics.map(r=>`<button class="rel" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)} onclick="toast('${RELICS[r].name}: ${RELICS[r].d.replace(/'/g,"")}')">${relicIcon(r)}</button>`).join("")
+    : `<span class="rslot"></span>`;
+  $("#topbar").innerHTML = `<div class="relicbox"><div class="relicrow ${G.relics.length>16?"tiny":G.relics.length>8?"small":""}">${rel}</div><span class="lbl">Relics</span></div>
     <div class="topr">
       <button class="tbtn" title="Gold" onclick="toast('Gold: '+G.gold)"><span class="ic">${TOPIC.gold}<b>${G.gold}</b></span><span class="lbl">Gold</span></button>
       <button class="tbtn" title="View map" onclick="showMapModal()"><span class="ic">${TOPIC.map}</span><span class="lbl">Map</span></button>
@@ -2339,7 +2375,7 @@ function glossaryTab(tab){
       <div class="gstat">Energy <b>${W.cost}</b> · Mult <b>×${W.mult}</b> · Sigil <b>${W.sigil}</b> letters</div>
       <div>${W.desc}</div><div><b>Critical (${W.sigil} letters):</b> ${W.crit}</div>
       <div class="muted">${STARTERS.includes(id)?`Starter weapon of ${HEROES[HERO_ORDER.find(h=>HEROES[h].weapons.includes(id))].name}`:ALTAR_POOL.includes(id)?"Weapon Altar (any hero)":"Not available in this build"}${G&&G.weapons&&G.weapons.includes(id)?" · <b>Equipped</b>":""}</div></div></div>`).join("");
-  if(tab==="relics") return Object.entries(RELICS).map(([id,R])=>`<div class="gcard small"><span class="relic big">${R.sym}</span><div>
+  if(tab==="relics") return Object.entries(RELICS).map(([id,R])=>`<div class="gcard small"><span class="relic big">${relicIcon(id)}</span><div>
       <h3>${R.name}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`).join("");
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
       <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · 3 slots max</div></div></div>`).join("");
@@ -2534,7 +2570,7 @@ function actCleared(){
   $("#app").innerHTML=actPage(`<div class="screen">
     <h2 class="pagetitle">Act ${act} cleared!</h2>
     <div class="paper">${act===1?"The guardian of the outskirts falls. Beyond lie the broken streets of <b>The Ruined City</b>.":act===2?"The city shakes and falls quiet. Ahead, the doors of <b>The Tower</b> stand open.":"The last guardian of The Tower collapses. A round door slides open, and violet light spills out of <b>The Lexicore Chamber</b>."} You rest to full health. Take a boss relic.</div>
-    <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');nextAct()" onkeydown="if(event.key==='Enter'){gainRelic('${r}');nextAct()}"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${RELICS[r].sym}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
+    <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');nextAct()" onkeydown="if(event.key==='Enter'){gainRelic('${r}');nextAct()}"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${relicIcon(r)}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
     <button class="btn" onclick="nextAct()">Skip relic</button></div>`);
 }
 function nextAct(){
@@ -2861,7 +2897,7 @@ function showTreasure(){
   G.screen="treasure"; renderHUD();
   const opts=[]; for(let i=0;i<3;i++){ const r=randomRelic(opts); if(r) opts.push(r); }
   $("#app").innerHTML=`<div class="screen"><h2 style="font-size:40px">Treasure Chest</h2><div class="muted">Pick one relic. The others crumble to dust.</div>
-    <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');showMap()"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${RELICS[r].sym}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
+    <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');showMap()"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${relicIcon(r)}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
     <button class="btn small" onclick="showMap()">Skip</button></div>`;
 }
 
@@ -3241,7 +3277,7 @@ const CARAVANS=[{x:290,body:"#e63946",trim:"#ffd166",label:"RELICS",inst:"flute"
 function shopItemHTML(kind,i,it){
   const can=!it.sold&&G.gold>=it.price, key=kind==="relics"?i+1:kind==="tiles"?i+4:i+7;
   let face="", tip="", kws=[];
-  if(kind==="relics"){ const R=RELICS[it.id]; face=`<span class="relic big">${R.sym}</span>`; tip=`<b>${R.name}</b><br>${R.d}`; }
+  if(kind==="relics"){ const R=RELICS[it.id]; face=`<span class="relic big">${relicIcon(it.id)}</span>`; tip=`<b>${R.name}</b><br>${R.d}`; }
   if(kind==="tiles"){ const t={...it.t,uid:-1,deb:null}; face=tileHTML(t,{noTip:true}); tip=`<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${VAL[t.ch]?` · Spell Power ${tileChip(t)}`:""}<br>${PAINTS[t.paint].name}: ${PAINTS[t.paint].d}`; kws=[t.paint]; if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma"); }
   if(kind==="potions"){ const P=POTIONS[it.id]; face=`<span class="gart sm">${potionIcon(it.id)}</span>`; tip=`<b>${P.name}</b><br>${P.d}`; }
   return `<button class="sitem ${it.sold?"sold":""} ${can?"":"poor"}" onclick="shopBuy('${kind}',${i})" ${it.sold?"disabled":""} ${tipAttr(tip+(it.sold?"":`<br><i>Press ${key} or click to buy for ${it.price} gold.</i>`),kws)}>
@@ -3428,7 +3464,7 @@ function clawCollect(b){
   const S=CL; let label="";
   if(b.kind==="coin"){ G.gold+=1; S.gold++; label=`+1 gold (${S.gold} total)`; }
   if(b.kind==="tile"){ const t=newTile(b.t.ch,{paint:b.t.paint,lvl:b.t.lvl}); G.deck.push(t); label=`${t.lvl===2?"Level 2 ":""}${t.paint?t.paint+" ":""}${t.ch} tile added to your deck`; S.won.push(tileHTML(t,{mini:true})); }
-  if(b.kind==="relic"){ gainRelic(b.rel); unlock("claw_relic"); label=`Relic: ${RELICS[b.rel].name}`; S.won.push(`<span class="relic" ${tipAttr(`<b>${RELICS[b.rel].name}</b><br>${RELICS[b.rel].d}`)}>${RELICS[b.rel].sym}</span>`); }
+  if(b.kind==="relic"){ gainRelic(b.rel); unlock("claw_relic"); label=`Relic: ${RELICS[b.rel].name}`; S.won.push(`<span class="relic" ${tipAttr(`<b>${RELICS[b.rel].name}</b><br>${RELICS[b.rel].d}`)}>${relicIcon(b.rel)}</span>`); }
   snd("coin"); clawMsg(`Prize! ${label}.`); $("#clawwon").innerHTML=(S.gold?`<span class="clawprize">+${S.gold}g</span>`:"")+S.won.join(""); renderHUD(); keepClawUI();
 }
 function keepClawUI(){ /* renderHUD re-renders only the HUD, the canvas stays */ }
