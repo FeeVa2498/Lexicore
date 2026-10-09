@@ -1,7 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta charset="utf-8">
 <title>Lexicore</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1143,7 +1139,7 @@ const KW = {
   crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect."],
   energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
-  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Mult: +0.5, +1, +1.5, +2.5… "],
+  bang:["Exclamation !","Must go at the end of a word. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."],
   comma:["Comma ,","Put it between two words to cast both in one action."],
   red:["Red Paint","+1 Might each time the tile is played."], blue:["Blue Paint","+1 Robust each time the tile is played."],
   green:["Green Paint","Draw 1 extra tile when the word is cast."], gold:["Gold Paint","+1 Gold each time the tile is played."],
@@ -1283,7 +1279,7 @@ const RELICS = {
   r16:{name:"Open Mouth",sym:"V…V",d:"+1.5 Arcana if word starts and ends with vowels.",f:c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?1.5:0},
   r17:{name:"Choir Bell",sym:"V>C",d:"+1.5 Arcana if vowels outnumber consonants.",f:c=>vowelsOf(c.L).length>consOf(c.L).length?1.5:0},
   wild:{name:"Jester Rune",sym:"?",d:"Adds a [ ? ] Wildcard tile to your deck. It becomes the best-scoring letter that makes a word.",gain:["?"]},
-  bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +0.5, +1, +1.5, +2.5… Arcana per consecutive !.",gain:["!","!"]},
+  bang:{name:"War Horn",sym:"!",d:"Adds two [ ! ] tiles. Put them at the end of a word: +2, +4, +6, +10… Spell Power per consecutive !.",gain:["!","!"]},
   comma:{name:"Hinge Pin",sym:",",d:"Adds a [ , ] tile. Place it between two words to cast both at once (BIG,CAT).",gain:[","]},
 };
 const POTIONS = {
@@ -1714,7 +1710,7 @@ function evaluate(tiles, w, check){
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
-  if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*.5; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
+  if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
   R.crit = R.L.length===w.sigil;
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
   R.mult=+R.mult.toFixed(2);
@@ -2585,7 +2581,7 @@ const EASEL_ART = (ch,p) => `<svg class="art" viewBox="0 0 140 160">${layer((sh,
   else sh("rect",`x="50" y="54" width="40" height="44"`,"#e8e4da");
 })}${ch?`<text x="72" y="88" text-anchor="middle" style="font:800 34px var(--f-tile);fill:#fff;stroke:#1d1b22;stroke-width:5;paint-order:stroke">${ch}</text>`:""}</svg>`;
 function slotInfo(t){
-  const sym={"?":"Wildcard: becomes the best letter that makes a word.","!":"Exclamation: put at the end of a word for bonus Mult (+1, +2, +3, +5…).",",":"Comma: put between two words to cast both at once."}[t.ch];
+  const sym={"?":"Wildcard: becomes the best letter that makes a word.","!":"Exclamation: put at the end of a word for bonus Spell Power (+2, +4, +6, +10…).",",":"Comma: put between two words to cast both at once."}[t.ch];
   return `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}`}${sym?`<br><span style="font-size:16px">${sym}</span>`:""}<br>
     <span class="muted" style="font-size:16px"><b>${PAINTS[t.paint].name}:</b> ${PAINTS[t.paint].d}</span>`;
 }
@@ -2828,7 +2824,7 @@ const HEROES={
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
-    play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for big bonus Mult, and a 4-letter Belt crit refunds its Energy.",
+    play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
     ending:["The Mercenary stands over the sparking sphere. \"Huh. The master of The Tower… is a computer.\"","Lexicore makes a counter-offer: a fortune in pre-war gold and a seat on the fleet to the Moon. The rat checks the contract, tears it up and grins.","\"Business is business. And the Moon looks rich.\""]},
@@ -2840,8 +2836,8 @@ const heroArt = () => hero().art;
 Object.assign(WEAPONS,{
   greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage. Each swing costs you 3 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
   dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
-  dagger:{name:"Parrying Dagger",cost:2,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
-  belt:{name:"Utility Belt",cost:1,sigil:4,kind:"util",mult:1,desc:"Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Mult.",crit:"Refund 1 Energy."},
+  dagger:{name:"Parrying Dagger",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Also gain Shield equal to the output."},
+  belt:{name:"Utility Belt",cost:1,sigil:4,kind:"util",mult:1,desc:"Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power.",crit:"Refund 1 Energy."},
 });
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
 KIND_LABEL.util="Utility";
@@ -3425,7 +3421,7 @@ const TUT=[
   {t:"Pick a weapon first. Tap the <b>Wand</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
-  {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics (and ! tiles) raise it, so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
+  {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
   {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
   {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 8 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
   {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
@@ -3545,5 +3541,3 @@ function start(data){
 try{ window.claude?.hot?.snapshot?.(()=>({G,C})); }catch(e){}
 if(window.claude?.hot?.ready) window.claude.hot.ready(start); else start(window.claude?.hot?.data ?? {});
 </script>
-
-</html>
