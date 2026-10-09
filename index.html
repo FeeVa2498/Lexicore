@@ -476,6 +476,7 @@ body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.pap
 .heroname{font:30px var(--f-display);font-weight:400;color:var(--hc);-webkit-text-stroke:5px var(--ink);paint-order:stroke fill}
 .herostats{font-size:16px;display:flex;align-items:center;gap:4px}.herostats svg{width:20px;height:20px}
 .herotxt{font-size:15px;line-height:1.25;justify-self:stretch}
+.herotag{font-size:18px;line-height:1.35;text-align:center;font-style:italic;min-height:5.4em}
 @media (max-width:900px){.herorow{grid-template-columns:1fr}.heroart{width:140px;height:150px}}
 .tile.fragile{border-style:dashed}
 .tile.fragile::before{content:"✦";position:absolute;right:2px;top:0;font-size:12px;color:#8b3fd9;z-index:3}
@@ -766,20 +767,22 @@ const ARTS = {
       if(P.pose==="idle"||P.pose==="guard"){ ink(`<path class="thick" d="M152 212 L172 98"/>`); sh("circle",`cx="174" cy="88" r="12"`,CC.gold); ink(`<path class="thin" d="M174 66 L174 59 M194 84 L201 82 M156 74 L150 70"/>`); }
       if(P.pose==="hurt"){ ink(`<path class="thick" d="M70 206 L42 104"/>`); sh("circle",`cx="40" cy="95" r="11"`,CC.gold); }
       ink(`<path class="thick" d="M62 198 Q24 200 26 170 Q28 152 44 158"/>`);
-      // cloak body
-      sh("path",`d="M58 212 Q52 152 102 124 Q150 152 144 212 Z"`,CC.char);
-      // scarf
-      sh("path",`d="M78 130 Q102 144 126 130 L124 142 Q102 154 80 142 Z"`,CC.orange);
-      sh("path",P.scarf?`d="M82 136 L40 140 L52 154 Z"`:`d="M82 136 L44 124 L50 142 Z"`,CC.orange);
+      // long blue wizard robe with gold trim
+      sh("path",`d="M50 216 Q50 150 102 124 Q154 150 152 216 Z"`,"#2b59c3");
+      sh("path",`d="M50 206 Q101 218 152 206 L152 216 Q101 226 50 216 Z"`,CC.gold);
+      ink(`<path class="thin" style="stroke:#ffd166" d="M102 140 L104 206"/>`);
+      for(const [sx,sy] of [[72,186],[132,176],[84,160]]) sh("path",`d="M${sx} ${sy-6} L${sx+2} ${sy-2} L${sx+6} ${sy} L${sx+2} ${sy+2} L${sx} ${sy+6} L${sx-2} ${sy+2} L${sx-6} ${sy} L${sx-2} ${sy-2} Z"`,"#ffd166");
+      // gold collar
+      sh("path",`d="M78 130 Q102 146 126 130 L124 140 Q102 154 80 140 Z"`,CC.gold);
       // front paws + props
-      if(P.pose==="idle"){ sh("rect",`x="88" y="152" width="32" height="38" rx="4"`,CC.orange); ink(`<path class="thin" d="M94 162 L114 162 M94 170 L110 170 M94 178 L114 178"/>`);
+      if(P.pose==="idle"){ sh("rect",`x="88" y="152" width="32" height="38" rx="4"`,"#8a4b24"); ink(`<path class="thin" d="M94 162 L114 162 M94 170 L110 170 M94 178 L114 178"/>`);
         sh("circle",`cx="92" cy="186" r="7"`,CC.char); sh("circle",`cx="158" cy="154" r="7"`,CC.char); }
       if(P.pose==="cast"){ ink(`<path class="thick" d="M120 152 L194 112"/>`); sh("circle",`cx="198" cy="110" r="17"`,CC.gold);
         ink(`<path d="M198 80 L198 68 M224 96 L236 90 M226 124 L238 130 M174 92 L166 82 M198 140 L200 150"/>`); sh("circle",`cx="128" cy="148" r="7"`,CC.char);
-        sh("rect",`x="80" y="160" width="24" height="30" rx="3"`,CC.orange); }
+        sh("rect",`x="80" y="160" width="24" height="30" rx="3"`,"#8a4b24"); }
       if(P.pose==="guard"){ sh("rect",`x="118" y="92" width="52" height="66" rx="8"`,CC.blue); ink(`<path class="thin" d="M126 108 L160 108 M126 122 L154 122 M126 136 L160 136"/>`);
         sh("circle",`cx="118" cy="150" r="7"`,CC.char); }
-      if(P.pose==="hurt"){ sh("rect",`x="126" y="190" width="28" height="18" rx="3" transform="rotate(-18 140 199)"`,CC.orange); sh("circle",`cx="84" cy="168" r="7"`,CC.char); }
+      if(P.pose==="hurt"){ sh("rect",`x="126" y="190" width="28" height="18" rx="3" transform="rotate(-18 140 199)"`,"#8a4b24"); sh("circle",`cx="84" cy="168" r="7"`,CC.char); }
       // head
       sh("path",`d="M84 94 L76 70 L98 84 Z"`,CC.char); sh("path",`d="M126 94 L134 70 L112 84 Z"`,CC.char);
       sh("circle",`cx="104" cy="106" r="28"`,CC.char);
@@ -3029,63 +3032,99 @@ Object.assign(ARTS,{
   wolf:{vb:[220,230], v:["i0","i1","atk","hurt","guard"],
     tf:{i0:"",i1:"translate(0 3)",atk:"rotate(5 110 220)",hurt:"rotate(-10 110 220) translate(-6 4)",guard:"rotate(-4 110 220)"},
     draw(v,sh,ink){
-      const W="#d9483b", W2="#a8322a";
-      ink(`<path class="thick" d="M76 196 Q30 200 30 160 Q34 140 52 150"/>`);
-      ink(`<path class="thick" d="M96 186 L84 222 L70 223 M126 186 L136 222 L150 223"/>`);
-      sh("path",`d="M70 196 Q62 136 112 112 Q160 136 154 196 Z"`,W);
-      sh("path",`d="M78 130 Q112 150 146 130 L144 150 Q112 166 80 150 Z"`,"#5b3a1e");
-      ink(`<path class="thin" d="M90 140 L94 156 M112 146 L112 162 M134 140 L130 156"/>`);
-      // greatsword
-      if(v==="atk"){ ink(`<path class="thick" d="M140 140 L176 128"/>`); sh("path",`d="M170 118 L214 66 L222 74 L178 128 Z"`,"#dfe7ef"); sh("rect",`x="162" y="122" width="24" height="9" rx="3" transform="rotate(-48 174 126)"`,"#c8a24a"); }
-      else if(v==="hurt"){ ink(`<path class="thick" d="M84 150 L54 170"/>`); sh("path",`d="M10 200 L60 170 L66 178 L16 208 Z"`,"#dfe7ef"); }
-      else if(v==="guard"){ ink(`<path class="thick" d="M140 140 L160 120"/>`); sh("path",`d="M148 30 L160 30 L162 128 L146 128 Z"`,"#dfe7ef"); sh("rect",`x="138" y="124" width="34" height="9" rx="3"`,"#c8a24a"); }
-      else { const y=v==="i1"?3:0; ink(`<path class="thick" d="M140 144 L164 150"/>`); sh("path",`d="M160 ${40+y} L176 ${40+y} L178 ${168+y} L158 ${168+y} Z"`,"#dfe7ef"); ink(`<path class="thin" d="M168 ${48+y} L168 ${160+y}"/>`); sh("rect",`x="148" y="${164+y}" width="40" height="10" rx="3"`,"#c8a24a"); sh("rect",`x="162" y="${174+y}" width="12" height="20" rx="3"`,"#8a4b24"); }
+      const F="#8d929b", F2="#6b707a", L="#e1e3e8", R="#c1272d", y=v==="i1"?3:0, flap=v==="i1"||v==="atk";
+      // torn red cape behind
+      sh("path",`d="M84 122 Q46 150 ${flap?24:32} 216 L${flap?40:46} 204 L${flap?46:54} 222 L60 206 L72 224 L84 208 L96 220 L104 140 Z"`,R);
+      // bushy grey tail
+      sh("path",`d="M76 188 Q30 196 24 160 Q42 174 62 162 Q60 176 80 176 Z"`,F2);
+      // legs
+      ink(`<path class="thick" d="M96 186 L86 222 L70 223 M126 186 L136 222 L152 223"/>`);
+      // body
+      sh("path",`d="M70 196 Q62 136 112 112 Q160 136 154 196 Z"`,F);
+      sh("path",`d="M100 132 Q112 150 126 132 L122 176 Q112 184 102 176 Z"`,L);
+      sh("path",`d="M78 134 L150 184 L144 192 L74 144 Z"`,"#5b3a1e");
+      sh("rect",`x="104" y="152" width="14" height="12" rx="2" transform="rotate(34 111 158)"`,"#9aa6b4");
+      // tattered red scarf
+      sh("path",`d="M80 120 Q112 138 146 120 L144 136 Q112 152 82 136 Z"`,R);
+      sh("path",flap?`d="M86 128 L40 112 L52 124 L30 128 L52 136 L40 146 L84 140 Z"`:`d="M86 128 L46 132 L56 140 L38 150 L60 150 L54 160 L86 142 Z"`,R);
+      // the greatsword
+      if(v==="atk"){
+        ink(`<path class="thick" d="M140 140 L172 130"/>`);
+        sh("path",`d="M170 118 L236 40 L248 44 L250 56 L184 132 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M178 124 L240 52"/>`);
+        sh("rect",`x="158" y="120" width="34" height="11" rx="3" transform="rotate(-48 175 126)"`,"#c8a24a"); sh("rect",`x="164" y="132" width="16" height="9" rx="3" transform="rotate(-48 172 136)"`,"#5b3a1e");
+      } else if(v==="hurt"){ ink(`<path class="thick" d="M84 150 L54 170"/>`); sh("path",`d="M4 206 L60 168 L68 180 L12 216 Z"`,"#dfe7ef"); }
+      else if(v==="guard"){ ink(`<path class="thick" d="M140 140 L160 120"/>`); sh("path",`d="M146 20 L164 20 L166 128 L144 128 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M155 28 L155 120"/>`); sh("rect",`x="134" y="124" width="42" height="10" rx="3"`,"#c8a24a"); }
+      else {
+        // resting on the shoulder, Sol-style: grip in front of the chest, blade over the shoulder
+        sh("path",`d="M150 ${118+y} L8 ${46+y} L-8 ${60+y} L2 ${70+y} L144 ${142+y} Z"`,"#dfe7ef");
+        ink(`<path class="thin" d="M140 ${128+y} L12 ${60+y}"/>`);
+        sh("rect",`x="138" y="${120+y}" width="12" height="34" rx="3" transform="rotate(-26 144 ${137+y})"`,"#c8a24a");
+        sh("path",`d="M150 ${132+y} L176 ${146+y} L172 ${154+y} L146 ${140+y} Z"`,"#5b3a1e"); sh("circle",`cx="178" cy="${152+y}" r="6"`,"#c8a24a");
+        ink(`<path class="thick" d="M144 136 L160 ${144+y}"/>`); sh("circle",`cx="160" cy="${144+y}" r="8"`,F2);
+      }
       // head
-      sh("path",`d="M80 74 L74 38 L100 62 Z"`,W2); sh("path",`d="M138 74 L146 38 L120 62 Z"`,W2);
-      sh("path",`d="M74 84 Q76 54 110 52 Q144 54 146 84 Q144 102 128 108 L110 124 L92 108 Q76 102 74 84 Z"`,W);
-      sh("path",`d="M94 98 Q110 92 126 98 L118 120 L110 124 L102 120 Z"`,"#f6e7c4");
+      sh("path",`d="M80 74 L74 36 L100 62 Z"`,F2); sh("path",`d="M138 74 L146 36 L120 62 Z"`,F2);
+      sh("path",`d="M74 84 Q76 54 110 52 Q144 54 146 84 Q144 102 128 108 L110 124 L92 108 Q76 102 74 84 Z"`,F);
+      sh("path",`d="M94 98 Q110 92 126 98 L118 120 L110 124 L102 120 Z"`,L);
       sh("circle",`cx="110" cy="102" r="5"`,"#1d1b22");
       if(v==="hurt") ink(`<path class="thick" style="stroke:#ffd23f" d="M88 76 L98 86 M98 76 L88 86 M122 76 L132 86 M132 76 L122 86"/>`);
       else ink(`<circle cx="93" cy="81" r="6" style="fill:#ffd23f"/><circle cx="127" cy="81" r="6" style="fill:#ffd23f"/><circle cx="94" cy="82" r="2.6" class="dark"/><circle cx="126" cy="82" r="2.6" class="dark"/><path class="thick" d="M82 70 L100 76 M138 70 L120 76"/>`);
+      // an old scar across the left eye
+      ink(`<path class="thin" style="stroke:#7a2a2a" d="M120 66 L134 96"/>`);
       ink(`<path class="thin" d="M104 112 L106 118 M116 112 L114 118" style="stroke:#fff"/>`);
-      ink(`<path class="thin" d="M86 60 L90 70 M100 56 L102 64" style="stroke:#5b1a14"/>`);
     }},
   rat2:{vb:[200,220], v:["i0","i1","atk","hurt","guard"],
-    tf:{i0:"",i1:"translate(0 3)",atk:"rotate(6 100 210) translate(6 0)",hurt:"rotate(-10 100 210) translate(-6 4)",guard:"translate(0 4)"},
+    tf:{i0:"",i1:"translate(0 3)",atk:"translate(10 -4) rotate(4 100 210)",hurt:"rotate(-10 100 210) translate(-6 4)",guard:"translate(0 4)"},
     draw(v,sh,ink){
-      const G1="#3f9d4b", G2="#2f7d3e";
-      ink(`<path class="thick" d="M70 196 Q24 204 22 172 Q22 156 36 160"/>`);
-      ink(`<path class="thick" d="M90 182 L80 214 L68 215 M114 182 L122 214 L134 215"/>`);
-      sh("path",`d="M64 196 Q60 134 100 112 Q140 134 136 196 Z"`,G1);
-      sh("path",`d="M66 160 L134 160 L132 170 L68 170 Z"`,"#8a4b24");
-      for(const x of [76,92,108,124]) sh("rect",`x="${x-5}" y="157" width="10" height="16" rx="2"`,x%2?"#c8a24a":"#9aa6b4");
-      // hood + face
-      sh("path",`d="M56 108 Q60 46 100 38 Q142 46 146 108 Q120 124 100 124 Q80 124 56 108 Z"`,G1);
-      sh("path",`d="M70 96 Q74 64 100 60 Q126 64 130 96 Q118 112 100 112 Q82 112 70 96 Z"`,"#a19ea8");
-      sh("path",`d="M100 106 L92 112 L108 112 Z"`,"#f4a7b9");
-      if(v==="hurt") ink(`<path class="thick" style="stroke:#ffd23f" d="M80 80 L90 90 M90 80 L80 90 M110 80 L120 90 M120 80 L110 90"/>`);
-      else ink(`<circle cx="86" cy="86" r="5.5" style="fill:#ffd23f"/><circle cx="114" cy="86" r="5.5" style="fill:#ffd23f"/><circle cx="87" cy="87" r="2.4" class="dark"/><circle cx="115" cy="87" r="2.4" class="dark"/>`);
-      ink(`<path class="thin" d="M78 100 L62 98 M78 104 L62 106 M122 100 L138 98 M122 104 L138 106"/>`);
-      sh("path",`d="M66 120 Q100 136 134 120 L132 132 Q100 146 68 132 Z"`,G2);
-      // daggers
-      if(v==="atk"){ ink(`<path class="thick" d="M128 140 L170 118"/>`); sh("path",`d="M168 114 L200 96 L198 104 L172 122 Z"`,"#dfe7ef"); sh("rect",`x="160" y="114" width="14" height="6" rx="2" transform="rotate(-30 167 117)"`,"#5b3a1e"); }
-      else if(v==="guard"){ ink(`<path class="thick" d="M72 140 L60 120 M128 140 L140 120"/>`); sh("path",`d="M56 96 L62 120 L54 120 Z"`,"#dfe7ef"); sh("path",`d="M144 96 L146 120 L138 120 Z"`,"#dfe7ef"); }
-      else if(v==="hurt"){ ink(`<path class="thick" d="M72 140 L50 160"/>`); }
-      else { const y=v==="i1"?3:0; ink(`<path class="thick" d="M128 140 L146 ${152+y}"/>`); sh("path",`d="M144 ${150+y} L150 ${120+y} L156 ${152+y} Z"`,"#dfe7ef"); ink(`<path class="thick" d="M72 140 L56 ${154+y}"/>`); sh("path",`d="M50 ${152+y} L54 ${126+y} L62 ${154+y} Z"`,"#dfe7ef"); }
+      const Fu="#9a948c", Fu2="#7a746c", P="#f4a7b9", C="#2f6b3e", C2="#24532f", M="#3d3a44", y=v==="i1"?3:0;
+      // long pink tail
+      ink(`<path style="stroke:#e88fa3;stroke-width:7" d="M62 192 Q12 202 14 168 Q16 150 34 156"/><path class="thin" d="M62 188 Q16 198 18 168"/>`);
+      // crouched legs
+      sh("ellipse",`cx="76" cy="${190+y*.5}" rx="20" ry="14"`,Fu2); sh("ellipse",`cx="128" cy="${188+y*.5}" rx="18" ry="13"`,Fu2);
+      sh("ellipse",`cx="90" cy="212" rx="16" ry="6"`,P); sh("ellipse",`cx="146" cy="212" rx="16" ry="6"`,P);
+      ink(`<path class="thick" d="M80 200 L88 210 M132 198 L142 210"/>`);
+      // low, forward-leaning cloak
+      sh("path",`d="M56 186 Q52 138 100 ${120+y} Q144 ${116+y} 156 ${150+y} Q150 180 126 190 L118 182 L110 194 L100 184 L90 196 L80 184 L68 194 Z"`,C);
+      sh("path",`d="M66 160 L148 ${166+y*.3} L146 ${176+y*.3} L64 170 Z"`,"#5b3a1e");
+      for(const x of [82,102,122]) sh("rect",`x="${x-5}" y="${160+(x-66)*.07}" width="10" height="14" rx="2"`,x===102?"#c8a24a":"#9aa6b4");
+      // back hand: reverse grip, blade along the forearm
+      const back = v==="guard" ? `M96 150 L124 96` : v==="hurt" ? `M80 150 L60 176` : `M96 150 L118 ${140+y}`;
+      ink(`<path class="thick" d="${back}"/>`);
+      if(v==="guard"){ sh("path",`d="M112 96 L150 70 L154 78 L120 104 Z"`,"#dfe7ef"); sh("circle",`cx="124" cy="96" r="8"`,Fu); }
+      else if(v!=="hurt"){ sh("circle",`cx="118" cy="${140+y}" r="8"`,Fu); sh("path",`d="M112 ${146+y} L92 ${178+y} L86 ${176+y} L106 ${142+y} Z"`,"#dfe7ef"); sh("rect",`x="114" y="${130+y}" width="8" height="12" rx="2" transform="rotate(30 118 ${136+y})"`,"#5b3a1e"); }
+      // hood + face pushed forward
+      sh("path",`d="M98 ${106+y} Q100 ${62+y} 132 ${58+y} Q166 ${62+y} 166 ${100+y} Q150 ${120+y} 130 ${120+y} Q112 ${120+y} 98 ${106+y} Z"`,C);
+      sh("path",`d="M150 ${64+y} Q164 ${44+y} 174 ${60+y} Q166 ${70+y} 156 ${74+y} Z"`,Fu); sh("path",`d="M156 ${62+y} Q164 ${52+y} 168 ${62+y} Z"`,P);
+      sh("path",`d="M112 ${98+y} Q116 ${76+y} 136 ${74+y} Q158 ${78+y} 160 ${96+y} Q166 ${102+y} 176 ${106+y} L164 ${114+y} Q140 ${116+y} 122 ${112+y} Q112 ${108+y} 112 ${98+y} Z"`,Fu);
+      sh("circle",`cx="176" cy="${106+y}" r="4.5"`,P);
+      // stealth mask over the snout
+      sh("path",`d="M116 ${102+y} Q140 ${110+y} 168 ${104+y} L166 ${114+y} Q140 ${122+y} 120 ${112+y} Z"`,M);
+      if(v==="hurt") ink(`<path class="thick" style="stroke:#ffd23f" d="M124 86 L132 94 M132 86 L124 94 M142 84 L150 92 M150 84 L142 92"/>`);
+      else ink(`<ellipse cx="129" cy="${90+y}" rx="5" ry="3.5" style="fill:#ffd23f"/><ellipse cx="148" cy="${88+y}" rx="5" ry="3.5" style="fill:#ffd23f"/><path class="thick" d="M120 ${82+y} L134 ${86+y} M156 ${80+y} L144 ${85+y}"/>`);
+      ink(`<path class="thin" d="M166 ${110+y} L186 ${106+y} M166 ${114+y} L186 ${116+y}"/>`);
+      // front hand: forward grip, ready to strike
+      if(v==="atk"){ ink(`<path class="thick" d="M138 146 L186 128"/>`); sh("circle",`cx="186" cy="128" r="8"`,Fu); sh("path",`d="M192 122 L236 110 L238 118 L194 132 Z"`,"#dfe7ef");
+        ink(`<path style="stroke:#fff;stroke-width:3" d="M200 98 Q230 110 222 140"/>`); }
+      else if(v==="guard"){ ink(`<path class="thick" d="M138 148 L150 100"/>`); sh("circle",`cx="150" cy="100" r="8"`,Fu); sh("path",`d="M146 92 L120 62 L126 58 L154 90 Z"`,"#dfe7ef"); }
+      else if(v==="hurt"){ ink(`<path class="thick" d="M138 150 L160 170"/>`); sh("path",`d="M160 172 L188 190 L184 196 L156 178 Z"`,"#dfe7ef"); }
+      else { ink(`<path class="thick" d="M138 148 L168 ${152+y}"/>`); sh("circle",`cx="168" cy="${152+y}" r="8"`,Fu); sh("path",`d="M174 ${146+y} L204 ${130+y} L206 ${138+y} L178 ${156+y} Z"`,"#dfe7ef"); sh("rect",`x="164" y="${140+y}" width="7" height="14" rx="2" transform="rotate(-60 168 ${147+y})"`,"#5b3a1e"); }
     }},
 });
 const HEROES={
   scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],
+    tag:"A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
     play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.","Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn.",""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
+    tag:"A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
     play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.","Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it.",""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
+    tag:"A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect.",
     play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said what it was.",
@@ -3120,17 +3159,14 @@ function showCharSelect(){
 }
 function renderCharSelect(){
   $("#app").innerHTML=`<div class="screen charsel">
-    <h2 class="pagetitle">Choose your climber</h2>
+    <h2 class="pagetitle">Choose your hero</h2>
     <div class="herorow">${HERO_ORDER.map((id,i)=>{ const H=HEROES[id], on=i===SEL.i;
       return `<button class="herocard ${on?"on":""}" style="--hc:${H.color}" onclick="if(SEL.i===${i}) startHero('${id}'); else { SEL.i=${i}; snd('tap'); renderCharSelect(); }" aria-pressed="${on}">
         <div class="heroart fighter" ${on?'data-pose="atk"':""}>${artSVG(H.art)}</div>
         <b class="heroname">${H.name}</b>
-        <span class="herostats">${SI.block?IC.heart:""} ${H.hp} HP · ${H.weapons.map(w=>WEAPONS[w].name).join(" + ")}</span>
-        <span class="herotxt"><b>Playstyle:</b> ${H.play}</span>
-        <span class="herotxt"><b>Who:</b> ${H.who}</span>
-        <span class="herotxt"><b>Why climb:</b> ${H.why}</span>
+        <span class="herotxt herotag">${H.tag}</span>
       </button>`; }).join("")}</div>
-    <div class="row" style="justify-content:center"><button class="btn" onclick="showSplash()">Back</button><button class="btn primary" onclick="startHero(HERO_ORDER[SEL.i])">Climb as ${HEROES[HERO_ORDER[SEL.i]].name}</button></div>
+    <div class="row" style="justify-content:center"><button class="btn" onclick="showSplash()">Back</button><button class="btn primary" onclick="startHero(HERO_ORDER[SEL.i])">Choose ${HEROES[HERO_ORDER[SEL.i]].name}</button></div>
     <div class="paper" style="font-size:15px"><kbd>A</kbd>/<kbd>D</kbd> to choose · <kbd>Enter</kbd> or <kbd>Space</kbd> to start</div>
   </div>`;
   clearInterval(window._selAtk);
@@ -3784,9 +3820,10 @@ ARTS.catback={vb:[220,230], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)"
     const t=v==="i1", ch=v==="cheer";
     if(!ch){ ink(`<path class="thick" d="M150 222 L176 96"/>`); sh("circle",`cx="178" cy="86" r="12"`,CC.gold); ink(`<path class="thin" d="M178 64 L178 58 M198 82 L204 80 M160 72 L154 68"/>`); }
     ink(`<path class="thick" d="M128 214 Q170 220 176 196 Q${t||ch?184:180} ${t||ch?176:180} ${t||ch?168:164} ${t||ch?172:176}"/>`);
-    sh("path",`d="M62 218 Q56 160 104 128 Q152 160 146 218 Z"`,CC.char);
-    sh("path",`d="M${t?118:116} 136 L${t||ch?164:160} ${t||ch?130:120} L${t||ch?156:154} ${t||ch?146:136} L${t?124:122} 148 Z"`,CC.orange);
-    sh("path",`d="M78 130 Q104 144 130 130 L128 142 Q104 154 80 142 Z"`,CC.orange);
+    sh("path",`d="M56 222 Q54 160 104 128 Q154 160 152 222 Z"`,"#2b59c3");
+    sh("path",`d="M56 212 Q104 224 152 212 L152 222 Q104 232 56 222 Z"`,CC.gold);
+    for(const [sx,sy] of [[80,190],[128,172]]) sh("path",`d="M${sx} ${sy-6} L${sx+2} ${sy-2} L${sx+6} ${sy} L${sx+2} ${sy+2} L${sx} ${sy+6} L${sx-2} ${sy+2} L${sx-6} ${sy} L${sx-2} ${sy-2} Z"`,"#ffd166");
+    sh("path",`d="M78 130 Q104 146 130 130 L128 140 Q104 154 80 140 Z"`,CC.gold);
     if(ch){ ink(`<path class="thick" d="M124 150 L150 70"/>`);
       sh("rect",`x="146" y="-6" width="10" height="84" rx="4" transform="rotate(10 151 36)"`,"#8a4b24");
       sh("path",`d="M162 -44 L170 -26 L190 -24 L175 -11 L179 9 L162 -1 L145 9 L149 -11 L134 -24 L154 -26 Z"`,CC.gold);
@@ -3850,26 +3887,30 @@ function splashURI(){
   return SPLASH_URI="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
 }
 ARTS.wolfback={vb:[230,240], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)",cheer:"translate(0 -6)"},
-  draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer";
-    ink(`<path class="thick" d="M150 214 Q206 214 206 172 Q204 148 ${t?186:190} ${t?150:146}"/>`); sh("path",`d="M150 214 Q210 220 208 168 Q204 140 184 148 Q196 180 150 196 Z"`,"#c43a2e");
-    if(!ch){ sh("path",`d="M66 210 L172 64 L184 74 L80 220 Z"`,"#dfe7ef"); sh("rect",`x="160" y="56" width="36" height="10" rx="3" transform="rotate(-54 178 61)"`,"#c8a24a"); }
-    sh("path",`d="M58 228 Q50 160 115 128 Q180 160 172 228 Z"`,"#d9483b");
-    sh("path",`d="M70 150 Q115 172 160 150 L156 166 Q115 186 74 166 Z"`,"#5b3a1e");
-    sh("path",`d="M80 96 L70 54 L100 82 Z"`,"#a8322a"); sh("path",`d="M150 96 L160 54 L130 82 Z"`,"#a8322a");
-    sh("circle",`cx="115" cy="104" r="34"`,"#d9483b");
-    ink(`<path class="thin" d="M96 92 L100 104 M118 86 L118 98 M136 92 L132 104" style="stroke:#5b1a14"/>`);
-    if(ch){ ink(`<path class="thick" d="M80 160 L70 70 M150 160 L160 70"/>`); sh("path",`d="M106 -40 L124 -40 L126 70 L104 70 Z"`,"#dfe7ef"); sh("rect",`x="90" y="66" width="50" height="10" rx="3"`,"#c8a24a"); ink(`<path style="stroke:#ffd23f" d="M115 -60 L115 -74 M84 -40 L74 -50 M146 -40 L156 -50"/>`); }
+  draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer", F="#8d929b", F2="#6b707a", R="#c1272d";
+    sh("path",`d="M150 214 Q210 220 208 168 Q204 140 184 148 Q196 180 150 196 Z"`,F2);
+    if(!ch){ sh("path",`d="M66 210 L172 64 L186 74 L80 222 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M76 212 L178 70"/>`); sh("rect",`x="160" y="56" width="38" height="11" rx="3" transform="rotate(-54 178 61)"`,"#c8a24a"); }
+    sh("path",`d="M58 228 Q50 160 115 128 Q180 160 172 228 Z"`,F);
+    // torn red cape over the back
+    sh("path",`d="M70 140 Q115 126 160 140 L${t?172:168} 226 L156 214 L148 232 L134 216 L122 234 L110 218 L96 232 L86 214 L${t?66:70} 228 Z"`,R);
+    sh("path",`d="M74 140 Q115 160 156 140 L154 154 Q115 172 76 154 Z"`,R);
+    sh("path",`d="M80 96 L70 54 L100 82 Z"`,F2); sh("path",`d="M150 96 L160 54 L130 82 Z"`,F2);
+    sh("circle",`cx="115" cy="104" r="34"`,F);
+    ink(`<path class="thin" d="M96 92 L100 104 M118 86 L118 98 M136 92 L132 104" style="stroke:#55595f"/>`);
+    if(ch){ ink(`<path class="thick" d="M80 160 L70 70 M150 160 L160 70"/>`); sh("path",`d="M104 -46 L126 -46 L128 70 L102 70 Z"`,"#dfe7ef"); sh("rect",`x="88" y="66" width="54" height="11" rx="3"`,"#c8a24a"); ink(`<path style="stroke:#ffd23f" d="M115 -66 L115 -80 M84 -46 L74 -56 M146 -46 L156 -56"/>`); }
   }};
-ARTS.ratback={vb:[200,220], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)",cheer:"translate(0 -6)"},
-  draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer";
-    ink(`<path class="thick" d="M128 204 Q186 210 184 178 Q182 160 ${t?172:168} ${t?168:164}"/>`);
-    sh("path",`d="M56 212 Q52 152 100 124 Q148 152 144 212 Z"`,"#3f9d4b");
-    sh("path",`d="M58 170 L142 170 L140 180 L60 180 Z"`,"#8a4b24");
-    for(const x of [70,90,110,130]) sh("rect",`x="${x-5}" y="166" width="10" height="18" rx="2"`,x%40?"#c8a24a":"#9aa6b4");
-    sh("path",`d="M56 118 Q60 52 100 34 Q140 52 144 118 Q120 134 100 134 Q80 134 56 118 Z"`,"#3f9d4b");
-    sh("path",`d="M100 34 Q${t?112:108} 20 ${t?122:118} 26 Q110 36 104 50 Z"`,"#2f7d3e");
-    ink(`<path class="thin" d="M100 40 L100 128" style="stroke:#2f7d3e"/>`);
-    if(ch){ ink(`<path class="thick" d="M64 150 L44 74 M136 150 L156 74"/>`); sh("path",`d="M38 70 L44 40 L50 70 Z"`,"#dfe7ef"); sh("path",`d="M150 70 L156 40 L162 70 Z"`,"#dfe7ef"); ink(`<path style="stroke:#ffd23f" d="M44 26 L44 14 M156 26 L156 14"/>`); }
+ARTS.ratback={vb:[200,220], v:["i0","i1","cheer"], tf:{i0:"translate(0 14)",i1:"translate(0 16)",cheer:"translate(0 -6)"},
+  draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer", Fu="#9a948c", C="#2f6b3e";
+    ink(`<path style="stroke:#e88fa3;stroke-width:7" d="M128 200 Q186 208 184 176 Q182 158 ${t?172:168} ${t?166:162}"/>`);
+    sh("ellipse",`cx="72" cy="196" rx="20" ry="13"`,"#7a746c"); sh("ellipse",`cx="128" cy="196" rx="20" ry="13"`,"#7a746c");
+    sh("path",`d="M54 196 Q52 146 100 124 Q148 146 146 196 L132 188 L124 200 L112 188 L100 202 L88 188 L76 200 L68 188 Z"`,C);
+    sh("path",`d="M58 168 L142 168 L140 178 L60 178 Z"`,"#5b3a1e");
+    for(const x of [72,100,128]) sh("rect",`x="${x-5}" y="164" width="10" height="18" rx="2"`,x===100?"#c8a24a":"#9aa6b4");
+    sh("circle",`cx="66" cy="66" r="18"`,Fu); sh("circle",`cx="134" cy="66" r="18"`,Fu);
+    sh("path",`d="M58 122 Q62 58 100 42 Q138 58 142 122 Q120 136 100 136 Q80 136 58 122 Z"`,C);
+    ink(`<path class="thin" d="M100 48 L100 130" style="stroke:#24532f"/>`);
+    if(ch){ ink(`<path class="thick" d="M64 150 L44 74 M136 150 L156 74"/>`); sh("path",`d="M38 70 L44 36 L50 70 Z"`,"#dfe7ef"); sh("path",`d="M150 70 L156 36 L162 70 Z"`,"#dfe7ef"); ink(`<path style="stroke:#ffd23f" d="M44 22 L44 10 M156 22 L156 10"/>`); }
+    else { ink(`<path class="thick" d="M60 150 L40 176 M140 150 L160 176"/>`); sh("path",`d="M36 174 L28 204 L44 180 Z"`,"#dfe7ef"); sh("path",`d="M164 174 L172 204 L156 180 Z"`,"#dfe7ef"); }
   }};
 const MENU_HERO={scholar:{art:"catback",css:"left:300px;top:390px;width:250px"},champion:{art:"wolfback",css:"left:95px;top:372px;width:245px"},mercenary:{art:"ratback",css:"left:540px;top:470px;width:185px"}};
 function heroesUnlocked(){ return HERO_ORDER.slice(); }
