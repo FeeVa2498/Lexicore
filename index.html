@@ -491,6 +491,7 @@ body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.pap
 .tfly .tile{width:72px;height:78px}.tfly .tile b{font-size:40px}
 .tflylabel{position:absolute;left:0;right:0;top:150px;text-align:center;font:48px var(--f-display);-webkit-text-stroke:7px var(--ink);paint-order:stroke fill;animation:popin .3s ease-out}
 
+.gcoin{position:absolute;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6c4 0 18%,#ffd23f 20% 60%,#e3a600 62%);border:3px solid var(--ink);z-index:48;pointer-events:none;box-shadow:inset 0 0 0 3px #f2b705}
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
 .mapscroll{height:min(72vh,760px);overflow-y:auto;border:2.5px solid var(--ink);border-radius:var(--sketch);background:var(--paper)}
@@ -2301,13 +2302,12 @@ const actPage = inner => inner;
 /* act transition after a boss */
 function actCleared(){
   const act=G.act||1;
-  G.gold+=100;
   if(act>=3) return showVictory();
   G.screen="actclear"; renderHUD();
   const opts=[]; for(let i=0;i<3;i++){ const r=randomRelic(opts); if(r) opts.push(r); }
   $("#app").innerHTML=actPage(`<div class="screen">
     <h2 class="pagetitle">Act ${act} cleared!</h2>
-    <div class="paper">${act===1?"The Gargoyle crumbles. Beyond the outskirts lie the broken streets of <b>The Ruined City</b>.":"The city shakes and falls quiet. Ahead, the doors of <b>The Tower</b> stand open."} You rest to full health. +100 gold. Take a boss relic.</div>
+    <div class="paper">${act===1?"The Gargoyle crumbles. Beyond the outskirts lie the broken streets of <b>The Ruined City</b>.":"The city shakes and falls quiet. Ahead, the doors of <b>The Tower</b> stand open."} You rest to full health. Take a boss relic.</div>
     <div class="cards">${opts.map(r=>`<div class="card btnlike" role="button" tabindex="0" onclick="gainRelic('${r}');nextAct()" onkeydown="if(event.key==='Enter'){gainRelic('${r}');nextAct()}"><div class="relic" style="width:56px;height:56px;margin:0 auto;font-size:17px">${RELICS[r].sym}</div><h3>${RELICS[r].name}</h3><div class="muted" style="font-size:15px">${RELICS[r].d}</div></div>`).join("")}</div>
     <button class="btn" onclick="nextAct()">Skip relic</button></div>`);
 }
@@ -2471,12 +2471,39 @@ async function venomAnim(targets,amt,crit,word){
   if(pe) delete pe.dataset.pose; for(const j of targets) fEl("e"+j)?.removeAttribute("data-pose");
   unfocus(); await sleep(T_(260)); renderCombat();
 }
+function killGold(i){
+  if(G.tutorial) return 0;
+  const act=G.act||1, n=C.es.length;
+  if(C.kind==="boss") return Math.round(100/n);
+  if(C.kind==="elite") return 30+rnd(16)+10*(act-1);
+  return Math.max(5,Math.round((14+rnd(10)+5*(act-1))/n));
+}
+function stagePt(el){ const st=$("#stage"); if(!st||!el) return {x:800,y:450}; const s=parseFloat(st.style.getPropertyValue("--s"))||1, sr=st.getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:(r.left-sr.left+r.width/2)/s, y:(r.top-sr.top+r.height/2)/s}; }
+async function goldDrop(i,amt){
+  const st=$("#stage"); if(!st||amt<=0) return;
+  const from=stagePt(fEl("e"+i)?.querySelector(".art")||fEl("e"+i)), to=stagePt(document.querySelector('.tbtn[title="Gold"] svg'));
+  const n=Math.min(14,Math.max(4,Math.round(amt/2))), per=[]; let left=amt; for(let k=0;k<n;k++){ const v=k===n-1?left:Math.floor(amt/n); per.push(v); left-=v; }
+  const coins=[];
+  for(let k=0;k<n;k++){ const d=document.createElement("div"); d.className="gcoin"; d.style.left=from.x+"px"; d.style.top=from.y+"px"; st.appendChild(d); coins.push(d); }
+  // burst out and bounce on the ground
+  await Promise.all(coins.map((d,k)=>{ const dx=(Math.random()-.5)*260, gy=Math.min(560,from.y+60+Math.random()*40)-from.y;
+    return d.animate([{transform:"translate(-50%,-50%) scale(.4)"},{transform:`translate(calc(-50% + ${dx*.6}px),calc(-50% + ${-140-Math.random()*90}px)) scale(1)`,offset:.4},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${gy}px)) scale(1)`,offset:.8},{transform:`translate(calc(-50% + ${dx*1.05}px),calc(-50% + ${gy-18}px)) scale(1)`,offset:.9},{transform:`translate(calc(-50% + ${dx*1.1}px),calc(-50% + ${gy}px)) scale(1)`}],{duration:T_(650+k*20),easing:"ease-out",fill:"forwards"}).finished.catch(()=>{}).then(()=>({dx:dx*1.1,dy:gy})); })).then(async ends=>{
+    await sleep(T_(200));
+    await Promise.all(coins.map((d,k)=>{ const e=ends[k]; const sx=from.x+e.dx, sy=from.y+e.dy;
+      return d.animate([{transform:`translate(calc(-50% + ${e.dx}px),calc(-50% + ${e.dy}px)) scale(1)`},{transform:`translate(calc(-50% + ${(sx+to.x)/2-from.x}px),calc(-50% + ${Math.min(sy,to.y)-160-from.y}px)) scale(1.2)`,offset:.5},{transform:`translate(calc(-50% + ${to.x-from.x}px),calc(-50% + ${to.y-from.y}px)) scale(.5)`}],{duration:T_(520),delay:k*55,easing:"ease-in",fill:"forwards"}).finished.catch(()=>{}).then(()=>{
+        d.remove(); G.gold+=per[k]; snd("coin"); const g=document.querySelector('.tbtn[title="Gold"] b'); if(g){ g.textContent=G.gold; g.parentNode.animate([{transform:"scale(1.25)"},{transform:"none"}],{duration:180}); } }); }));
+  });
+  const p=to; const pop=document.createElement("div"); pop.className="num"; pop.textContent=`+${amt}`; pop.style.cssText=`left:${p.x-60}px;top:${p.y+40}px;font-size:46px;color:#ffd23f;--sw:8px;position:absolute;z-index:50`; st.appendChild(pop);
+  pop.animate([{opacity:0,transform:"translate(-50%,-50%) scale(.5)"},{opacity:1,transform:"translate(-50%,-50%) scale(1.1)",offset:.2},{opacity:0,transform:"translate(-50%,-110%)"}],{duration:T_(1000)}).onfinish=()=>pop.remove();
+}
 async function deathAnim(i){
   const el=fEl("e"+i); if(!el) return;
   const c=center("e"+i), L=C.lay["e"+i]; particles(c.x,c.y,30,["#cfcabf","#8d909b","#fff",PAL[i%PAL.length]],260);
   el.dataset.pose="hurt"; snd("hit"); snd("hurt"); shake(40);
   mushroomBoom($("#fxl"), c.x, Math.min(L.y-20, 600));
-  await sleep(T_(180)); el.classList.add("dying"); await sleep(T_(1100));
+  const amt=killGold(i); C.goldGot=(C.goldGot||0)+amt;
+  const gd=goldDrop(i,amt);
+  await sleep(T_(180)); el.classList.add("dying"); await sleep(T_(900)); await gd;
 }
 
 document.addEventListener("keydown",e=>{
@@ -2522,10 +2549,9 @@ function screenKey(e){
 function winCombat(){
   if(C&&!G.tutorial){ unlock("first_blood"); if(G.hp>=(C.hpStart??0)) unlock("untouched"); if(C.kind==="boss") unlock(["act1","act2","act3"][(G.act||1)-1]); }
   if(G.tutorial){ unlock("tutorial"); setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
-  const kind=C.kind; C=null;
+  const kind=C.kind, got=C.goldGot||0; C=null;
   if(kind==="boss"){ return actCleared(); }
-  const act=G.act||1; const rw={gold: kind==="elite"? 30+rnd(16)+10*(act-1) : 14+rnd(10)+5*(act-1), slots:rollPaintSlots(), extras:[]};
-  G.gold+=rw.gold;
+  const rw={gold:got, slots:rollPaintSlots(), extras:[]};
   // GDD extras are granted automatically so the reward screen stays a single choice
   if(kind==="elite"||Math.random()<.4){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<MAX_POTIONS){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
   if(kind==="elite"){ const r=randomRelic(); if(r){ gainRelic(r); rw.extras.push(RELICS[r].name); } }
