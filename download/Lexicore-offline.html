@@ -191,7 +191,8 @@ body.f1 .art .fr.i1{display:inline}
 .dots{display:inline-flex;gap:3px;vertical-align:middle}.dots i{width:10px;height:10px;border:2px solid #fff;border-radius:2px;display:inline-block}
 .potshelf{display:grid;grid-template-rows:repeat(3,1fr);gap:0;padding:4px}
 .pslot{display:grid;place-items:center;border-bottom:7px solid #8a5a33;background:none;border-top:none;border-left:none;border-right:none;padding:0}
-.pslot svg{width:62px;height:62px}
+.pslot svg{height:min(62px,90%);width:auto;aspect-ratio:1}
+.potshelf{overflow:hidden}.pslot{min-height:0}
 .pslot:hover svg{transform:rotate(-8deg) scale(1.08)}
 .handgrid{display:grid;grid-template-columns:repeat(var(--cols,4),1fr);grid-auto-rows:var(--rowh,58px);gap:9px 11px;padding:12px 14px;align-content:start}
 .handgrid .tile{width:100%;height:100%}
@@ -1671,7 +1672,7 @@ function renderHUD(){
     <span class="hstat" title="Health">${IC.heart}<b>${G.hp}</b>/${G.maxHp}</span>
     <span class="hstat" title="Gold">${IC.coin}<b>${G.gold}</b></span>
     <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/${((G.map&&G.map.F)??MAP_FLOORS)+1}</span>
-    <span class="row" style="gap:4px" title="Potions">${Array.from({length:MAX_POTIONS},(_,i)=>{const p=G.potions[i];
+    <span class="row" style="gap:4px" title="Potions">${Array.from({length:maxPotions()},(_,i)=>{const p=G.potions[i];
       return p?`<button class="pot full" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" title="Empty potion slot"></span>`}).join("")}</span>
     <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)}>${relicIcon(r)}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
     <span class="spacer"></span>
@@ -1740,15 +1741,18 @@ function showHelp(){
 }
 
 /* ================= POTIONS ================= */
-function addPotion(id){ if(G.potions.length>=MAX_POTIONS){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
+function addPotion(id){ if(hasR("sozu")){ toast("Sozu: you can't hold potions."); return false; } if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
 async function usePotion(i){
   const id=G.potions[i]; if(!id) return;
   const P=POTIONS[id];
+  if(P.passive){ toast(`${P.name} works by itself: it saves you when you would die.`); return; }
   if(!C && !P.any){ toast(`${P.name} can only be used in combat.`); return; }
+  if(C && id==="smoke" && C.kind==="boss"){ toast("The boss blocks every exit. Smoke Bomb won't work here."); return; }
   if(C && (C.busy||C.over)) return;
   if(C && !tg("potion")) return;
   G.potions.splice(i,1); snd("shield");
-  if(!C){ const h=20+10*((G.act||1)-1); G.hp=Math.min(G.maxHp,G.hp+h); toast(`Healed ${h} HP.`); renderHUD(); return; }
+  if(hasR("bird")){ G.hp=Math.min(G.maxHp,G.hp+5); flashRelics(["bird"]); }
+  if(!C){ if(id==="fruit"){ G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); toast("Max HP +5."); } else { const h=20+10*((G.act||1)-1); G.hp=Math.min(G.maxHp,G.hp+h); toast(`Healed ${h} HP.`); } renderHUD(); return; }
   C.busy=true; renderCombat(); log(`Used ${P.name}.`);
   const t=aliveTarget();
   switch(id){
@@ -1758,6 +1762,16 @@ async function usePotion(i){
     case "might": { const m=3+2*((G.act||1)-1); C.p.might+=m; await buffAnim("p",`+${m} Might`); break; }
     case "purge": for(const u in C.t) if(C.t[u].deb) C.t[u].deb=null; C.p.poison=0; await healAnim("p",0,"Cleansed!"); break;
     case "ink": draw(5); break;
+    case "tonic": C.energy+=2; await buffAnim("p","+2 Energy"); break;
+    case "pages": C.disc.push(...C.hand); C.hand=[]; draw(HAND_SIZE); await buffAnim("p","Fresh hand"); break;
+    case "venom": { const n=8+4*((G.act||1)-1); C.es[t].poison+=n; await venomAnim([t],n,false,"Venom"); break; }
+    case "bomb": { const n=12+6*((G.act||1)-1); for(let j=0;j<C.es.length;j++){ if(C.es[j].dead) continue; const r=dealToEnemy(j,n,{}); updateBar("e"+j); const c=center("e"+j); impact(c.x,c.y,r.dmg,{colors:["#ff7b00","#ffd000","#3d3a44","#fff"]}); numPop(c.x,c.top+10,`-${r.dmg}`,r.dmg,"#ffd000"); } snd("hit"); shake(18); await sleep(T_(700)); break; }
+    case "brittle": C.es.forEach(e=>{ if(!e.dead) e.broken+=3; }); await skillAnim("p","e"+t,"Broken 3 to all"); break;
+    case "jester": case "shout": { const ch=id==="jester"?"?":"!", n=id==="jester"?2:3; for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; C.hand.push(nt.uid); C.fresh.push(nt.uid); } await buffAnim("p",`+${n} [ ${ch} ]`); break; }
+    case "smoke": C.over=true; C.busy=false; log("You vanish in a puff of smoke."); toast("You escaped!"); C=null; closeStage(); showMap(); return;
+    case "fruit": G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); await healAnim("p",5); break;
+    case "echo": C.echo=true; await buffAnim("p","Next word ×2"); break;
+    case "clarity": for(const u of C.hand){ if(/[A-Z]/.test(C.t[u].ch)) C.t[u].lvl=2; } await buffAnim("p","Hand → Level 2"); break;
   }
   C.busy=false; renderCombat();
   await resolveDeaths();
@@ -1786,6 +1800,8 @@ function startCombat(group, kind, opt={}){
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
   if(opt.tut) C.tut={i:0,free:false,phase:null,ready:true};
   C.twin=group.includes("twinA");
+  if(hasR("philo")) C.es.forEach(e=>e.might+=2);
+  C.turnCasts=0; C.baseThorns=0;
   C.hpStart=G.hp;
   G.screen="combat";
   buildStage();
@@ -1801,14 +1817,26 @@ function draw(n){
 function aliveTarget(){ if(C.es[C.target] && !C.es[C.target].dead) return C.target; const i=C.es.findIndex(e=>!e.dead); C.target=Math.max(0,i); return C.target; }
 function setTarget(i){ if(!C||C.over||C.es[i].dead) return; C.target=i; snd("tap"); renderCombat(); }
 async function startPlayerTurn(){
-  C.turn++; C.p.block=0; C.p.thorns=0;
-  C.energy=BASE_ENERGY; C.used=[];
-  draw(HAND_SIZE - C.hand.length);
+  C.turn++; C.p.block=0;
+  C.energy=maxEnergy()+(C.nextEnergy||0); C.nextEnergy=0; C.used=[]; C.turnCasts=0; C.echo=false;
+  let extra=C.nextDraw||0; C.nextDraw=0; const fired=[];
+  if(!C.tut&&C.turn===1){
+    if(hasR("lantern")){ C.energy++; fired.push("lantern"); }
+    if(hasR("anchor")){ C.p.block+=10; fired.push("anchor"); }
+    if(hasR("knuckle")){ C.p.might+=2; fired.push("knuckle"); }
+    if(hasR("scales")){ C.baseThorns=3; fired.push("scales"); }
+    if(hasR("pouch")){ extra+=4; fired.push("pouch"); }
+  }
+  if(!C.tut&&hasR("flower")&&C.turn%3===0){ C.energy++; fired.push("flower"); log("Happy Flower: +1 Energy."); }
+  C.p.thorns=C.baseThorns||0;
+  draw(HAND_SIZE - C.hand.length + extra);
   if(C.tut&&C.turn===1) ensureLetters("CATDOG");
   if(C.tut&&C.turn===3) ensureLetters("STONE");
-  C.wi = C.tut&&C.turn===1?1:0; C.busy=false;
-  renderCombat();
+  C.wi = C.tut&&C.turn===1?1:0;
+  renderCombat(); if(fired.length) flashRelics(fired);
   banner(`Turn ${C.turn}`, 700);
+  if(!C.tut&&hasR("coil")&&C.es.some(e=>!e.dead)){ await sleep(T_(500)); await relicHitAll(3,"Static Coil","coil"); if(await resolveDeaths()) return; }
+  C.busy=false; renderCombat();
   tutEvent("turn",C.turn);
 }
 
@@ -1904,6 +1932,7 @@ async function cast(){
   const tiles=C.bar.map(u=>C.t[u]);
   const R=evaluate(tiles,w,true);
   if(!R.valid){ toast(R.reason); snd("buzz"); sigilShake(); return; }
+  if(C.echo){ C.echo=false; R.total*=2; R.notes.push("Echo ×2"); log("Echo Draught doubles this word."); }
   C.busy=true;
   C.energy-=w.cost; C.used.push(C.wi);
   const fr=C.p.frustrated;
@@ -1921,11 +1950,12 @@ async function cast(){
     }
   }
   C.hand=C.hand.filter(u=>!C.bar.includes(u));
-  for(const u of C.bar){ if(C.t[u].fragile) C.ban.push(u); else C.disc.push(u); }
+  for(const u of C.bar){ if(C.t[u].fragile) C.ban.push(u); else if(wid==="boomerang") C.hand.push(u); else C.disc.push(u); }
   C.bar=[];
   if(!G.tutorial||true){ if(R.easter) achHit(R.easter); if(!R.fallback&&R.L.length>=7) achHit("long7"); if(!R.fallback&&R.L.length>=10) achHit("long10");
     if(R.crit&&!R.fallback) achHit("crit"); if(R.words&&R.words.length>1) achHit("comma"); if(tiles.filter(t=>t.ch==="?").length>=3) achHit("wild3"); }
   G.stats.words++;
+  C.turnCasts=(C.turnCasts||0)+1; const thirdCast=C.turnCasts%3===0;
   if(!R.fallback&&R.words){ G.wordUses=G.wordUses||{}; const key=R.words.join(","); G.wordUses[key]=(G.wordUses[key]||0)+1; }
   if(!C.firstCast){ C.firstCast=true; if(G.relics.includes("gloves")){ extraDraw+=tiles.length; R.fired.push("gloves"); log(`Quick Gloves: draw ${tiles.length}.`); } }
   const label = R.words?R.words.join(", "):R.L;
@@ -1936,6 +1966,7 @@ async function cast(){
     const ti=aliveTarget();
     let dmg=R.total, opts={};
     if(R.crit && wid==="hammer"){ dmg*=2; opts.pierce=true; }
+    if(hasR("nib")){ G.nib=(G.nib||0)+1; if(G.nib%10===0){ dmg*=2; log("Pen Nib! Double damage."); flashRelics(["nib"]); } }
     const wasFull=C.es[ti].hp===C.es[ti].max;
     const res=dealToEnemy(ti,dmg,opts);
     if(wasFull&&C.es[ti].hp<=0) achOneShot();
@@ -1948,6 +1979,7 @@ async function cast(){
     }
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
     let dealt=res.dmg;
+    if(wid==="boomerang"&&R.crit&&C.es[ti].hp>0){ log("Critical! The boomerang comes back around."); const r2=dealToEnemy(ti,Math.floor(dmg/2),{}); await strikeAnim("p","e"+ti,r2,{word:"↺"}); dealt+=r2.dmg; }
     if(wid==="dagger"&&R.crit){ let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Parry! +${sh} Shield.`); await guardAnim("p",sh,{}); }
     if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0&&!undying()){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
@@ -1974,12 +2006,38 @@ async function cast(){
     for(const j of targets) C.es[j].poison+=amt;
     log(`Venom: ${amt} Poison${R.crit?" on every enemy":""}.`); if(R.crit) snd("crit");
     await venomAnim(targets,amt,R.crit,label);
+  } else if(w.kind==="heal"){
+    let h=Math.max(1,Math.floor(R.total/4)); if(R.crit){ h*=2; snd("crit"); }
+    G.hp=Math.min(G.maxHp,G.hp+h); log(`Healing Censer: +${h} HP.`);
+    const c=center("p"); if(R.crit) stamp(c.x,c.top-40,"CRITICAL!"); wordPop(c.x,c.top-110,label);
+    await healAnim("p",h); updateBar("p");
+  } else if(w.kind==="draw"){
+    const n=Math.min(5,Math.max(1,Math.floor(R.total/6))); const before=C.hand.length; draw(n);
+    const got=C.hand.slice(before); if(R.crit){ snd("crit"); got.forEach(u=>{ if(/[A-Z]/.test(C.t[u].ch)) C.t[u].lvl=2; }); }
+    log(`Seeker's Lantern: draw ${got.length}${R.crit?" (Level 2 this combat)":""}.`);
+    const c=center("p"); wordPop(c.x,c.top-110,label); await buffAnim("p",`Draw ${got.length}${R.crit?" · Lv 2":""}`);
+  } else if(w.kind==="forge"){
+    const n=Math.min(3,Math.max(1,Math.floor(R.total/8))); const ch=R.L[R.L.length-1]||"E"; const made=[];
+    for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:R.crit?2:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; C.hand.push(nt.uid); C.fresh.push(nt.uid); made.push(nt.uid); }
+    if(R.crit) snd("crit"); log(`Rune Chisel: carved ${n} Fragile ${ch} tile${n>1?"s":""}${R.crit?" (Level 2)":""} into your hand.`);
+    const c=center("p"); wordPop(c.x,c.top-110,label); await buffAnim("p",`+${n} ${ch}${R.crit?" Lv 2":""}`);
+  } else if(w.kind==="cleanse"){
+    let cleared=0; for(const u of C.hand){ if(C.t[u].deb){ C.t[u].deb=null; cleared++; } }
+    let sh=Math.floor(R.total/2); if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh;
+    if(R.crit){ snd("crit"); for(const s of ["poison","weaken","broken","frustrated","curse"]) C.p[s]=0; }
+    log(`Cleansing Bell: ${cleared} tile${cleared===1?"":"s"} cleansed${R.crit?", and all your debuffs":""}. +${sh} Shield.`);
+    await guardAnim("p",sh,{crit:R.crit,word:label});
+  } else if(w.kind==="store"){
+    const e=Math.min(3,1+Math.floor(R.total/12)); C.nextEnergy=(C.nextEnergy||0)+e; if(R.crit){ snd("crit"); C.nextDraw=(C.nextDraw||0)+3; }
+    log(`Sand Hourglass: +${e} Energy${R.crit?" and +3 tiles":""} next turn.`);
+    const c=center("p"); wordPop(c.x,c.top-110,label); await buffAnim("p",`Next turn +${e} Energy${R.crit?" · +3 tiles":""}`);
   } else {
     let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2);
     C.p.block+=sh; snd("shield");
     if(R.crit){ snd("crit"); if(wid==="shield"){ extraDraw+=3; log("Critical! Draw 3 tiles."); } if(wid==="bulwark"){ C.p.robust+=2; log("Critical! +2 Robust."); } if(wid==="mirror"){ C.p.thorns+=Math.floor(sh/2); log(`Critical! Thorns ${Math.floor(sh/2)}.`); } }
     await guardAnim("p",sh,{crit:R.crit,word:label});
   }
+  if(thirdCast){ if(hasR("shuriken")){ C.p.might++; log("Shuriken: +1 Might."); flashRelics(["shuriken"]); } if(hasR("opener")&&C.es.some(e=>e.hp>0)) await relicHitAll(5,"Letter Opener","opener"); }
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
   if(extraDraw) draw(extraDraw);
   if(G.hp<=0&&!undying()) return gameOver("your own frustration");
@@ -2056,10 +2114,10 @@ async function endTurn(){
     const t=C.t[u];
     if(t.deb&&t.deb.t==="condemn"){ t.deb.n--; if(t.deb.n<=0){ C.hand.splice(C.hand.indexOf(u),1); t.deb=null; C.ban.push(u); log(`Condemned ${t.ch} is banished until this fight ends.`); } }
   }
-  C.disc.push(...C.hand); C.hand=[];
+  if(!hasR("satchel")){ C.disc.push(...C.hand); C.hand=[]; }
   for(const u in C.t){ const d=C.t[u].deb; if(d&&d.t==="lock"){ d.n--; if(d.n<=0) C.t[u].deb=null; } }
   const p=C.p;
-  if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0&&!undying()) return gameOver("Poison"); }
+  if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0&&!undying()) return gameOver("Poison"); medkitCheck(); }
   if(p.weaken>0) p.weaken--; if(p.broken>0) p.broken--; if(p.frustrated>0) p.frustrated--;
   if(p.curse>0 && G.hp<=p.curse){ G.hp=0; if(!undying()){ renderCombat(); return gameOver("the Curse"); } }
   renderCombat();
@@ -2082,6 +2140,7 @@ async function enemyTurn(){
         await strikeAnim(key,"p",res,{heavy:a.heavy});
         renderCombat();
         if(G.hp<=0&&!undying()) return gameOver(def.name);
+        medkitCheck();
         if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; if(e.dead) break; }
       } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
@@ -2156,7 +2215,7 @@ function renderCombat(){
       <button class="tbtn" title="Settings" onclick="showSettings()"><span class="ic">${TOPIC.gear}</span><span class="lbl">Setting</span></button>
     </div>`;
   const en=$("#energy"); en.className="ui"+(C.energy?"":" empty");
-  en.innerHTML=`<div class="gem" title="Energy">${gemSVG()}<b>${C.energy}/${BASE_ENERGY}</b></div><span class="lbl">Energy</span>`;
+  en.innerHTML=`<div class="gem" title="Energy">${gemSVG()}<b>${C.energy}/${maxEnergy()}</b></div><span class="lbl">Energy</span>`;
   // sigil box
   const barTiles=C.bar.map(u=>C.t[u]);
   let prev = barTiles.length ? evaluate(barTiles,w,false) : null, wres={};
@@ -2177,7 +2236,7 @@ function renderCombat(){
     return `<button class="wslot ${i===C.wi?"sel":""} ${used?"used":""}" data-i="${i}" onclick="selWeapon(${i})" ${tipAttr(`<b>${W.name}</b> · ${KIND_LABEL[W.kind]} · ${W.cost} Energy · Mult ×${W.mult}<br>${W.desc}<br><b>Critical (exactly ${W.sigil} letters):</b> ${W.crit}`,["crit","energy"].concat(W.kind==="psn"?["poison"]:W.kind==="buff"?["might","robust"]:id==="mirror"?["thorns"]:id==="sword"?["broken"]:[]))} aria-pressed="${i===C.wi}">
       <span class="cost">${W.cost}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
-  const pots = Array.from({length:MAX_POTIONS},(_,i)=>{ const p=G.potions[i];
+  const pots = Array.from({length:maxPotions()},(_,i)=>{ const p=G.potions[i];
     return p?`<button class="pslot" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})">${potionIcon(p)}</button>`:`<span class="pslot" title="Empty potion slot"></span>`; }).join("");
   const n=C.hand.length, cols=n>16?5:4, rows=Math.max(4,Math.ceil(n/cols));
   const rowh = Math.floor((262-24-(rows-1)*9)/rows);
@@ -2186,7 +2245,7 @@ function renderCombat(){
     return tileHTML(t,{click:`tapTile(${u})`,cls:(on?"ghost ":"")+(fresh.has(u)?"pop-in":"")}); }).join("") + "<span class='tile empty'></span>".repeat(Math.max(0,cols*rows-n));
   $("#bottom").innerHTML = `
     <div class="shelf"><span class="lbl">Weapons (${MAX_WEAPONS} slots)</span><div class="weapons">${ws}</div></div>
-    <div class="shelf potshelf">${pots}</div>
+    <div class="shelf potshelf" style="grid-template-rows:repeat(${maxPotions()},1fr)">${pots}</div>
     <div class="shelf handgrid" id="handgrid" style="--cols:${cols};--rowh:${rowh}px">${hand}</div>
     <div class="piles">
       <button class="pilebtn" onclick="showDeck(C.draw.map(u=>C.t[u]),'Draw pile')" title="Draw pile">${TOPIC.deck}<span class="n">${C.draw.length}</span><span class="pl">Draw</span></button>
@@ -2284,7 +2343,7 @@ function hpBarInner(k){ const [h,m]=hpOf(k), tr=trailOf(k);
   return `<i class="hpf" style="width:${100*h/m}%"></i><i class="hplost" style="left:${100*h/m}%;width:${100*Math.max(0,tr-h)/m}%"></i>`; }
 function scheduleTrail(k){
   C.trailT=C.trailT||{}; if(C.trailT[k]) return;
-  C.trailT[k]=setTimeout(()=>{ if(!C) return; C.trailT[k]=null; const [h,m]=hpOf(k); C.trail[k]=h;
+  const owner=C; C.trailT[k]=setTimeout(()=>{ if(!C||C!==owner) return; C.trailT[k]=null; const [h,m]=hpOf(k); C.trail=C.trail||{}; C.trail[k]=h;
     const lost=fEl(k)?.querySelector(".hplost"); if(lost){ lost.classList.add("drain"); lost.style.width="0%"; } }, T_(700));
 }
 function updateBar(k){
@@ -2378,7 +2437,7 @@ function glossaryTab(tab){
   if(tab==="relics") return Object.entries(RELICS).map(([id,R])=>`<div class="gcard small"><span class="relic big">${relicIcon(id)}</span><div>
       <h3>${R.name}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`).join("");
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
-      <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · 3 slots max</div></div></div>`).join("");
+      <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.passive?"Works by itself":P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · ${maxPotions()} slots max</div></div></div>`).join("");
   if(tab==="keywords") return Object.entries(KW).map(([k,v])=>`<div class="gcard small">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]?`<div class="gart sm">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`).join("");
 }
 function showGlossary(tab="monsters"){
@@ -2566,7 +2625,7 @@ function actCleared(){
   if(act>=4) return showEnding();
   if(act===3&&!G.liftoffSeen){ G.liftoffSeen=true; return showLiftoff(actCleared); }
   G.screen="actclear"; renderHUD();
-  const opts=[]; for(let i=0;i<3;i++){ const r=randomRelic(opts); if(r) opts.push(r); }
+  const opts=bossRelicChoices();
   $("#app").innerHTML=actPage(`<div class="screen">
     <h2 class="pagetitle">Act ${act} cleared!</h2>
     <div class="paper">${act===1?"The guardian of the outskirts falls. Beyond lie the broken streets of <b>The Ruined City</b>.":act===2?"The city shakes and falls quiet. Ahead, the doors of <b>The Tower</b> stand open.":"The last guardian of The Tower collapses. A round door slides open, and violet light spills out of <b>The Lexicore Chamber</b>."} You rest to full health. Take a boss relic.</div>
@@ -2735,8 +2794,10 @@ async function venomAnim(targets,amt,crit,word){
 }
 function killGold(i){
   if(G.tutorial) return 0;
-  const act=G.act||1, n=C.es.length;
-  if(C.kind==="boss") return Math.round(130/n);
+  if(hasR("ecto")) return 0;
+  const act=G.act||1, n=C.es.length, k=hasR("idol")?1.25:1;
+  if(C.kind==="boss") return Math.round(130*k/n);
+  if(k>1){ const base = C.kind==="elite" ? 40+rnd(18)+12*(act-1) : Math.max(6,Math.round((19+rnd(12)+7*(act-1))/n)); return Math.round(base*k); }
   if(C.kind==="elite") return 40+rnd(18)+12*(act-1);
   return Math.max(6,Math.round((19+rnd(12)+7*(act-1))/n));
 }
@@ -2816,17 +2877,18 @@ function winCombat(){
   if(kind==="boss"){ return actCleared(); }
   const rw={gold:got, slots:rollPaintSlots(), extras:[]};
   // GDD extras are granted automatically so the reward screen stays a single choice
-  if(kind==="elite"||Math.random()<.5){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<MAX_POTIONS){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
+  if(!hasR("sozu")&&(kind==="elite"||Math.random()<.5)){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<maxPotions()){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
   if(kind==="elite"){ const r=randomRelic(); if(r){ gainRelic(r); rw.extras.push(RELICS[r].name); } }
   G.reward=rw; G.screen="reward";
   renderReward();
 }
 function randomRelic(exclude=[]){
-  const pool=Object.keys(RELICS).filter(r=>!RELICS[r].starter&&!G.relics.includes(r)&&!exclude.includes(r));
+  const pool=Object.keys(RELICS).filter(r=>!RELICS[r].starter&&!RELICS[r].boss&&!G.relics.includes(r)&&!exclude.includes(r));
   return pool.length?pick(pool):null;
 }
 function gainRelic(id){
   G.relics.push(id); const R=RELICS[id];
+  if(id==="berry"){ G.maxHp+=7; G.hp+=7; }
   if(R.gain) for(const ch of R.gain) G.deck.push(newTile(ch));
   renderHUD(); toast(`Relic gained: ${R.name}`); snd("coin");
 }
@@ -2836,7 +2898,7 @@ function rollPaintSlots(){
   const s1=pick([...SLOT1]);
   const s2=pick([...SLOT2].filter(c=>c!==s1));
   const s3=pick([...ALPHA,"?","!",","].filter(c=>c!==s1&&c!==s2));
-  return [s1,s2,s3].map(ch=>({ch, paint:pick(Object.keys(PAINTS)), lvl:(/[A-Z]/.test(ch)&&Math.random()<LV2_REWARD_CHANCE)?2:1}));
+  return (hasR("crown")?[pick([s1,s2,s3])]:[s1,s2,s3]).map(ch=>({ch, paint:pick(Object.keys(PAINTS)), lvl:(/[A-Z]/.test(ch)&&Math.random()<LV2_REWARD_CHANCE)?2:1}));
 }
 function normSlots(rw){ rw.slots=rw.slots.map(x=>typeof x==="string"?{ch:x,paint:rw.paint||"red",lvl:1}:x); return rw.slots; }
 function rerollCost(){ if(!G.rerollCost) G.rerollCost=5; return G.rerollCost; }
@@ -2889,7 +2951,7 @@ function claimPaintLetter(i){
 }
 
 /* ================= REST ================= */
-function restHeal(){ G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.3)); snd("shield"); showMap(); }
+function restHeal(){ if(hasR("dripper")){ toast("Coffee Dripper: you can't sleep."); snd("buzz"); return; } G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.3)+(hasR("pillow")?15:0)); snd("shield"); showMap(); }
 function restUpgrade(){ pickTile("Upgrade a tile to Level 2", t=>/[A-Z]/.test(t.ch)&&t.lvl===1, t=>{ t.lvl=2; snd("coin"); toast(`${t.ch} upgraded to Level 2.`); showMap(); }); }
 
 /* ================= TREASURE ================= */
@@ -2905,6 +2967,102 @@ function showTreasure(){
 const ALTAR_POOL=["lance","drum","mirror","quill"];
 const KIND_LABEL={atk:"Attack",def:"Defense",buff:"Buff",psn:"Poison"};
 const BLADE_DOWN={lance:true,quill:true,sword:true,needle:true,hammer:true};
+/* ================= CONTENT PACK 2: weapons, potions, relics ================= */
+Object.assign(WEAPONS,{
+  censer:{name:"Healing Censer",cost:2,sigil:5,kind:"heal",mult:1,desc:"Heal HP equal to output ÷ 4 (min 1).",crit:"Heal twice as much.",price:110},
+  lantern2:{name:"Seeker's Lantern",cost:1,sigil:3,kind:"draw",mult:1,desc:"Draw 1 tile per 6 output (min 1, max 5).",crit:"The drawn tiles become Level 2 for this combat.",price:110},
+  chisel:{name:"Rune Chisel",cost:1,sigil:4,kind:"forge",mult:1,desc:"Carve Fragile copies of the word's LAST letter into your hand: 1 per 8 output (min 1, max 3). Fragile tiles vanish after one use.",crit:"The copies are Level 2.",price:110},
+  bell:{name:"Cleansing Bell",cost:1,sigil:4,kind:"cleanse",mult:1,desc:"Remove every debuff from the tiles in your hand, and gain Shield equal to output ÷ 2.",crit:"Also remove all of YOUR debuffs (Poison, Weaken, Broken, Frustrated, Curse).",price:110},
+  hourglass:{name:"Sand Hourglass",cost:1,sigil:5,kind:"store",mult:1,desc:"Store time: next turn you get +1 Energy, +1 more per 12 output (max +3).",crit:"Next turn you also draw 3 extra tiles.",price:110},
+  boomerang:{name:"Boomerang",cost:2,sigil:4,kind:"atk",mult:1,desc:"Deal damage. The tiles you used fly back into your hand.",crit:"It hits a second time for half damage.",price:110},
+});
+ALTAR_POOL.push("censer","lantern2","chisel","bell","hourglass","boomerang");
+Object.assign(KIND_LABEL,{heal:"Heal",draw:"Draw",forge:"Forge",cleanse:"Cleanse",store:"Store",util:"Utility"});
+Object.assign(WICON,{
+  censer:()=>iconSVG("0 0 100 100",(sh,ink)=>{ ink(`<path class="thick" d="M50 4 L50 30"/>`); sh("path",`d="M28 40 Q50 28 72 40 L66 74 Q50 86 34 74 Z"`,"#c8a24a"); sh("rect",`x="30" y="34" width="40" height="10" rx="4"`,"#8a6a1e"); ink(`<path style="stroke:#57cc4d;stroke-width:5" d="M42 26 Q36 16 44 8 M58 26 Q64 16 56 8"/>`); sh("path",`d="M50 50 L54 58 L62 58 L56 64 L58 72 L50 67 L42 72 L44 64 L38 58 L46 58 Z"`,"#ff5d8f"); }),
+  lantern2:()=>iconSVG("0 0 100 100",(sh,ink)=>{ ink(`<path class="thick" d="M50 4 L50 16 M38 16 L62 16"/>`); sh("path",`d="M34 22 L66 22 L70 78 L30 78 Z"`,"#3a3f4a"); sh("path",`d="M40 30 L60 30 L62 70 L38 70 Z"`,"#ffd166"); sh("path",`d="M50 38 Q58 50 50 62 Q42 50 50 38 Z"`,"#ff7b00"); sh("rect",`x="26" y="78" width="48" height="10" rx="4"`,"#3a3f4a"); }),
+  chisel:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="44" y="40" width="12" height="54" rx="4"`,"#8a4b24"); sh("path",`d="M42 8 L58 8 L58 40 L50 46 L42 40 Z"`,"#dfe7ef"); sh("rect",`x="12" y="66" width="26" height="26" rx="4"`,"#f6e7c4"); ink(`<text x="25" y="86" text-anchor="middle" style="font:800 18px var(--f-tile);fill:#1d1b22;stroke:none">A</text><path class="thin" style="stroke:#ffd166" d="M64 20 L76 14 M64 30 L80 30"/>`); }),
+  bell:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M24 72 Q24 26 50 20 Q76 26 76 72 L84 80 L16 80 Z"`,"#bfe0ff"); sh("circle",`cx="50" cy="86" r="7"`,"#c8a24a"); sh("rect",`x="44" y="10" width="12" height="12" rx="4"`,"#c8a24a"); ink(`<path class="thin" style="stroke:#fff" d="M36 34 Q32 50 34 66"/><path style="stroke:#5fd4c4;stroke-width:4" d="M6 40 Q2 50 6 60 M94 40 Q98 50 94 60"/>`); }),
+  hourglass:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="22" y="6" width="56" height="10" rx="4"`,"#8a4b24"); sh("rect",`x="22" y="84" width="56" height="10" rx="4"`,"#8a4b24"); sh("path",`d="M30 16 L70 16 Q70 40 52 50 Q70 60 70 84 L30 84 Q30 60 48 50 Q30 40 30 16 Z"`,"#e9f7ff"); sh("path",`d="M38 30 L62 30 Q58 42 50 48 Q42 42 38 30 Z"`,"#ffbe0b"); sh("path",`d="M34 82 Q50 62 66 82 Z"`,"#ffbe0b"); }),
+  boomerang:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M14 80 Q20 20 84 16 L88 30 Q40 34 32 84 Z"`,"#c27a3a"); ink(`<path class="thin" d="M24 74 Q30 30 80 24"/><path style="stroke:#5fd4c4;stroke-width:4" d="M60 60 Q80 70 76 88 M70 54 Q90 60 92 76"/>`); }),
+});
+Object.assign(POTIONS,{
+  phoenix:{name:"Phoenix Feather",d:"Keep it in a slot. When you would die, it burns and brings you back with 30% HP. It can't be drunk.",passive:true},
+  tonic:{name:"Energy Tonic",d:"Gain 2 Energy."},
+  pages:{name:"Fresh Pages",d:"Discard your whole hand and draw a fresh 16 tiles."},
+  venom:{name:"Venom Vial",d:"Inflict 8 Poison on the target (+4 per Act after the first)."},
+  bomb:{name:"Blast Jar",d:"Deal 12 damage to ALL enemies (+6 per Act after the first)."},
+  brittle:{name:"Shatter Draught",d:"Inflict Broken 3 on ALL enemies (+50% damage taken)."},
+  jester:{name:"Jester's Brew",d:"Add 2 Fragile [ ? ] Wildcard tiles to your hand."},
+  shout:{name:"Battle Cry",d:"Add 3 Fragile [ ! ] tiles to your hand."},
+  smoke:{name:"Smoke Bomb",d:"Escape a normal or Elite fight. You get no reward. Doesn't work on bosses."},
+  fruit:{name:"Ancient Fruit",d:"Raise your Max HP by 5 and heal 5. Usable anywhere.",any:true},
+  echo:{name:"Echo Draught",d:"The next word you cast this turn has its output doubled."},
+  clarity:{name:"Clarity Draught",d:"Every tile in your hand becomes Level 2 for this combat."},
+});
+Object.assign(POTION_COLOR,{phoenix:"#ff7b00",tonic:"#ffd166",pages:"#f6e7c4",venom:"#7fd34a",bomb:"#3d3a44",brittle:"#bfe0ff",jester:"#9b5de5",shout:"#e63946",smoke:"#9aa6b4",fruit:"#57cc4d",echo:"#5fd4c4",clarity:"#fff8df"});
+Object.assign(RELICS,{
+  coupon:{name:"Merchant's Coupon",sym:"%",d:"Everything in the shop costs 25% less."},
+  nib:{name:"Pen Nib",sym:"10",d:"Every 10th attack you cast deals double damage."},
+  anchor:{name:"Anchor",sym:"⚓",d:"Start each combat with 10 Shield."},
+  pouch:{name:"Extra Pouch",sym:"+4",d:"Draw 4 extra tiles on the first turn of each combat."},
+  lantern:{name:"Lantern",sym:"+1",d:"Gain 1 extra Energy on the first turn of each combat."},
+  knuckle:{name:"Iron Knuckles",sym:"M",d:"Start each combat with 2 Might."},
+  scales:{name:"Bronze Scales",sym:"T",d:"Start each combat with 3 Thorns that last the whole fight."},
+  ticket:{name:"Meal Ticket",sym:"♨",d:"Heal 15 HP whenever you enter a shop."},
+  pillow:{name:"Feather Pillow",sym:"z",d:"Resting at a Rest Site heals 15 more HP."},
+  idol:{name:"Golden Idol",sym:"$",d:"Enemies drop 25% more gold."},
+  medkit:{name:"Medic Kit",sym:"+",d:"The first time you fall below 50% HP in a combat, heal 12."},
+  coil:{name:"Static Coil",sym:"ϟ",d:"At the start of each of your turns, deal 3 damage to ALL enemies."},
+  opener:{name:"Letter Opener",sym:"3",d:"Every 3rd word you cast in a turn deals 5 damage to ALL enemies."},
+  shuriken:{name:"Shuriken",sym:"✦",d:"Every 3rd word you cast in a turn gives +1 Might."},
+  berry:{name:"Strawberry",sym:"♣",d:"Raise your Max HP by 7 when you pick it up."},
+  potbelt:{name:"Potion Belt",sym:"B",d:"Gain 2 extra potion slots."},
+  bird:{name:"Toy Ornithopter",sym:"^",d:"Heal 5 HP whenever you use a potion."},
+  flower:{name:"Happy Flower",sym:"✿",d:"Every 3rd turn of a combat, gain 1 extra Energy."},
+  ecto:{name:"Ectoplasm",sym:"E",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold."},
+  dripper:{name:"Coffee Dripper",sym:"C",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites."},
+  sozu:{name:"Sozu",sym:"S",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions."},
+  crown:{name:"Busted Crown",sym:"♛",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile."},
+  philo:{name:"Philosopher's Stone",sym:"◆",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might."},
+  satchel:{name:"Hoarder's Satchel",sym:"H",boss:true,d:"Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16."},
+});
+Object.assign(RELIC_DRAW,{
+  coupon:(sh,ink)=>{ sh("path",`d="M4 12 L36 12 L36 18 Q32 20 36 22 L36 30 L4 30 L4 22 Q8 20 4 18 Z"`,"#fff8df"); ink(`<text x="20" y="26" text-anchor="middle" style="font:800 11px var(--f-tile);fill:#e63946;stroke:none">-25%</text>`); },
+  nib:(sh,ink)=>{ sh("path",`d="M20 4 L30 18 L24 36 L16 36 L10 18 Z"`,"#3d3a44"); ink(`<path class="thin" style="stroke:#ffd166" d="M20 10 L20 30"/><circle cx="20" cy="22" r="2" style="fill:#ffd166;stroke:none"/>`); },
+  anchor:(sh,ink)=>{ ink(`<path style="stroke:#717d8c;stroke-width:5" d="M20 8 L20 34 M10 16 L30 16 M6 24 Q8 34 20 34 Q32 34 34 24"/><circle cx="20" cy="6" r="4"/><path class="thin" d="M20 8 L20 34"/>`); },
+  pouch:(sh,ink)=>{ sh("path",`d="M10 14 Q4 34 20 36 Q36 34 30 14 Z"`,"#c27a3a"); sh("path",`d="M12 14 L28 14 L24 8 L16 8 Z"`,"#8a4b24"); sh("rect",`x="14" y="20" width="12" height="12" rx="2"`,"#f8bb75"); ink(`<text x="20" y="30" text-anchor="middle" style="font:800 10px var(--f-tile);fill:#1d1b22;stroke:none">+4</text>`); },
+  lantern:(sh,ink)=>{ ink(`<path d="M20 4 L20 8"/>`); sh("rect",`x="12" y="8" width="16" height="4" rx="2"`,"#3a3f4a"); sh("path",`d="M11 12 L29 12 L27 32 L13 32 Z"`,"#ffd166"); sh("path",`d="M20 16 Q25 22 20 28 Q15 22 20 16 Z"`,"#ff7b00"); sh("rect",`x="10" y="32" width="20" height="4" rx="2"`,"#3a3f4a"); },
+  knuckle:(sh,ink)=>{ sh("path",`d="M6 16 Q6 10 12 10 L30 10 Q36 10 36 16 L36 22 Q36 28 30 28 L12 28 Q6 28 6 22 Z"`,"#9aa6b4"); for(const x of [11,18,25,32]) ink(`<circle cx="${x-1}" cy="18" r="3.4" style="fill:#3d3a44"/>`); },
+  scales:(sh,ink)=>{ for(const [x,y] of [[12,12],[24,12],[18,22],[6,22],[30,22],[12,32],[24,32]]) sh("path",`d="M${x-6} ${y-4} Q${x} ${y+6} ${x+6} ${y-4} Z"`,"#c8823a"); },
+  ticket:(sh,ink)=>{ sh("rect",`x="4" y="12" width="32" height="18" rx="3"`,"#ffd166"); ink(`<path class="thin" style="stroke-dasharray:2 2" d="M12 12 L12 30"/>`); sh("path",`d="M18 26 Q18 18 26 18 Q32 18 32 26 Z"`,"#c27a3a"); },
+  pillow:(sh,ink)=>{ sh("path",`d="M4 14 Q20 8 36 14 Q38 22 36 30 Q20 36 4 30 Q2 22 4 14 Z"`,"#f6e7c4"); ink(`<text x="30" y="12" style="font:800 9px var(--f-tile);fill:#3a86ff;stroke:none">z</text><text x="34" y="6" style="font:800 7px var(--f-tile);fill:#3a86ff;stroke:none">z</text>`); },
+  idol:(sh,ink)=>{ sh("path",`d="M12 36 L14 20 Q8 14 12 8 Q20 2 28 8 Q32 14 26 20 L28 36 Z"`,"#ffbe0b"); ink(`<circle cx="17" cy="13" r="1.6" class="dark"/><circle cx="23" cy="13" r="1.6" class="dark"/><path class="thin" d="M16 26 L24 26"/>`); },
+  medkit:(sh,ink)=>{ sh("rect",`x="5" y="12" width="30" height="22" rx="4"`,"#fff8df"); sh("rect",`x="15" y="8" width="10" height="6" rx="2"`,"#9aa6b4"); sh("path",`d="M17 16 L23 16 L23 20 L27 20 L27 26 L23 26 L23 30 L17 30 L17 26 L13 26 L13 20 L17 20 Z"`,"#e63946"); },
+  coil:(sh,ink)=>{ sh("path",`d="M22 2 L8 22 L18 22 L14 38 L32 14 L21 14 Z"`,"#ffd166"); ink(`<path class="thin" style="stroke:#5fd4c4" d="M4 10 L8 12 M34 28 L38 30"/>`); },
+  opener:(sh,ink)=>{ sh("path",`d="M6 34 L28 8 L34 6 L32 12 L10 36 Z"`,"#dfe7ef"); sh("rect",`x="2" y="28" width="12" height="6" rx="2" transform="rotate(-48 8 31)"`,"#8a4b24"); sh("rect",`x="22" y="22" width="14" height="12" rx="1"`,"#f6e7c4"); ink(`<path class="thin" d="M22 22 L29 28 L36 22"/>`); },
+  shuriken:(sh,ink)=>{ sh("path",`d="M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z"`,"#9aa6b4"); ink(`<circle cx="20" cy="20" r="3" style="fill:#3d3a44"/>`); },
+  berry:(sh,ink)=>{ sh("path",`d="M20 36 Q6 28 8 16 Q12 10 20 12 Q28 10 32 16 Q34 28 20 36 Z"`,"#e63946"); sh("path",`d="M12 12 L20 6 L28 12 L20 14 Z"`,"#57cc4d"); for(const [x,y] of [[15,20],[25,20],[20,27],[14,27],[26,27]]) ink(`<circle cx="${x}" cy="${y}" r="1" style="fill:#ffd166;stroke:none"/>`); },
+  potbelt:(sh,ink)=>{ sh("rect",`x="2" y="20" width="36" height="8" rx="3"`,"#8a4b24"); for(const [x,c] of [[10,"#e63946"],[20,"#3a86ff"],[30,"#57cc4d"]]){ sh("path",`d="M${x-4} 10 L${x+4} 10 L${x+5} 24 L${x-5} 24 Z"`,c); } },
+  bird:(sh,ink)=>{ sh("path",`d="M6 24 Q18 14 34 18 L30 24 Q18 22 6 24 Z"`,"#ffbe0b"); sh("path",`d="M14 20 L24 6 L26 20 Z"`,"#fb8b24"); sh("path",`d="M16 22 L26 34 L28 22 Z"`,"#fb8b24"); ink(`<circle cx="30" cy="19" r="1.4" class="dark"/>`); },
+  flower:(sh,ink)=>{ for(let i=0;i<6;i++){ const a=i*Math.PI/3; sh("circle",`cx="${(20+Math.cos(a)*9).toFixed(1)}" cy="${(18+Math.sin(a)*9).toFixed(1)}" r="6"`,"#ff9ad5"); } sh("circle",`cx="20" cy="18" r="6"`,"#ffd166"); ink(`<path d="M20 26 L20 38"/><circle cx="18" cy="17" r="1" class="dark"/><circle cx="22" cy="17" r="1" class="dark"/><path class="thin" d="M17 20 Q20 22 23 20"/>`); },
+  ecto:(sh,ink)=>{ sh("path",`d="M8 36 L8 18 Q8 4 20 4 Q32 4 32 18 L32 36 L28 32 L24 36 L20 32 L16 36 L12 32 Z"`,"#c3f06b"); ink(`<circle cx="15" cy="16" r="2.5" class="dark"/><circle cx="25" cy="16" r="2.5" class="dark"/><ellipse cx="20" cy="24" rx="3" ry="4" class="dark"/>`); },
+  dripper:(sh,ink)=>{ sh("path",`d="M6 8 L34 8 L24 22 L16 22 Z"`,"#c27a3a"); sh("path",`d="M20 24 Q24 30 20 32 Q16 30 20 24 Z"`,"#5b3a1e"); sh("path",`d="M10 34 L30 34 L28 38 L12 38 Z"`,"#fff8df"); },
+  sozu:(sh,ink)=>{ sh("path",`d="M4 30 L34 10 L36 14 L8 34 Z"`,"#57a64a"); ink(`<path class="thin" d="M14 26 L16 29 M24 19 L26 22"/>`); sh("path",`d="M30 18 Q34 22 32 26 Q28 24 30 18 Z"`,"#5fd4c4"); },
+  crown:(sh,ink)=>{ sh("path",`d="M4 32 L6 12 L13 22 L20 6 L27 22 L34 12 L36 32 Z"`,"#ffbe0b"); ink(`<path class="thick" style="stroke:#1d1b22" d="M18 8 L23 20 L19 26"/>`); sh("circle",`cx="13" cy="28" r="2"`,"#e63946"); sh("circle",`cx="27" cy="28" r="2"`,"#3a86ff"); },
+  philo:(sh,ink)=>{ sh("path",`d="M20 2 L34 14 L28 36 L12 36 L6 14 Z"`,"#e63946"); ink(`<path class="thin" style="stroke:#fff" d="M20 2 L20 36 M6 14 L34 14 M12 36 L20 14 L28 36"/>`); },
+  satchel:(sh,ink)=>{ sh("path",`d="M6 16 L34 16 L32 36 L8 36 Z"`,"#8a4b24"); sh("path",`d="M6 16 Q20 4 34 16 L30 24 Q20 18 10 24 Z"`,"#a0602e"); sh("rect",`x="17" y="20" width="6" height="7" rx="2"`,"#c8a24a"); },
+});
+const ENERGY_RELICS=["ecto","dripper","sozu","crown","philo"];
+const hasR = id => !!(typeof G!=="undefined"&&G&&G.relics&&G.relics.includes(id));
+function maxEnergy(){ return BASE_ENERGY + ENERGY_RELICS.filter(hasR).length; }
+function maxPotions(){ return MAX_POTIONS + (hasR("potbelt")?2:0); }
+function bossRelicChoices(){ const pool=shuffle(Object.keys(RELICS).filter(r=>RELICS[r].boss&&!G.relics.includes(r))); const out=pool.slice(0,3); while(out.length<3){ const r=randomRelic(out); if(!r) break; out.push(r); } return out; }
+function medkitCheck(){ if(C&&hasR("medkit")&&!C.medUsed&&G.hp>0&&G.hp<G.maxHp/2){ C.medUsed=true; G.hp=Math.min(G.maxHp,G.hp+12); log("Medic Kit: +12 HP."); try{ const pc=center("p"); numPop(pc.x,pc.top+20,"+12",10,"#7ae582"); updateBar("p"); flashRelics(["medkit"]); }catch(e){} } }
+async function relicHitAll(n,label,rid){
+  for(let j=0;j<C.es.length;j++){ if(C.es[j].dead) continue; const r=dealToEnemy(j,n,{}); updateBar("e"+j); const c=center("e"+j); impact(c.x,c.y,r.dmg,{colors:["#5fd4c4","#ffd166","#fff"]}); numPop(c.x,c.top+10,`-${r.dmg}`,r.dmg,"#ffd166"); }
+  log(`${label}: ${n} damage to all enemies.`); snd("hit"); flashRelics([rid]); await sleep(T_(450)); renderCombat();
+}
 function showAltar(){
   G.screen="altar"; renderHUD();
   if(!G.altar||G.altarDone){
@@ -3269,6 +3427,8 @@ function showShop(){
           tiles:[0,1,2].map(()=>{ const t=genShopTile(); return {t,price:shopTilePrice(t),sold:false}; }),
           potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:Math.round((45+rnd(20))*(1+.15*((G.act||1)-1))),sold:false})),
           tossed:false};
+  if(hasR("coupon")) for(const k of ["relics","tiles","potions"]) G.shop[k].forEach(it=>it.price=Math.round(it.price*.75));
+  if(hasR("ticket")){ const h=Math.min(15,G.maxHp-G.hp); G.hp+=h; if(h) toast(`Meal Ticket: +${h} HP.`); }
   renderShop();
 }
 const CARAVANS=[{x:290,body:"#e63946",trim:"#ffd166",label:"RELICS",inst:"flute",hat:"#3a86ff",name:"Pip, the eldest"},
@@ -3299,7 +3459,8 @@ function renderShop(){
 function shopBuy(kind,i){
   const S=G.shop, it=S[kind][i]; if(!it||it.sold) return;
   if(G.gold<it.price){ toast(`Not enough gold (need ${it.price}).`); snd("buzz"); return; }
-  if(kind==="potions"&&G.potions.length>=MAX_POTIONS){ toast("Your potion slots are full."); snd("buzz"); return; }
+  if(kind==="potions"&&hasR("sozu")){ toast("Sozu: you can't hold potions."); snd("buzz"); return; }
+  if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your potion slots are full."); snd("buzz"); return; }
   G.gold-=it.price; it.sold=true;
   if(kind==="relics") gainRelic(it.id);
   if(kind==="tiles"){ G.deck.push(newTile(it.t.ch,{paint:it.t.paint,lvl:it.t.lvl})); toast(`${it.t.ch} tile added to your deck.`); }
@@ -3315,14 +3476,14 @@ function shopToss(){
 /* ================= REST SITE ================= */
 function showRest(){
   G.screen="rest"; renderHUD(); const BAY=(G.act||1)>=4;
-  const heal=Math.floor(G.maxHp*0.3);
+  const heal=Math.floor(G.maxHp*0.3)+(hasR("pillow")?15:0);
   $("#app").innerHTML=sceneWrap(`
     <div class="shop-title">${BAY?"Recharge Bay":"Campsite"}</div>
     <div class="tent">${BAY?POD_SVG():TENT_SVG()}</div>
     <div class="fire">${artSVG(BAY?"heater":"campfire")}</div><div class="fireglow"></div>
     <div class="restcat">${artSVG(heroArt())}</div>
     <div class="restopts">
-      <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>${BAY?"Step into the charging pod and":"Sleep by the fire and"} recover ${heal} HP (30% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
+      <button class="restbtn" onclick="restHeal()" ${hasR("dripper")?'disabled style="opacity:.45"':""} ${tipAttr(`<b>Rest</b><br>${BAY?"Step into the charging pod and":"Sleep by the fire and"} recover ${heal} HP (30% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
       <button class="restbtn up" onclick="restUpgrade()" ${tipAttr(`<b>Upgrade</b><br>Carve one letter tile into Level 2: +${LV2_BONUS} Spell Power forever. Wildcards can't be upgraded. Press 2.`)}><b>2 · Upgrade</b><span>One tile → Level 2</span></button>
     </div>`,"restscene");
   fitScene();
@@ -3544,8 +3705,14 @@ function spinWheel(){
 
 /* ================= END SCREENS ================= */
 function undying(){
-  if(!G||G.hero!=="champion"||G.hp>0) return false;
-  const a=G.act||1; if(G.undyingAct===a) return false;
+  if(!G||G.hp>0) return false;
+  if(G.hero!=="champion"||G.undyingAct===(G.act||1)){
+    const pi=G.potions.indexOf("phoenix"); if(pi<0) return false;
+    G.potions.splice(pi,1); G.hp=Math.max(1,Math.floor(G.maxHp*.3)); log(`The Phoenix Feather burns! Back up with ${G.hp} HP.`);
+    try{ const pc=center("p"); stamp(pc.x,pc.top-40,"REBORN!"); numPop(pc.x,pc.top+20,`+${G.hp}`,12,"#ff7b00"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
+    return true;
+  }
+  const a=G.act||1;
   G.undyingAct=a; G.hp=Math.min(G.maxHp,1+15);
   log("Undying! The Champion refuses to fall: back up with 16 HP.");
   try{ const pc=center("p"); stamp(pc.x,pc.top-40,"UNDYING!"); numPop(pc.x,pc.top+20,"+15",12,"#7ae582"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
