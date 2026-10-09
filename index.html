@@ -1424,7 +1424,7 @@ const ENEMIES = {
   goblin:{name:"Thorn Goblin",hp:46,art:"goblin",moves:[[{k:"blk",v:10},{k:"buff",s:"might",v:2}],[{k:"atk",v:11}],[{k:"tile",d:"slimy",n:3}]]},
   arachne:{name:"Arachne Matriarch",hp:85,art:"arachne",elite:true,moves:[[{k:"tile",d:"poison",n:4},{k:"blk",v:10}],[{k:"atk",v:16}],[{k:"pdeb",s:"weaken",v:2}],[{k:"atk",v:12}]]},
   quartz:{name:"Quartz Punisher",hp:100,art:"quartz",elite:true,moves:[[{k:"pdeb",s:"broken",v:2}],[{k:"atk",v:16}],[{k:"blk",v:15},{k:"tile",d:"lock",n:2}],[{k:"atk",v:22,heavy:true}]]},
-  tslime:{name:"Training Slime",hp:80,art:"slime",moves:[[{k:"atk",v:8}],[{k:"blk",v:8},{k:"atk",v:6}],[{k:"atk",v:10}]]},
+  tslime:{name:"Training Slime",hp:55,art:"slime",moves:[[{k:"atk",v:5}],[{k:"blk",v:5},{k:"atk",v:4}],[{k:"atk",v:7}]]},
   gargoyle:{name:"Ancient Stone Gargoyle",hp:155,art:"gargoyle",boss:true,moves:[
     [{k:"tile",d:"curse",n:2},{k:"tile",d:"condemn",n:2}],[{k:"atk",v:16},{k:"blk",v:15}],[{k:"pdeb",s:"frustrated",v:3},{k:"atk",v:12}],[{k:"atk",v:24,heavy:true}]],
     names:["Chant of Decay","Stone Slam","Gaze of Frustration","Execute"]},
@@ -1940,7 +1940,7 @@ async function cast(){
   renderCombat();
   if(await resolveDeaths()) return;
   C.busy=false; renderCombat();
-  tutEvent("cast",{kind:w.kind,crit:R.crit});
+  tutEvent("cast",{kind:w.kind,crit:R.crit,word:R.L});
 }
 function dealToEnemy(i,amount,opts){
   const e=C.es[i];
@@ -2753,7 +2753,7 @@ function screenKey(e){
     if(kl==="s"||kl==="arrowdown"||kl==="d"||kl==="arrowright"){ e.preventDefault(); mapSelMove(1); return; }
     if(k==="Enter"||k===" "){ e.preventDefault(); mapSelGo(); return; }
     return; }
-  if(scr==="reward"&&G.reward){ if(n>=1&&n<=3){ e.preventDefault(); claimPaintLetter(n-1); } else if(k.toLowerCase()==="r"){ rerollPaint(); } return; }
+  if(scr==="reward"&&G.reward){ if(n>=1&&n<=3){ e.preventDefault(); claimPaintLetter(n-1); } else if(k.toLowerCase()==="s"){ e.preventDefault(); skipReward(); } return; }
   if(scr==="altar"&&G.altar&&!G.altarDone&&(n===1||n===2)){ e.preventDefault(); pullWeapon(n-1); return; }
   if(scr==="rest"&&(n===1||n===2)){ e.preventDefault(); (n===1?restHeal:restUpgrade)(); return; }
   if(scr==="shop"&&G.shop){ if(n>=1&&n<=9){ e.preventDefault(); shopBuy(["relics","tiles","potions"][Math.floor((n-1)/3)],(n-1)%3); } else if(k.toLowerCase()==="t") shopToss(); else if(k.toLowerCase()==="l"){ G.shop=null; showMap(); } return; }
@@ -2813,12 +2813,12 @@ function renderReward(){
       <div id="easel">${EASEL_ART(first.ch,first.paint)}</div>
       <div id="painter">${artSVG("painter",{paint:first.paint})}</div>
     </div>
-    <div class="box" style="max-width:520px;display:grid;gap:4px"><span style="font-size:16px">The painter bot made three new tiles. Pick one to add to your deck.</span>
+    <div class="box" style="max-width:520px;display:grid;gap:4px"><span style="font-size:16px">The painter bot made three new tiles. Pick one to add to your deck, or skip.</span>
       <div id="slotinfo">${slotInfo(first)}</div></div>
     <div class="row" style="justify-content:center;gap:22px">
       ${rw.slots.map((t,i)=>`<button class="tile p-${t.paint} ${t.lvl===2?"L2":""} ${/[A-Z]/.test(t.ch)?"":"sym"} floaty" style="animation-delay:${i*-.5}s" onclick="claimPaintLetter(${i})"
         onmouseenter="previewEasel(${i})" onfocus="previewEasel(${i})" aria-label="Take ${t.lvl===2?"Level 2 ":""}${t.paint} ${t.ch} tile"><b>${t.ch}</b>${VAL[t.ch]?`<span class="val">${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}</span>`:""}${t.lvl===2?`<span class="lv">II</span>`:""}</button>`).join("")}
-      <button class="btn small" onclick="rerollPaint()" ${G.gold<cost?"disabled":""} title="Re-roll all three tiles. The price rises each use and never resets this run.">↻ Re-roll · ${cost}g</button>
+      <button class="btn small" onclick="skipReward()" title="Leave without adding a tile (press S). A thin deck draws your best letters more often.">Skip · S</button>
     </div>
   </div>`;
 }
@@ -2826,6 +2826,7 @@ function previewEasel(i){ const rw=G.reward; if(!rw) return; const t=rw.slots[i]
   const e=$("#easel"); if(e) e.innerHTML=EASEL_ART(t.ch,t.paint);
   const p=$("#painter"); if(p) p.innerHTML=artSVG("painter",{paint:t.paint});
   const s=$("#slotinfo"); if(s) s.innerHTML=slotInfo(t); }
+function skipReward(){ if(!G.reward) return; G.reward=null; snd("tap"); toast("You leave the tiles on the easel."); showMap(); }
 function rerollPaint(){
   const cost=rerollCost(); if(G.gold<cost) return;
   G.gold-=cost; G.rerollCost+=5; G.reward.slots=rollPaintSlots(); snd("coin"); renderReward();
@@ -3914,7 +3915,7 @@ ARTS.ratback={vb:[200,220], v:["i0","i1","cheer"], tf:{i0:"translate(0 14)",i1:"
     if(ch){ ink(`<path class="thick" d="M64 150 L44 74 M136 150 L156 74"/>`); sh("path",`d="M38 70 L44 36 L50 70 Z"`,"#dfe7ef"); sh("path",`d="M150 70 L156 36 L162 70 Z"`,"#dfe7ef"); ink(`<path style="stroke:#ffd23f" d="M44 22 L44 10 M156 22 L156 10"/>`); }
     else { ink(`<path class="thick" d="M60 150 L40 176 M140 150 L160 176"/>`); sh("path",`d="M36 174 L28 204 L44 180 Z"`,"#dfe7ef"); sh("path",`d="M164 174 L172 204 L156 180 Z"`,"#dfe7ef"); }
   }};
-const MENU_HERO={scholar:{art:"catback",css:"left:300px;top:390px;width:250px"},champion:{art:"wolfback",css:"left:95px;top:372px;width:245px"},mercenary:{art:"ratback",css:"left:540px;top:470px;width:185px"}};
+const MENU_HERO={scholar:{art:"catback",css:"left:250px;top:470px;width:270px;z-index:3"},champion:{art:"wolfback",css:"left:80px;top:395px;width:215px;z-index:1"},mercenary:{art:"ratback",css:"left:450px;top:428px;width:165px;z-index:1"}};
 function heroesUnlocked(){ return HERO_ORDER.slice(); }
 function cheerHero(el){ if(!el) return; el.dataset.pose="cheer"; snd("win"); clearTimeout(el._t); el._t=setTimeout(()=>{ delete el.dataset.pose; },1500); }
 function splashFx(host,x,y,n,cols){ for(let i=0;i<n;i++){ const p=document.createElement("div"); p.className="puff"; const s=18+Math.random()*26;
@@ -3981,16 +3982,16 @@ const TUT=[
   {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and the old words turn into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
   {t:"Pick a weapon first. Tap the <b>Wand</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
-  {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
+  {word:"CAT",t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
   {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
   {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
-  {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 8 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
+  {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 5 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
   {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
   {t:"Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.", wait:2, next:"Play", done:ev=>ev==="endTurn"},
   {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Wand? Cast a word with exactly that many letters and the Wand makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
-  {t:"Select the Wand and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
+  {word:"STONE",t:"Select the Wand and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
   {t:"Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
 ];
 function startTutorial(){
@@ -4036,7 +4037,18 @@ function tutEvent(ev,a){
   if(!C||!C.tut||C.tut.free) return;
   const st=TUT[C.tut.i];
   if(st.wait&&!C.tut.ready){ if(ev==="turn"&&a>=st.wait){ C.tut.ready=true; setTimeout(tutRender,T_(900)); } return; }
-  if(st.done&&(C.tut.phase==="play"||!st.next)&&st.done(ev,a)) tutAdvance();
+  if(st.done&&(C.tut.phase==="play"||!st.next)&&st.done(ev,a)){
+    if(ev==="cast"&&st.word&&a.word&&a.word!==st.word) tutRebel(a.word,st.word);
+    tutAdvance();
+  }
+}
+function tutRebel(w,asked){
+  C.tut.rebels=(C.tut.rebels||0)+1;
+  const lines=[`Oh-ho! <b>${w}</b> instead of <b>${asked}</b>? A rebel, huh? Too cool to follow the instructions.`,`<b>${w}</b>. Again. You really don't like being told what to do, do you?`];
+  setTimeout(()=>{ openModal(`<h2 style="font-size:40px">Rebellious, aren't we?</h2>
+    <div style="font-size:22px;max-width:46ch">${lines[Math.min(C.tut.rebels,2)-1]}</div>
+    <div class="muted" style="margin-top:6px">Fine. It still counts.</div>
+    <button class="btn primary" style="margin-top:12px" onclick="closeModal()">Yep, that's me</button>`); snd("buzz"); }, T_(1400));
 }
 function tutAdvance(){
   if(TUT[C.tut.i].zoom){ unfocus(); C.tut.zoomed=false; }
