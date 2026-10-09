@@ -3271,9 +3271,10 @@ ARTS.catback={vb:[220,230], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)"
     sh("path",`d="M62 218 Q56 160 104 128 Q152 160 146 218 Z"`,CC.char);
     sh("path",`d="M${t?118:116} 136 L${t||ch?164:160} ${t||ch?130:120} L${t||ch?156:154} ${t||ch?146:136} L${t?124:122} 148 Z"`,CC.orange);
     sh("path",`d="M78 130 Q104 144 130 130 L128 142 Q104 154 80 142 Z"`,CC.orange);
-    if(ch){ ink(`<path class="thick" d="M84 150 L70 60 M124 150 L138 60"/>`);
-      sh("path",`d="M64 30 L104 40 L144 30 L144 66 L104 76 L64 66 Z"`,CC.orange); ink(`<path class="thin" d="M104 40 L104 76 M74 44 L98 50 M110 50 L134 44"/>`);
-      ink(`<path style="stroke:#ffd23f" d="M104 20 L104 6 M70 18 L62 8 M138 18 L146 8 M50 40 L38 36 M158 40 L170 36"/>`); }
+    if(ch){ ink(`<path class="thick" d="M124 150 L150 70"/>`);
+      sh("rect",`x="146" y="-6" width="10" height="84" rx="4" transform="rotate(10 151 36)"`,"#8a4b24");
+      sh("path",`d="M162 -44 L170 -26 L190 -24 L175 -11 L179 9 L162 -1 L145 9 L149 -11 L134 -24 L154 -26 Z"`,CC.gold);
+      ink(`<path style="stroke:#ffd23f" d="M162 -58 L162 -72 M134 -40 L122 -50 M190 -40 L202 -50 M126 -6 L112 -4 M198 -6 L212 -4"/>`); }
     sh("path",`d="M80 104 L72 78 L94 92 Z"`,CC.char); sh("path",`d="M128 104 L136 78 L114 92 Z"`,CC.char);
     sh("circle",`cx="104" cy="110" r="27"`,CC.char);
     sh("path",`d="M40 92 Q104 70 170 88 Q160 104 104 102 Q50 104 40 92 Z"`,CC.blue);
@@ -3378,7 +3379,7 @@ function showSplash(){
       <div class="sp-cloud sp-int" style="left:560px;top:120px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
       <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()" ${tipAttr("The Tower. Lexicore waits somewhere near the top.")}><i></i></div>
       <div class="sp-ring"><svg viewBox="0 0 160 60" width="160" height="60" style="overflow:visible">${layer((sh,ink)=>{ sh("path",`d="M4 30 Q80 -4 156 30 Q80 64 4 30 Z M24 30 Q80 50 136 30 Q80 12 24 30 Z"`,"#bfefff"); ink(`<path class="thin" style="stroke:#5fd4c4" d="M14 30 Q80 2 146 30"/>`); })}</svg></div>
-      ${heroesUnlocked().map(h=>`<div class="sp-cat sp-int" style="${MENU_HERO[h].css}" onpointerdown="event.stopPropagation();cheerHero(this)" ${tipAttr(HEROES[h].name)}>${artSVG(MENU_HERO[h].art)}</div>`).join("")}
+      ${heroesUnlocked().map(h=>`<div class="sp-cat sp-int" style="${MENU_HERO[h].css}" onpointerdown="event.stopPropagation();cheerHero(this)" aria-label="${HEROES[h].name}">${artSVG(MENU_HERO[h].art)}</div>`).join("")}
     </div>
     <div class="sp-ui">
       <h1 class="sp-title">Lexicore</h1>
