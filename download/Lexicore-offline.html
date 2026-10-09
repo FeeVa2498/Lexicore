@@ -1741,13 +1741,13 @@ function showHelp(){
 }
 
 /* ================= POTIONS ================= */
-function addPotion(id){ if(hasR("sozu")){ toast("Sozu: you can't hold potions."); return false; } if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
+function addPotion(id){ if(hasR("sozu")){ toast("Cracked Flask: you can't hold potions."); return false; } if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
 async function usePotion(i){
   const id=G.potions[i]; if(!id) return;
   const P=POTIONS[id];
   if(P.passive){ toast(`${P.name} works by itself: it saves you when you would die.`); return; }
   if(!C && !P.any){ toast(`${P.name} can only be used in combat.`); return; }
-  if(C && id==="smoke" && C.kind==="boss"){ toast("The boss blocks every exit. Smoke Bomb won't work here."); return; }
+  if(C && id==="smoke" && C.kind==="boss"){ toast("The boss blocks every exit. Vanishing Powder won't work here."); return; }
   if(C && (C.busy||C.over)) return;
   if(C && !tg("potion")) return;
   G.potions.splice(i,1); snd("shield");
@@ -1827,7 +1827,7 @@ async function startPlayerTurn(){
     if(hasR("scales")){ C.baseThorns=3; fired.push("scales"); }
     if(hasR("pouch")){ extra+=4; fired.push("pouch"); }
   }
-  if(!C.tut&&hasR("flower")&&C.turn%3===0){ C.energy++; fired.push("flower"); log("Happy Flower: +1 Energy."); }
+  if(!C.tut&&hasR("flower")&&C.turn%3===0){ C.energy++; fired.push("flower"); log("Wind-up Key: +1 Energy."); }
   C.p.thorns=C.baseThorns||0;
   draw(HAND_SIZE - C.hand.length + extra);
   if(C.tut&&C.turn===1) ensureLetters("CATDOG");
@@ -1966,7 +1966,7 @@ async function cast(){
     const ti=aliveTarget();
     let dmg=R.total, opts={};
     if(R.crit && wid==="hammer"){ dmg*=2; opts.pierce=true; }
-    if(hasR("nib")){ G.nib=(G.nib||0)+1; if(G.nib%10===0){ dmg*=2; log("Pen Nib! Double damage."); flashRelics(["nib"]); } }
+    if(hasR("nib")){ G.nib=(G.nib||0)+1; if(G.nib%10===0){ dmg*=2; log("Chalk Tally: the 10th mark! Double damage."); flashRelics(["nib"]); } }
     const wasFull=C.es[ti].hp===C.es[ti].max;
     const res=dealToEnemy(ti,dmg,opts);
     if(wasFull&&C.es[ti].hp<=0) achOneShot();
@@ -2037,7 +2037,7 @@ async function cast(){
     if(R.crit){ snd("crit"); if(wid==="shield"){ extraDraw+=3; log("Critical! Draw 3 tiles."); } if(wid==="bulwark"){ C.p.robust+=2; log("Critical! +2 Robust."); } if(wid==="mirror"){ C.p.thorns+=Math.floor(sh/2); log(`Critical! Thorns ${Math.floor(sh/2)}.`); } }
     await guardAnim("p",sh,{crit:R.crit,word:label});
   }
-  if(thirdCast){ if(hasR("shuriken")){ C.p.might++; log("Shuriken: +1 Might."); flashRelics(["shuriken"]); } if(hasR("opener")&&C.es.some(e=>e.hp>0)) await relicHitAll(5,"Letter Opener","opener"); }
+  if(thirdCast){ if(hasR("shuriken")){ C.p.might++; log("Metronome: +1 Might."); flashRelics(["shuriken"]); } if(hasR("opener")&&C.es.some(e=>e.hp>0)) await relicHitAll(5,"Rubber Stamp","opener"); }
   if(fr>0 && R.L.length < fr+1){ G.hp=Math.max(0,G.hp-1); log("Frustrated: the short word stings for 1."); }
   if(extraDraw) draw(extraDraw);
   if(G.hp<=0&&!undying()) return gameOver("your own frustration");
@@ -2951,7 +2951,7 @@ function claimPaintLetter(i){
 }
 
 /* ================= REST ================= */
-function restHeal(){ if(hasR("dripper")){ toast("Coffee Dripper: you can't sleep."); snd("buzz"); return; } G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.3)+(hasR("pillow")?15:0)); snd("shield"); showMap(); }
+function restHeal(){ if(hasR("dripper")){ toast("Insomnia Lamp: you can't sleep."); snd("buzz"); return; } G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.3)+(hasR("pillow")?15:0)); snd("shield"); showMap(); }
 function restUpgrade(){ pickTile("Upgrade a tile to Level 2", t=>/[A-Z]/.test(t.ch)&&t.lvl===1, t=>{ t.lvl=2; snd("coin"); toast(`${t.ch} upgraded to Level 2.`); showMap(); }); }
 
 /* ================= TREASURE ================= */
@@ -2995,36 +2995,36 @@ Object.assign(POTIONS,{
   brittle:{name:"Shatter Draught",d:"Inflict Broken 3 on ALL enemies (+50% damage taken)."},
   jester:{name:"Jester's Brew",d:"Add 2 Fragile [ ? ] Wildcard tiles to your hand."},
   shout:{name:"Battle Cry",d:"Add 3 Fragile [ ! ] tiles to your hand."},
-  smoke:{name:"Smoke Bomb",d:"Escape a normal or Elite fight. You get no reward. Doesn't work on bosses."},
+  smoke:{name:"Vanishing Powder",d:"Escape a normal or Elite fight. You get no reward. Doesn't work on bosses."},
   fruit:{name:"Ancient Fruit",d:"Raise your Max HP by 5 and heal 5. Usable anywhere.",any:true},
   echo:{name:"Echo Draught",d:"The next word you cast this turn has its output doubled."},
   clarity:{name:"Clarity Draught",d:"Every tile in your hand becomes Level 2 for this combat."},
 });
 Object.assign(POTION_COLOR,{phoenix:"#ff7b00",tonic:"#ffd166",pages:"#f6e7c4",venom:"#7fd34a",bomb:"#3d3a44",brittle:"#bfe0ff",jester:"#9b5de5",shout:"#e63946",smoke:"#9aa6b4",fruit:"#57cc4d",echo:"#5fd4c4",clarity:"#fff8df"});
 Object.assign(RELICS,{
-  coupon:{name:"Merchant's Coupon",sym:"%",d:"Everything in the shop costs 25% less."},
-  nib:{name:"Pen Nib",sym:"10",d:"Every 10th attack you cast deals double damage."},
-  anchor:{name:"Anchor",sym:"⚓",d:"Start each combat with 10 Shield."},
-  pouch:{name:"Extra Pouch",sym:"+4",d:"Draw 4 extra tiles on the first turn of each combat."},
-  lantern:{name:"Lantern",sym:"+1",d:"Gain 1 extra Energy on the first turn of each combat."},
+  coupon:{name:"Haggler's Badge",sym:"%",d:"Everything in the shop costs 25% less."},
+  nib:{name:"Chalk Tally",sym:"10",d:"Every 10th attack you cast deals double damage."},
+  anchor:{name:"Scrap Plating",sym:"⚓",d:"Start each combat with 10 Shield."},
+  pouch:{name:"Pencil Case",sym:"+4",d:"Draw 4 extra tiles on the first turn of each combat."},
+  lantern:{name:"Spark Plug",sym:"+1",d:"Gain 1 extra Energy on the first turn of each combat."},
   knuckle:{name:"Iron Knuckles",sym:"M",d:"Start each combat with 2 Might."},
-  scales:{name:"Bronze Scales",sym:"T",d:"Start each combat with 3 Thorns that last the whole fight."},
-  ticket:{name:"Meal Ticket",sym:"♨",d:"Heal 15 HP whenever you enter a shop."},
-  pillow:{name:"Feather Pillow",sym:"z",d:"Resting at a Rest Site heals 15 more HP."},
-  idol:{name:"Golden Idol",sym:"$",d:"Enemies drop 25% more gold."},
-  medkit:{name:"Medic Kit",sym:"+",d:"The first time you fall below 50% HP in a combat, heal 12."},
+  scales:{name:"Potted Cactus",sym:"T",d:"Start each combat with 3 Thorns that last the whole fight."},
+  ticket:{name:"Caravan Stew",sym:"♨",d:"Heal 15 HP whenever you enter a shop."},
+  pillow:{name:"Sleeping Bag",sym:"z",d:"Resting at a Rest Site heals 15 more HP."},
+  idol:{name:"Magpie Feather",sym:"$",d:"Enemies drop 25% more gold."},
+  medkit:{name:"Duct Tape",sym:"+",d:"The first time you fall below 50% HP in a combat, heal 12."},
   coil:{name:"Static Coil",sym:"ϟ",d:"At the start of each of your turns, deal 3 damage to ALL enemies."},
-  opener:{name:"Letter Opener",sym:"3",d:"Every 3rd word you cast in a turn deals 5 damage to ALL enemies."},
-  shuriken:{name:"Shuriken",sym:"✦",d:"Every 3rd word you cast in a turn gives +1 Might."},
-  berry:{name:"Strawberry",sym:"♣",d:"Raise your Max HP by 7 when you pick it up."},
-  potbelt:{name:"Potion Belt",sym:"B",d:"Gain 2 extra potion slots."},
-  bird:{name:"Toy Ornithopter",sym:"^",d:"Heal 5 HP whenever you use a potion."},
-  flower:{name:"Happy Flower",sym:"✿",d:"Every 3rd turn of a combat, gain 1 extra Energy."},
-  ecto:{name:"Ectoplasm",sym:"E",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold."},
-  dripper:{name:"Coffee Dripper",sym:"C",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites."},
-  sozu:{name:"Sozu",sym:"S",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions."},
-  crown:{name:"Busted Crown",sym:"♛",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile."},
-  philo:{name:"Philosopher's Stone",sym:"◆",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might."},
+  opener:{name:"Rubber Stamp",sym:"3",d:"Every 3rd word you cast in a turn deals 5 damage to ALL enemies."},
+  shuriken:{name:"Metronome",sym:"✦",d:"Every 3rd word you cast in a turn gives +1 Might."},
+  berry:{name:"Canned Peaches",sym:"♣",d:"Raise your Max HP by 7 when you pick it up."},
+  potbelt:{name:"Bottle Rack",sym:"B",d:"Gain 2 extra potion slots."},
+  bird:{name:"Bendy Straw",sym:"^",d:"Heal 5 HP whenever you use a potion."},
+  flower:{name:"Wind-up Key",sym:"✿",d:"Every 3rd turn of a combat, gain 1 extra Energy."},
+  ecto:{name:"Hollow Coin",sym:"E",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold."},
+  dripper:{name:"Insomnia Lamp",sym:"C",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites."},
+  sozu:{name:"Cracked Flask",sym:"S",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions."},
+  crown:{name:"Dry Palette",sym:"♛",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile."},
+  philo:{name:"Rival's Banner",sym:"◆",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might."},
   satchel:{name:"Hoarder's Satchel",sym:"H",boss:true,d:"Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16."},
 });
 Object.assign(RELIC_DRAW,{
@@ -3053,12 +3053,36 @@ Object.assign(RELIC_DRAW,{
   philo:(sh,ink)=>{ sh("path",`d="M20 2 L34 14 L28 36 L12 36 L6 14 Z"`,"#e63946"); ink(`<path class="thin" style="stroke:#fff" d="M20 2 L20 36 M6 14 L34 14 M12 36 L20 14 L28 36"/>`); },
   satchel:(sh,ink)=>{ sh("path",`d="M6 16 L34 16 L32 36 L8 36 Z"`,"#8a4b24"); sh("path",`d="M6 16 Q20 4 34 16 L30 24 Q20 18 10 24 Z"`,"#a0602e"); sh("rect",`x="17" y="20" width="6" height="7" rx="2"`,"#c8a24a"); },
 });
+
+Object.assign(RELIC_DRAW,{
+  coupon:(sh,ink)=>{ sh("circle",`cx="20" cy="18" r="13"`,"#ffbe0b"); sh("path",`d="M12 28 L8 38 L14 34 L18 38 L20 30 Z M28 28 L32 38 L26 34 L22 38 L20 30 Z"`,"#e63946"); ink(`<text x="20" y="22" text-anchor="middle" style="font:800 10px var(--f-tile);fill:#1d1b22;stroke:none">-25</text>`); },
+  nib:(sh,ink)=>{ sh("rect",`x="3" y="6" width="34" height="28" rx="3"`,"#2f4a3a"); ink(`<path style="stroke:#fff;stroke-width:2.4" d="M8 12 L8 28 M12 12 L12 28 M16 12 L16 28 M20 12 L20 28 M6 24 L22 16 M26 12 L26 28 M30 12 L30 28 M34 12 L34 22"/>`); },
+  anchor:(sh,ink)=>{ sh("path",`d="M6 8 L34 6 L36 32 L4 34 Z"`,"#9aa6b4"); sh("path",`d="M10 12 L30 11 L31 28 L9 29 Z"`,"#b9c3cf"); for(const [x,y] of [[8,10],[32,9],[33,30],[7,31]]) ink(`<circle cx="${x}" cy="${y}" r="1.8" style="fill:#3d3a44"/>`); ink(`<path class="thin" d="M14 18 L24 24 M22 14 L28 20"/>`); },
+  pouch:(sh,ink)=>{ sh("rect",`x="4" y="12" width="32" height="18" rx="6"`,"#3a86ff"); ink(`<path class="thin" d="M4 18 L36 18"/>`); sh("path",`d="M10 8 L30 8 L28 16 L12 16 Z"`,"#ffbe0b"); sh("path",`d="M14 4 L17 8 L14 16 Z"`,"#e63946"); sh("path",`d="M22 4 L25 8 L22 16 Z"`,"#57cc4d"); },
+  lantern:(sh,ink)=>{ sh("rect",`x="16" y="2" width="8" height="8" rx="2"`,"#717d8c"); sh("rect",`x="12" y="10" width="16" height="14" rx="3"`,"#f6e7c4"); ink(`<path class="thin" d="M12 14 L28 14 M12 18 L28 18"/>`); sh("rect",`x="15" y="24" width="10" height="8"`,"#9aa6b4"); ink(`<path d="M20 32 L20 38 L24 38"/><path style="stroke:#ffd166;stroke-width:2.4" d="M30 30 L36 26 M30 36 L37 37"/>`); },
+  scales:(sh,ink)=>{ sh("path",`d="M10 28 L30 28 L27 38 L13 38 Z"`,"#c27a3a"); sh("path",`d="M16 28 L16 10 Q16 4 20 4 Q24 4 24 10 L24 28 Z"`,"#57a64a"); sh("path",`d="M10 20 Q8 14 12 12 L16 14 L16 22 Z M30 16 Q32 10 28 8 L24 10 L24 18 Z"`,"#57a64a"); ink(`<path class="thin" d="M18 8 L16 6 M22 14 L25 12 M18 20 L15 19 M22 24 L25 23"/>`); },
+  ticket:(sh,ink)=>{ sh("path",`d="M4 18 L36 18 Q34 34 20 34 Q6 34 4 18 Z"`,"#c27a3a"); sh("ellipse",`cx="20" cy="18" rx="16" ry="5"`,"#a0602e"); for(const [x,y,c] of [[14,17,"#57cc4d"],[22,16,"#fb8b24"],[27,19,"#e63946"]]) sh("circle",`cx="${x}" cy="${y}" r="2.6"`,c); ink(`<path class="thin" style="stroke:#9aa6b4" d="M14 10 Q12 6 15 3 M22 10 Q20 6 23 3"/>`); },
+  pillow:(sh,ink)=>{ sh("ellipse",`cx="12" cy="22" rx="9" ry="12"`,"#3f9d4b"); sh("rect",`x="12" y="10" width="24" height="24" rx="4"`,"#57cc4d"); ink(`<ellipse cx="12" cy="22" rx="4" ry="6"/><path class="thin" d="M18 10 L18 34 M28 10 L28 34"/>`); sh("rect",`x="20" y="8" width="4" height="28" rx="1"`,"#8a4b24"); },
+  idol:(sh,ink)=>{ sh("path",`d="M10 34 Q6 18 18 6 Q30 2 32 14 Q30 28 10 34 Z"`,"#3d3a44"); sh("path",`d="M14 28 Q14 18 22 10 Q28 8 28 14 Q24 24 14 28 Z"`,"#e9eef3"); ink(`<path class="thin" d="M10 34 L28 10"/>`); sh("circle",`cx="31" cy="30" r="6"`,"#ffbe0b"); },
+  medkit:(sh,ink)=>{ sh("circle",`cx="18" cy="20" r="14"`,"#9aa6b4"); sh("circle",`cx="18" cy="20" r="6"`,"#fffdf7"); sh("path",`d="M28 26 L38 30 L36 36 L26 30 Z"`,"#9aa6b4"); ink(`<path class="thin" d="M8 14 Q18 8 28 14"/>`); },
+  opener:(sh,ink)=>{ sh("ellipse",`cx="20" cy="8" rx="7" ry="5"`,"#8a4b24"); sh("rect",`x="17" y="12" width="6" height="10"`,"#8a4b24"); sh("rect",`x="8" y="22" width="24" height="8" rx="2"`,"#3d3a44"); sh("rect",`x="6" y="30" width="28" height="6" rx="2"`,"#e63946"); },
+  shuriken:(sh,ink)=>{ sh("path",`d="M10 36 L16 6 L24 6 L30 36 Z"`,"#c27a3a"); ink(`<path class="thick" d="M20 32 L28 10"/><circle cx="25" cy="18" r="2.4" style="fill:#3d3a44"/><path class="thin" d="M14 26 L26 26"/>`); },
+  berry:(sh,ink)=>{ sh("rect",`x="8" y="10" width="24" height="26" rx="3"`,"#9aa6b4"); sh("rect",`x="8" y="16" width="24" height="14"`,"#fb8b24"); ink(`<ellipse cx="20" cy="10" rx="12" ry="2.6"/><ellipse cx="20" cy="36" rx="12" ry="2.6"/>`); sh("circle",`cx="20" cy="23" r="4"`,"#ffd166"); },
+  potbelt:(sh,ink)=>{ sh("rect",`x="3" y="10" width="34" height="4" rx="1"`,"#8a4b24"); sh("rect",`x="3" y="30" width="34" height="4" rx="1"`,"#8a4b24"); for(const [x,c] of [[9,"#e63946"],[20,"#57cc4d"],[31,"#3a86ff"]]){ sh("path",`d="M${x-4} 16 L${x+4} 16 L${x+5} 30 L${x-5} 30 Z"`,c); sh("rect",`x="${x-2}" y="12" width="4" height="4"`,"#c27a3a"); } },
+  bird:(sh,ink)=>{ sh("path",`d="M10 16 L30 16 L27 36 L13 36 Z"`,"#ff9ad5"); ink(`<path style="stroke:#3a86ff;stroke-width:3.4" d="M22 26 L24 8 L32 4"/><path class="thin" d="M10 22 L30 22"/>`); },
+  flower:(sh,ink)=>{ sh("rect",`x="18" y="16" width="4" height="20"`,"#c8a24a"); sh("path",`d="M20 18 Q6 18 6 9 Q6 2 14 4 Q20 6 20 18 Z M20 18 Q34 18 34 9 Q34 2 26 4 Q20 6 20 18 Z"`,"#ffbe0b"); ink(`<path class="thin" d="M20 26 L25 26 M20 31 L25 31"/>`); },
+  ecto:(sh,ink)=>{ sh("circle",`cx="20" cy="20" r="15"`,"#ffbe0b"); sh("circle",`cx="20" cy="20" r="6"`,"#1d1b22"); ink(`<circle class="thin" cx="20" cy="20" r="11"/><path class="thin" style="stroke:#7a2a2a" d="M30 8 L24 16 M10 30 L15 25"/>`); },
+  dripper:(sh,ink)=>{ sh("path",`d="M8 20 Q20 6 32 20 Z"`,"#3a86ff"); sh("rect",`x="18" y="20" width="4" height="12"`,"#717d8c"); sh("rect",`x="10" y="32" width="20" height="5" rx="2"`,"#717d8c"); sh("ellipse",`cx="20" cy="24" rx="7" ry="4"`,"#fff8df"); ink(`<circle cx="20" cy="24" r="2" class="dark"/><path class="thin" style="stroke:#ffd166" d="M8 26 L4 30 M32 26 L36 30"/>`); },
+  sozu:(sh,ink)=>{ sh("path",`d="M14 4 L26 4 L26 14 L34 32 Q36 36 32 36 L8 36 Q4 36 6 32 L14 14 Z"`,"#bfe0ff"); ink(`<path class="thick" style="stroke:#1d1b22" d="M18 14 L22 22 L17 28 L22 34"/>`); sh("path",`d="M28 36 Q32 38 30 40"`,"#5fd4c4"); },
+  crown:(sh,ink)=>{ sh("path",`d="M4 22 Q4 6 22 6 Q38 6 36 20 Q34 26 28 24 Q24 22 24 28 Q24 36 14 34 Q4 32 4 22 Z"`,"#e9cfa8"); sh("circle",`cx="14" cy="16" r="4"`,"#e63946"); ink(`<circle class="thin" cx="24" cy="14" r="3.5"/><circle class="thin" cx="12" cy="26" r="3.5"/>`); },
+  philo:(sh,ink)=>{ ink(`<path class="thick" d="M8 4 L8 38"/>`); sh("path",`d="M8 6 L34 10 L28 16 L34 22 L8 22 Z"`,"#c1272d"); sh("circle",`cx="20" cy="14" r="4"`,"#fff8df"); ink(`<path class="thin" d="M18 13 L19 14 M21 13 L22 14 M18 16 L22 16"/>`); },
+});
 const ENERGY_RELICS=["ecto","dripper","sozu","crown","philo"];
 const hasR = id => !!(typeof G!=="undefined"&&G&&G.relics&&G.relics.includes(id));
 function maxEnergy(){ return BASE_ENERGY + ENERGY_RELICS.filter(hasR).length; }
 function maxPotions(){ return MAX_POTIONS + (hasR("potbelt")?2:0); }
 function bossRelicChoices(){ const pool=shuffle(Object.keys(RELICS).filter(r=>RELICS[r].boss&&!G.relics.includes(r))); const out=pool.slice(0,3); while(out.length<3){ const r=randomRelic(out); if(!r) break; out.push(r); } return out; }
-function medkitCheck(){ if(C&&hasR("medkit")&&!C.medUsed&&G.hp>0&&G.hp<G.maxHp/2){ C.medUsed=true; G.hp=Math.min(G.maxHp,G.hp+12); log("Medic Kit: +12 HP."); try{ const pc=center("p"); numPop(pc.x,pc.top+20,"+12",10,"#7ae582"); updateBar("p"); flashRelics(["medkit"]); }catch(e){} } }
+function medkitCheck(){ if(C&&hasR("medkit")&&!C.medUsed&&G.hp>0&&G.hp<G.maxHp/2){ C.medUsed=true; G.hp=Math.min(G.maxHp,G.hp+12); log("Duct Tape: +12 HP."); try{ const pc=center("p"); numPop(pc.x,pc.top+20,"+12",10,"#7ae582"); updateBar("p"); flashRelics(["medkit"]); }catch(e){} } }
 async function relicHitAll(n,label,rid){
   for(let j=0;j<C.es.length;j++){ if(C.es[j].dead) continue; const r=dealToEnemy(j,n,{}); updateBar("e"+j); const c=center("e"+j); impact(c.x,c.y,r.dmg,{colors:["#5fd4c4","#ffd166","#fff"]}); numPop(c.x,c.top+10,`-${r.dmg}`,r.dmg,"#ffd166"); }
   log(`${label}: ${n} damage to all enemies.`); snd("hit"); flashRelics([rid]); await sleep(T_(450)); renderCombat();
@@ -3428,7 +3452,7 @@ function showShop(){
           potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:Math.round((45+rnd(20))*(1+.15*((G.act||1)-1))),sold:false})),
           tossed:false};
   if(hasR("coupon")) for(const k of ["relics","tiles","potions"]) G.shop[k].forEach(it=>it.price=Math.round(it.price*.75));
-  if(hasR("ticket")){ const h=Math.min(15,G.maxHp-G.hp); G.hp+=h; if(h) toast(`Meal Ticket: +${h} HP.`); }
+  if(hasR("ticket")){ const h=Math.min(15,G.maxHp-G.hp); G.hp+=h; if(h) toast(`Caravan Stew: +${h} HP.`); }
   renderShop();
 }
 const CARAVANS=[{x:290,body:"#e63946",trim:"#ffd166",label:"RELICS",inst:"flute",hat:"#3a86ff",name:"Pip, the eldest"},
@@ -3459,7 +3483,7 @@ function renderShop(){
 function shopBuy(kind,i){
   const S=G.shop, it=S[kind][i]; if(!it||it.sold) return;
   if(G.gold<it.price){ toast(`Not enough gold (need ${it.price}).`); snd("buzz"); return; }
-  if(kind==="potions"&&hasR("sozu")){ toast("Sozu: you can't hold potions."); snd("buzz"); return; }
+  if(kind==="potions"&&hasR("sozu")){ toast("Cracked Flask: you can't hold potions."); snd("buzz"); return; }
   if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your potion slots are full."); snd("buzz"); return; }
   G.gold-=it.price; it.sold=true;
   if(kind==="relics") gainRelic(it.id);
