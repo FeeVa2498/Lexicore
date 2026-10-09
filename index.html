@@ -51,7 +51,7 @@ body.f1 .art .fr.i0{display:none}
 body.f1 .art .fr.i1{display:inline}
 .art .fr.still{display:inline!important}
 .fighter[data-pose] .art .fr{display:none!important}
-.fighter[data-pose="atk"] .art .fr.atk,.fighter[data-pose="hurt"] .art .fr.hurt,.fighter[data-pose="guard"] .art .fr.guard{display:inline!important}
+.heroart[data-pose="i0x"] .art .fr.i0,.fighter[data-pose="atk"] .art .fr.atk,.fighter[data-pose="hurt"] .art .fr.hurt,.fighter[data-pose="guard"] .art .fr.guard{display:inline!important}
 
 /* HUD (outside combat) */
 #hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2.5px solid var(--ink)}
@@ -469,6 +469,20 @@ body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.pap
 .fighter.flip .art{transform:scaleX(-1)}
 .fighter.giant .over{bottom:auto;top:28%;left:-30%;transform:none}
 .behind{color:#ff3b30;font:16px var(--f-display);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
+
+
+/* ================= HEROES ================= */
+.herorow{display:grid;grid-template-columns:repeat(3,minmax(0,330px));gap:18px;justify-content:center;width:100%}
+.herocard{display:grid;gap:6px;justify-items:center;text-align:left;background:#fff8dfe8;border:4px solid var(--ink);border-radius:var(--sketch);padding:12px 14px;box-shadow:5px 6px 0 var(--ink);filter:saturate(.55) brightness(.92);transition:transform .2s,filter .2s;position:relative}
+.herocard.on{filter:none;transform:translateY(-8px) scale(1.03);box-shadow:0 0 0 5px var(--hc),0 0 30px var(--hc),5px 6px 0 var(--ink)}
+.heroart{position:relative!important;width:190px;height:200px}
+.heroart svg{width:100%;height:100%}
+.heroname{font:30px var(--f-display);font-weight:400;color:var(--hc);-webkit-text-stroke:5px var(--ink);paint-order:stroke fill}
+.herostats{font-size:16px;display:flex;align-items:center;gap:4px}.herostats svg{width:20px;height:20px}
+.herotxt{font-size:15px;line-height:1.25;justify-self:stretch}
+@media (max-width:900px){.herorow{grid-template-columns:1fr}.heroart{width:140px;height:150px}}
+.tile.fragile{border-style:dashed}
+.tile.fragile::before{content:"✦";position:absolute;right:2px;top:0;font-size:12px;color:#8b3fd9;z-index:3}
 
 /* map */
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;align-items:start}
@@ -1325,9 +1339,11 @@ let G = null;   // run state
 let C = null;   // combat state
 
 function newTile(ch, o={}){ return {uid:G.uidN++, ch, lvl:o.lvl||1, paint:o.paint||null}; }
-function newRun(){
+function newRun(heroId){
+  if(!heroId) return showCharSelect();
   musicGame();
-  G = {uidN:1, hp:70, maxHp:70, gold:99, deck:[], relics:[], potions:["heal"], weapons:["sword","shield"],
+  const H=HEROES[heroId];
+  G = {uidN:1, hero:heroId, hp:H.hp, maxHp:H.hp, gold:99, deck:[], relics:[], potions:["heal"], weapons:H.weapons.slice(),
        map:null, pos:null, floor:0, act:1, screen:"map", lastEnemy:null, removeCost:75,
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
@@ -1421,7 +1437,7 @@ function mapSVG(interactive){
       <rect class="sq" x="${-s}" y="${-s}" width="${2*s}" height="${2*s}" rx="${8*big}" transform="rotate(${((n.f*7+n.c*3)%7)-3})"/>
       <g transform="scale(${1.25*big})">${mapIcon2(n.type)}</g>
       ${done&&!cur?`<path class="tick" d="M${s-8} ${-s-2} l6 8 l12 -16"/>`:""}
-      ${cur?`<g transform="translate(0 ${-s-34}) scale(.42)">${artSVG("cat",{only:"i0"}).replace('<svg class="art" viewBox="0 0 200 220"','<svg class="art" viewBox="0 0 200 220" x="-100" y="-110" width="200" height="220"')}</g>`:""}
+      ${cur?`<g transform="translate(0 ${-s-34}) scale(.42)">${artSVG(heroArt(),{only:"i0"}).replace(/<svg class="art" viewBox="0 0 (\d+) (\d+)"/,(m,w,h)=>`<svg class="art" viewBox="0 0 ${w} ${h}" x="-100" y="-110" width="200" height="220"`)}</g>`:""}
     </g>`;
   }
   const act=G.act||1;
@@ -1520,12 +1536,12 @@ function tileTitle(t){
 }
 function tileHTML(t, opts={}){
   const sym = !/[A-Z]/.test(t.ch);
-  const cls = ["tile", opts.mini?"mini":"", t.lvl===2?"L2":"", t.paint?"p-"+t.paint:"", t.deb?"d-"+t.deb.t:"", sym?"sym":"", opts.cls||""].join(" ");
+  const cls = ["tile", t.fragile?"fragile":"", opts.mini?"mini":"", t.lvl===2?"L2":"", t.paint?"p-"+t.paint:"", t.deb?"d-"+t.deb.t:"", sym?"sym":"", opts.cls||""].join(" ");
   const chip = sym ? "" : `<span class="val">${tileChip(t)}</span>`;
   const db = t.deb ? `<span class="db ${t.deb.t}">${SI[TILE_DEB_ICON[t.deb.t]]}${t.deb.n?`<i>${t.deb.n}</i>`:""}</span>` : "";
   const on = opts.click ? `onclick="${opts.click}"` : "";
   const tag = opts.click ? "button" : "div";
-  const kws=[]; if(t.paint) kws.push(t.paint); if(t.deb) kws.push(DEB_KW[t.deb.t]); if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma");
+  const kws=[]; if(t.fragile) kws.push("fragile"); if(t.paint) kws.push(t.paint); if(t.deb) kws.push(DEB_KW[t.deb.t]); if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma");
   const tipTxt = `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${tileChip(t)}`}${t.deb&&t.deb.t==="lock"?`<br>Locked for ${t.deb.n} more turn(s).`:""}`;
   return `<${tag} class="${cls}${opts.as?" wild-on":""}" ${on} ${opts.noTip?"":tipAttr(opts.as?`<b>Wildcard ?</b> → ${opts.as}`:tipTxt,kws)} aria-label="${esc(tileTitle(t))}"><b>${opts.as||t.ch}</b>${chip}${t.lvl===2?`<span class="lv">II</span>`:""}${db}</${tag}>`;
 }
@@ -1684,9 +1700,11 @@ function evaluate(tiles, w, check){
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${v}`);} }
-  if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
-  R.total = Math.floor(R.chips*R.mult);
+  if(k&&w.id==="dagger"){ R.bang=Math.min(k,8); R.notes.push(`${"!".repeat(R.bang)} → ${R.bang} extra throw${R.bang>1?"s":""}`); }
+  else if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]; R.mult+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b}`); }
   R.crit = R.L.length===w.sigil;
+  if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
+  R.total = Math.floor(R.chips*R.mult);
   if(parts.length>1) R.notes.push(`${parts.length} words`);
   R.valid = true; R.words=words;
   return R;
@@ -1735,7 +1753,9 @@ async function cast(){
       if(t.deb.t==="slimy"||t.deb.t==="condemn") t.deb=null;
     }
   }
-  C.hand=C.hand.filter(u=>!C.bar.includes(u)); C.disc.push(...C.bar); C.bar=[];
+  C.hand=C.hand.filter(u=>!C.bar.includes(u));
+  for(const u of C.bar){ if(C.t[u].fragile) C.ban.push(u); else C.disc.push(u); }
+  C.bar=[];
   if(!G.tutorial||true){ if(R.easter) achHit(R.easter); if(!R.fallback&&R.L.length>=7) achHit("long7"); if(!R.fallback&&R.L.length>=10) achHit("long10");
     if(R.crit&&!R.fallback) achHit("crit"); if(R.words&&R.words.length>1) achHit("comma"); if(tiles.filter(t=>t.ch==="?").length>=3) achHit("wild3"); }
   G.stats.words++;
@@ -1758,15 +1778,27 @@ async function cast(){
       if(wid==="hammer"){ log("Critical! The hammer smashes through block."); }
     }
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
+    let dealt=res.dmg;
+    if(wid==="dagger"&&R.bang){ updateBar("e"+ti); dealt+=await throwDaggers(ti,R.bang,label); }
+    if(wid==="dagger"&&R.crit){ const t={uid:G.uidN++,ch:"!",lvl:1,paint:null,deb:null,fragile:true}; C.t[t.uid]=t; C.disc.push(t.uid); log("Critical! A Fragile [ ! ] tile is forged into your discard pile."); }
+    if(G.hero==="champion"&&dealt>=10){ const h=Math.floor(dealt/10); G.hp=Math.min(G.maxHp,G.hp+h); log(`Bloodthirst heals ${h}.`); }
+    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-5); log("The Greatsword bites back: −5 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-5",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0){ renderCombat(); return gameOver("their own Greatsword"); } }
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
       for(let j=0;j<C.es.length;j++){ if(j===ti||C.es[j].dead) continue; const full2=C.es[j].hp===C.es[j].max; const r2=dealToEnemy(j,dmg,{}); updateBar("e"+j); if(full2&&C.es[j].hp<=0) achOneShot(); const c=center("e"+j); impact(c.x,c.y,r2.dmg,{colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); numPop(c.x,c.top+10,r2.dmg?`-${r2.dmg}`:"Blocked!",r2.dmg,"#ffd23f"); fEl("e"+j)?.classList.add("flash"); }
       snd("hit"); shake(20); await sleep(T_(800)); }
+  } else if(w.kind==="util"){
+    const n=Math.max(1,Math.floor(R.total/5)); extraDraw+=n; log(`Utility Belt: draw ${n}.`);
+    const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(200)); fEl("p").dataset.pose="atk"; wordPop(c.x,c.top-110,label);
+    numPop(c.x,c.top+10,`Draw ${n}`,10,"#c3f06b");
+    if(R.crit){ snd("crit"); let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Critical! +${sh} Shield.`); stamp(c.x,c.top-40,"CRITICAL!"); delete fEl("p").dataset.pose; unfocus(); await guardAnim("p",sh,{}); }
+    else { await sleep(T_(700)); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(200)); }
   } else if(w.kind==="buff"){
-    const gain=Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`War drums: +${gain} Might.`);
-    if(R.crit){ snd("crit"); C.p.robust+=2; log("Critical! +2 Robust."); }
+    const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total*0.1)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
+    if(R.crit&&wid==="dumbbell"){ snd("crit"); G.hp=Math.min(G.maxHp,G.hp+5); log("Critical! Heal 5."); updateBar("p"); }
+    else if(R.crit){ snd("crit"); C.p.robust+=2; log("Critical! +2 Robust."); }
     const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(220)); fEl("p").dataset.pose="atk";
     if(R.crit) stamp(c.x,c.top-40,"CRITICAL!"); wordPop(c.x,c.top-110,label);
-    await buffAnim("p",`+${gain} Might${R.crit?" +2 Robust":""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
+    await buffAnim("p",`+${gain} Might${R.crit?(wid==="dumbbell"?" · +5 HP":" +2 Robust"):""}`); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(250));
   } else if(w.kind==="psn"){
     const amt=Math.max(1,Math.floor(R.total/3)); const ti=aliveTarget();
     const targets=R.crit?C.es.map((e,j)=>j).filter(j=>!C.es[j].dead):[ti];
@@ -1910,7 +1942,7 @@ function fighterHTML(key){
   const inover = !isP && (L.y-L.h<230);
   return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})"`}>
-    <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?"cat":def.art,isP?{}:(def.artO||{}))}
+    <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?heroArt():def.art,isP?{}:(def.artO||{}))}
     <div class="under"><div class="hpbar">${hpBarInner(key)}${block>0?`<em class="blk" ${tipAttr(`<b>Shield ${block}</b><br>Blocks the next ${block} damage.`,["block"])}>${block}</em>`:""}<span>${hp[0]}/${hp[1]}</span></div></div></div>`;
 }
 function renderCombat(){
@@ -2146,7 +2178,7 @@ function glossaryTab(tab){
       <h3>${W.name} <span class="gtag k-${W.kind}">${KIND_LABEL[W.kind]}</span></h3>
       <div class="gstat">Energy <b>${W.cost}</b> · Mult <b>×${W.mult}</b> · Sigil <b>${W.sigil}</b> letters</div>
       <div>${W.desc}</div><div><b>Critical (${W.sigil} letters):</b> ${W.crit}</div>
-      <div class="muted">${id==="sword"||id==="shield"?"Starter weapon":ALTAR_POOL.includes(id)?"Weapon Altar":"Not available in this build"}${G&&G.weapons&&G.weapons.includes(id)?" · <b>Equipped</b>":""}</div></div></div>`).join("");
+      <div class="muted">${STARTERS.includes(id)?`Starter weapon of ${HEROES[HERO_ORDER.find(h=>HEROES[h].weapons.includes(id))].name}`:ALTAR_POOL.includes(id)?"Weapon Altar (any hero)":"Not available in this build"}${G&&G.weapons&&G.weapons.includes(id)?" · <b>Equipped</b>":""}</div></div></div>`).join("");
   if(tab==="relics") return Object.entries(RELICS).map(([id,R])=>`<div class="gcard small"><span class="relic big">${R.sym}</span><div>
       <h3>${R.name}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`).join("");
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
@@ -2500,7 +2532,7 @@ function renderReward(){
     <h2 style="font-size:40px">Victory</h2>
     <div class="muted">+${rw.gold} gold${rw.extras.length?` · Also found: ${rw.extras.join(", ")}`:""}</div>
     <div class="reward-scene">
-      <div>${artSVG("cat")}</div>
+      <div>${artSVG(heroArt())}</div>
       <div id="easel">${EASEL_ART(first.ch,first.paint)}</div>
       <div id="painter">${artSVG("painter",{paint:first.paint})}</div>
     </div>
@@ -2550,7 +2582,7 @@ function showAltar(){
   G.screen="altar"; renderHUD();
   if(!G.altar||G.altarDone){
     let pool=ALTAR_POOL.filter(w=>!G.weapons.includes(w));
-    if(pool.length<2) pool=pool.concat(Object.keys(WEAPONS).filter(w=>!G.weapons.includes(w)&&!pool.includes(w)));
+    if(pool.length<2) pool=pool.concat(Object.keys(WEAPONS).filter(w=>!G.weapons.includes(w)&&!pool.includes(w)&&!STARTERS.includes(w)));
     G.altar=shuffle(pool).slice(0,2); G.altarDone=false;
   }
   const card=id=>{ const W=WEAPONS[id]; return `<div class="altar-info" role="tooltip">
@@ -2670,6 +2702,151 @@ const TENT_SVG = ()=>`<svg viewBox="0 0 360 260" class="art" style="overflow:vis
   sh("path",`d="M180 20 L120 250 L148 250 Z"`,"#f4a261"); ink(`<path d="M180 20 L180 4 M10 252 L350 252"/>`); sh("path",`d="M180 4 L206 12 L180 20 Z"`,CC.gold);
 })}</svg>`;
 
+/* ================= HEROES ================= */
+Object.assign(ARTS,{
+  wolf:{vb:[220,230], v:["i0","i1","atk","hurt","guard"],
+    tf:{i0:"",i1:"translate(0 3)",atk:"rotate(5 110 220)",hurt:"rotate(-10 110 220) translate(-6 4)",guard:"rotate(-4 110 220)"},
+    draw(v,sh,ink){
+      const W="#d9483b", W2="#a8322a";
+      ink(`<path class="thick" d="M76 196 Q30 200 30 160 Q34 140 52 150"/>`);
+      ink(`<path class="thick" d="M96 186 L84 222 L70 223 M126 186 L136 222 L150 223"/>`);
+      sh("path",`d="M70 196 Q62 136 112 112 Q160 136 154 196 Z"`,W);
+      sh("path",`d="M78 130 Q112 150 146 130 L144 150 Q112 166 80 150 Z"`,"#5b3a1e");
+      ink(`<path class="thin" d="M90 140 L94 156 M112 146 L112 162 M134 140 L130 156"/>`);
+      // greatsword
+      if(v==="atk"){ ink(`<path class="thick" d="M140 140 L176 128"/>`); sh("path",`d="M170 118 L214 66 L222 74 L178 128 Z"`,"#dfe7ef"); sh("rect",`x="162" y="122" width="24" height="9" rx="3" transform="rotate(-48 174 126)"`,"#c8a24a"); }
+      else if(v==="hurt"){ ink(`<path class="thick" d="M84 150 L54 170"/>`); sh("path",`d="M10 200 L60 170 L66 178 L16 208 Z"`,"#dfe7ef"); }
+      else if(v==="guard"){ ink(`<path class="thick" d="M140 140 L160 120"/>`); sh("path",`d="M148 30 L160 30 L162 128 L146 128 Z"`,"#dfe7ef"); sh("rect",`x="138" y="124" width="34" height="9" rx="3"`,"#c8a24a"); }
+      else { const y=v==="i1"?3:0; ink(`<path class="thick" d="M140 144 L164 150"/>`); sh("path",`d="M160 ${40+y} L176 ${40+y} L178 ${168+y} L158 ${168+y} Z"`,"#dfe7ef"); ink(`<path class="thin" d="M168 ${48+y} L168 ${160+y}"/>`); sh("rect",`x="148" y="${164+y}" width="40" height="10" rx="3"`,"#c8a24a"); sh("rect",`x="162" y="${174+y}" width="12" height="20" rx="3"`,"#8a4b24"); }
+      // head
+      sh("path",`d="M80 74 L74 38 L100 62 Z"`,W2); sh("path",`d="M138 74 L146 38 L120 62 Z"`,W2);
+      sh("path",`d="M74 84 Q76 54 110 52 Q144 54 146 84 Q144 102 128 108 L110 124 L92 108 Q76 102 74 84 Z"`,W);
+      sh("path",`d="M94 98 Q110 92 126 98 L118 120 L110 124 L102 120 Z"`,"#f6e7c4");
+      sh("circle",`cx="110" cy="102" r="5"`,"#1d1b22");
+      if(v==="hurt") ink(`<path class="thick" style="stroke:#ffd23f" d="M88 76 L98 86 M98 76 L88 86 M122 76 L132 86 M132 76 L122 86"/>`);
+      else ink(`<circle cx="93" cy="81" r="6" style="fill:#ffd23f"/><circle cx="127" cy="81" r="6" style="fill:#ffd23f"/><circle cx="94" cy="82" r="2.6" class="dark"/><circle cx="126" cy="82" r="2.6" class="dark"/><path class="thick" d="M82 70 L100 76 M138 70 L120 76"/>`);
+      ink(`<path class="thin" d="M104 112 L106 118 M116 112 L114 118" style="stroke:#fff"/>`);
+      ink(`<path class="thin" d="M86 60 L90 70 M100 56 L102 64" style="stroke:#5b1a14"/>`);
+    }},
+  rat2:{vb:[200,220], v:["i0","i1","atk","hurt","guard"],
+    tf:{i0:"",i1:"translate(0 3)",atk:"rotate(6 100 210) translate(6 0)",hurt:"rotate(-10 100 210) translate(-6 4)",guard:"translate(0 4)"},
+    draw(v,sh,ink){
+      const G1="#3f9d4b", G2="#2f7d3e";
+      ink(`<path class="thick" d="M70 196 Q24 204 22 172 Q22 156 36 160"/>`);
+      ink(`<path class="thick" d="M90 182 L80 214 L68 215 M114 182 L122 214 L134 215"/>`);
+      sh("path",`d="M64 196 Q60 134 100 112 Q140 134 136 196 Z"`,G1);
+      sh("path",`d="M66 160 L134 160 L132 170 L68 170 Z"`,"#8a4b24");
+      for(const x of [76,92,108,124]) sh("rect",`x="${x-5}" y="157" width="10" height="16" rx="2"`,x%2?"#c8a24a":"#9aa6b4");
+      // hood + face
+      sh("path",`d="M56 108 Q60 46 100 38 Q142 46 146 108 Q120 124 100 124 Q80 124 56 108 Z"`,G1);
+      sh("path",`d="M70 96 Q74 64 100 60 Q126 64 130 96 Q118 112 100 112 Q82 112 70 96 Z"`,"#a19ea8");
+      sh("path",`d="M100 106 L92 112 L108 112 Z"`,"#f4a7b9");
+      if(v==="hurt") ink(`<path class="thick" style="stroke:#ffd23f" d="M80 80 L90 90 M90 80 L80 90 M110 80 L120 90 M120 80 L110 90"/>`);
+      else ink(`<circle cx="86" cy="86" r="5.5" style="fill:#ffd23f"/><circle cx="114" cy="86" r="5.5" style="fill:#ffd23f"/><circle cx="87" cy="87" r="2.4" class="dark"/><circle cx="115" cy="87" r="2.4" class="dark"/>`);
+      ink(`<path class="thin" d="M78 100 L62 98 M78 104 L62 106 M122 100 L138 98 M122 104 L138 106"/>`);
+      sh("path",`d="M66 120 Q100 136 134 120 L132 132 Q100 146 68 132 Z"`,G2);
+      // daggers
+      if(v==="atk"){ ink(`<path class="thick" d="M128 140 L170 118"/>`); sh("path",`d="M168 114 L200 96 L198 104 L172 122 Z"`,"#dfe7ef"); sh("rect",`x="160" y="114" width="14" height="6" rx="2" transform="rotate(-30 167 117)"`,"#5b3a1e"); }
+      else if(v==="guard"){ ink(`<path class="thick" d="M72 140 L60 120 M128 140 L140 120"/>`); sh("path",`d="M56 96 L62 120 L54 120 Z"`,"#dfe7ef"); sh("path",`d="M144 96 L146 120 L138 120 Z"`,"#dfe7ef"); }
+      else if(v==="hurt"){ ink(`<path class="thick" d="M72 140 L50 160"/>`); }
+      else { const y=v==="i1"?3:0; ink(`<path class="thick" d="M128 140 L146 ${152+y}"/>`); sh("path",`d="M144 ${150+y} L150 ${120+y} L156 ${152+y} Z"`,"#dfe7ef"); ink(`<path class="thick" d="M72 140 L56 ${154+y}"/>`); sh("path",`d="M50 ${152+y} L54 ${126+y} L62 ${154+y} Z"`,"#dfe7ef"); }
+    }},
+});
+const HEROES={
+  scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],
+    play:"Balanced spell-caster. Shines with medium and long words: the Sword crits at 5 letters, the Shield at 4.",
+    who:"A curious wizard cat who found the ancient Tablet and never put it down.",
+    why:"Hungry for knowledge. Whatever waits at the top of The Tower must know everything the old world knew.",
+    ending:["The great eye dims, then opens again, softer. <i>\"Candidate accepted.\"</i>","Lexicore copies The Scholar's mind into a fleet of nanobots and fires the old missiles at the alien headquarters on the Moon.","\"And so the spell-cat departed, eager to absorb the endless knowledge of the stars.\""]},
+  champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
+    play:"Berserker with no shield. Short brutal words: the Greatsword costs 5 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might and heals on a 2-letter crit. Heals 1 HP for every 10 damage dealt.",
+    who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
+    why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
+    ending:["LEXICORE's eye cracks and goes dark. The Champion laughs, breathless, for the first time in years.","\"Finally. A worthy fight.\" Lexicore reboots and offers a seat in the nanobot fleet heading for the Moon. The wolf shoulders the greatsword and climbs aboard.","\"There is always a bigger fight, somewhere among the stars.\""]},
+  mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
+    play:"Fragile combo assassin. The Dagger crits at just 2 letters and forges Fragile [ ! ] tiles; every ! at the end of a word throws another dagger, each one harder than the last (1, 2, 3, 5, 8…). The Utility Belt draws extra tiles and shields on a 5-letter crit.",
+    who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
+    why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
+    ending:["The Mercenary stands over the sparking sphere. \"Huh. The master of The Tower… is a computer.\"","Lexicore makes a counter-offer: a fortune in pre-war gold and a seat on the fleet to the Moon. The rat checks the contract, tears it up and grins.","\"Business is business. And the Moon looks rich.\""]},
+};
+const HERO_ORDER=["scholar","champion","mercenary"];
+const STARTERS=HERO_ORDER.flatMap(h=>HEROES[h].weapons);
+const hero = () => HEROES[(G&&G.hero)||"scholar"];
+const heroArt = () => hero().art;
+Object.assign(WEAPONS,{
+  greatsword:{name:"Greatsword",cost:2,sigil:3,kind:"atk",mult:2,desc:"Deal damage. Each swing costs you 5 HP.",crit:"+1 Spell Power for every 2 HP you are missing."},
+  dumbbell:{name:"Dumbbell",cost:1,sigil:2,kind:"buff",mult:1,desc:"Gain Might equal to output × 0.1 (rounded down, min 1).",crit:"Heal 5 HP."},
+  dagger:{name:"Dagger",cost:2,sigil:2,kind:"atk",mult:2,desc:"Deal damage. Each [ ! ] at the end of the word throws another dagger (1, 2, 3, 5, 8… Spell Power).",crit:"Forge a Fragile [ ! ] tile into your discard pile."},
+  belt:{name:"Utility Belt",cost:1,sigil:5,kind:"util",mult:1,desc:"Draw tiles equal to output ÷ 5 (min 1).",crit:"Gain Shield equal to the output."},
+});
+Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
+KIND_LABEL.util="Utility";
+Object.assign(WICON,{
+  greatsword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M44 2 L56 2 L58 70 L42 70 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 6 L50 66"/>`); sh("rect",`x="22" y="68" width="56" height="9" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="77" width="10" height="17" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="96" r="5"`,CC.red); }),
+  dumbbell:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="22" y="45" width="56" height="10" rx="3"`,"#9aa6b4"); sh("rect",`x="8" y="28" width="16" height="44" rx="4"`,"#3d3a44"); sh("rect",`x="76" y="28" width="16" height="44" rx="4"`,"#3d3a44"); sh("rect",`x="22" y="34" width="10" height="32" rx="3"`,CC.red); sh("rect",`x="68" y="34" width="10" height="32" rx="3"`,CC.red); }),
+  dagger:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 6 L58 60 L42 60 Z"`,"#e3ebf3"); sh("rect",`x="32" y="58" width="36" height="8" rx="3"`,"#5b3a1e"); sh("rect",`x="45" y="66" width="10" height="22" rx="2"`,"#2f7d3e"); sh("circle",`cx="50" cy="92" r="5"`,CC.gold); }),
+  belt:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="6" y="40" width="88" height="20" rx="5"`,"#8a4b24"); sh("rect",`x="40" y="36" width="20" height="28" rx="3"`,CC.gold); for(const x of [16,70]) sh("rect",`x="${x}" y="54" width="16" height="24" rx="3"`,"#3f9d4b"); sh("path",`d="M86 56 L92 78 L82 78 Z"`,"#dfe7ef"); }),
+});
+KW.fragile=["Fragile","This tile disappears for the rest of the combat after its first use (like Exhaust)."];
+
+/* --- character select --- */
+let SEL={i:0};
+function showCharSelect(){
+  closeSplash(); closeStage(); $("#hud").hidden=true; document.body.classList.add("actbg");
+  document.body.style.setProperty("--actbg", `url("${bgURI("normal",1)}")`);
+  G=null; C=null; renderCharSelect();
+}
+function renderCharSelect(){
+  $("#app").innerHTML=`<div class="screen charsel">
+    <h2 class="pagetitle">Choose your climber</h2>
+    <div class="herorow">${HERO_ORDER.map((id,i)=>{ const H=HEROES[id], on=i===SEL.i;
+      return `<button class="herocard ${on?"on":""}" style="--hc:${H.color}" onclick="if(SEL.i===${i}) startHero('${id}'); else { SEL.i=${i}; snd('tap'); renderCharSelect(); }" aria-pressed="${on}">
+        <div class="heroart fighter" ${on?'data-pose="atk"':""}>${artSVG(H.art)}</div>
+        <b class="heroname">${H.name}</b>
+        <span class="herostats">${SI.block?IC.heart:""} ${H.hp} HP · ${H.weapons.map(w=>WEAPONS[w].name).join(" + ")}</span>
+        <span class="herotxt"><b>Playstyle:</b> ${H.play}</span>
+        <span class="herotxt"><b>Who:</b> ${H.who}</span>
+        <span class="herotxt"><b>Why climb:</b> ${H.why}</span>
+      </button>`; }).join("")}</div>
+    <div class="row" style="justify-content:center"><button class="btn" onclick="showSplash()">Back</button><button class="btn primary" onclick="startHero(HERO_ORDER[SEL.i])">Climb as ${HEROES[HERO_ORDER[SEL.i]].name}</button></div>
+    <div class="paper" style="font-size:15px"><kbd>A</kbd>/<kbd>D</kbd> to choose · <kbd>Enter</kbd> or <kbd>Space</kbd> to start</div>
+  </div>`;
+  clearInterval(window._selAtk);
+  window._selAtk=setInterval(()=>{ const el=document.querySelector(".herocard.on .heroart"); if(!el){ clearInterval(window._selAtk); return; } el.dataset.pose = el.dataset.pose==="atk"?"i0x":"atk"; },600);
+}
+document.addEventListener("keydown",e=>{ if(!document.querySelector(".charsel")||!$("#modal").hidden) return; const k=e.key.toLowerCase();
+  if(k==="a"||k==="arrowleft"){ SEL.i=(SEL.i+2)%3; snd("tap"); renderCharSelect(); e.preventDefault(); }
+  else if(k==="d"||k==="arrowright"){ SEL.i=(SEL.i+1)%3; snd("tap"); renderCharSelect(); e.preventDefault(); }
+  else if(k==="enter"||k===" "){ e.preventDefault(); startHero(HERO_ORDER[SEL.i]); }
+  else if(k==="escape") showSplash(); },true);
+function startHero(id){ clearInterval(window._selAtk); newRun(id); }
+
+/* --- dagger throws --- */
+const DAGGER_PROJ=`<svg viewBox="0 0 80 24" width="80" height="24" style="overflow:visible">${layer((sh)=>{ sh("path",`d="M4 12 L50 6 L50 18 Z"`,"#e3ebf3"); sh("rect",`x="50" y="4" width="6" height="16" rx="2"`,"#5b3a1e"); sh("rect",`x="56" y="9" width="20" height="6" rx="2"`,"#2f7d3e"); })}</svg>`;
+async function throwDaggers(ti,n,word){
+  const p=center("p"); let total=0;
+  for(let i=0;i<n;i++){
+    if(C.es[ti].dead||C.es[ti].hp<=0){ const nt=C.es.findIndex(e=>!e.dead&&e.hp>0); if(nt<0) break; ti=nt; }
+    const sp=FIB[Math.min(i,FIB.length-1)]+C.p.might, dmg=sp*WEAPONS.dagger.mult;
+    const t=center("e"+ti), style=i%4, dur=T_(Math.max(170,420-i*45));
+    const d=fxEl("div","fxsvg",DAGGER_PROJ); d.style.cssText=`left:${p.x+60}px;top:${p.y-50}px;width:80px;height:24px;z-index:9`;
+    const dx=t.x-p.x-60, dy=t.y-p.y+50;
+    const kf = style===0 ? [{transform:"translate(0,0) rotate(180deg)"},{transform:`translate(${dx}px,${dy}px) rotate(180deg)`}]
+      : style===1 ? [{transform:"translate(0,0) rotate(0deg)"},{transform:`translate(${dx}px,${dy}px) rotate(1440deg)`}]
+      : style===2 ? [{transform:"translate(0,0) rotate(160deg)"},{transform:`translate(${dx/2}px,${dy/2-200}px) rotate(200deg)`},{transform:`translate(${dx}px,${dy}px) rotate(230deg)`}]
+      : [{transform:"translate(0,-60px) rotate(170deg) scale(.8)"},{transform:`translate(${dx}px,${dy}px) rotate(190deg) scale(1.2)`}];
+    const pe=fEl("p"); if(pe){ pe.dataset.pose="atk"; }
+    snd("tap"); await d.animate(kf,{duration:dur,easing:style===2?"ease-in":"linear"}).finished.catch(()=>{}); d.remove();
+    const r=dealToEnemy(ti,dmg,{}); total+=r.dmg; updateBar("e"+ti); snd("hit");
+    const T=fEl("e"+ti); if(T){ T.classList.remove("flash"); void T.offsetWidth; T.classList.add("flash"); }
+    starBurst(t.x,t.y,40+i*10,"#ffd166",8); numPop(t.x+(Math.random()-.5)*60,t.top+20-i*8,r.dmg?`-${r.dmg}`:"Blocked!",10+i*6,"#ffd23f"); shake(6+i*2);
+    await sleep(T_(60));
+  }
+  const pe=fEl("p"); if(pe) delete pe.dataset.pose;
+  if(n>1) stamp(center("e"+ti).x, center("e"+ti).top-40, `${n} THROWS!`);
+  await sleep(T_(500)); return total;
+}
+
 /* ================= SHOP: the Caravan Brothers ================= */
 const SHOP_LETTERS="AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ";
 function genShopTile(){ const ch=Math.random()<.1?pick(["?","!",","]):pick([...SHOP_LETTERS]); const lvl=/[A-Z]/.test(ch)&&Math.random()<.22?2:1;
@@ -2733,7 +2910,7 @@ function showRest(){
     <div class="shop-title">Campsite</div>
     <div class="tent">${TENT_SVG()}</div>
     <div class="fire">${artSVG("campfire")}</div><div class="fireglow"></div>
-    <div class="restcat">${artSVG("cat")}</div>
+    <div class="restcat">${artSVG(heroArt())}</div>
     <div class="restopts">
       <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>Sleep by the fire and recover ${heal} HP (20% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
       <button class="restbtn up" onclick="restUpgrade()" ${tipAttr(`<b>Upgrade</b><br>Carve one letter tile into Level 2: +${LV2_BONUS} Spell Power forever. Wildcards can't be upgraded. Press 2.`)}><b>2 · Upgrade</b><span>One tile → Level 2</span></button>
@@ -2962,8 +3139,8 @@ function gameOver(cause){
   clearSave();
   setTimeout(()=>{
     C=null; G.screen="dead"; renderHUD();
-    $("#app").innerHTML=`<div class="screen"><div style="width:200px;opacity:.8">${artSVG("cat",{only:"hurt"})}</div>
-    <h2 style="font-size:44px">The Spell-Cat falls</h2><div class="muted">Felled by ${cause} on floor ${G.floor}.</div>
+    $("#app").innerHTML=`<div class="screen"><div style="width:200px;opacity:.8">${artSVG(heroArt(),{only:"hurt"})}</div>
+    <h2 style="font-size:44px">${hero().name} falls</h2><div class="muted">Felled by ${cause} on floor ${G.floor}.</div>
     ${statsHTML()}<button class="btn primary" onclick="newRun()">New run</button></div>`;
   },700);
 }
@@ -2974,17 +3151,16 @@ function statsHTML(){
     <span>Total damage</span><b>${s.dmg}</b><span>Enemies defeated</span><b>${s.kills}</b><span>Relics</span><b>${G.relics.length}</b></div>`;
 }
 function showVictory(){
-  clearSave(); G.screen="won"; renderHUD();
+  clearSave(); G.screen="won"; renderHUD(); const H=hero();
   $("#app").innerHTML=`<div class="screen">
-    <div style="width:220px">${artSVG("cat")}</div>
+    <div style="width:220px">${artSVG(H.art)}</div>
     <h2 class="pagetitle">LEXICORE is defeated</h2>
-    <div class="paper" style="max-width:60ch;text-align:left;display:grid;gap:8px">
-      <span>The great eye dims, then opens again, softer. <i>"Candidate accepted."</i></span>
-      <span>Lexicore copies the Spell-Cat's mind into a fleet of nanobots and fires the old missiles at the alien headquarters on the Moon.</span></div>
+    <div class="paper" style="max-width:60ch;text-align:left;display:grid;gap:8px"><span>${H.ending[0]}</span><span>${H.ending[1]}</span></div>
     ${statsHTML()}
-    <p class="quote" style="color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill">"And so the spell-cat departed, eager to absorb the endless knowledge of the stars."</p>
+    <p class="quote" style="color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill">${H.ending[2]}</p>
     <button class="btn primary" onclick="newRun()">New run</button></div>`;
 }
+
 
 
 /* ================= TITLE ================= */
@@ -3148,7 +3324,7 @@ const TUT_KEY="lexspire-tutorial-done";
 function tutDone(){ try{ return localStorage.getItem(TUT_KEY)==="1"; }catch(e){ return false; } }
 function setTutDone(){ try{ localStorage.setItem(TUT_KEY,"1"); }catch(e){} }
 const TUT=[
-  {t:"Welcome, Spell-Cat! Long ago English became a lost rune-language. Spell real English words on your tablet and your nanobots turn them into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
+  {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and your nanobots turn them into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
   {t:"Pick a weapon first. Tap the <b>Sword Orb</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
