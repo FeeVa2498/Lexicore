@@ -1432,11 +1432,11 @@ const RIDDLES = [
   ["MOUSE","The cat's oldest quarry, and an old human desk tool."],["LIGHT","I fill a whole room but take up no space."],
   ["WATER","Bots drink oil. Cats and humans need me."],["SNAKE","I travel without legs and shed my coat each season."],
   ["HEART","I beat all day without fists."],["NIGHT","I fall every day and never break."],
-  ["TOWER","Climb me floor by floor. At the very top of me waits Lexicore."],["ROBOT","Ancient defenders, still marching long after their makers fell."],
+  ["TOWER","Climb me floor by floor. Nobody who reached my top ever came back."],["ROBOT","Ancient defenders, still marching long after their makers fell."],
   ["QUEEN","The strongest piece on a checkered board."],["APPLE","A fruit that fell on a thinker's head."],
-  ["BLADE","Grass has one. So does a knife."],["MAGIC","Old words, spoken right, make the nanobots do this."],
+  ["BLADE","Grass has one. So does a knife."],["MAGIC","Old words, spoken right, do this."],
   ["CRANE","A long-legged bird, and a machine that lifts."],["PLANT","Some of us learned to think after the bombs fell."],
-  ["BRAIN","Lexicore has a silicon one. Yours is soft."],["SMILE","A curve that sets many things straight."],
+  ["BRAIN","Every great sorcerer has a big one."],["SMILE","A curve that sets many things straight."],
   ["MONEY","Shopkeepers in the wasteland still crave it."],["SHELL","A turtle's house, and a husk left on the beach."],
   ["DREAM","You visit me every night but cannot bring me back."],["MOONS","Earth has one; the aliens hide behind it."],
 ];
@@ -2262,7 +2262,7 @@ const ACH = {
   act1:{n:"Foot of The Tower",d:"Defeat the boss of the Outskirts.",c:"#76706a"},
   act2:{n:"City Lights",d:"Defeat the boss of the Ruined City.",c:"#f4a261"},
   act3:{n:"Top Floor",d:"Defeat the boss of The Tower.",c:"#5fd4c4"},
-  act4:{n:"Worthy",d:"Defeat LEXICORE in its chamber.",c:"#9b5de5"},
+  act4:{n:"Worthy",d:"Defeat whatever waits at the very top of The Tower.",c:"#9b5de5"},
   close:{n:"That Was Close",d:"Cast NIGERIA.",c:"#2fa84f",secret:true},
   close_enough:{n:"Close Enough",d:"Cast a censored swear word, like FVCK or SH!T.",c:"#ff5d8f",secret:true},
 };
@@ -2312,7 +2312,8 @@ const MON_LORE={tslime:"A gentle practice blob kept by the Tablet for new spell-
   arachne:"Queen of the overgrown subway. Her webs poison whole hands of tiles.",quartz:"A pre-war defense robot with a crystal brain and a very big hammer.",
   gargoyle:"Stone guardian at the foot of The Tower. It curses, condemns and executes."};
 function glossaryTab(tab){
-  if(tab==="monsters") return Object.entries(ENEMIES).map(([id,E])=>`<div class="gcard"><div class="gart">${artSVG(E.art,{only:"i0"})}</div><div>
+  if(tab==="monsters") return Object.entries(ENEMIES).map(([id,E])=>id==="lexicore"&&!achGet().act4?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
+      <h3>??? <span class="gtag">Boss</span></h3><div class="muted">Whoever waits at the very top of The Tower. Some say a great sorcerer. Nobody who climbed that far has come back to tell.</div></div></div>`:`<div class="gcard"><div class="gart">${artSVG(E.art,{only:"i0"})}</div><div>
       <h3>${E.name} <span class="gtag">${E.boss?"Boss":E.elite?"Elite":id==="tslime"?"Tutorial":"Normal"}</span></h3>
       <div class="gstat">HP <b>${E.hp}</b> · ${E.moves.length}-turn cycle</div><div class="muted">${MON_LORE[id]||""}</div>
       <ol class="gmoves">${E.moves.map((m,i)=>`<li>${E.names?`<b>${E.names[i]}:</b> `:""}${m.map(moveText).join(" + ")}</li>`).join("")}</ol></div></div>`).join("");
@@ -2485,10 +2486,10 @@ Object.assign(MON_LORE,{rat:"Wears a cooking pot as a helmet and swings a lead p
   titan:"Something enormous walks the ruined city. All you can see is its foot.",twinA:"One half of the Gemini brutes. They fight back to back… or front to back.",twinB:"The other half. Whichever twin you turn your back on hits twice as hard.",
   prisoner:"An alien kept in the Tower for interrogation. It wants out, and you are in the way.",drone:"Old-world security, still patrolling the Tower's halls.",moth:"A moth with circuit-board wings. Its dust turns tiles to slime.",
   warden:"Keeper of the cells. Locks letters like it locks doors.",alpha:"The strongest escaped prisoner, chains still hanging from its wrists.",
-  lexicore:"The supercomputer in the chamber above The Tower. It wants to know if you are worthy of the old language.",
+  lexicore:"The supercomputer that waited above The Tower. Its test is over.",
   shroom:"The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children.",
   zero:"The first alien ever caught. Its mind is too big for its cell, and it leaks.",
-  gatekeeper:"A walking vault door. Nothing reaches The Lexicore Chamber unless it says so."});
+  gatekeeper:"A walking vault door. Nothing reaches the top of The Tower unless it says so."});
 const ACTS={
   1:{name:"The Outskirts",singles:[["slime"],["bat"],["goblin"]],pairs:[["slime","bat"],["bat","bat"],["slime","slime"],["goblin","bat"]],trios:[["bat","slime","bat"],["slime","goblin","slime"]],elites:["arachne","quartz"],bosses:[["gargoyle"],["shroom"]]},
   2:{name:"The Ruined City",singles:[["rat"],["hound"],["crow"]],pairs:[["rat","crow"],["hound","rat"],["crow","crow"]],trios:[["rat","crow","rat"],["crow","hound","crow"]],elites:["knight","mantis"],bosses:[["titan"],["twinA","twinB"]]},
@@ -2864,7 +2865,7 @@ function showAltar(){
       <div class="muted">Costs ${W.cost} Energy per cast · reusable while you have Energy</div></div>`; };
   $("#app").innerHTML=`<div class="screen altar-screen">
     <h2 style="font-size:40px">The Weapon Altar</h2>
-    <div class="muted" style="max-width:56ch">Two weapons are sunk deep in an old nanobot shrine. Pull one free. The shrine will swallow the other.</div>
+    <div class="muted" style="max-width:56ch">Two weapons are sunk deep in an old stone shrine. Pull one free. The shrine will swallow the other.</div>
     <div class="altar" id="altar">
       <svg class="altar-back" viewBox="0 0 600 300" aria-hidden="true">${layer((sh,ink)=>{
         sh("path",`d="M60 290 L90 150 L510 150 L540 290 Z"`,"#a19c94");
@@ -2971,6 +2972,30 @@ ARTS.robocoon={vb:[200,200], v:["i0","i1"], tf:{i0:"",i1:"translate(0 -2)"},
     ink(`<path style="stroke:#5fd4c4;stroke-width:3" d="M92 92 L96 95 L100 92 L104 95 L108 92"/>`);
     ink(`<path d="M100 50 L100 34"/>`); sh("circle",`cx="100" cy="30" r="5"`,f?c:"#ff3b30");
   }};
+const POD_SVG = ()=>`<svg viewBox="0 0 360 260" class="art" style="overflow:visible">${layer((sh,ink)=>{
+  for(const [d,c] of [["M40 250 Q20 200 60 190","#3a3f4a"],["M320 250 Q340 196 296 188","#3a3f4a"]]) ink(`<path style="stroke:${c};stroke-width:12" d="${d}"/><path class="thin" d="${d}"/>`);
+  sh("ellipse",`cx="180" cy="244" rx="150" ry="18"`,"#2b2e36");
+  sh("path",`d="M100 240 L100 70 Q180 -20 260 70 L260 240 Z"`,"#717d8c");
+  sh("path",`d="M124 228 L124 84 Q180 18 236 84 L236 228 Z"`,"rgba(95,212,196,.55)");
+  ink(`<path class="thin" style="stroke:#e9fffb" d="M140 90 Q150 70 168 62 M144 120 L144 200"/>`);
+  for(const y of [110,160,210]) ink(`<ellipse cx="180" cy="${y}" rx="52" ry="9" style="stroke:#5fd4c4;stroke-width:4"/>`);
+  sh("rect",`x="150" y="16" width="60" height="18" rx="6"`,"#4a5361"); sh("circle",`cx="180" cy="10" r="7"`,"#57cc4d");
+  sh("rect",`x="268" y="120" width="36" height="70" rx="6"`,"#4a5361");
+  for(let i=0;i<4;i++) sh("rect",`x="276" y="${132+i*13}" width="20" height="8" rx="2"`,i<3?"#57cc4d":"#2b2e36");
+})}</svg>`;
+ARTS.heater={vb:[200,200], v:["i0","i1"], tf:{i0:"",i1:"translate(0 -3)"},
+  draw(v,sh,ink){
+    const f=v==="i1";
+    ink(`<path class="thick" d="M100 150 L60 196 M100 150 L140 196 M100 150 L100 196"/>`);
+    sh("ellipse",`cx="100" cy="196" rx="50" ry="6"`,"#2b2e36");
+    sh("rect",`x="86" y="128" width="28" height="26" rx="5"`,"#4a5361");
+    sh("circle",`cx="100" cy="88" r="${f?50:46}"`,"rgba(255,123,0,.35)");
+    sh("circle",`cx="100" cy="88" r="40"`,"#3a3f4a");
+    sh("circle",`cx="100" cy="88" r="30"`,f?"#ffbe0b":"#ff7b00");
+    ink(`<path style="stroke:${f?"#fff1c4":"#ffd000"};stroke-width:4" d="M78 80 Q88 70 100 80 Q112 90 122 80 M78 96 Q88 86 100 96 Q112 106 122 96"/>`);
+    ink(`<path class="thin" d="M60 88 L70 88 M130 88 L140 88 M100 48 L100 58"/>`);
+    ink(`<path class="thin" style="stroke:#ffd166" d="${f?"M150 50 q8 -6 0 -14 M48 54 q-8 -6 0 -14":"M154 60 q8 -6 0 -14 M44 62 q-8 -6 0 -14"}"/>`);
+  }};
 ARTS.campfire={vb:[200,200], v:["i0","i1"], tf:{i0:"",i1:""},
   draw(v,sh,ink){
     const f=v==="i1";
@@ -3053,7 +3078,7 @@ const HEROES={
   scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],
     play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
-    why:"Hungry for knowledge. Whatever waits at the top of The Tower must know everything the old world knew.",
+    why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.","Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn.",""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],
     play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
@@ -3063,7 +3088,7 @@ const HEROES={
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],
     play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
-    why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said it was a machine.",
+    why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said what it was.",
     ending:["LEXICORE's test is over. Ten thousand copies of The Mercenary now ride the last missiles of the old world toward the Moon.","Far below, the original rat counts the gold left in the Tower's vaults. Business is business, and somebody has to mind the shop.",""]},
 };
 const HERO_ORDER=["scholar","champion","mercenary"];
@@ -3201,15 +3226,15 @@ function shopToss(){
 
 /* ================= REST SITE ================= */
 function showRest(){
-  G.screen="rest"; renderHUD();
+  G.screen="rest"; renderHUD(); const BAY=(G.act||1)>=4;
   const heal=Math.floor(G.maxHp*0.3);
   $("#app").innerHTML=sceneWrap(`
-    <div class="shop-title">Campsite</div>
-    <div class="tent">${TENT_SVG()}</div>
-    <div class="fire">${artSVG("campfire")}</div><div class="fireglow"></div>
+    <div class="shop-title">${BAY?"Recharge Bay":"Campsite"}</div>
+    <div class="tent">${BAY?POD_SVG():TENT_SVG()}</div>
+    <div class="fire">${artSVG(BAY?"heater":"campfire")}</div><div class="fireglow"></div>
     <div class="restcat">${artSVG(heroArt())}</div>
     <div class="restopts">
-      <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>Sleep by the fire and recover ${heal} HP (30% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
+      <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>${BAY?"Step into the charging pod and":"Sleep by the fire and"} recover ${heal} HP (30% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
       <button class="restbtn up" onclick="restUpgrade()" ${tipAttr(`<b>Upgrade</b><br>Carve one letter tile into Level 2: +${LV2_BONUS} Spell Power forever. Wildcards can't be upgraded. Press 2.`)}><b>2 · Upgrade</b><span>One tile → Level 2</span></button>
     </div>`,"restscene");
   fitScene();
@@ -3724,7 +3749,7 @@ function oldTitle(){
     <div class="title-hero">
       <div style="width:min(220px,55vw)">${artSVG("cat")}</div>
       <h1>Lexicore</h1>
-      <div class="sub">English is a lost rune-language. You are the Spell-Cat, and every word you spell commands a swarm of nanobots.</div>
+      <div class="sub">English is a lost rune-language. You are the Spell-Cat, and every word you spell becomes a spell.</div>
     </div>
     <div class="row" style="justify-content:center">
       <button class="btn primary" onclick="newRun()">New run</button>
@@ -3868,13 +3893,13 @@ function showSplash(){
       <div class="sp-cloud sp-int" style="left:260px;top:210px" onpointerdown="event.stopPropagation();popCloud(this)" ${tipAttr("Pop!")}>${CLOUD_SVG}</div>
       <div class="sp-cloud s2 sp-int" style="left:820px;top:250px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
       <div class="sp-cloud sp-int" style="left:560px;top:120px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
-      <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()" ${tipAttr("The Tower. Lexicore waits somewhere near the top.")}><i></i></div>
+      <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()" ${tipAttr("The Tower. Many have tried to climb it. None have come back down.")}><i></i></div>
       <div class="sp-ring"><svg viewBox="0 0 160 60" width="160" height="60" style="overflow:visible">${layer((sh,ink)=>{ sh("path",`d="M4 30 Q80 -4 156 30 Q80 64 4 30 Z M24 30 Q80 50 136 30 Q80 12 24 30 Z"`,"#bfefff"); ink(`<path class="thin" style="stroke:#5fd4c4" d="M14 30 Q80 2 146 30"/>`); })}</svg></div>
       ${heroesUnlocked().map(h=>`<div class="sp-cat sp-int" style="${MENU_HERO[h].css}" onpointerdown="event.stopPropagation();cheerHero(this)" aria-label="${HEROES[h].name}">${artSVG(MENU_HERO[h].art)}</div>`).join("")}
     </div>
     <div class="sp-ui">
       <h1 class="sp-title">Lexicore</h1>
-      <div class="sp-sub">Far away, Lexicore waits at the top of The Tower.</div>
+      <div class="sp-sub">Far away, The Tower rises. They say a great sorcerer waits at the top.</div>
       <div class="sp-press" id="sppress">Press any key to continue</div>
       <div class="sp-menu" id="spmenu" hidden></div>
     </div>
@@ -3910,7 +3935,7 @@ const TUT_KEY="lexspire-tutorial-done";
 function tutDone(){ try{ return localStorage.getItem(TUT_KEY)==="1"; }catch(e){ return false; } }
 function setTutDone(){ try{ localStorage.setItem(TUT_KEY,"1"); }catch(e){} }
 const TUT=[
-  {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and your nanobots turn them into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
+  {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and the old words turn into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
   {t:"Pick a weapon first. Tap the <b>Wand</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
