@@ -1,0 +1,1274 @@
+{
+  "_notes": [
+    "Enemies repeat their moveCycle in order, starting at turn 1.",
+    "attack damage = value + enemy Might (x1.5 if the player is Broken).",
+    "Normal fights scale each enemy's HP by group size: 1-2 enemies x1, 3 x0.75, 4 x0.62, 5 x0.55, 6+ x0.5.",
+    "Rival's Banner (boss relic) gives every enemy +2 Might at combat start."
+  ],
+  "enemies": [
+    {
+      "id": "slime",
+      "name": "Green Slime",
+      "act": 1,
+      "tier": "normal",
+      "hp": 40,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 7
+            },
+            {
+              "type": "block",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 10
+            }
+          ]
+        }
+      ],
+      "lore": "Radioactive goo that learned to wobble with intent. Its touch poisons your runes."
+    },
+    {
+      "id": "bat",
+      "name": "Gloom Bat",
+      "act": 1,
+      "tier": "normal",
+      "hp": 32,
+      "art": "bat",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 12
+            }
+          ]
+        }
+      ],
+      "lore": "Screeches in frequencies that scramble a caster's patience."
+    },
+    {
+      "id": "goblin",
+      "name": "Thorn Goblin",
+      "act": 1,
+      "tier": "normal",
+      "hp": 46,
+      "art": "goblin",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "block",
+              "value": 10
+            },
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 11
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "slimy",
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "lore": "A thorny scavenger. It buffs itself, then smears slime on your tiles."
+    },
+    {
+      "id": "arachne",
+      "name": "Arachne Matriarch",
+      "act": 1,
+      "tier": "elite",
+      "hp": 85,
+      "art": "arachne",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 4
+            },
+            {
+              "type": "block",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 12
+            }
+          ]
+        }
+      ],
+      "lore": "Queen of the overgrown subway. Her webs poison whole hands of tiles."
+    },
+    {
+      "id": "quartz",
+      "name": "Quartz Punisher",
+      "act": 1,
+      "tier": "elite",
+      "hp": 100,
+      "art": "quartz",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "block",
+              "value": 15
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 22,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "A pre-war defense robot with a crystal brain and a very big hammer."
+    },
+    {
+      "id": "tslime",
+      "name": "Training Slime",
+      "act": 0,
+      "tier": "tutorial",
+      "hp": 55,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "block",
+              "value": 5
+            },
+            {
+              "type": "attack",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 7
+            }
+          ]
+        }
+      ],
+      "lore": "A gentle practice blob kept by the Tablet for new spell-casters."
+    },
+    {
+      "id": "gargoyle",
+      "name": "Ancient Stone Gargoyle",
+      "act": 1,
+      "tier": "boss",
+      "hp": 155,
+      "art": "gargoyle",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Chant of Decay",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "curse",
+              "count": 2
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Stone Slam",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 16
+            },
+            {
+              "type": "block",
+              "value": 15
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Gaze of Frustration",
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "frustrated",
+              "value": 3
+            },
+            {
+              "type": "attack",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Execute",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 24,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "Stone guardian at the foot of The Tower. It curses, condemns and executes."
+    },
+    {
+      "id": "rat",
+      "name": "Scrap Rat",
+      "act": 2,
+      "tier": "normal",
+      "hp": 65,
+      "art": "rat",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 14
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "block",
+              "value": 13
+            },
+            {
+              "type": "attack",
+              "value": 8
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 2
+            },
+            {
+              "type": "attack",
+              "value": 7
+            }
+          ]
+        }
+      ],
+      "lore": "Wears a cooking pot as a helmet and swings a lead pipe. Jams your tiles shut."
+    },
+    {
+      "id": "hound",
+      "name": "Riot Hound",
+      "act": 2,
+      "tier": "normal",
+      "hp": 70,
+      "art": "hound",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 3
+            },
+            {
+              "type": "block",
+              "value": 9
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 12
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "lore": "A former police dog in a riot vest. Gets angrier every turn."
+    },
+    {
+      "id": "crow",
+      "name": "Wrench Crow",
+      "act": 2,
+      "tier": "normal",
+      "hp": 55,
+      "art": "crow",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 10
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 15
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 1
+            },
+            {
+              "type": "attack",
+              "value": 7
+            }
+          ]
+        }
+      ],
+      "lore": "Steals wrenches, goggles and your patience."
+    },
+    {
+      "id": "knight",
+      "name": "Junkyard Knight",
+      "act": 2,
+      "tier": "elite",
+      "hp": 150,
+      "art": "knight",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "block",
+              "value": 25
+            },
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 23
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 2
+            },
+            {
+              "type": "attack",
+              "value": 13
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 31,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "Scrap-armored badger with a STOP sign shield. Condemns the weak."
+    },
+    {
+      "id": "mantis",
+      "name": "Hazmat Mantis",
+      "act": 2,
+      "tier": "elite",
+      "hp": 135,
+      "art": "mantis",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 3
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 27,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "Wears a hazmat suit so the poison stays on the outside."
+    },
+    {
+      "id": "titan",
+      "name": "The Titan",
+      "act": 2,
+      "tier": "boss",
+      "hp": 305,
+      "art": "titan",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Stomp",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 27
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Rumble",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 3
+            },
+            {
+              "type": "block",
+              "value": 32
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Mega Kick",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 38,
+              "heavy": true
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Earthquake",
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 2
+            },
+            {
+              "type": "playerDebuff",
+              "status": "frustrated",
+              "value": 3
+            }
+          ]
+        }
+      ],
+      "special": [
+        "giant"
+      ],
+      "lore": "Something enormous walks the ruined city. All you can see is its foot."
+    },
+    {
+      "id": "twinA",
+      "name": "Gemini Left",
+      "act": 2,
+      "tier": "boss",
+      "hp": 150,
+      "art": "twin",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Pinch",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 15
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Brace",
+          "actions": [
+            {
+              "type": "block",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Crush",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 21,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "special": [
+        "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
+      ],
+      "lore": "One half of the Gemini brutes. They fight back to back… or front to back."
+    },
+    {
+      "id": "twinB",
+      "name": "Gemini Right",
+      "act": 2,
+      "tier": "boss",
+      "hp": 150,
+      "art": "twin",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Brace",
+          "actions": [
+            {
+              "type": "block",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Pinch",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 17
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Hex",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "curse",
+              "count": 2
+            },
+            {
+              "type": "attack",
+              "value": 9
+            }
+          ]
+        }
+      ],
+      "special": [
+        "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
+      ],
+      "lore": "The other half. Whichever twin you turn your back on hits twice as hard."
+    },
+    {
+      "id": "prisoner",
+      "name": "Prisoner 0451",
+      "act": 3,
+      "tier": "normal",
+      "hp": 105,
+      "art": "prisoner",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 22
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 3
+            },
+            {
+              "type": "block",
+              "value": 19
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "curse",
+              "count": 2
+            },
+            {
+              "type": "attack",
+              "value": 14
+            }
+          ]
+        }
+      ],
+      "lore": "An alien kept in the Tower for interrogation. It wants out, and you are in the way."
+    },
+    {
+      "id": "drone",
+      "name": "Sentry Drone",
+      "act": 3,
+      "tier": "normal",
+      "hp": 90,
+      "art": "drone",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 15
+            },
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 2
+            },
+            {
+              "type": "block",
+              "value": 15
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 26
+            }
+          ]
+        }
+      ],
+      "lore": "Old-world security, still patrolling the Tower's halls."
+    },
+    {
+      "id": "moth",
+      "name": "Cyber Moth",
+      "act": 3,
+      "tier": "normal",
+      "hp": 85,
+      "art": "moth",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "slimy",
+              "count": 3
+            },
+            {
+              "type": "attack",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 17
+            },
+            {
+              "type": "playerDebuff",
+              "status": "poison",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 24
+            }
+          ]
+        }
+      ],
+      "lore": "A moth with circuit-board wings. Its dust turns tiles to slime."
+    },
+    {
+      "id": "warden",
+      "name": "Warden Unit",
+      "act": 3,
+      "tier": "elite",
+      "hp": 225,
+      "art": "warden",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "block",
+              "value": 38
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 34
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 3
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 42,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "Keeper of the cells. Locks letters like it locks doors."
+    },
+    {
+      "id": "alpha",
+      "name": "Escaped Prisoner Alpha",
+      "act": 3,
+      "tier": "elite",
+      "hp": 205,
+      "art": "alpha",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 5
+            },
+            {
+              "type": "block",
+              "value": 17
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 27
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 3
+            },
+            {
+              "type": "attack",
+              "value": 17
+            }
+          ]
+        }
+      ],
+      "lore": "The strongest escaped prisoner, chains still hanging from its wrists."
+    },
+    {
+      "id": "shroom",
+      "name": "Mother Mycelia",
+      "act": 1,
+      "tier": "boss",
+      "hp": 165,
+      "art": "shroom",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Spore Cloud",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 2
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Cap Slam",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 14
+            },
+            {
+              "type": "block",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Mycelium",
+          "actions": [
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 2
+            },
+            {
+              "type": "block",
+              "value": 14
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Fungal Burst",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 22,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children."
+    },
+    {
+      "id": "zero",
+      "name": "Prisoner Zero",
+      "act": 3,
+      "tier": "boss",
+      "hp": 400,
+      "art": "zero",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Mind Spike",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 3
+            },
+            {
+              "type": "attack",
+              "value": 18
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Psychic Shell",
+          "actions": [
+            {
+              "type": "block",
+              "value": 28
+            },
+            {
+              "type": "buff",
+              "status": "might",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Scream",
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 2
+            },
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Annihilate",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 38,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "The first alien ever caught. Its mind is too big for its cell, and it leaks."
+    },
+    {
+      "id": "gatekeeper",
+      "name": "The Gatekeeper",
+      "act": 3,
+      "tier": "boss",
+      "hp": 430,
+      "art": "gatekeeper",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Lockdown",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 3
+            },
+            {
+              "type": "block",
+              "value": 32
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Laser Sweep",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 26
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Purge",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 3
+            },
+            {
+              "type": "attack",
+              "value": 14
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Overcharge",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 40,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "A walking vault door. Nothing reaches the top of The Tower unless it says so."
+    },
+    {
+      "id": "lexicore",
+      "name": "LEXICORE",
+      "act": 4,
+      "tier": "boss",
+      "hp": 480,
+      "art": "lexicore",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "name": "Parse",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "curse",
+              "count": 2
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 2
+            },
+            {
+              "type": "block",
+              "value": 26
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "name": "Compile",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 38
+            },
+            {
+              "type": "block",
+              "value": 34
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "name": "Overwrite",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 3
+            },
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Delete",
+          "actions": [
+            {
+              "type": "attack",
+              "value": 51,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "The supercomputer that waited above The Tower. Its test is over.",
+      "glossaryHiddenUntil": "achievement act4"
+    }
+  ]
+}

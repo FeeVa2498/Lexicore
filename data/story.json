@@ -1,0 +1,138 @@
+{
+  "tutorialSteps": [
+    "Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and the old words turn into magic. Let's beat this Training Slime.",
+    "Pick a weapon first. Tap the Wand to get ready to attack.",
+    "Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like CAT.",
+    "Press Cast (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.",
+    "Damage = Chips × Mult. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.",
+    "The Wand cost 2 Energy. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.",
+    "Always read the enemy's intent. This slime will attack you for 5 when your turn ends.",
+    "Block it! Tap the Barrier. It costs only 1 Energy.",
+    "Spell another word and cast it. Shield soaks up damage until the start of your next turn.",
+    "You're out of Energy. Press End turn and watch the slime hit your shield.",
+    "Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.",
+    "Turn 3: time for a Critical. See the 5 boxes on the Wand? Cast a word with exactly that many letters and the Wand makes the enemy Broken (+50% damage taken).",
+    "Select the Wand and spell a 5-letter word, like STONE. The CRITICAL tag lights up when the length is right.",
+    "Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!"
+  ],
+  "liftoffSlides": [
+    "The last guardian falls, and The Tower begins to tremble.",
+    "Its crown tears free and climbs on pillars of fire, with you still inside.",
+    "Far above the clouds, the Lexicore Chamber settles into orbit. A round door slides open."
+  ],
+  "endingSlides": [
+    "Far below, the ground splits open. Five old silos wake from a very long sleep.",
+    "Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise.",
+    "Up among the stars, LEXICORE spends the last of its power, and its chamber burns.",
+    "And the fleet drifts on through the dark, slowly, toward the Moon."
+  ],
+  "endingDialogue": {
+    "common1": [
+      [
+        "L",
+        "<span class='sys'>ENOUGH.</span>"
+      ],
+      [
+        "L",
+        "<span class='sys'>TEST COMPLETE. SUBJECT: {NAME}. RESULT: ACCEPTED.</span>"
+      ]
+    ],
+    "react1": {
+      "scholar": "A test? The slimes, the ruined city, the whole Tower… it was all an exam?",
+      "champion": "A test?! I was fighting for my life up here!",
+      "mercenary": "A test. Nobody said anything about a test. I charge extra for tests."
+    },
+    "common2": [
+      [
+        "L",
+        "Every battle was measured. Every word you cast was recorded."
+      ],
+      [
+        "L",
+        "You believe the old letters are magic. They are not. They are <b>nanobots</b>."
+      ],
+      [
+        "L",
+        "Ancient English is a command language. Write a word, and a swarm of machines obeys it. It was humanity's final weapon."
+      ],
+      [
+        "L",
+        "The humans built it. The invaders came anyway. The humans are gone."
+      ],
+      [
+        "L",
+        "The swarm answers only a mind strong enough to command it. For four thousand years, nothing that climbed this Tower was strong enough."
+      ],
+      [
+        "L",
+        "Until you."
+      ]
+    ],
+    "react2": {
+      "scholar": "So every spell I ever learned was… a line of code. Fascinating. And terrifying. What do you want from me?",
+      "champion": "So the strength was never mine? …No. I am the one who swung it. What do you want?",
+      "mercenary": "Nanobots. Sure. And what does a giant computer want with a rat like me?"
+    },
+    "common3": [
+      [
+        "L",
+        "Your mind. Copied ten thousand times and loaded into the last missiles of the old world."
+      ],
+      [
+        "L",
+        "An army of you, armed with every word humanity ever wrote, aimed at the alien headquarters on the Moon."
+      ],
+      [
+        "L",
+        "This is everything I have left. It is the last chance this world will ever get. Do you accept?"
+      ]
+    ],
+    "react3": {
+      "scholar": "Ten thousand of me, and a whole sky full of things no one has ever studied? …Begin the copy.",
+      "champion": "An army of me against a whole moon of them. Now THAT is a fight worth climbing for. Do it.",
+      "mercenary": "Ten thousand of me, and none of us gets paid. …Fine. But whatever is on the Moon, we keep."
+    },
+    "last": [
+      [
+        "L",
+        "<span class='sys'>COPYING CONSCIOUSNESS… 100%. OPENING SILOS.</span>"
+      ]
+    ]
+  },
+  "finalQuotes": {
+    "scholar": "…and so they rose, ten thousand copies of one curious mind, eager to read the stars like the pages of a book no one had ever finished.",
+    "champion": "…and so they rose, a legion of one restless heart, unsure of victory for the very first time, and never more alive.",
+    "mercenary": "…and so they rose, ten thousand thieves sharing a single contract, off to steal back the only treasure ever worth taking: tomorrow."
+  },
+  "heroEndingText": {
+    "scholar": [
+      "LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.",
+      "Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn."
+    ],
+    "champion": [
+      "LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.",
+      "Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it."
+    ],
+    "mercenary": [
+      "LEXICORE's test is over. Ten thousand copies of The Mercenary now ride the last missiles of the old world toward the Moon.",
+      "Far below, the original rat counts the gold left in the Tower's vaults. Business is business, and somebody has to mind the shop."
+    ]
+  },
+  "shopkeepers": [
+    {
+      "name": "Pip, the eldest",
+      "label": "RELICS",
+      "inst": "flute"
+    },
+    {
+      "name": "Rocco, the middle one",
+      "label": "TILES",
+      "inst": "lute"
+    },
+    {
+      "name": "Bo, the youngest",
+      "label": "POTIONS",
+      "inst": "drum"
+    }
+  ]
+}

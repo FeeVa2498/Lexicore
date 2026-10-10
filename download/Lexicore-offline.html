@@ -1691,7 +1691,7 @@ function tileChip(t, letter){
   return VAL[L] + (t.lvl===2?LV2_BONUS:0);
 }
 function tileTitle(t){
-  let s = /[A-Z]/.test(t.ch) ? `${t.ch} · Spell Power ${tileChip(t)}` : ({"?":"Wildcard: becomes the best letter","!":"Exclamation: end of word, bonus Arcana",",":"Comma: joins two words"})[t.ch];
+  let s = /[A-Z]/.test(t.ch) ? `${t.ch} · Spell Power ${tileChip(t)}` : ({"?":"Wildcard: becomes the best letter","!":"Exclamation: end of a word or a single letter, bonus Spell Power",",":"Comma: joins two words"})[t.ch];
   if(t.lvl===2) s+=` · Level 2 (+${LV2_BONUS})`;
   if(t.paint) s+=` · ${PAINTS[t.paint].name}: ${PAINTS[t.paint].d}`;
   if(t.deb) s+=` · ${TILE_DEBUFFS[t.deb.t].name}${t.deb.n?` (${t.deb.n})`:""}: ${TILE_DEBUFFS[t.deb.t].d}`;
@@ -2299,7 +2299,7 @@ function showControls(){
       ${r("<kbd>Esc</kbd>","Clear the sigil bar; if it's empty, open Settings (Map, Deck, Rules)")}
       <tr><th colspan="2">Map &amp; screens</th></tr>
       ${r("<kbd>W</kbd><kbd>S</kbd> / <kbd>↑</kbd><kbd>↓</kbd> · <kbd>Enter</kbd>","Map: pick the next node, then travel (drag with the mouse or scroll to pan)")}
-      ${r("<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>R</kbd>","Reward: take a tile / re-roll")}
+      ${r("<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>S</kbd>","Reward: take a tile / skip")}
       ${r("<kbd>1</kbd> <kbd>2</kbd>","Weapon Altar and Rest Site: choose an option")}
       ${r("<kbd>1</kbd>–<kbd>9</kbd> · <kbd>T</kbd> · <kbd>L</kbd>","Shop: buy relics 1–3, tiles 4–6, potions 7–9 · toss a tile · leave")}
       ${r("<kbd>Tab</kbd> + <kbd>Enter</kbd>","Move between and press any button (shop, events, menus)")}

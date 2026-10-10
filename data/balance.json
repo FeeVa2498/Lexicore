@@ -1,0 +1,144 @@
+{
+  "combat": {
+    "handSize": 16,
+    "handOverflow": "Tiles that would enter a full hand go to the discard pile.",
+    "baseEnergy": 3,
+    "maxWeapons": 5,
+    "basePotionSlots": 3,
+    "brokenMultiplier": 1.5,
+    "weakenShieldMultiplier": 0.5,
+    "singleTile": "Mult 1, no relics; trailing ! allowed",
+    "journalSecondCast": "output x2 on the 2nd cast of the same word in a run"
+  },
+  "map": {
+    "floorsPerAct": 8,
+    "columns": 7,
+    "paths": 6,
+    "floorRules": [
+      {
+        "floor": 0,
+        "type": "start: Weapon Altar"
+      },
+      {
+        "floor": 1,
+        "type": "combat"
+      },
+      {
+        "floor": "2-3",
+        "weights": {
+          "combat": 60,
+          "event": 30,
+          "shop": 10
+        }
+      },
+      {
+        "floor": 4,
+        "weights": {
+          "rest": 50,
+          "shop": 50
+        }
+      },
+      {
+        "floor": 5,
+        "weights": {
+          "combat": 42,
+          "elite": 34,
+          "event": 24
+        }
+      },
+      {
+        "floor": 6,
+        "type": "treasure"
+      },
+      {
+        "floor": 7,
+        "weights": {
+          "combat": 40,
+          "elite": 34,
+          "event": 16,
+          "shop": 10
+        }
+      },
+      {
+        "floor": 8,
+        "type": "rest"
+      },
+      {
+        "floor": 9,
+        "type": "boss"
+      }
+    ],
+    "act4": [
+      "rest",
+      "shop",
+      "event",
+      "boss:lexicore"
+    ]
+  },
+  "gold": {
+    "start": 99,
+    "normalPerFight": "total ≈ 19 + rand(0..11) + 7*(act-1), split evenly across the enemies in the fight (min 6 per enemy)",
+    "elite": "40 + rand(0..17) + 12*(act-1)",
+    "bossTotal": "130 total, split across boss enemies",
+    "goldenIdolMultiplier": 1.25,
+    "hollowCoin": "0 gold from enemies"
+  },
+  "rewards": {
+    "tileChoices": 3,
+    "potionChance": {
+      "normal": 0.5,
+      "elite": 1.0
+    },
+    "eliteRelic": 1,
+    "bossRelicChoices": 3,
+    "actClearHeal": "full"
+  },
+  "rest": {
+    "healPercent": 0.3,
+    "sleepingBagBonus": 15,
+    "upgrade": "one letter tile -> Level 2 (+3 Spell Power)"
+  },
+  "shop": {
+    "relicPrice": "130-179 x (1 + 0.15*(act-1))",
+    "tilePrice": "(30 + letterValue*3 + 30 if Level 2) x (1 + 0.15*(act-1))",
+    "potionPrice": "45-64 x (1 + 0.15*(act-1))",
+    "tossTileStart": 75,
+    "tossTileIncrease": 25,
+    "hagglersBadge": 0.75,
+    "specialTileChance": 0.1,
+    "level2Chance": 0.22
+  },
+  "events": {
+    "pool": [
+      "wordle",
+      "claw",
+      "wheel"
+    ],
+    "wordle": "6 guesses at a 5-letter word; win = relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard), lose = random potion",
+    "claw": "5 grabs; 42 coins (1 gold each), 6 tiles (12% special, 65% painted, 25% Level 2), 1 relic",
+    "wheel": [
+      "Relic",
+      "Potion",
+      "Heal 15",
+      "Random tile -> Level 2",
+      "Paint a random unpainted tile",
+      "Zap -10 HP"
+    ]
+  },
+  "groupHpScaling": {
+    "1": 1,
+    "2": 1,
+    "3": 0.75,
+    "4": 0.62,
+    "5": 0.55,
+    "6+": 0.5
+  },
+  "potionScaling": {
+    "healingDraught": "20 + 10*(act-1)",
+    "volatileFlask": "20 * act",
+    "ironTonic": "15 * act",
+    "mightyBrew": "3 + 2*(act-1)",
+    "venomVial": "8 + 4*(act-1)",
+    "blastJar": "12 + 6*(act-1)"
+  }
+}

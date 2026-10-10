@@ -1,0 +1,88 @@
+{
+  "_notes": [
+    "All heroes start with 99 gold, 1 Healing Draught, and the shared 34-tile starting deck (see tiles.json)."
+  ],
+  "heroes": [
+    {
+      "id": "scholar",
+      "name": "The Scholar",
+      "art": "cat",
+      "color": "#3a86ff",
+      "maxHp": 70,
+      "startingWeapons": [
+        "sword",
+        "shield"
+      ],
+      "startingRelic": "journal",
+      "charSelectText": "A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
+      "playstyle": "Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
+      "who": "A curious wizard cat who found the ancient Tablet and never put it down.",
+      "why": "Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.",
+          "Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn."
+        ],
+        "finalQuote": "…and so they rose, ten thousand copies of one curious mind, eager to read the stars like the pages of a book no one had ever finished."
+      }
+    },
+    {
+      "id": "champion",
+      "name": "The Champion",
+      "art": "wolf",
+      "color": "#e63946",
+      "maxHp": 88,
+      "startingWeapons": [
+        "greatsword",
+        "dumbbell"
+      ],
+      "startingRelic": "blood",
+      "charSelectText": "A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
+      "playstyle": "Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: Adrenaline (below 50% HP: +0.5 Mult) and Undying (once per Act, survive a killing blow at 1 HP and heal 15).",
+      "who": "A red wolf who has beaten every rival in the wastes and grown bored of winning.",
+      "why": "Looking for a real challenge. Rumor says the master of The Tower has never lost.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.",
+          "Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it."
+        ],
+        "finalQuote": "…and so they rose, a legion of one restless heart, unsure of victory for the very first time, and never more alive."
+      },
+      "passives": [
+        {
+          "id": "adrenaline",
+          "name": "Adrenaline",
+          "effect": "Below 50% HP: +0.5 Mult on every cast."
+        },
+        {
+          "id": "undying",
+          "name": "Undying",
+          "effect": "Once per Act, when HP would reach 0, survive at 1 HP and heal 15 (16 HP)."
+        }
+      ]
+    },
+    {
+      "id": "mercenary",
+      "name": "The Mercenary",
+      "art": "rat2",
+      "color": "#57cc4d",
+      "maxHp": 60,
+      "startingWeapons": [
+        "dagger",
+        "belt"
+      ],
+      "startingRelic": "gloves",
+      "charSelectText": "A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect.",
+      "playstyle": "Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
+      "who": "A hooded rat thief with a belt full of tricks and a very expensive contract.",
+      "why": "Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said what it was.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Ten thousand copies of The Mercenary now ride the last missiles of the old world toward the Moon.",
+          "Far below, the original rat counts the gold left in the Tower's vaults. Business is business, and somebody has to mind the shop."
+        ],
+        "finalQuote": "…and so they rose, ten thousand thieves sharing a single contract, off to steal back the only treasure ever worth taking: tomorrow."
+      }
+    }
+  ]
+}

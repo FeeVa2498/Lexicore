@@ -1,0 +1,191 @@
+{
+  "_notes": [
+    "Floor = node index + 1. Pools: floors 1-2 singles; floors 3-5 singles + pairs; floors 6+ pairs + trios. Never the same group twice in a row.",
+    "Elites: an elite already fought in this act is not picked again (2 per act, at most 2 elite nodes per path).",
+    "One boss group is picked per act at random when the act starts and shown on the map legend.",
+    "Act 4 has no random fights: Rest -> Shop -> Event -> LEXICORE."
+  ],
+  "acts": [
+    {
+      "act": 1,
+      "name": "The Outskirts",
+      "normalEncounters": {
+        "singles": [
+          [
+            "slime"
+          ],
+          [
+            "bat"
+          ],
+          [
+            "goblin"
+          ]
+        ],
+        "pairs": [
+          [
+            "slime",
+            "bat"
+          ],
+          [
+            "bat",
+            "bat"
+          ],
+          [
+            "slime",
+            "slime"
+          ],
+          [
+            "goblin",
+            "bat"
+          ]
+        ],
+        "trios": [
+          [
+            "bat",
+            "slime",
+            "bat"
+          ],
+          [
+            "slime",
+            "goblin",
+            "slime"
+          ]
+        ]
+      },
+      "elites": [
+        "arachne",
+        "quartz"
+      ],
+      "bossOptions": [
+        [
+          "gargoyle"
+        ],
+        [
+          "shroom"
+        ]
+      ]
+    },
+    {
+      "act": 2,
+      "name": "The Ruined City",
+      "normalEncounters": {
+        "singles": [
+          [
+            "rat"
+          ],
+          [
+            "hound"
+          ],
+          [
+            "crow"
+          ]
+        ],
+        "pairs": [
+          [
+            "rat",
+            "crow"
+          ],
+          [
+            "hound",
+            "rat"
+          ],
+          [
+            "crow",
+            "crow"
+          ]
+        ],
+        "trios": [
+          [
+            "rat",
+            "crow",
+            "rat"
+          ],
+          [
+            "crow",
+            "hound",
+            "crow"
+          ]
+        ]
+      },
+      "elites": [
+        "knight",
+        "mantis"
+      ],
+      "bossOptions": [
+        [
+          "titan"
+        ],
+        [
+          "twinA",
+          "twinB"
+        ]
+      ]
+    },
+    {
+      "act": 3,
+      "name": "The Tower",
+      "normalEncounters": {
+        "singles": [
+          [
+            "prisoner"
+          ],
+          [
+            "drone"
+          ],
+          [
+            "moth"
+          ]
+        ],
+        "pairs": [
+          [
+            "drone",
+            "moth"
+          ],
+          [
+            "prisoner",
+            "drone"
+          ],
+          [
+            "moth",
+            "moth"
+          ]
+        ],
+        "trios": [
+          [
+            "drone",
+            "prisoner",
+            "drone"
+          ],
+          [
+            "moth",
+            "drone",
+            "moth"
+          ]
+        ]
+      },
+      "elites": [
+        "warden",
+        "alpha"
+      ],
+      "bossOptions": [
+        [
+          "zero"
+        ],
+        [
+          "gatekeeper"
+        ]
+      ]
+    },
+    {
+      "act": 4,
+      "name": "The Lexicore Chamber",
+      "normalEncounters": null,
+      "elites": [],
+      "bossOptions": [
+        [
+          "lexicore"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "_notes": [
+    "Default 3 potion slots (+2 with Bottle Rack). Shop price 45-64 gold x (1 + 0.15 x (act-1)).",
+    "Drop: Elites always drop a potion; normal fights 50%. No potions with Cracked Flask."
+  ],
+  "potions": [
+    {
+      "id": "heal",
+      "name": "Healing Draught",
+      "description": "Heal 20 HP (+10 per Act after the first). Usable anywhere.",
+      "usableOutsideCombat": true,
+      "passive": false
+    },
+    {
+      "id": "fire",
+      "name": "Volatile Flask",
+      "description": "Deal 20 damage to the target (×Act number).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "iron",
+      "name": "Iron Tonic",
+      "description": "Gain 15 Shield (×Act number).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "might",
+      "name": "Mighty Brew",
+      "description": "Gain 3 Might (+2 per Act after the first).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "purge",
+      "name": "Purge Salts",
+      "description": "Cleanse all tile debuffs and your Poison.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "ink",
+      "name": "Ink of Plenty",
+      "description": "Draw 5 tiles.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "phoenix",
+      "name": "Phoenix Feather",
+      "description": "Keep it in a slot. When you would die, it burns and brings you back with 30% HP. It can't be drunk.",
+      "usableOutsideCombat": false,
+      "passive": true
+    },
+    {
+      "id": "tonic",
+      "name": "Energy Tonic",
+      "description": "Gain 2 Energy.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "pages",
+      "name": "Fresh Pages",
+      "description": "Discard your whole hand and draw a fresh 16 tiles.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "venom",
+      "name": "Venom Vial",
+      "description": "Inflict 8 Poison on the target (+4 per Act after the first).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "bomb",
+      "name": "Blast Jar",
+      "description": "Deal 12 damage to ALL enemies (+6 per Act after the first).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "brittle",
+      "name": "Shatter Draught",
+      "description": "Inflict Broken 3 on ALL enemies (+50% damage taken).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "jester",
+      "name": "Jester's Brew",
+      "description": "Add 2 Fragile [ ? ] Wildcard tiles to your hand (or your discard pile if your hand is full).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "shout",
+      "name": "Battle Cry",
+      "description": "Add 3 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full).",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "smoke",
+      "name": "Vanishing Powder",
+      "description": "Escape a normal or Elite fight. You get no reward. Doesn't work on bosses.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "fruit",
+      "name": "Ancient Fruit",
+      "description": "Raise your Max HP by 5 and heal 5. Usable anywhere.",
+      "usableOutsideCombat": true,
+      "passive": false
+    },
+    {
+      "id": "echo",
+      "name": "Echo Draught",
+      "description": "The next word you cast this turn has its output doubled.",
+      "usableOutsideCombat": false,
+      "passive": false
+    },
+    {
+      "id": "clarity",
+      "name": "Clarity Draught",
+      "description": "Every tile in your hand becomes Level 2 for this combat.",
+      "usableOutsideCombat": false,
+      "passive": false
+    }
+  ]
+}

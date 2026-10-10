@@ -1,0 +1,327 @@
+{
+  "_notes": [
+    "'Arcana' in relic descriptions means Mult (UI wording to be unified).",
+    "mult relics: multFormulaJS receives c = {L: cast letters (wildcards resolved), sp: array of each tile's Spell Power} and returns the Mult bonus.",
+    "Mult relics do NOT apply to single-tile casts (fallback).",
+    "starter and boss relics never appear in shops, chests, elite rewards or events; boss relics are offered (pick 1 of 3) after each Act 1-3 boss."
+  ],
+  "relics": [
+    {
+      "id": "r1",
+      "name": "Twin Moons",
+      "category": "mult",
+      "description": "+0.5 Arcana if word length is even.",
+      "multFormulaJS": "c=>c.L.length%2===0?.5:0"
+    },
+    {
+      "id": "r2",
+      "name": "Odd Fang",
+      "category": "mult",
+      "description": "+0.5 Arcana if word length is odd.",
+      "multFormulaJS": "c=>c.L.length%2===1?.5:0"
+    },
+    {
+      "id": "r3",
+      "name": "Ouroboros Loop",
+      "category": "mult",
+      "description": "+1.5 Arcana if first letter matches last letter.",
+      "multFormulaJS": "c=>c.L.length>1&&c.L[0]===c.L[c.L.length-1]?1.5:0"
+    },
+    {
+      "id": "r4",
+      "name": "Vowel Prism",
+      "category": "mult",
+      "description": "+0.25 Arcana per unique vowel.",
+      "multFormulaJS": "c=>.25*new Set(vowelsOf(c.L)).size"
+    },
+    {
+      "id": "r5",
+      "name": "Consonant Coil",
+      "category": "mult",
+      "description": "+0.2 Arcana per unique consonant.",
+      "multFormulaJS": "c=>.2*new Set(consOf(c.L)).size"
+    },
+    {
+      "id": "r6",
+      "name": "Mirror Shard",
+      "category": "mult",
+      "description": "+1 Arcana per pair of adjacent identical letters.",
+      "multFormulaJS": "c=>{let n=0;for(let i=1;i<c.L.length;i++)if(c.L[i]===c.L[i-1])n++;return 1*n}"
+    },
+    {
+      "id": "r7",
+      "name": "Lone Wolf Seal",
+      "category": "mult",
+      "description": "+0.5 Arcana if no letter repeats.",
+      "multFormulaJS": "c=>c.L.length>1&&new Set(c.L).size===c.L.length?.5:0"
+    },
+    {
+      "id": "r8",
+      "name": "Triad Totem",
+      "category": "mult",
+      "description": "+2.5 Arcana if one letter appears 3+ times.",
+      "multFormulaJS": "c=>{const m={};for(const ch of c.L)m[ch]=(m[ch]||0)+1;return Object.values(m).some(v=>v>=3)?2.5:0}"
+    },
+    {
+      "id": "r9",
+      "name": "Heavy Ink",
+      "category": "mult",
+      "description": "+0.4 Arcana per played tile with Spell Power ≥ 5.",
+      "multFormulaJS": "c=>.4*c.sp.filter(v=>v>=5).length"
+    },
+    {
+      "id": "r10",
+      "name": "Pebble Charm",
+      "category": "mult",
+      "description": "+1 Arcana if ALL played tiles have Spell Power ≤ 4.",
+      "multFormulaJS": "c=>c.sp.length&&c.sp.every(v=>v<=4)?1:0"
+    },
+    {
+      "id": "r11",
+      "name": "Long Scroll",
+      "category": "mult",
+      "description": "+2 Arcana if word is 7+ letters.",
+      "multFormulaJS": "c=>c.L.length>=7?2:0"
+    },
+    {
+      "id": "r12",
+      "name": "Ledger Stone",
+      "category": "mult",
+      "description": "+0.75 Arcana if total base Spell Power ≥ 15.",
+      "multFormulaJS": "c=>c.sp.reduce((a,b)=>a+b,0)>=15?.75:0"
+    },
+    {
+      "id": "r13",
+      "name": "Heart Vowel",
+      "category": "mult",
+      "description": "+0.75 Arcana if the exact middle letter is a vowel.",
+      "multFormulaJS": "c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?.75:0"
+    },
+    {
+      "id": "r14",
+      "name": "Dawn Glyph",
+      "category": "mult",
+      "description": "+0.5 Arcana if word starts with A–F.",
+      "multFormulaJS": "c=>/^[A-F]/.test(c.L)?.5:0"
+    },
+    {
+      "id": "r15",
+      "name": "Dusk Glyph",
+      "category": "mult",
+      "description": "+0.5 Arcana if word ends with T–Z.",
+      "multFormulaJS": "c=>/[T-Z]$/.test(c.L)?.5:0"
+    },
+    {
+      "id": "r16",
+      "name": "Open Mouth",
+      "category": "mult",
+      "description": "+1.5 Arcana if word starts and ends with vowels.",
+      "multFormulaJS": "c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?1.5:0"
+    },
+    {
+      "id": "r17",
+      "name": "Choir Bell",
+      "category": "mult",
+      "description": "+1.5 Arcana if vowels outnumber consonants.",
+      "multFormulaJS": "c=>vowelsOf(c.L).length>consOf(c.L).length?1.5:0"
+    },
+    {
+      "id": "blood",
+      "name": "Berserker's Blood",
+      "category": "starter",
+      "description": "Starter relic of The Champion. Heal 5 HP at the end of every combat.",
+      "hero": "champion"
+    },
+    {
+      "id": "gloves",
+      "name": "Quick Gloves",
+      "category": "starter",
+      "description": "Starter relic of The Mercenary. After the first word you cast in each combat, draw as many tiles as it used.",
+      "hero": "mercenary"
+    },
+    {
+      "id": "journal",
+      "name": "Journal",
+      "category": "starter",
+      "description": "Starter relic of The Scholar. The second time you cast a word in this run, its output is doubled. From the third time on it scores normally.",
+      "hero": "scholar"
+    },
+    {
+      "id": "wild",
+      "name": "Jester Rune",
+      "category": "tile_grant",
+      "description": "Adds a [ ? ] Wildcard tile to your deck. It becomes the best-scoring letter that makes a word.",
+      "grantsTiles": [
+        "?"
+      ]
+    },
+    {
+      "id": "bang",
+      "name": "War Horn",
+      "category": "tile_grant",
+      "description": "Adds two [ ! ] tiles. Put them at the end of a word: +2, +4, +6, +10… Spell Power per consecutive !.",
+      "grantsTiles": [
+        "!",
+        "!"
+      ]
+    },
+    {
+      "id": "comma",
+      "name": "Hinge Pin",
+      "category": "tile_grant",
+      "description": "Adds a [ , ] tile. Place it between two words to cast both at once (BIG,CAT).",
+      "grantsTiles": [
+        ","
+      ]
+    },
+    {
+      "id": "coupon",
+      "name": "Haggler's Badge",
+      "category": "common",
+      "description": "Everything in the shop costs 25% less."
+    },
+    {
+      "id": "nib",
+      "name": "Chalk Tally",
+      "category": "common",
+      "description": "Every 10th attack you cast deals double damage."
+    },
+    {
+      "id": "anchor",
+      "name": "Scrap Plating",
+      "category": "common",
+      "description": "Start each combat with 10 Shield."
+    },
+    {
+      "id": "pouch",
+      "name": "Pencil Case",
+      "category": "common",
+      "description": "On the first turn of each combat, after every word you cast, draw back up to 16 tiles."
+    },
+    {
+      "id": "lantern",
+      "name": "Spark Plug",
+      "category": "common",
+      "description": "Gain 1 extra Energy on the first turn of each combat."
+    },
+    {
+      "id": "knuckle",
+      "name": "Iron Knuckles",
+      "category": "common",
+      "description": "Start each combat with 2 Might."
+    },
+    {
+      "id": "scales",
+      "name": "Potted Cactus",
+      "category": "common",
+      "description": "Start each combat with 3 Thorns that last the whole fight."
+    },
+    {
+      "id": "ticket",
+      "name": "Caravan Stew",
+      "category": "common",
+      "description": "Heal 15 HP whenever you enter a shop."
+    },
+    {
+      "id": "pillow",
+      "name": "Sleeping Bag",
+      "category": "common",
+      "description": "Resting at a Rest Site heals 15 more HP."
+    },
+    {
+      "id": "idol",
+      "name": "Magpie Feather",
+      "category": "common",
+      "description": "Enemies drop 25% more gold."
+    },
+    {
+      "id": "medkit",
+      "name": "Duct Tape",
+      "category": "common",
+      "description": "The first time you fall below 50% HP in a combat, heal 12."
+    },
+    {
+      "id": "coil",
+      "name": "Static Coil",
+      "category": "common",
+      "description": "At the start of each of your turns, deal 3 damage to ALL enemies."
+    },
+    {
+      "id": "opener",
+      "name": "Rubber Stamp",
+      "category": "common",
+      "description": "Every 3rd word you cast in a turn deals 5 damage to ALL enemies."
+    },
+    {
+      "id": "shuriken",
+      "name": "Metronome",
+      "category": "common",
+      "description": "Every 3rd word you cast in a turn gives +1 Might."
+    },
+    {
+      "id": "berry",
+      "name": "Canned Peaches",
+      "category": "common",
+      "description": "Raise your Max HP by 7 when you pick it up."
+    },
+    {
+      "id": "potbelt",
+      "name": "Bottle Rack",
+      "category": "common",
+      "description": "Gain 2 extra potion slots."
+    },
+    {
+      "id": "bird",
+      "name": "Bendy Straw",
+      "category": "common",
+      "description": "Heal 5 HP whenever you use a potion."
+    },
+    {
+      "id": "flower",
+      "name": "Wind-up Key",
+      "category": "common",
+      "description": "Every 3rd turn of a combat, gain 1 extra Energy."
+    },
+    {
+      "id": "ecto",
+      "name": "Hollow Coin",
+      "category": "boss",
+      "description": "Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold.",
+      "extraEnergyPerTurn": 1
+    },
+    {
+      "id": "dripper",
+      "name": "Insomnia Lamp",
+      "category": "boss",
+      "description": "Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites.",
+      "extraEnergyPerTurn": 1
+    },
+    {
+      "id": "sozu",
+      "name": "Cracked Flask",
+      "category": "boss",
+      "description": "Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions.",
+      "extraEnergyPerTurn": 1
+    },
+    {
+      "id": "crown",
+      "name": "Dry Palette",
+      "category": "boss",
+      "description": "Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile.",
+      "extraEnergyPerTurn": 1
+    },
+    {
+      "id": "philo",
+      "name": "Rival's Banner",
+      "category": "boss",
+      "description": "Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might.",
+      "extraEnergyPerTurn": 1
+    },
+    {
+      "id": "satchel",
+      "name": "Hoarder's Satchel",
+      "category": "boss",
+      "description": "Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16."
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "statuses": {
+    "block": {
+      "n": "Shield",
+      "d": "Blocks incoming damage. Clears at the start of the owner's turn."
+    },
+    "might": {
+      "n": "Might",
+      "d": "+1 Spell Power to attack weapons per stack. Resets after combat."
+    },
+    "robust": {
+      "n": "Robust",
+      "d": "+1 Spell Power to defense weapons per stack. Resets after combat."
+    },
+    "poison": {
+      "n": "Poisoned",
+      "d": "Takes X damage at the end of its turn, then loses 1 stack."
+    },
+    "weaken": {
+      "n": "Weaken",
+      "d": "Shield generated is halved. Counts down each turn."
+    },
+    "broken": {
+      "n": "Broken",
+      "d": "Takes +50% damage from all sources. Counts down each turn."
+    },
+    "curse": {
+      "n": "Cursed",
+      "d": "At end of turn, if HP ≤ Curse stacks, you die instantly."
+    },
+    "thorns": {
+      "n": "Thorns",
+      "d": "When an enemy attacks you, it takes this much damage. Clears at the start of your turn."
+    },
+    "frustrated": {
+      "n": "Frustrated",
+      "d": "Casting a word shorter than X+1 letters deals 1 self-damage. Loses 1 stack per turn."
+    }
+  },
+  "keywords": {
+    "block": {
+      "name": "Shield",
+      "text": "Blocks incoming damage. Lost at the start of the owner's next turn."
+    },
+    "might": {
+      "name": "Might",
+      "text": "Each stack adds +1 Spell Power to attack words (for enemies: +1 damage per attack). Lasts this combat."
+    },
+    "robust": {
+      "name": "Robust",
+      "text": "Each stack adds +1 Spell Power to shield words. Lasts this combat."
+    },
+    "thorns": {
+      "name": "Thorns",
+      "text": "When an enemy attacks you, it takes this much damage back. Clears at the start of your turn."
+    },
+    "poison": {
+      "name": "Poison",
+      "text": "At the end of its owner's turn, deals damage equal to its stacks, then loses 1 stack."
+    },
+    "weaken": {
+      "name": "Weaken",
+      "text": "Shield gained is halved. Counts down at the end of each turn."
+    },
+    "broken": {
+      "name": "Broken",
+      "text": "Takes 50% more damage from every source. Counts down each turn."
+    },
+    "curse": {
+      "name": "Cursed",
+      "text": "At the end of turn, if HP is at or below the Curse stacks, the target dies instantly."
+    },
+    "frustrated": {
+      "name": "Frustrated",
+      "text": "Casting a word shorter than stacks + 1 letters deals 1 damage to yourself. Loses 1 stack per turn."
+    },
+    "slimy": {
+      "name": "Slimy tile",
+      "text": "The tile's Spell Power is 0 the first time it is used."
+    },
+    "ptile": {
+      "name": "Poisoned tile",
+      "text": "Using this tile gives you +1 Poison."
+    },
+    "lock": {
+      "name": "Locked tile",
+      "text": "Cannot be played for a few turns."
+    },
+    "condemn": {
+      "name": "Condemned tile",
+      "text": "If it is still in your hand at the end of turn, it is banished for the rest of this combat."
+    },
+    "ctile": {
+      "name": "Cursed tile",
+      "text": "Using this tile gives you +1 Curse."
+    },
+    "ftile": {
+      "name": "Frustrated tile",
+      "text": "Using this tile gives you +1 Frustrated."
+    },
+    "crit": {
+      "name": "Critical",
+      "text": "Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect. [ ! ] tiles count as letters for this: with a 3-sigil weapon, SAW crits but SAW! does not, and HI! does."
+    },
+    "energy": {
+      "name": "Energy",
+      "text": "You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."
+    },
+    "wild": {
+      "name": "Wildcard ?",
+      "text": "Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."
+    },
+    "bang": {
+      "name": "Exclamation !",
+      "text": "Must go at the end of a word, or after a single letter (U!, U!!!!). It can never be cast on its own. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."
+    },
+    "comma": {
+      "name": "Comma ,",
+      "text": "Put it between two words to cast both in one action."
+    },
+    "red": {
+      "name": "Red Paint",
+      "text": "+1 Might each time the tile is played."
+    },
+    "blue": {
+      "name": "Blue Paint",
+      "text": "+1 Robust each time the tile is played."
+    },
+    "green": {
+      "name": "Green Paint",
+      "text": "Draw 1 extra tile when the word is cast."
+    },
+    "gold": {
+      "name": "Gold Paint",
+      "text": "+1 Gold each time the tile is played."
+    },
+    "fragile": {
+      "name": "Fragile",
+      "text": "This tile disappears for the rest of the combat after its first use (like Exhaust)."
+    }
+  }
+}

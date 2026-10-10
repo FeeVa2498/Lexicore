@@ -1,0 +1,142 @@
+{
+  "achievements": [
+    {
+      "id": "tutorial",
+      "name": "Class Dismissed",
+      "description": "Finish the tutorial.",
+      "color": "#57cc4d"
+    },
+    {
+      "id": "first_blood",
+      "name": "First Blood",
+      "description": "Win your first fight in a run.",
+      "color": "#e63946"
+    },
+    {
+      "id": "crit",
+      "name": "Precision",
+      "description": "Land your first Critical.",
+      "color": "#fb8b24"
+    },
+    {
+      "id": "one_shot",
+      "name": "One and Done",
+      "description": "Defeat a normal enemy from full HP with a single word.",
+      "color": "#ffbe0b"
+    },
+    {
+      "id": "one_shot_elite",
+      "name": "Elite Eraser",
+      "description": "Defeat an Elite from full HP with a single word.",
+      "color": "#9b5de5"
+    },
+    {
+      "id": "one_shot_boss",
+      "name": "Boss? What Boss?",
+      "description": "Defeat the Act 1 boss from full HP with a single word.",
+      "color": "#ff006e"
+    },
+    {
+      "id": "long7",
+      "name": "Wordsmith",
+      "description": "Cast a word with 7 or more letters.",
+      "color": "#3a86ff"
+    },
+    {
+      "id": "long10",
+      "name": "Sesquipedalian",
+      "description": "Cast a word with 10 or more letters.",
+      "color": "#1747b8"
+    },
+    {
+      "id": "big100",
+      "name": "Triple Digits",
+      "description": "Deal 100 or more damage with one word.",
+      "color": "#e5352b"
+    },
+    {
+      "id": "comma",
+      "name": "Comma Chameleon",
+      "description": "Cast two words at once with a comma tile.",
+      "color": "#5fd4c4"
+    },
+    {
+      "id": "wild3",
+      "name": "Wild at Heart",
+      "description": "Cast a word that uses 3 wildcard tiles.",
+      "color": "#c79bff"
+    },
+    {
+      "id": "untouched",
+      "name": "Untouchable",
+      "description": "Win a fight without losing any HP.",
+      "color": "#8ccf2a"
+    },
+    {
+      "id": "claw_relic",
+      "name": "Claw Master",
+      "description": "Win a relic from the claw machine.",
+      "color": "#ffd166"
+    },
+    {
+      "id": "act1",
+      "name": "Foot of The Tower",
+      "description": "Defeat the boss of the Outskirts.",
+      "color": "#76706a"
+    },
+    {
+      "id": "act2",
+      "name": "City Lights",
+      "description": "Defeat the boss of the Ruined City.",
+      "color": "#f4a261"
+    },
+    {
+      "id": "act3",
+      "name": "Top Floor",
+      "description": "Defeat the boss of The Tower.",
+      "color": "#5fd4c4"
+    },
+    {
+      "id": "act4",
+      "name": "Worthy",
+      "description": "Defeat whatever waits at the very top of The Tower.",
+      "color": "#9b5de5"
+    },
+    {
+      "id": "close",
+      "name": "That Was Close",
+      "description": "Cast NIGERIA.",
+      "color": "#2fa84f",
+      "secret": true
+    },
+    {
+      "id": "close_enough",
+      "name": "Close Enough",
+      "description": "Cast a censored swear word, like FVCK or SH!T.",
+      "color": "#ff5d8f",
+      "secret": true
+    }
+  ],
+  "easterEggWords": {
+    "NIGERIA": "close",
+    "FVCK": "close_enough",
+    "FVCKS": "close_enough",
+    "FVCKER": "close_enough",
+    "FVCKING": "close_enough",
+    "PHVCK": "close_enough",
+    "MOTHERFVCKER": "close_enough",
+    "SH!T": "close_enough",
+    "SH!TTY": "close_enough",
+    "BULLSH!T": "close_enough",
+    "CVNT": "close_enough",
+    "VAG!NA": "close_enough",
+    "B!TCH": "close_enough",
+    "B!TCHES": "close_enough",
+    "D!CK": "close_enough",
+    "PR!CK": "close_enough",
+    "P!SS": "close_enough",
+    "P!SSED": "close_enough",
+    "T!TS": "close_enough",
+    "DAMM!T": "close_enough"
+  }
+}

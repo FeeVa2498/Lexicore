@@ -1,0 +1,112 @@
+{
+  "letterSpellPower": {
+    "A": 2,
+    "B": 4,
+    "C": 4,
+    "D": 3,
+    "E": 2,
+    "F": 5,
+    "G": 3,
+    "H": 5,
+    "I": 2,
+    "J": 9,
+    "K": 6,
+    "L": 2,
+    "M": 4,
+    "N": 2,
+    "O": 2,
+    "P": 4,
+    "Q": 11,
+    "R": 2,
+    "S": 2,
+    "T": 2,
+    "U": 2,
+    "V": 5,
+    "W": 5,
+    "X": 9,
+    "Y": 5,
+    "Z": 11
+  },
+  "level2Bonus": 3,
+  "startingDeck": {
+    "consonants": "BCDFGHJKLMNPQRSTVWXYZ (1 each, 21 tiles)",
+    "vowels": "A, I, U, E, O (2 each, 10 tiles)",
+    "wildcards": 3,
+    "total": 34,
+    "sequence": "BCDFGHJKLMNPQRSTVWXYZAAIIUUEEOO???"
+  },
+  "specialTiles": {
+    "?": {
+      "name": "Wildcard",
+      "spellPower": 0,
+      "rule": "Becomes the letter that makes a valid word with the highest Spell Power. Scores 0. Cannot be upgraded."
+    },
+    "!": {
+      "name": "Exclamation",
+      "rule": "Only at the end of a word or after a single letter. Cannot be cast alone. Consecutive ! add 2,4,6,10,16,26,42 Spell Power (FIB x2, cumulative). Counts toward crit length."
+    },
+    ",": {
+      "name": "Comma",
+      "rule": "Between two words to cast both at once; both must be valid. Not counted toward crit length."
+    }
+  },
+  "paints": {
+    "red": {
+      "name": "Red Paint · Might",
+      "d": "+1 Might when played (+1 Spell Power to attack weapons this combat)."
+    },
+    "blue": {
+      "name": "Blue Paint · Robust",
+      "d": "+1 Robust when played (+1 Spell Power to defense weapons this combat)."
+    },
+    "green": {
+      "name": "Green Paint · Agility",
+      "d": "Draws +1 tile when the word is submitted."
+    },
+    "gold": {
+      "name": "Gold Paint · Fortune",
+      "d": "+1 Gold each time it is played."
+    }
+  },
+  "tileDebuffs": {
+    "slimy": {
+      "tag": "SL",
+      "name": "Slimy",
+      "d": "Spell Power is 0 for its first use."
+    },
+    "poison": {
+      "tag": "PO",
+      "name": "Poisoned",
+      "d": "Gives you +1 Poison when used."
+    },
+    "lock": {
+      "tag": "LK",
+      "name": "Locked",
+      "d": "Cannot be played for N turns."
+    },
+    "condemn": {
+      "tag": "CD",
+      "name": "Condemned",
+      "d": "Banished for the rest of this combat if still unplayed in hand at end of turn. It returns to your deck after the fight."
+    },
+    "curse": {
+      "tag": "CU",
+      "name": "Cursed",
+      "d": "Gives you +1 Curse when used."
+    },
+    "frustrate": {
+      "tag": "FR",
+      "name": "Frustrated",
+      "d": "Gives you +1 Frustrated when used."
+    }
+  },
+  "fragile": "Fragile tiles are banished for the rest of the combat after one use (created by Utility Belt, Rune Chisel, Jester's Brew, Battle Cry).",
+  "rewardSlots": {
+    "slot1": "AIUEO",
+    "slot2": "YZQXJWR",
+    "slot3": "any letter or ? ! ,",
+    "level2Chance": 0.2,
+    "paint": "random of red/blue/green/gold"
+  },
+  "shopLetterPool": "AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ"
+}
