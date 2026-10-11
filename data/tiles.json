@@ -77,12 +77,12 @@
     "poison": {
       "tag": "PO",
       "name": "Poisoned",
-      "d": "Gives you +1 Poison when used."
+      "d": "Casting it gives you +1 Poison: you take damage equal to your Poison at the end of your turn, then it drops by 1."
     },
     "lock": {
       "tag": "LK",
       "name": "Locked",
-      "d": "Cannot be played for N turns."
+      "d": "Can't be cast until the lock counts down to 0 (1 per turn)."
     },
     "condemn": {
       "tag": "CD",
@@ -92,12 +92,12 @@
     "curse": {
       "tag": "CU",
       "name": "Cursed",
-      "d": "Gives you +1 Curse when used."
+      "d": "Casting it gives you +1 Curse: if your HP is at or below your Curse at the end of a turn, you die instantly."
     },
     "frustrate": {
       "tag": "FR",
       "name": "Frustrated",
-      "d": "Gives you +1 Frustrated when used."
+      "d": "Casting it gives you +1 Frustrated: words shorter than (stacks + 1) letters deal 1 damage to you."
     },
     "burn": {
       "tag": "SM",

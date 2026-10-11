@@ -14,19 +14,19 @@
     },
     "poison": {
       "n": "Poisoned",
-      "d": "Takes X damage at the end of its turn, then loses 1 stack."
+      "d": "Takes damage equal to its Poison at the end of its turn, then loses 1 stack."
     },
     "weaken": {
       "n": "Weaken",
-      "d": "Shield generated is halved. Counts down each turn."
+      "d": "All Shield gained is halved. Loses 1 stack each turn."
     },
     "broken": {
       "n": "Broken",
-      "d": "Takes +50% damage from all sources. Counts down each turn."
+      "d": "Takes 50% more damage from all sources. Loses 1 stack each turn."
     },
     "curse": {
       "n": "Cursed",
-      "d": "At end of turn, if HP ≤ Curse stacks, you die instantly."
+      "d": "At the end of turn, if HP is at or below the Curse stacks, it dies instantly. Lasts the whole fight."
     },
     "thorns": {
       "n": "Thorns",
@@ -34,7 +34,7 @@
     },
     "frustrated": {
       "n": "Frustrated",
-      "d": "Casting a word shorter than X+1 letters deals 1 self-damage. Loses 1 stack per turn."
+      "d": "Casting a word shorter than (stacks + 1) letters deals 1 damage to yourself. Loses 1 stack each turn."
     }
   },
   "keywords": {
@@ -56,35 +56,35 @@
     },
     "poison": {
       "name": "Poison",
-      "text": "At the end of its owner's turn, deals damage equal to its stacks, then loses 1 stack."
+      "text": "Deals damage at the end of its owner's turn equal to its stacks, then loses 1 stack. Example: 3 Poison deals 3, then 2, then 1."
     },
     "weaken": {
       "name": "Weaken",
-      "text": "Shield gained is halved. Counts down at the end of each turn."
+      "text": "Halves all Shield the owner gains. Loses 1 stack at the end of each turn."
     },
     "broken": {
       "name": "Broken",
-      "text": "Takes 50% more damage from every source. Counts down each turn."
+      "text": "The owner takes 50% more damage from every source. Loses 1 stack at the end of each turn."
     },
     "curse": {
       "name": "Cursed",
-      "text": "At the end of turn, if HP is at or below the Curse stacks, the target dies instantly."
+      "text": "Instant death: at the end of turn, if the owner's HP is at or below its Curse stacks, it dies. Curse never wears off during the fight."
     },
     "frustrated": {
       "name": "Frustrated",
-      "text": "Casting a word shorter than stacks + 1 letters deals 1 damage to yourself. Loses 1 stack per turn."
+      "text": "Short words hurt: casting a word shorter than (stacks + 1) letters deals 1 damage to you. Loses 1 stack at the end of each turn."
     },
     "slimy": {
       "name": "Slimy tile",
-      "text": "The tile's Spell Power is 0 the first time it is used."
+      "text": "The tile is worth 0 Spell Power the first time you cast it. The slime washes off after that."
     },
     "ptile": {
       "name": "Poisoned tile",
-      "text": "Using this tile gives you +1 Poison."
+      "text": "Casting it poisons you: +1 Poison, which deals damage equal to your Poison at the end of your turn, then loses 1 stack."
     },
     "lock": {
       "name": "Locked tile",
-      "text": "Cannot be played for a few turns."
+      "text": "The tile is frozen in place: it can't be cast until the lock counts down to 0 (1 per turn)."
     },
     "condemn": {
       "name": "Condemned tile",
@@ -92,11 +92,11 @@
     },
     "ctile": {
       "name": "Cursed tile",
-      "text": "Using this tile gives you +1 Curse."
+      "text": "Casting it curses you: +1 Curse. If your HP is at or below your Curse at the end of a turn, you die instantly. Curse lasts the whole fight."
     },
     "ftile": {
       "name": "Frustrated tile",
-      "text": "Using this tile gives you +1 Frustrated."
+      "text": "Casting it frustrates you: +1 Frustrated. While Frustrated, words shorter than (stacks + 1) letters deal 1 damage to you."
     },
     "burn": {
       "name": "Smoldering tile",
@@ -128,11 +128,11 @@
     },
     "red": {
       "name": "Red Paint",
-      "text": "+1 Might each time the tile is played."
+      "text": "Casting it gives you +1 Might (+1 Spell Power on attack words for the rest of the fight)."
     },
     "blue": {
       "name": "Blue Paint",
-      "text": "+1 Robust each time the tile is played."
+      "text": "Casting it gives you +1 Robust (+1 Spell Power on shield words for the rest of the fight)."
     },
     "green": {
       "name": "Green Paint",
