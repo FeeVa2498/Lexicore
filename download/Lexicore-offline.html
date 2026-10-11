@@ -4096,7 +4096,8 @@ function endScript(){
   return [...T.common1.map(fix),["H",T.react1[id]],...T.common2,["H",T.react2[id]],...T.common3,["H",T.react3[id]],...T.last];
 }
 const END_KEY="lexicore-endings";
-function endingsGet(){ try{ return JSON.parse(localStorage.getItem(END_KEY))||{}; }catch(e){ return {}; } }
+const TEST_UNLOCK_ALL_ENDINGS=true; /* TEMP for playtesting: set to false before release */
+function endingsGet(){ if(TEST_UNLOCK_ALL_ENDINGS) return Object.fromEntries(HERO_ORDER.map(h=>[h,true])); try{ return JSON.parse(localStorage.getItem(END_KEY))||{}; }catch(e){ return {}; } }
 function endingUnlock(h){ const o=endingsGet(); o[h]=true; try{ localStorage.setItem(END_KEY,JSON.stringify(o)); }catch(e){} }
 function replayEnding(h){
   if(C){ toast("Finish or leave this fight first."); return; }
