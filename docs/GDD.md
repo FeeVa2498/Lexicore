@@ -82,8 +82,8 @@ When LEXICORE is defeated it speaks (full script in `../data/story.json`):
 - The "magic letters" are **nanobots**, humanity's last weapon. Ancient English is the command language that controls them.
 - Humanity built them, the alien invaders came anyway, and humanity is gone.
 - The swarm only obeys a mind strong enough to command it. In four thousand years, nothing that climbed the Tower was strong enough, until the hero.
-- LEXICORE copies the hero's mind **ten thousand times**, loads the copies into the last missiles of the old world, and launches them at the **alien headquarters on the Moon**. It is the planet's last chance.
-- LEXICORE does not stay behind: it spends the last of its power to fly its own **Chamber as the command ship**, at the head of the fleet, on a **one-way trip**. The hero (the original) rides with it; together they command the final battle.
+- LEXICORE copies the hero's mind **a million times** (about a thousand minds per missile), loads the copies into the last missiles of the old world, and launches them at the **alien headquarters on the Moon**. It is the planet's last chance.
+- LEXICORE does not stay behind: it spends the last of its power to fly its own **Chamber as the command ship**, at the head of the fleet, on a **one-way trip**. LEXICORE admits it does not know whether the alien headquarters holds what they would need to return: win or lose, they may be stranded on the Moon. The hero (the original) rides with it; together they command the final battle.
 
 Each hero reacts in character (3 personal lines each), then accepts.
 
@@ -93,9 +93,9 @@ The ending is a still-picture slideshow (§18.2) followed by a black screen and 
 
 | Hero | Closing line |
 |---|---|
-| The Scholar | *"…and so they rose, ten thousand copies of one curious mind, eager to read the stars like the pages of a book no one had ever finished."* |
+| The Scholar | *"…and so they rose, a million copies of one curious mind, eager to read the stars like the pages of a book no one had ever finished."* |
 | The Champion | *"…and so they rose, a legion of one restless heart, unsure of victory for the very first time, and never more alive."* |
-| The Mercenary | *"…and so they rose, ten thousand thieves sharing a single contract, off to steal back the only treasure ever worth taking: tomorrow."* |
+| The Mercenary | *"…and so they rose, a million thieves sharing a single contract, off to steal back the only treasure ever worth taking: tomorrow."* |
 
 ---
 
@@ -790,7 +790,7 @@ All cutscenes are **still pictures** with 2-frame idle elements (flames, smoke, 
 1. Dialogue scene (StS-style): hero portrait on the left, LEXICORE on the right, typewriter text, speaker highlighting.
 2. Slides:
    - *"Far below, the ground splits open. Row after row of old silos wake from a very long sleep."* — a whole field of round silos (5 rows in perspective, dozens of hatches) opens; missile noses in the hero's colour peek out; warning lights blink.
-   - *"Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise."* — dozens of missiles in the air at different depths (small and high in the back, big and low in front), smoke over the silo field.
+   - *"A million copies of one mind, sealed inside the last missiles of the old world, rise."* — dozens of missiles in the air at different depths (small and high in the back, big and low in front), smoke over the silo field.
    - *"Up among the stars, LEXICORE pours the last of its power into its engines. The Chamber breaks orbit to lead them."* — in space above Earth, the Chamber fires its thrusters and turns toward the Moon; the missile fleet forms up behind it.
    - *"A one-way trip. Side by side, LEXICORE and the hero lead the final battle toward the Moon."* — the Chamber leads the long column of missiles toward the Moon and its alien base.
 3. Black screen; the hero's closing quote appears phrase by phrase (§2.4).
