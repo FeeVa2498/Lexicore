@@ -83,6 +83,7 @@ When LEXICORE is defeated it speaks (full script in `../data/story.json`):
 - Humanity built them, the alien invaders came anyway, and humanity is gone.
 - The swarm only obeys a mind strong enough to command it. In four thousand years, nothing that climbed the Tower was strong enough, until the hero.
 - LEXICORE copies the hero's mind **ten thousand times**, loads the copies into the last missiles of the old world, and launches them at the **alien headquarters on the Moon**. It is the planet's last chance.
+- LEXICORE does not stay behind: it spends the last of its power to fly its own **Chamber as the command ship**, at the head of the fleet, on a **one-way trip**. The hero (the original) rides with it; together they command the final battle.
 
 Each hero reacts in character (3 personal lines each), then accepts.
 
@@ -788,10 +789,10 @@ All cutscenes are **still pictures** with 2-frame idle elements (flames, smoke, 
 
 1. Dialogue scene (StS-style): hero portrait on the left, LEXICORE on the right, typewriter text, speaker highlighting.
 2. Slides:
-   - *"Far below, the ground splits open. Five old silos wake from a very long sleep."* — round silo hatches open, missile noses appear (painted in the hero's colour).
-   - *"Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise."* — missiles launch amid smoke.
-   - *"Up among the stars, LEXICORE spends the last of its power, and its chamber burns."* — the chamber explodes **in orbit**.
-   - *"And the fleet drifts on through the dark, slowly, toward the Moon."* — the fleet approaches the alien headquarters.
+   - *"Far below, the ground splits open. Row after row of old silos wake from a very long sleep."* — a whole field of round silos (5 rows in perspective, dozens of hatches) opens; missile noses in the hero's colour peek out; warning lights blink.
+   - *"Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise."* — dozens of missiles in the air at different depths (small and high in the back, big and low in front), smoke over the silo field.
+   - *"Up among the stars, LEXICORE pours the last of its power into its engines. The Chamber breaks orbit to lead them."* — in space above Earth, the Chamber fires its thrusters and turns toward the Moon; the missile fleet forms up behind it.
+   - *"A one-way trip. Side by side, LEXICORE and the hero lead the final battle toward the Moon."* — the Chamber leads the long column of missiles toward the Moon and its alien base.
 3. Black screen; the hero's closing quote appears phrase by phrase (§2.4).
 
 **Music sync (ending)**: the dialogue scene is silent. The ending theme (`audio/ending.mp3`, ~39 s, plays once, no loop) starts exactly when the first silo slide fades in. The 4 slides advance automatically (≈6.35 s hold + 0.7 s fade each; clicks don't advance them, Skip/Esc jumps to the quote), and the quote phrases are spaced so the final phrase finishes at ≈37.5 s, just before the music ends. The quote screen then waits: **"Press any key to continue"** (any key or click) → run summary.

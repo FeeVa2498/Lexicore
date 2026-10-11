@@ -3626,19 +3626,19 @@ const HEROES={
     play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
-    ending:["LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.","Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn.",""]},
+    ending:["LEXICORE's test is over. Its chamber now leads ten thousand copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it.",""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],relic:"blood",
     tag:"A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
     play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
-    ending:["LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.","Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it.",""]},
+    ending:["LEXICORE's test is over. Its chamber now leads ten thousand copies of The Champion on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original wolf watches the Moon grow larger and grins. For once, the next fight is bigger than the one who will fight it.",""]},
   mercenary:{name:"The Mercenary",art:"rat2",color:"#57cc4d",hp:60,weapons:["dagger","belt"],relic:"gloves",
     tag:"A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect.",
     play:"Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
     who:"A hooded rat thief with a belt full of tricks and a very expensive contract.",
     why:"Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said what it was.",
-    ending:["LEXICORE's test is over. Ten thousand copies of The Mercenary now ride the last missiles of the old world toward the Moon.","Far below, the original rat counts the gold left in the Tower's vaults. Business is business, and somebody has to mind the shop.",""]},
+    ending:["LEXICORE's test is over. Its chamber now leads ten thousand copies of The Mercenary on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original rat quietly rewrites the contract. Payment on delivery. Destination: the Moon.",""]},
 };
 const HERO_ORDER=["scholar","champion","mercenary"];
 const STARTERS=HERO_ORDER.flatMap(h=>HEROES[h].weapons);
@@ -4072,7 +4072,8 @@ const END_TALK={
   common3:[
     ["L","Your mind. Copied ten thousand times and loaded into the last missiles of the old world."],
     ["L","An army of you, armed with every word humanity ever wrote, aimed at the alien headquarters on the Moon."],
-    ["L","This is everything I have left. It is the last chance this world will ever get. Do you accept?"]],
+    ["L","I will not stay behind. The last of my power will carry this chamber to the Moon, at the head of the fleet."],
+    ["L","It is a one-way trip. You and I will command the final battle together. It is the last chance this world will ever get. Do you accept?"]],
   react3:{
     scholar:"Ten thousand of me, and a whole sky full of things no one has ever studied? …Begin the copy.",
     champion:"An army of me against a whole moon of them. Now THAT is a fight worth climbing for. Do it.",
@@ -4211,6 +4212,31 @@ function siloG(open,fr,rocket,col){ return layer((sh,ink)=>{
     sh("circle",`cx="${x-120}" cy="680" r="7"`,fr?"#ff3b30":"#5a1a1a"); sh("circle",`cx="${x+120}" cy="680" r="7"`,fr?"#5a1a1a":"#ffbe0b"); }
 },"wobB"); }
 function siloFront(){ return layer((sh,ink)=>{ for(const x of SILOS){ sh("path",`d="M${x-98} 700 A98 28 0 0 0 ${x+98} 700 L${x+114} 700 A114 34 0 0 1 ${x-114} 700 Z"`,"#717d8c"); } },"wobB"); }
+
+/* a whole field of silos seen in perspective (stage 0: open, noses showing; stage 1: launching) */
+function noseG(x,y,s,col){ return layer(sh=>{ sh("rect",`x="${x-14*s}" y="${y-58*s}" width="${28*s}" height="${58*s}"`,"#e9eef3"); sh("path",`d="M${x-14*s} ${y-56*s} Q${x} ${y-112*s} ${x+14*s} ${y-56*s} Z"`,col); sh("rect",`x="${x-14*s}" y="${y-24*s}" width="${28*s}" height="${8*s}"`,col); },"wobB"); }
+function siloField(stage,fr,col){
+  const rows=[[652,.34],[690,.46],[736,.6],[792,.78],[858,1]];
+  let out="";
+  rows.forEach(([y,s],ri)=>{ const step=165*s, off=(ri%2?step/2:0)+20;
+    const xs=[]; for(let x=off;x<1600+step;x+=step) xs.push(x);
+    out+=layer(sh=>{ for(const x of xs){ sh("ellipse",`cx="${x}" cy="${y}" rx="${64*s}" ry="${19*s}"`,"#717d8c"); sh("ellipse",`cx="${x}" cy="${y}" rx="${52*s}" ry="${14*s}"`,"#120d1c");
+      sh("path",`d="M${x-64*s} ${y} L${x-118*s} ${y-6*s} L${x-122*s} ${y+10*s} L${x-62*s} ${y+12*s} Z"`,"#9aa6b4"); } },"wobB");
+    if(stage===0){ out+=xs.map(x=>noseG(x,y+4*s,s,col)).join(""); out+=layer(sh=>{ for(const x of xs) sh("path",`d="M${x-52*s} ${y} A${52*s} ${14*s} 0 0 0 ${x+52*s} ${y} L${x+64*s} ${y} A${64*s} ${19*s} 0 0 1 ${x-64*s} ${y} Z"`,"#717d8c"); },"wobB");
+      out+=layer(sh=>{ for(const x of xs) sh("circle",`cx="${x+70*s}" cy="${y-8*s}" r="${5*s}"`,(fr+ri)%2?"#ff3b30":"#5a1a1a"); },"wobB"); }
+    else { out+=two(puffs(xs.map((x,i)=>[x+(i%2?24:-24)*s,y-10*s,30*s]),"#a9a3b8"),puffs(xs.map((x,i)=>[x+(i%2?-20:20)*s,y-16*s,34*s]),"#a9a3b8")); }
+  });
+  if(stage===1){ // missiles in the air: far ones small and high, near ones big and low
+    let r=""; const lay=[[.3,90,260,26],[.42,160,380,20],[.58,260,500,14],[.8,380,600,9]];
+    lay.forEach(([s,y0,y1,n],li)=>{ for(let i=0;i<n;i++){ const x=40+(i+.5)*(1520/n)+((li*37+i*53)%30-15); const y=y0+((i*71+li*29)%(y1-y0)); r+=rocketG(x,y,64*s,((i%3)-1)*2,col,fr); } });
+    out+=r;
+  }
+  return out;
+}
+/* a band of small rockets flying the same direction */
+function fleetG(col,fr,box,rot,size,n){ const [[x0,y0],[x1,y1]]=box; let s="";
+  for(let i=0;i<n;i++){ const tt=(i+.5)/n, jx=((i*53)%60)-30, jy=((i*97)%80)-40; const x=x0+(x1-x0)*tt+jx, y=y0+(y1-y0)*tt+jy; const w=size[0]+((i*17)%(size[1]-size[0]+1)); s+=rocketG(x,y,w,rot,col,fr); }
+  return s; }
 const SLIDE_SETS={
   liftoff:()=>[
     {cap:"The last guardian falls, and The Tower begins to tremble.",svg:fr=>`${nightSky("ls1")}${endStars2(80,1600,500,0,1)}${towerG(false)}
@@ -4223,23 +4249,17 @@ const SLIDE_SETS={
       ${podG(780,400,.9,fr,{open:true})}`},
   ],
   ending:(col)=>[
-    {cap:"Far below, the ground splits open. Five old silos wake from a very long sleep.",svg:fr=>`${nightSky("es1")}${endStars2(90,1600,480,0,4)}${towerG(true)}${siloG(true,fr)}
-      ${SILOS.map(x=>rocketG(x,622,64,0,col)).join("")}${siloFront()}
-      ${two(puffs(SILOS.map((x,i)=>[x+(i%2?60:-60),668,22])),puffs(SILOS.map((x,i)=>[x+(i%2?-50:50),660,26])))}`},
-    {cap:"Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise.",svg:fr=>`${nightSky("es2","#0b0820","#2b1f4a","#7a4a6e")}${endStars2(90,1600,480,0,5)}${towerG(true)}${siloG(true,fr)}
-      ${SILOS.map((x,i)=>rocketG(x,380-(i%2)*120,80,0,col,fr)).join("")}
-      ${two(puffs(SILOS.flatMap((x,i)=>[[x-40,660,40],[x+40,680,34],[x,600-(i%2)*90,30]])),puffs(SILOS.flatMap((x,i)=>[[x-50,670,34],[x+30,660,40],[x+10,590-(i%2)*90,34]])))}`},
-    {cap:"Up among the stars, LEXICORE spends the last of its power, and its chamber burns.",svg:fr=>`<rect width="1600" height="900" fill="#05040f"/>${endStars2(200,1600,900,0,6)}${earthG()}
-      ${[[300,520,-8],[480,400,-4],[1180,460,6],[1320,560,10]].map(([x,y,r])=>rocketG(x,y,30,r,col,fr)).join("")}
-      ${podG(800,400,.8,fr,{dark:true})}
-      ${layer(sh=>{ const spikes=(r1,r2,n,off)=>{ let d=""; for(let i=0;i<n*2;i++){ const a=off+i*Math.PI/n, r=i%2?r2:r1; d+=`${i?"L":"M"}${(800+Math.cos(a)*r).toFixed(0)} ${(350+Math.sin(a)*r).toFixed(0)} `; } return d+"Z"; };
-        sh("path",`d="${spikes(fr?330:290,fr?170:200,12,fr?.2:0)}"`,"#ff7b00"); sh("path",`d="${spikes(fr?220:250,fr?110:96,10,fr?0:.3)}"`,"#ffd000"); sh("circle",`cx="800" cy="350" r="${fr?80:66}"`,"#fff8df"); })}
-      ${two(layer(sh=>{ for(const [x,y,w] of [[470,170,40],[1130,220,30],[560,560,34],[1080,600,44],[300,320,24]]) sh("rect",`x="${x}" y="${y}" width="${w}" height="${w*.6}" rx="4" transform="rotate(${x%40} ${x} ${y})"`,"#4a5361"); }),
-             layer(sh=>{ for(const [x,y,w] of [[450,150,40],[1150,200,30],[540,580,34],[1100,620,44],[280,300,24]]) sh("rect",`x="${x}" y="${y}" width="${w}" height="${w*.6}" rx="4" transform="rotate(${x%40+20} ${x} ${y})"`,"#4a5361"); }))}`},
-    {cap:"And the fleet drifts on through the dark, slowly, toward the Moon.",svg:fr=>`<rect width="1600" height="900" fill="#05040f"/>${endStars2(220,1600,900,0,7)}
+    {cap:"Far below, the ground splits open. Row after row of old silos wake from a very long sleep.",svg:fr=>`${nightSky("es1")}${endStars2(90,1600,480,0,4)}${towerG(true)}${siloField(0,fr,col)}`},
+    {cap:"Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise.",svg:fr=>`${nightSky("es2","#0b0820","#2b1f4a","#7a4a6e")}${endStars2(90,1600,480,0,5)}${towerG(true)}${siloField(1,fr,col)}`},
+    {cap:"Up among the stars, LEXICORE pours the last of its power into its engines. The Chamber breaks orbit to lead them.",svg:fr=>`<rect width="1600" height="900" fill="#05040f"/>${endStars2(200,1600,900,0,6)}${earthG()}
+      ${fleetG(col,fr,[[90,600],[560,640]],58,[30,40],16)}
+      <g transform="rotate(58 960 330)">${podG(960,330,.66,fr,{thrust:true})}</g>
+      ${fleetG(col,fr,[[300,470],[640,560]],58,[44,56],9)}`},
+    {cap:"A one-way trip. Side by side, LEXICORE and the hero lead the final battle toward the Moon.",svg:fr=>`<rect width="1600" height="900" fill="#05040f"/>${endStars2(220,1600,900,0,7)}
       ${layer(sh=>{ sh("path",`d="M-300 1100 Q150 650 700 1100 Z"`,"#3a86ff"); sh("path",`d="M20 900 Q120 820 240 840 Q240 900 160 900 Z"`,"#57cc4d"); },"wobB")}
-      ${moonG(1230,300,200,fr)}
-      ${Array.from({length:14},(_,i)=>{ const row=i%5, c=Math.floor(i/5); return rocketG(380+c*130+row*40, 640-row*70-c*60, 34, 58, col, fr); }).join("")}`},
+      ${moonG(1250,290,210,fr)}
+      ${fleetG(col,fr,[[260,800],[860,500]],58,[22,34],34)}
+      <g transform="rotate(62 930 410)">${podG(930,410,.3,fr,{thrust:true})}</g>`},
   ],
 };
 function slideShow(set,arg,onDone,opt={}){

@@ -21,10 +21,10 @@
     "Far above the clouds, the Lexicore Chamber settles into orbit. A round door slides open."
   ],
   "endingSlides": [
-    "Far below, the ground splits open. Five old silos wake from a very long sleep.",
+    "Far below, the ground splits open. Row after row of old silos wake from a very long sleep.",
     "Ten thousand copies of one mind, sealed inside the last missiles of the old world, rise.",
-    "Up among the stars, LEXICORE spends the last of its power, and its chamber burns.",
-    "And the fleet drifts on through the dark, slowly, toward the Moon."
+    "Up among the stars, LEXICORE pours the last of its power into its engines. The Chamber breaks orbit to lead them.",
+    "A one-way trip. Side by side, LEXICORE and the hero lead the final battle toward the Moon."
   ],
   "endingDialogue": {
     "common1": [
@@ -84,7 +84,11 @@
       ],
       [
         "L",
-        "This is everything I have left. It is the last chance this world will ever get. Do you accept?"
+        "I will not stay behind. The last of my power will carry this chamber to the Moon, at the head of the fleet."
+      ],
+      [
+        "L",
+        "It is a one-way trip. You and I will command the final battle together. It is the last chance this world will ever get. Do you accept?"
       ]
     ],
     "react3": {
@@ -106,16 +110,16 @@
   },
   "heroEndingText": {
     "scholar": [
-      "LEXICORE's test is over. Ten thousand copies of The Scholar now ride the last missiles of the old world toward the Moon.",
-      "Far below, the original cat opens a dusty book and starts reading again. There is still so much left to learn."
+      "LEXICORE's test is over. Its chamber now leads ten thousand copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.",
+      "At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it."
     ],
     "champion": [
-      "LEXICORE's test is over. Ten thousand copies of The Champion now ride the last missiles of the old world toward the Moon.",
-      "Far below, the original wolf watches the smoke trails fade and grins. For once, the next fight is bigger than the one who will fight it."
+      "LEXICORE's test is over. Its chamber now leads ten thousand copies of The Champion on a one-way voyage to the alien headquarters on the Moon.",
+      "At the command deck, the original wolf watches the Moon grow larger and grins. For once, the next fight is bigger than the one who will fight it."
     ],
     "mercenary": [
-      "LEXICORE's test is over. Ten thousand copies of The Mercenary now ride the last missiles of the old world toward the Moon.",
-      "Far below, the original rat counts the gold left in the Tower's vaults. Business is business, and somebody has to mind the shop."
+      "LEXICORE's test is over. Its chamber now leads ten thousand copies of The Mercenary on a one-way voyage to the alien headquarters on the Moon.",
+      "At the command deck, the original rat quietly rewrites the contract. Payment on delivery. Destination: the Moon."
     ]
   },
   "shopkeepers": [
