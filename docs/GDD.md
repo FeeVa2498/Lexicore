@@ -767,6 +767,7 @@ Splash/menu → character select → map → combat → reward → shop → rest
 | Shop BGM | Shop (the brothers play it on their instruments) |
 | Rest BGM | Rest Site |
 | Silence | Everything in Act 4, and the ending dialogue |
+| Ending theme | Plays once from the first ending slide to the closing quote |
 
 - Tracks loop seamlessly (leading/trailing silence trimmed). Popups apply a low-pass "muffled radio" filter.
 - SFX are synthesized: tap, buzz (invalid), hit, shield, crit, coin, hurt, win; explosions use filtered noise.
@@ -792,6 +793,10 @@ All cutscenes are **still pictures** with 2-frame idle elements (flames, smoke, 
    - *"Up among the stars, LEXICORE spends the last of its power, and its chamber burns."* — the chamber explodes **in orbit**.
    - *"And the fleet drifts on through the dark, slowly, toward the Moon."* — the fleet approaches the alien headquarters.
 3. Black screen; the hero's closing quote appears phrase by phrase (§2.4).
+
+**Music sync (ending)**: the dialogue scene is silent. The ending theme (`audio/ending.mp3`, ~39 s, plays once, no loop) starts exactly when the first silo slide fades in. The 4 slides advance automatically (≈6.35 s hold + 0.7 s fade each; clicks don't advance them, Skip/Esc jumps to the quote), and the quote phrases are spaced so the final phrase finishes at ≈37.5 s, just before the music ends. The quote screen then waits: **"Press any key to continue"** (any key or click) → run summary.
+
+**Replay**: Glossary → **Endings** tab shows one card per hero. Locked endings show a padlock wrapped in chains and the name "???"; unlocked ones show the hero art, name and closing quote, with a **Watch ending** button that replays from the post-LEXICORE dialogue (does not touch the saved run). Unlocks persist in `localStorage: lexicore-endings`.
 4. Run summary: words cast, best word, total damage, enemies defeated, relics; New Run / Main Menu.
 
 ---

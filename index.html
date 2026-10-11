@@ -647,6 +647,8 @@ body.f1 .sf0{display:none}
 .tile.d-lock::before{display:none}
 .db.burn{background:#ff7b00}
 .tile.fragile::before{z-index:3}
+.equote .ebtn.ghostbtn{background:none;border:none;box-shadow:none;color:#cfc8ea;font:22px var(--f-body);animation:pressblink 1.6s ease-in-out infinite}
+@keyframes pressblink{50%{opacity:.35}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -690,7 +692,7 @@ const VOL=(()=>{ try{ const v=JSON.parse(localStorage.getItem("lexicore-vol")); 
 function setVolume(kind,v){ VOL[kind]=Math.max(0,Math.min(10,v)); try{ localStorage.setItem("lexicore-vol",JSON.stringify(VOL)); }catch(e){}
   if(kind==="music"&&AUD.music&&AUD.ctx) AUD.music.gain.setTargetAtTime(.75*VOL.music/10,AUD.ctx.currentTime,.05); if(kind==="sfx") snd("tap"); }
 const AUD={loops:{},cur:null,ctx:null,master:null,music:null,bufs:{},loading:{},srcs:[],mode:null,p1:null,wantAdv:false,advanced:false};
-const TRACKS={menu:"audio/pattern3.mp3",game:"audio/gameplay.mp3",shop:"audio/shop.mp3",rest:"audio/rest.mp3"};
+const TRACKS={menu:"audio/pattern3.mp3",game:"audio/gameplay.mp3",shop:"audio/shop.mp3",rest:"audio/rest.mp3",ending:"audio/ending.mp3"};
 const TRIM={game:1,shop:1,rest:1};
 function actx(){
   if(!AUD.ctx){ try{
@@ -2483,10 +2485,11 @@ function glossaryTab(tab){
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
       <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.passive?"Works by itself":P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · ${maxPotions()} slots max</div></div></div>`).join("");
   if(tab==="effects") return glossaryEffects();
+  if(tab==="endings") return glossaryEndings();
   if(tab==="keywords") return Object.entries(KW).map(([k,v])=>`<div class="gcard small">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]?`<div class="gart sm">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`).join("");
 }
 function showGlossary(tab="monsters"){
-  const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Potions",effects:"Effects",keywords:"Keywords"};
+  const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Potions",effects:"Effects",keywords:"Keywords",endings:"Endings"};
   openModal(`<h2>Glossary</h2>
     <div class="gtabs" role="tablist">${Object.entries(tabs).map(([k,v])=>`<button class="btn small ${k===tab?"primary":""}" role="tab" aria-selected="${k===tab}" onclick="showGlossary('${k}')">${v}</button>`).join("")}</div>
     <div class="glist">${glossaryTab(tab)}</div>
@@ -2871,6 +2874,20 @@ function potionMenu(i){
       <button class="btn small" onclick="closeModal()">Cancel</button></div></div>`);
 }
 function discardPotion(i){ const id=G.potions[i]; if(!id) return; G.potions.splice(i,1); closeModal(); toast(`${POTIONS[id].name} discarded.`); snd("tap"); if(C) renderCombat(); else renderHUD(); }
+const LOCK_ART=`<svg viewBox="0 0 200 200" class="art">${layer((sh,ink)=>{
+  sh("rect",`x="10" y="10" width="180" height="180" rx="16"`,"#3d3a44");
+  for(const [x1,y1,x2,y2] of [[0,30,200,170],[0,170,200,30]]){ const n=9; for(let i=0;i<n;i++){ const x=x1+(x2-x1)*(i+.5)/n, y=y1+(y2-y1)*(i+.5)/n; sh("ellipse",`cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" rx="13" ry="8" transform="rotate(${(Math.atan2(y2-y1,x2-x1)*180/Math.PI+(i%2?90:0)).toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)})"`,"#9aa6b4"); } }
+  ink(`<path class="thick" d="M76 96 L76 74 Q76 50 100 50 Q124 50 124 74 L124 96"/>`); sh("rect",`x="62" y="94" width="76" height="64" rx="10"`,"#c8a24a");
+  sh("circle",`cx="100" cy="120" r="8"`,"#3d3a44"); sh("rect",`x="96" y="124" width="8" height="18" rx="3"`,"#3d3a44");
+})}</svg>`;
+function glossaryEndings(){
+  const got=endingsGet();
+  return HERO_ORDER.map(h=>{ const H=HEROES[h], ok=!!got[h];
+    return `<div class="gcard"><div class="gart" style="${ok?"":"filter:none"}">${ok?artSVG(H.art,{only:"i0"}):LOCK_ART}</div><div>
+      <h3>${ok?H.name:"???"} <span class="gtag">${ok?"Unlocked":"Locked"}</span></h3>
+      <div class="muted">${ok?`<i>${END_QUOTE[h]}</i>`:"Defeat whatever waits at the very top of The Tower with this hero to unlock their ending."}</div>
+      ${ok?`<button class="btn primary small" style="margin-top:8px" onclick="replayEnding('${h}')">▶ Watch ending</button>`:""}</div></div>`; }).join("");
+}
 function glossaryEffects(){
   const demo=(o)=>tileHTML({uid:-1,ch:o.ch||"A",lvl:1,paint:o.paint||null,deb:o.deb||null,fragile:o.fragile,fort:o.fort},{noTip:true});
   const card=(art,title,tag,txt)=>`<div class="gcard small"><div class="gart sm" style="display:grid;place-items:center">${art}</div><div><h3>${title} <span class="gtag">${tag}</span></h3><div>${txt}</div></div></div>`;
@@ -4075,8 +4092,16 @@ function endScript(){
   const fix=l=>[l[0],l[1].replace("{NAME}",nm)];
   return [...T.common1.map(fix),["H",T.react1[id]],...T.common2,["H",T.react2[id]],...T.common3,["H",T.react3[id]],...T.last];
 }
-function showEnding(){
-  clearSave(); G.screen="ending"; C=null; closeStage&&closeStage();
+const END_KEY="lexicore-endings";
+function endingsGet(){ try{ return JSON.parse(localStorage.getItem(END_KEY))||{}; }catch(e){ return {}; } }
+function endingUnlock(h){ const o=endingsGet(); o[h]=true; try{ localStorage.setItem(END_KEY,JSON.stringify(o)); }catch(e){} }
+function replayEnding(h){
+  if(C){ toast("Finish or leave this fight first."); return; }
+  closeModal(); E.replay={G:G}; G={hero:h,screen:"ending",relics:[],potions:[],weapons:[],stats:{}}; showEnding(true);
+}
+function showEnding(replay){
+  if(!replay){ clearSave(); endingUnlock(G.hero); E.replay=null; }
+  G.screen="ending"; C=null; closeStage&&closeStage(); preloadEnding();
   const hud=$("#hud"); if(hud) hud.hidden=true;
   setMusic("silence");
   const H=hero();
@@ -4098,7 +4123,8 @@ function showEnding(){
 }
 function endKey(e){
   if(G?.screen!=="ending") return;
-  if(e.key===" "||e.key==="Enter"){ e.preventDefault(); if(E.stage==="talk") endNext(); else if(E.stage==="quote"&&E.quoteReady) endFinish(); }
+  if(E.stage==="quote"){ if(E.quoteReady){ e.preventDefault(); endFinish(); } return; }
+  if(e.key===" "||e.key==="Enter"){ e.preventDefault(); if(E.stage==="talk") endNext(); }
   if(e.key==="Escape"){ e.preventDefault(); endSkip(); }
 }
 function endNext(){
@@ -4215,8 +4241,8 @@ const SLIDE_SETS={
       ${Array.from({length:14},(_,i)=>{ const row=i%5, c=Math.floor(i/5); return rocketG(380+c*130+row*40, 640-row*70-c*60, 34, 58, col, fr); }).join("")}`},
   ],
 };
-function slideShow(set,arg,onDone){
-  const slides=SLIDE_SETS[set](arg);
+function slideShow(set,arg,onDone,opt={}){
+  const slides=SLIDE_SETS[set](arg); const HOLD=opt.hold||5200;
   document.getElementById("ending")?.remove();
   const root=document.createElement("div"); root.id="ending";
   root.innerHTML=`<div class="est"><div class="layer" id="escene"></div><div class="ecap" id="ecap"></div><div class="efade" id="efade" style="opacity:1"></div>
@@ -4235,11 +4261,11 @@ function slideShow(set,arg,onDone){
     $("#escene").innerHTML=`<svg viewBox="0 0 1600 900" width="1600" height="900" style="position:absolute;inset:0"><g class="sf0">${sl.svg(0)}</g><g class="sf1">${sl.svg(1)}</g></svg>`;
     const cap=$("#ecap"); cap.textContent=sl.cap; cap.classList.remove("on"); void cap.offsetWidth; cap.classList.add("on");
     fade.animate([{opacity:1},{opacity:0}],{duration:800,fill:"forwards"});
-    S.busy=false; S.t=setTimeout(go,5200);
+    S.busy=false; S.t=setTimeout(go,HOLD);
   };
-  const key=e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); go(); } if(e.key==="Escape"){ e.preventDefault(); finish(); } };
+  const key=e=>{ if(!opt.timed&&(e.key===" "||e.key==="Enter")){ e.preventDefault(); go(); } if(e.key==="Escape"){ e.preventDefault(); finish(); } };
   addEventListener("keydown",key);
-  root.querySelector("#escene").onclick=go; root.querySelector("#ecap").onclick=go;
+  if(!opt.timed){ root.querySelector("#escene").onclick=go; root.querySelector("#ecap").onclick=go; }
   $("#eskip").onclick=finish;
   go();
   return root;
@@ -4250,15 +4276,21 @@ function showLiftoff(then){
   setMusic("menu");
   slideShow("liftoff",null,root=>{ removeEventListener("resize",endFit); root.remove(); if(hud) hud.hidden=false; then(); });
 }
-/* ending after the dialogue */
+/* the ending theme plays once, from the silos to the final quote (~39 s) */
+function preloadEnding(){ if(actx()) loadTrack("ending"); }
+async function playEndingTheme(){
+  if(!AUD.bufs.ending) await loadTrack("ending");
+  if(!AUD.ctx) return; AUD.cur="ending"; stopMusic(.4); mkSrc("ending",false,AUD.ctx.currentTime+.05,.6);
+}
+const END_HOLD=6350, END_QUOTE_WINDOW=7600;
 function endCutscene(){
   E.stage="cut"; removeEventListener("keydown",endKey);
-  setMusic("menu");
-  slideShow("ending",hero().color,()=>{ E.stage="cut"; addEventListener("keydown",endKey); endQuote(true); });
+  playEndingTheme();
+  slideShow("ending",hero().color,()=>{ E.stage="cut"; addEventListener("keydown",endKey); endQuote(true); },{timed:true,hold:END_HOLD});
 }
 async function endQuote(fromSlides){
   if(E.stage==="quote") return; E.stage="quote"; E.quoteReady=false;
-  setMusic("menu");
+  if(AUD.cur!=="ending") playEndingTheme();
   if(!document.querySelector("#ending .est")){ return endFinish(); }
   const fade=$("#efade"); const sk=$("#eskip"); if(sk){ sk.textContent="Continue ▸"; sk.onclick=()=>{ if(E.quoteReady) endFinish(); }; }
   if(fade){ fade.animate([{opacity:+getComputedStyle(fade).opacity||0},{opacity:1}],{duration:fromSlides?10:600,fill:"forwards"}); }
@@ -4266,16 +4298,21 @@ async function endQuote(fromSlides){
   const q=END_QUOTE[G.hero]||END_QUOTE.scholar;
   const words=q.split(/(?<=,|:)\s/);
   const box=document.createElement("div"); box.className="equote"; box.style.zIndex=16;
-  box.innerHTML=`<p>${words.map(w=>`<span>${w} </span>`).join("")}</p><button class="btn primary ebtn" onclick="endFinish()">Continue</button>`;
+  box.innerHTML=`<p>${words.map(w=>`<span>${w} </span>`).join("")}</p><button class="btn ebtn" onclick="endFinish()">Continue</button>`;
   $("#ending .est").appendChild(box); box.style.opacity=1;
   const cap=$("#ecap"); if(cap) cap.classList.remove("on");
-  for(const s of box.querySelectorAll("p span")){ s.classList.add("on"); await new Promise(r=>setTimeout(r,1500)); }
-  E.quoteReady=true; box.querySelector(".ebtn").classList.add("on");
+  const spans=[...box.querySelectorAll("p span")]; const gap=spans.length>1?Math.round((END_QUOTE_WINDOW-1600)/(spans.length-1)):0;
+  for(let si=0;si<spans.length;si++){ spans[si].classList.add("on"); if(si<spans.length-1) await new Promise(r=>setTimeout(r,gap)); }
+  await new Promise(r=>setTimeout(r,1600));
+  E.quoteReady=true; const btn=box.querySelector(".ebtn"); btn.textContent="Press any key to continue"; btn.classList.add("on","ghostbtn");
+  box.onclick=()=>{ if(E.quoteReady) endFinish(); }; if(sk) sk.style.display="none";
 }
 function endFinish(){
   removeEventListener("keydown",endKey); removeEventListener("resize",endFit);
   (E.timers||[]).forEach(clearTimeout); document.getElementById("ending")?.remove();
   const hud=$("#hud"); if(hud) hud.hidden=false;
+  stopMusic(1.2); AUD.cur=null;
+  if(E.replay){ G=E.replay.G; E.replay=null; if(G&&G.map) showMap(); else { G=null; showTitle(); } return; }
   showVictory();
 }
 
