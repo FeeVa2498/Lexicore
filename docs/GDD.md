@@ -251,7 +251,8 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **The Titan (Act 1 boss)**: drawn as a giant; only its foot is visible.
 - **Summon (Mother Mycelia)**: her first move, *Spore Brood*, summons **2 Sporelings** that fight beside her. A fight holds at most **5 enemies**; if fewer than 2 spots are free, she fills only the remaining spots. When Mother Mycelia dies, every Sporeling withers at once.
 - **Split (Great Slime, Act 1 Elite)**: when it dies it splits into **5 Slimelets** (green, blue, pink, orange, violet: the normal slime in 5 colours, 16 HP each). The fight is won only when all of them are dead.
-- **Minions** (Sporelings, Slimelets) drop no gold.
+- **Minions** (Sporelings, Slimelets) drop no gold. Each Slimelet colour carries its own tile debuff: green Poison, blue Lock, pink Frustrate, orange Slimy, violet Condemn.
+- **Debuff design rule**: almost every enemy uses at least one status or tile debuff, and tile debuffs hit 2–5 tiles per use (more in later Acts), so the hand is always under pressure.
 
 ---
 
@@ -488,7 +489,8 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | 9 | Boss |
 
 - Elites appear **only on floors 5 and 7**, so a path meets at most 2 Elites, and the two Elites of an Act are never repeated within that Act.
-- Encounter pools: floors 1–2 single enemies; floors 3–5 singles or pairs; floors 6+ pairs or trios. The same group never appears twice in a row. Full pools in `../data/encounters.json`.
+- Encounter pools (designed groups, most fights are multi-enemy): floors 1–2 singles or pairs; floors 3–4 pairs or trios; floors 5–6 pairs, trios (double weight) or quads; floors 7+ trios or quads (double weight). Roughly 10% of normal fights are single enemies, ~35% pairs, ~37% trios, ~18% quads. The same group never appears twice in a row. Full pools in `../data/encounters.json`.
+- In normal fights, enemy **damage** also scales with group size: 1–2 enemies ×1, 3 ×0.85, 4 ×0.72, 5+ ×0.62 (HP scaling in §12.4).
 
 ### 10.2 Act 4: The Lexicore Chamber
 
@@ -657,7 +659,7 @@ A mechanical AI core: an armoured octagonal shell with red glowing circuitry, a 
 
 ### 14.1 Tutorial (first launch; can be replayed from the menu)
 
-A scripted fight as The Scholar against a **Training Slime** (55 HP, hits 5/4/7). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 5-letter Critical (STONE). The UI only allows the highlighted action at each step.
+A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 5-letter Critical (STONE). The UI only allows the highlighted action at each step.
 
 - **Rebel popup**: if the player casts a different word than the one suggested (CAT / STONE), a popup says *"Rebellious, aren't we? … Too cool to follow the instructions."* (a second, different line for the second time). The word still counts.
 - "Skip tutorial" is always available.
