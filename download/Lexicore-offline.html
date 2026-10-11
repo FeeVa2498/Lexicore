@@ -2914,6 +2914,42 @@ function glossaryEffects(){
   ENEMIES.lexicore.moves[1]=[A(38),B(34),T("burn",4)];
 })();
 
+/* ================= REBALANCE 4: each enemy has 1-2 themed debuffs, applied to more tiles ================= */
+(function(){
+  const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  const M={
+    tslime:[[A(3)],[B(4),A(3)],[A(4)]],
+    slime:[[A(7),B(6)],[T("slimy",4)],[A(10)]],                         // goo: Slimy
+    bat:[[A(9)],[T("frustrate",4)],[A(11)]],                             // screeching: Frustrate
+    goblin:[[B(10),U("might",2)],[A(9),T("burn",3)],[A(12)]],            // torch: Smoldering
+    thornbloom:[[A(8)],[T("poison",4),B(6)],[A(6),T("poison",2)]],       // thorns: Poison
+    sporeling:[[A(4)],[T("poison",2)],[A(5)]],
+    arachne:[[T("poison",6),B(10)],[A(16)],[P("weaken",2),A(8)],[A(12)]],// venom + webs: Poison, Weaken
+    quartz:[[P("broken",2)],[A(16)],[B(15),T("lock",5)],[A(22,1)]],      // crystal prison: Lock, Broken
+    bigslime:[[A(13)],[T("slimy",6),B(10)],[A(10)],[A(18,1)]],           // Slimy
+    shroom:[[{k:"summon",id:"sporeling",n:2}],[T("poison",6)],[A(14),B(10)],[U("might",2),B(14)],[A(22,1)]], // spores: Poison
+    titan:[[A(14)],[T("lock",5),B(14)],[A(22,1)],[P("broken",2),A(8)]],  // crushing: Lock, Broken
+    rat:[[A(14)],[B(13),A(8)],[T("lock",4),A(7)]],                       // jams tiles: Lock
+    hound:[[A(16)],[U("might",3),B(9)],[A(10),T("condemn",3)]],          // riot police: Condemn
+    crow:[[A(10),T("frustrate",4)],[A(15)],[A(7),T("frustrate",3)]],     // thief: Frustrate
+    knight:[[B(25),U("might",3)],[A(23)],[T("condemn",5),A(13)],[A(31,1)]], // STOP sign: Condemn
+    mantis:[[A(20)],[T("poison",6),P("weaken",2)],[A(27,1)]],            // hazmat: Poison, Weaken
+    gargoyle:[[T("curse",4),T("condemn",4)],[A(26),B(24)],[A(19),T("curse",3)],[A(38,1)]], // Curse, Condemn
+    twinA:[[A(15)],[B(16),T("lock",4)],[A(21,1)]],                       // Lock
+    twinB:[[B(16)],[A(17)],[T("curse",3),A(9)]],                         // Curse
+    prisoner:[[A(22)],[T("frustrate",5),B(19)],[A(14),T("frustrate",3)]],// psychic: Frustrate
+    drone:[[A(15),T("burn",4)],[T("lock",4),B(15)],[A(26)]],             // lasers + security: Smoldering, Lock
+    moth:[[T("slimy",5),A(10)],[A(17)],[A(24)]],                         // wing dust: Slimy
+    warden:[[B(38)],[A(34)],[T("lock",6),P("weaken",2)],[A(42,1)]],      // jailer: Lock, Weaken
+    alpha:[[U("might",5),B(17)],[A(27)],[T("condemn",5),A(17)]],         // Condemn
+    zero:[[T("frustrate",6),A(18)],[B(28),U("might",3)],[T("curse",3),A(12)],[A(38,1)]], // mind: Frustrate, Curse
+    gatekeeper:[[T("lock",6),B(32)],[A(26),T("burn",4)],[A(14)],[A(40,1)]], // vault + laser: Lock, Smoldering
+    lexicore:[[T("curse",4),B(26)],[A(38),B(34)],[T("condemn",5),A(12)],[A(51,1)]], // Curse, Condemn
+  };
+  for(const [id,mv] of Object.entries(M)) if(ENEMIES[id]) ENEMIES[id].moves=mv;
+  for(const [id,d] of Object.entries({slime_g:"poison",slime_b:"lock",slime_p:"frustrate",slime_o:"slimy",slime_v:"condemn"})) if(ENEMIES[id]) ENEMIES[id].moves=[[A(4),B(3)],[T(d,3)],[A(6)]];
+})();
+
 /* ================= COMBAT FX ================= */
 function focusOn(keys,z,cx,cy){
   const w=$("#world"); if(!w) return;

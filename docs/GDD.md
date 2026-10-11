@@ -260,7 +260,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Summon (Mother Mycelia)**: her first move, *Spore Brood*, summons **2 Sporelings** that fight beside her. A fight holds at most **5 enemies**; if fewer than 2 spots are free, she fills only the remaining spots. When Mother Mycelia dies, every Sporeling withers at once.
 - **Split (Great Slime, Act 1 Elite)**: when it dies it splits into **5 Slimelets** (green, blue, pink, orange, violet: the normal slime in 5 colours, 16 HP each). The fight is won only when all of them are dead.
 - **Minions** (Sporelings, Slimelets) drop no gold. Each Slimelet colour carries its own tile debuff: green Poison, blue Lock, pink Frustrate, orange Slimy, violet Condemn.
-- **Debuff design rule**: almost every enemy uses at least one status or tile debuff, and tile debuffs hit 2–5 tiles per use (more in later Acts), so the hand is always under pressure.
+- **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
 
 ---
 
@@ -608,37 +608,37 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | Enemy | Act | Tier | HP | Move cycle (repeats) |
 |---|---|---|---|---|
 | **Training Slime** | Tutorial | tutorial | 30 | Atk 3 → Block 4 + Atk 3 → Atk 4 |
-| **Green Slime** | 1 | normal | 40 | Atk 7 + Block 6 → Poison×3 tiles → Atk 10 |
-| **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×3 tiles → Atk 6 + Weaken 1 |
-| **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×2 tiles → Slimy×4 tiles |
-| **Thornbloom** | 1 | normal | 38 | Atk 8 → Frustrate×3 tiles + Block 6 → Atk 5 + Poison×2 tiles |
+| **Green Slime** | 1 | normal | 40 | Atk 7 + Block 6 → Slimy×4 tiles → Atk 10 |
+| **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×4 tiles → Atk 11 |
+| **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×3 tiles → Atk 12 |
+| **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → Atk 6 + Poison×2 tiles |
 | **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → Atk 5 |
-| **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×2 tiles → Atk 6 |
-| **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×2 tiles → Atk 6 |
-| **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Frustrate×2 tiles → Atk 6 |
-| **Orange Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Slimy×2 tiles → Atk 6 |
-| **Violet Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Condemn×2 tiles → Atk 6 |
-| **Arachne Matriarch** | 1 | elite | 85 | Poison×5 tiles + Block 10 → Atk 16 → Weaken 2 + Condemn×2 tiles → Atk 12 |
-| **Quartz Punisher** | 1 | elite | 100 | Broken 2 + Lock×3 tiles → Atk 16 → Block 15 + Lock×3 tiles → Atk 22! |
-| **Great Slime** | 1 | elite | 95 | Atk 13 → Slimy×5 tiles + Block 10 → Atk 8 + Poison×3 tiles → Atk 18! |
-| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×4 tiles + Block 14 → **Mega Kick**: Atk 22! + Burn×2 tiles → **Earthquake**: Broken 1 + Frustrated 2 + Condemn×2 tiles |
-| **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×4 tiles + Weaken 1 → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 + Slimy×3 tiles → **Fungal Burst**: Atk 22! |
-| **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×3 tiles + Atk 7 |
-| **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×2 tiles + Weaken 1 |
-| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×3 tiles → Atk 15 → Broken 1 + Atk 7 + Burn×3 tiles |
-| **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×4 tiles + Atk 13 → Atk 31! |
-| **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×5 tiles + Weaken 2 → Atk 27! → Poison×3 tiles + Atk 12 |
-| **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×3 tiles + Condemn×4 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Frustrated 3 + Atk 19 + Frustrate×3 tiles → **Execute**: Atk 38! |
-| **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×3 tiles → **Crush**: Atk 21! |
-| **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×2 tiles + Atk 9 + Slimy×3 tiles |
-| **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×4 tiles + Block 19 → Curse×2 tiles + Atk 14 |
-| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×3 tiles → Lock×4 tiles + Block 15 → Atk 26 |
-| **Cyber Moth** | 3 | normal | 85 | Slimy×4 tiles + Atk 10 → Atk 17 + Poison 4 + Poison×2 tiles → Atk 24 |
-| **Warden Unit** | 3 | elite | 225 | Block 38 → Atk 34 → Lock×5 tiles + Weaken 2 → Atk 42! |
-| **Escaped Prisoner Alpha** | 3 | elite | 205 | +5 Might + Block 17 → Atk 27 → Condemn×4 tiles + Atk 17 → Frustrate×3 tiles + Atk 20 |
-| **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×5 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Weaken 2 + Broken 2 + Curse×2 tiles → **Annihilate**: Atk 38! |
-| **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×5 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Condemn×4 tiles + Atk 14 → **Overcharge**: Atk 40! |
-| **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×3 tiles + Frustrate×3 tiles + Block 26 → **Compile**: Atk 38 + Block 34 + Burn×4 tiles → **Overwrite**: Condemn×4 tiles + Broken 2 + Slimy×3 tiles → **Delete**: Atk 51! |
+| **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×3 tiles → Atk 6 |
+| **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×3 tiles → Atk 6 |
+| **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Frustrate×3 tiles → Atk 6 |
+| **Orange Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Slimy×3 tiles → Atk 6 |
+| **Violet Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Condemn×3 tiles → Atk 6 |
+| **Arachne Matriarch** | 1 | elite | 85 | Poison×6 tiles + Block 10 → Atk 16 → Weaken 2 + Atk 8 → Atk 12 |
+| **Quartz Punisher** | 1 | elite | 100 | Broken 2 → Atk 16 → Block 15 + Lock×5 tiles → Atk 22! |
+| **Great Slime** | 1 | elite | 95 | Atk 13 → Slimy×6 tiles + Block 10 → Atk 10 → Atk 18! |
+| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×5 tiles + Block 14 → **Mega Kick**: Atk 22! → **Earthquake**: Broken 2 + Atk 8 |
+| **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×6 tiles → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
+| **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×4 tiles + Atk 7 |
+| **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×3 tiles |
+| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 15 → Atk 7 + Frustrate×3 tiles |
+| **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×5 tiles + Atk 13 → Atk 31! |
+| **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×6 tiles + Weaken 2 → Atk 27! |
+| **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×4 tiles + Condemn×4 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Atk 19 + Curse×3 tiles → **Execute**: Atk 38! |
+| **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×4 tiles → **Crush**: Atk 21! |
+| **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×3 tiles + Atk 9 |
+| **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×5 tiles + Block 19 → Atk 14 + Frustrate×3 tiles |
+| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×4 tiles → Lock×4 tiles + Block 15 → Atk 26 |
+| **Cyber Moth** | 3 | normal | 85 | Slimy×5 tiles + Atk 10 → Atk 17 → Atk 24 |
+| **Warden Unit** | 3 | elite | 225 | Block 38 → Atk 34 → Lock×6 tiles + Weaken 2 → Atk 42! |
+| **Escaped Prisoner Alpha** | 3 | elite | 205 | +5 Might + Block 17 → Atk 27 → Condemn×5 tiles + Atk 17 |
+| **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×6 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Curse×3 tiles + Atk 12 → **Annihilate**: Atk 38! |
+| **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×6 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Atk 14 → **Overcharge**: Atk 40! |
+| **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×4 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×5 tiles + Atk 12 → **Delete**: Atk 51! |
 
 Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14) → Rumble (Lock 2 tiles + 14 Shield) → Mega Kick (22, heavy) → Earthquake (Broken 1 + Frustrated 2) → repeat.
 

@@ -32,8 +32,8 @@
           "actions": [
             {
               "type": "tileDebuff",
-              "debuff": "poison",
-              "count": 3
+              "debuff": "slimy",
+              "count": 4
             }
           ]
         },
@@ -72,7 +72,7 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 3
+              "count": 4
             }
           ]
         },
@@ -81,12 +81,7 @@
           "actions": [
             {
               "type": "attack",
-              "value": 6
-            },
-            {
-              "type": "playerDebuff",
-              "status": "weaken",
-              "value": 1
+              "value": 11
             }
           ]
         }
@@ -125,7 +120,7 @@
             {
               "type": "tileDebuff",
               "debuff": "burn",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -133,9 +128,8 @@
           "turn": 3,
           "actions": [
             {
-              "type": "tileDebuff",
-              "debuff": "slimy",
-              "count": 4
+              "type": "attack",
+              "value": 12
             }
           ]
         }
@@ -156,7 +150,7 @@
             {
               "type": "tileDebuff",
               "debuff": "poison",
-              "count": 5
+              "count": 6
             },
             {
               "type": "block",
@@ -182,9 +176,8 @@
               "value": 2
             },
             {
-              "type": "tileDebuff",
-              "debuff": "condemn",
-              "count": 2
+              "type": "attack",
+              "value": 8
             }
           ]
         },
@@ -215,11 +208,6 @@
               "type": "playerDebuff",
               "status": "broken",
               "value": 2
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "lock",
-              "count": 3
             }
           ]
         },
@@ -242,7 +230,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 3
+              "count": 5
             }
           ]
         },
@@ -316,7 +304,7 @@
             {
               "type": "tileDebuff",
               "debuff": "curse",
-              "count": 3
+              "count": 4
             },
             {
               "type": "tileDebuff",
@@ -344,17 +332,12 @@
           "name": "Gaze of Frustration",
           "actions": [
             {
-              "type": "playerDebuff",
-              "status": "frustrated",
-              "value": 3
-            },
-            {
               "type": "attack",
               "value": 19
             },
             {
               "type": "tileDebuff",
-              "debuff": "frustrate",
+              "debuff": "curse",
               "count": 3
             }
           ]
@@ -409,7 +392,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 3
+              "count": 4
             },
             {
               "type": "attack",
@@ -461,12 +444,7 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 2
-            },
-            {
-              "type": "playerDebuff",
-              "status": "weaken",
-              "value": 1
+              "count": 3
             }
           ]
         }
@@ -491,7 +469,7 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 3
+              "count": 4
             }
           ]
         },
@@ -508,17 +486,12 @@
           "turn": 3,
           "actions": [
             {
-              "type": "playerDebuff",
-              "status": "broken",
-              "value": 1
-            },
-            {
               "type": "attack",
               "value": 7
             },
             {
               "type": "tileDebuff",
-              "debuff": "burn",
+              "debuff": "frustrate",
               "count": 3
             }
           ]
@@ -563,7 +536,7 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 4
+              "count": 5
             },
             {
               "type": "attack",
@@ -607,7 +580,7 @@
             {
               "type": "tileDebuff",
               "debuff": "poison",
-              "count": 5
+              "count": 6
             },
             {
               "type": "playerDebuff",
@@ -623,20 +596,6 @@
               "type": "attack",
               "value": 27,
               "heavy": true
-            }
-          ]
-        },
-        {
-          "turn": 4,
-          "actions": [
-            {
-              "type": "tileDebuff",
-              "debuff": "poison",
-              "count": 3
-            },
-            {
-              "type": "attack",
-              "value": 12
             }
           ]
         }
@@ -668,7 +627,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 4
+              "count": 5
             },
             {
               "type": "block",
@@ -684,11 +643,6 @@
               "type": "attack",
               "value": 22,
               "heavy": true
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "burn",
-              "count": 2
             }
           ]
         },
@@ -699,17 +653,11 @@
             {
               "type": "playerDebuff",
               "status": "broken",
-              "value": 1
-            },
-            {
-              "type": "playerDebuff",
-              "status": "frustrated",
               "value": 2
             },
             {
-              "type": "tileDebuff",
-              "debuff": "condemn",
-              "count": 2
+              "type": "attack",
+              "value": 8
             }
           ]
         }
@@ -748,7 +696,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 3
+              "count": 4
             }
           ]
         },
@@ -804,16 +752,11 @@
             {
               "type": "tileDebuff",
               "debuff": "curse",
-              "count": 2
+              "count": 3
             },
             {
               "type": "attack",
               "value": 9
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "slimy",
-              "count": 3
             }
           ]
         }
@@ -846,7 +789,7 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 4
+              "count": 5
             },
             {
               "type": "block",
@@ -858,13 +801,13 @@
           "turn": 3,
           "actions": [
             {
-              "type": "tileDebuff",
-              "debuff": "curse",
-              "count": 2
-            },
-            {
               "type": "attack",
               "value": 14
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 3
             }
           ]
         }
@@ -889,7 +832,7 @@
             {
               "type": "tileDebuff",
               "debuff": "burn",
-              "count": 3
+              "count": 4
             }
           ]
         },
@@ -933,7 +876,7 @@
             {
               "type": "tileDebuff",
               "debuff": "slimy",
-              "count": 4
+              "count": 5
             },
             {
               "type": "attack",
@@ -947,16 +890,6 @@
             {
               "type": "attack",
               "value": 17
-            },
-            {
-              "type": "playerDebuff",
-              "status": "poison",
-              "value": 4
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "poison",
-              "count": 2
             }
           ]
         },
@@ -1004,7 +937,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 5
+              "count": 6
             },
             {
               "type": "playerDebuff",
@@ -1063,25 +996,11 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 4
+              "count": 5
             },
             {
               "type": "attack",
               "value": 17
-            }
-          ]
-        },
-        {
-          "turn": 4,
-          "actions": [
-            {
-              "type": "tileDebuff",
-              "debuff": "frustrate",
-              "count": 3
-            },
-            {
-              "type": "attack",
-              "value": 20
             }
           ]
         }
@@ -1114,12 +1033,7 @@
             {
               "type": "tileDebuff",
               "debuff": "poison",
-              "count": 4
-            },
-            {
-              "type": "playerDebuff",
-              "status": "weaken",
-              "value": 1
+              "count": 6
             }
           ]
         },
@@ -1149,11 +1063,6 @@
             {
               "type": "block",
               "value": 14
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "slimy",
-              "count": 3
             }
           ]
         },
@@ -1187,7 +1096,7 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 5
+              "count": 6
             },
             {
               "type": "attack",
@@ -1215,19 +1124,13 @@
           "name": "Scream",
           "actions": [
             {
-              "type": "playerDebuff",
-              "status": "weaken",
-              "value": 2
-            },
-            {
-              "type": "playerDebuff",
-              "status": "broken",
-              "value": 2
-            },
-            {
               "type": "tileDebuff",
               "debuff": "curse",
-              "count": 2
+              "count": 3
+            },
+            {
+              "type": "attack",
+              "value": 12
             }
           ]
         },
@@ -1260,7 +1163,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 5
+              "count": 6
             },
             {
               "type": "block",
@@ -1287,11 +1190,6 @@
           "turn": 3,
           "name": "Purge",
           "actions": [
-            {
-              "type": "tileDebuff",
-              "debuff": "condemn",
-              "count": 4
-            },
             {
               "type": "attack",
               "value": 14
@@ -1327,12 +1225,7 @@
             {
               "type": "tileDebuff",
               "debuff": "curse",
-              "count": 3
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "frustrate",
-              "count": 3
+              "count": 4
             },
             {
               "type": "block",
@@ -1351,11 +1244,6 @@
             {
               "type": "block",
               "value": 34
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "burn",
-              "count": 4
             }
           ]
         },
@@ -1366,17 +1254,11 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 4
+              "count": 5
             },
             {
-              "type": "playerDebuff",
-              "status": "broken",
-              "value": 2
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "slimy",
-              "count": 3
+              "type": "attack",
+              "value": 12
             }
           ]
         },
@@ -1417,8 +1299,8 @@
           "actions": [
             {
               "type": "tileDebuff",
-              "debuff": "frustrate",
-              "count": 3
+              "debuff": "poison",
+              "count": 4
             },
             {
               "type": "block",
@@ -1431,7 +1313,7 @@
           "actions": [
             {
               "type": "attack",
-              "value": 5
+              "value": 6
             },
             {
               "type": "tileDebuff",
@@ -1466,7 +1348,7 @@
             {
               "type": "tileDebuff",
               "debuff": "slimy",
-              "count": 5
+              "count": 6
             },
             {
               "type": "block",
@@ -1479,12 +1361,7 @@
           "actions": [
             {
               "type": "attack",
-              "value": 8
-            },
-            {
-              "type": "tileDebuff",
-              "debuff": "poison",
-              "count": 3
+              "value": 10
             }
           ]
         },
@@ -1575,7 +1452,7 @@
             {
               "type": "tileDebuff",
               "debuff": "poison",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -1619,7 +1496,7 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -1663,7 +1540,7 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -1707,7 +1584,7 @@
             {
               "type": "tileDebuff",
               "debuff": "slimy",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -1751,7 +1628,7 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 2
+              "count": 3
             }
           ]
         },
