@@ -284,9 +284,9 @@
     {
       "id": "gargoyle",
       "name": "Ancient Stone Gargoyle",
-      "act": 1,
+      "act": 2,
       "tier": "boss",
-      "hp": 155,
+      "hp": 300,
       "art": "gargoyle",
       "moveCycle": [
         {
@@ -301,7 +301,7 @@
             {
               "type": "tileDebuff",
               "debuff": "condemn",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -311,11 +311,11 @@
           "actions": [
             {
               "type": "attack",
-              "value": 16
+              "value": 26
             },
             {
               "type": "block",
-              "value": 15
+              "value": 24
             }
           ]
         },
@@ -330,7 +330,7 @@
             },
             {
               "type": "attack",
-              "value": 12
+              "value": 19
             }
           ]
         },
@@ -340,13 +340,13 @@
           "actions": [
             {
               "type": "attack",
-              "value": 24,
+              "value": 38,
               "heavy": true
             }
           ]
         }
       ],
-      "lore": "Stone guardian at the foot of The Tower. It curses, condemns and executes."
+      "lore": "A stone guardian that once watched the city gates. It curses, condemns and executes."
     },
     {
       "id": "rat",
@@ -597,9 +597,9 @@
     {
       "id": "titan",
       "name": "The Titan",
-      "act": 2,
+      "act": 1,
       "tier": "boss",
-      "hp": 305,
+      "hp": 180,
       "art": "titan",
       "moveCycle": [
         {
@@ -608,7 +608,7 @@
           "actions": [
             {
               "type": "attack",
-              "value": 27
+              "value": 14
             }
           ]
         },
@@ -619,11 +619,11 @@
             {
               "type": "tileDebuff",
               "debuff": "lock",
-              "count": 3
+              "count": 2
             },
             {
               "type": "block",
-              "value": 32
+              "value": 14
             }
           ]
         },
@@ -633,7 +633,7 @@
           "actions": [
             {
               "type": "attack",
-              "value": 38,
+              "value": 22,
               "heavy": true
             }
           ]
@@ -645,12 +645,12 @@
             {
               "type": "playerDebuff",
               "status": "broken",
-              "value": 2
+              "value": 1
             },
             {
               "type": "playerDebuff",
               "status": "frustrated",
-              "value": 3
+              "value": 2
             }
           ]
         }
@@ -658,7 +658,7 @@
       "special": [
         "giant"
       ],
-      "lore": "Something enormous walks the ruined city. All you can see is its foot."
+      "lore": "Something enormous walks the outskirts. All you can see is its foot."
     },
     {
       "id": "twinA",
@@ -1010,6 +1010,17 @@
       "moveCycle": [
         {
           "turn": 1,
+          "name": "Spore Brood",
+          "actions": [
+            {
+              "type": "summon",
+              "enemy": "sporeling",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "turn": 2,
           "name": "Spore Cloud",
           "actions": [
             {
@@ -1025,7 +1036,7 @@
           ]
         },
         {
-          "turn": 2,
+          "turn": 3,
           "name": "Cap Slam",
           "actions": [
             {
@@ -1039,7 +1050,7 @@
           ]
         },
         {
-          "turn": 3,
+          "turn": 4,
           "name": "Mycelium",
           "actions": [
             {
@@ -1054,7 +1065,7 @@
           ]
         },
         {
-          "turn": 4,
+          "turn": 5,
           "name": "Fungal Burst",
           "actions": [
             {
@@ -1065,7 +1076,8 @@
           ]
         }
       ],
-      "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children."
+      "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children.",
+      "minionsDieWithIt": true
     },
     {
       "id": "zero",
@@ -1269,6 +1281,379 @@
       ],
       "lore": "The supercomputer that waited above The Tower. Its test is over.",
       "glossaryHiddenUntil": "achievement act4"
+    },
+    {
+      "id": "thornbloom",
+      "name": "Thornbloom",
+      "act": 1,
+      "tier": "normal",
+      "hp": 38,
+      "art": "thornbloom",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 8
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 2
+            },
+            {
+              "type": "block",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 5
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "lore": "A bramble bush that grew a face, and a temper. Its pollen frustrates your letters."
+    },
+    {
+      "id": "bigslime",
+      "name": "Great Slime",
+      "act": 1,
+      "tier": "elite",
+      "hp": 95,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 13
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "slimy",
+              "count": 3
+            },
+            {
+              "type": "block",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 8
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 18,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "The slime that ate all the other slimes. Hit it hard enough and it remembers it was five of them.",
+      "splitsInto": [
+        "slime_g",
+        "slime_b",
+        "slime_p",
+        "slime_o",
+        "slime_v"
+      ]
+    },
+    {
+      "id": "sporeling",
+      "name": "Sporeling",
+      "act": 1,
+      "tier": "minion",
+      "hp": 14,
+      "art": "sporeling",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 5
+            }
+          ]
+        }
+      ],
+      "lore": "One of Mother Mycelia's children. Small, angry, and poisonous.",
+      "minion": true
+    },
+    {
+      "id": "slime_g",
+      "name": "Green Slimelet",
+      "act": 1,
+      "tier": "minion",
+      "hp": 16,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "block",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        }
+      ],
+      "lore": "A piece of the Great Slime, still wobbling with rage.",
+      "minion": true
+    },
+    {
+      "id": "slime_b",
+      "name": "Blue Slimelet",
+      "act": 1,
+      "tier": "minion",
+      "hp": 16,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "block",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        }
+      ],
+      "lore": "A piece of the Great Slime, still wobbling with rage.",
+      "minion": true
+    },
+    {
+      "id": "slime_p",
+      "name": "Pink Slimelet",
+      "act": 1,
+      "tier": "minion",
+      "hp": 16,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "block",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        }
+      ],
+      "lore": "A piece of the Great Slime, still wobbling with rage.",
+      "minion": true
+    },
+    {
+      "id": "slime_o",
+      "name": "Orange Slimelet",
+      "act": 1,
+      "tier": "minion",
+      "hp": 16,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "block",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        }
+      ],
+      "lore": "A piece of the Great Slime, still wobbling with rage.",
+      "minion": true
+    },
+    {
+      "id": "slime_v",
+      "name": "Violet Slimelet",
+      "act": 1,
+      "tier": "minion",
+      "hp": 16,
+      "art": "slime",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "block",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        }
+      ],
+      "lore": "A piece of the Great Slime, still wobbling with rage.",
+      "minion": true
     }
   ]
 }

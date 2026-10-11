@@ -1268,6 +1268,7 @@ function intentHTML(e){
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
+    if(a.k==="summon"){ lines.push(`summon <b>${a.n} ${ENEMIES[a.id].name}s</b> (fills free spots)`); return `<span class="ii">${SI.intentSummon}<b>+${a.n}</b></span>`; }
     if(a.k==="pdeb"){ lines.push(`inflict <b>${a.v} ${STATUS[a.s].n}</b> on you`); kws.push(a.s); return `<span class="ii">${SI.intentDebuff}<span class="mini-i">${SI[a.s]}</span><b>${a.v}</b></span>`; }
   });
   const nm = def.names ? `<b>${def.names[mi]}</b><br>` : "";
@@ -1778,7 +1779,7 @@ async function usePotion(i){
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const T_ = ms => RM ? Math.round(ms*.25) : ms;
 const ENC_W = {tslime:210,slime:210,bat:205,goblin:205,arachne:285,quartz:250,gargoyle:340};
-const SLOTS = [[[1240,578]],[[1090,578],[1400,578]],[[1000,478],[1230,582],[1460,478]],[[985,482],[1160,582],[1335,482],[1500,582]],[[960,470],[1110,582],[1260,470],[1410,582],[1545,470]]];
+const SLOTS = [[[1240,578]],[[1090,578],[1400,578]],[[1000,478],[1230,582],[1460,478]],[[985,482],[1160,582],[1335,482],[1500,582]],[[945,470],[1090,582],[1235,470],[1380,582],[1515,470]]];
 function pickEncounter(kind){
   if(kind==="elite") return [pick(["arachne","quartz"])];
   if(kind==="boss") return ["gargoyle"];
@@ -2065,10 +2066,16 @@ function hurtPlayer(amount){
   return {dmg, absorbed};
 }
 async function resolveDeaths(){
-  let any=false;
-  for(let i=0;i<C.es.length;i++){ const e=C.es[i];
-    if(!e.dead && e.hp<=0){ e.dead=true; any=true; G.stats.kills++; log(`${ENEMIES[e.id].name} is defeated!`); await deathAnim(i); e.gone=true; } }
+  let any=false; const splits=[];
+  for(let pass=0;pass<2;pass++){ let leaderFell=false;
+    for(let i=0;i<C.es.length;i++){ const e=C.es[i];
+      if(!e.dead && e.hp<=0){ e.dead=true; any=true; G.stats.kills++; const D=ENEMIES[e.id]; log(`${D.name} is defeated!`); await deathAnim(i); e.gone=true;
+        if(D.split) splits.push(...D.split); if(D.leader) leaderFell=true; } }
+    if(!leaderFell) break;
+    C.es.forEach(m=>{ if(!m.dead&&ENEMIES[m.id].minion){ m.hp=0; } }); log("Without their mother, the Sporelings wither away.");
+  }
   if(!any) return false;
+  if(splits.length&&!C.over){ banner("It splits apart!",1000); await spawnEnemies(splits); }
   if(C.es.every(e=>e.dead)){ C.over=true; C.busy=true; snd("win"); renderCombat(); banner("Victory!",1200); await sleep(T_(1100)); winCombat(); return true; }
   aliveTarget(); renderCombat(); return false;
 }
@@ -2127,9 +2134,11 @@ async function endTurn(){
   await enemyTurn();
 }
 async function enemyTurn(){
-  for(let i=0;i<C.es.length;i++){
-    const e=C.es[i]; if(e.dead) continue;
-    const def=ENEMIES[e.id], key="e"+i;
+  const order=C.es.slice();
+  for(const e of order){
+    if(!C||C.over) return;
+    if(e.dead||!C.es.includes(e)) continue;
+    let i=C.es.indexOf(e); const def=ENEMIES[e.id]; let key="e"+i;
     e.block=0; renderCombat();
     const mi=e.mi%def.moves.length, move=def.moves[mi];
     if(def.names){ log(`${def.name} uses ${def.names[mi]}.`); banner(def.names[mi],1100); await sleep(T_(500)); }
@@ -2143,10 +2152,11 @@ async function enemyTurn(){
         renderCombat();
         if(G.hp<=0&&!undying()) return gameOver(def.name);
         medkitCheck();
-        if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; if(e.dead) break; }
+        if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; if(e.dead) break; }
       } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
       else if(a.k==="tile"){ const ch=applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); renderCombat(); await tileFlyFx(ch,`${TILE_DEBUFFS[a.d].name}!`); }
+      else if(a.k==="summon"){ const n=await spawnEnemies(Array(a.n).fill(a.id)); i=C.es.indexOf(e); key="e"+i; log(n?`${def.name} summons ${n} ${ENEMIES[a.id].name}${n>1?"s":""}.`:`${def.name} tries to summon, but there is no room.`); }
       else if(a.k==="pdeb"){ C.p[a.s]+=a.v; log(`You are ${STATUS[a.s].n} (${a.v}).`); await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); }
       renderCombat();
     }
@@ -2420,6 +2430,7 @@ function moveText(a){
   if(a.k==="buff") return `+${a.v} ${STATUS[a.s].n}`;
   if(a.k==="tile") return `${TILE_DEBUFFS[a.d].name} on <b>${a.n}</b> tiles`;
   if(a.k==="pdeb") return `Inflict ${a.v} ${STATUS[a.s].n}`;
+  if(a.k==="summon") return `Summon <b>${a.n}</b> ${ENEMIES[a.id].name}s`;
 }
 const MON_LORE={tslime:"A gentle practice blob kept by the Tablet for new spell-casters.",slime:"Radioactive goo that learned to wobble with intent. Its touch poisons your runes.",
   bat:"Screeches in frequencies that scramble a caster's patience.",goblin:"A thorny scavenger. It buffs itself, then smears slime on your tiles.",
@@ -2639,6 +2650,86 @@ function nextAct(){
   toast(`Act ${G.act}: ${ACTS[G.act].name}`); showMap();
 }
 
+/* ================= ACT 1 ADDITIONS: Thornbloom, Great Slime + splits, Sporelings ================= */
+Object.assign(ARTS,{
+  sporeling:{vb:[140,150],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 3)",atk:"translate(-12 0) rotate(-8 70 145)",hurt:"translate(8 0) rotate(10 70 145)"},draw(v,sh,ink){
+    ink(`<path class="thick" d="M56 128 L50 146 M84 128 L90 146"/>`);
+    sh("path",`d="M46 132 Q42 96 54 74 L86 74 Q98 96 94 132 Z"`,"#f3ead8");
+    const cy=v==="i1"?-3:0;
+    sh("path",`d="M12 ${80+cy} Q16 ${22+cy} 70 ${18+cy} Q124 ${22+cy} 128 ${80+cy} Q70 ${92+cy} 12 ${80+cy} Z"`,"#e63946");
+    for(const [x,y,r] of [[42,50,8],[74,34,7],[102,56,9]]) sh("circle",`cx="${x}" cy="${y+cy}" r="${r}"`,"#fff8df");
+    if(v==="hurt") eyesX(ink,[[60,104],[80,104]]); else ink(`<ellipse cx="60" cy="104" rx="5" ry="${v==="i1"?2:6}" class="dark"/><ellipse cx="80" cy="104" rx="5" ry="${v==="i1"?2:6}" class="dark"/>`);
+    if(v==="atk") sh("ellipse",`cx="70" cy="118" rx="7" ry="5"`,"#3f1d1d"); else ink(`<path class="thin" d="M62 117 Q70 122 78 117"/>`);
+    if(v==="atk") for(const [x,y] of [[10,100],[-4,86],[4,120]]) sh("circle",`cx="${x}" cy="${y}" r="5"`,"#c3f06b");
+  }},
+  thornbloom:{vb:[220,230],v:["i0","i1","atk","hurt"],tf:{i0:"",i1:"translate(0 2)",atk:"translate(-16 0) rotate(-7 110 225)",hurt:"translate(12 0) rotate(8 110 225)"},draw(v,sh,ink){
+    // bramble bush body
+    for(const [x,y,r,c] of [[64,186,40,"#2f7d3e"],[156,186,40,"#2f7d3e"],[110,176,50,"#3f9d4b"],[80,150,30,"#57a64a"],[140,150,30,"#57a64a"]]) sh("circle",`cx="${x}" cy="${y}" r="${r}"`,c);
+    ink(`<path class="thin" d="M40 170 l-10 -6 M58 210 l-8 8 M180 168 l10 -6 M168 210 l8 8 M110 220 l0 8 M88 130 l-6 -8 M132 130 l6 -8"/>`);
+    // vine arms
+    const at=v==="atk";
+    ink(`<path style="stroke:#2f7d3e;stroke-width:8" d="M74 150 Q${at?20:40} ${at?120:110} ${at?-10:28} ${at?110:80}"/><path class="thin" d="M74 150 Q${at?20:40} ${at?120:110} ${at?-10:28} ${at?110:80}"/>`);
+    ink(`<path style="stroke:#2f7d3e;stroke-width:8" d="M146 150 Q186 116 194 84"/><path class="thin" d="M146 150 Q186 116 194 84"/>`);
+    sh("path",`d="M${at?-10:28} ${at?110:80} l-10 -4 l6 10 Z"`,"#c1272d"); sh("path",`d="M194 84 l8 -8 l2 12 Z"`,"#c1272d");
+    // flower head
+    const open=v==="i1"?1.08:1;
+    for(let k=0;k<8;k++){ const a=k*Math.PI/4; sh("ellipse",`cx="${(110+Math.cos(a)*34*open).toFixed(1)}" cy="${(88+Math.sin(a)*34*open).toFixed(1)}" rx="20" ry="13" transform="rotate(${k*45} ${(110+Math.cos(a)*34*open).toFixed(1)} ${(88+Math.sin(a)*34*open).toFixed(1)})"`,k%2?"#ff5d8f":"#ff9ad5"); }
+    sh("circle",`cx="110" cy="88" r="27"`,"#ffd166");
+    if(v==="hurt") eyesX(ink,[[100,84],[120,84]]);
+    else ink(`<circle cx="100" cy="84" r="5" class="dark"/><circle cx="120" cy="84" r="5" class="dark"/><path class="thick" d="M92 74 L104 78 M128 74 L116 78"/>`);
+    if(at) sh("path",`d="M98 96 Q110 112 122 96 Z"`,"#7a2a2a"); else ink(`<path class="thin" d="M100 98 Q110 104 120 98"/>`);
+    if(at) for(const [x,y] of [[40,60],[20,80],[30,40],[8,62]]) sh("circle",`cx="${x}" cy="${y}" r="4"`,"#ffe66d");
+  }},
+});
+// slime tint / crown support
+(function(){ const S=ARTS.slime, base=S.draw;
+  S.draw=function(v,sh,ink,fo,o={}){
+    const sh2=(t,a,c)=>sh(t,a,c===CC.slime&&o.tint?o.tint:c);
+    base.call(this,v,sh2,ink,fo,o);
+    if(o.crown){ sh("path",`d="M70 ${v==="i1"?112:104} L74 ${v==="i1"?80:72} L88 ${v==="i1"?96:88} L100 ${v==="i1"?72:64} L112 ${v==="i1"?96:88} L126 ${v==="i1"?80:72} L130 ${v==="i1"?112:104} Z"`,"#ffbe0b"); sh("circle",`cx="100" cy="${v==="i1"?92:84}" r="5"`,"#e63946"); }
+  };
+})();
+const SLIME_KIDS=[["slime_g","Green Slimelet","#8ccf2a"],["slime_b","Blue Slimelet","#5aa9ff"],["slime_p","Pink Slimelet","#ff8fc8"],["slime_o","Orange Slimelet","#ffa94d"],["slime_v","Violet Slimelet","#b07cff"]];
+Object.assign(ENEMIES,{
+  thornbloom:{name:"Thornbloom",hp:38,art:"thornbloom",moves:[[{k:"atk",v:8}],[{k:"tile",d:"frustrate",n:2},{k:"blk",v:6}],[{k:"atk",v:5},{k:"pdeb",s:"weaken",v:1}]]},
+  bigslime:{name:"Great Slime",hp:95,art:"slime",artO:{crown:true,tint:"#6fbf2a"},elite:true,split:SLIME_KIDS.map(s=>s[0]),
+    moves:[[{k:"atk",v:13}],[{k:"tile",d:"slimy",n:3},{k:"blk",v:10}],[{k:"atk",v:8},{k:"pdeb",s:"weaken",v:1}],[{k:"atk",v:18,heavy:true}]]},
+  sporeling:{name:"Sporeling",hp:14,art:"sporeling",minion:true,moves:[[{k:"atk",v:4}],[{k:"tile",d:"poison",n:1}],[{k:"atk",v:5}]]},
+});
+for(const [id,nm,col] of SLIME_KIDS) ENEMIES[id]={name:nm,hp:16,art:"slime",artO:{tint:col},minion:true,moves:[[{k:"atk",v:4},{k:"blk",v:3}],[{k:"tile",d:"poison",n:1}],[{k:"atk",v:6}]]};
+Object.assign(ENC_W,{thornbloom:220,bigslime:330,sporeling:130,slime_g:150,slime_b:150,slime_p:150,slime_o:150,slime_v:150});
+Object.assign(MON_LORE,{thornbloom:"A bramble bush that grew a face, and a temper. Its pollen frustrates your letters.",
+  bigslime:"The slime that ate all the other slimes. Hit it hard enough and it remembers it was five of them.",
+  sporeling:"One of Mother Mycelia's children. Small, angry, and poisonous.",
+  slime_g:"A piece of the Great Slime, still wobbling with rage.",slime_b:"A piece of the Great Slime, still wobbling with rage.",slime_p:"A piece of the Great Slime, still wobbling with rage.",slime_o:"A piece of the Great Slime, still wobbling with rage.",slime_v:"A piece of the Great Slime, still wobbling with rage.",
+  titan:"Something enormous walks the outskirts. All you can see is its foot.",
+  gargoyle:"A stone guardian that once watched the city gates. It curses, condemns and executes."});
+// Mother Mycelia summons two Sporelings (leader: her children wither when she falls)
+ENEMIES.shroom.leader=true;
+ENEMIES.shroom.moves=[[{k:"summon",id:"sporeling",n:2}],...ENEMIES.shroom.moves];
+ENEMIES.shroom.names=["Spore Brood",...ENEMIES.shroom.names];
+// boss swap: Titan → Act 1, Gargoyle → Act 2 (rescaled)
+Object.assign(ENEMIES.titan,{hp:180,moves:[[{k:"atk",v:14}],[{k:"tile",d:"lock",n:2},{k:"blk",v:14}],[{k:"atk",v:22,heavy:true}],[{k:"pdeb",s:"broken",v:1},{k:"pdeb",s:"frustrated",v:2}]]});
+Object.assign(ENEMIES.gargoyle,{hp:300,moves:[[{k:"tile",d:"curse",n:2},{k:"tile",d:"condemn",n:3}],[{k:"atk",v:26},{k:"blk",v:24}],[{k:"pdeb",s:"frustrated",v:3},{k:"atk",v:19}],[{k:"atk",v:38,heavy:true}]]});
+ACTS[1].bosses=[["shroom"],["titan"]];
+ACTS[2].bosses=[["gargoyle"],["twinA","twinB"]];
+ACTS[1].elites=["arachne","quartz","bigslime"];
+ACTS[1].singles.push(["thornbloom"]); ACTS[1].pairs.push(["thornbloom","slime"],["thornbloom","bat"]); ACTS[1].trios.push(["thornbloom","goblin","thornbloom"]);
+SI.intentSummon=iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M3 13 Q4 4 12 4 Q20 4 21 13 Z"`,"#e63946"); sh("rect",`x="9" y="13" width="6" height="8" rx="2"`,"#f3ead8"); ink(`<path class="thin" d="M18 2 L18 8 M15 5 L21 5"/>`); });
+/* spawn helper: fills free slots (max 5 alive), keeps target, re-lays the stage */
+async function spawnEnemies(ids){
+  const alive=C.es.filter(x=>!x.dead).length; const list=ids.slice(0,Math.max(0,5-alive)); if(!list.length) return 0;
+  const tgt=C.es[C.target];
+  C.es=C.es.filter(x=>!x.dead);
+  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:hasR("philo")?2:0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
+  C.es.push(...born);
+  C.target=Math.max(0,tgt&&!tgt.dead?C.es.indexOf(tgt):0);
+  C.trail={}; C.trailT={};
+  computeLayout(); renderCombat();
+  born.forEach(b=>{ const el=fEl("e"+C.es.indexOf(b)); if(el&&!RM) el.animate([{transform:"scale(.2)",opacity:0},{transform:"scale(1.08)",opacity:1,offset:.7},{transform:"scale(1)",opacity:1}],{duration:T_(520),easing:"ease-out"}); });
+  snd("shield"); await sleep(T_(600)); return born.length;
+}
+
 /* ================= COMBAT FX ================= */
 function focusOn(keys,z,cx,cy){
   const w=$("#world"); if(!w) return;
@@ -2797,8 +2888,9 @@ async function venomAnim(targets,amt,crit,word){
 function killGold(i){
   if(G.tutorial) return 0;
   if(hasR("ecto")) return 0;
+  if(C.es[i]&&ENEMIES[C.es[i].id].minion) return 0;
   const act=G.act||1, n=C.es.length, k=hasR("idol")?1.25:1;
-  if(C.kind==="boss") return Math.round(130*k/n);
+  if(C.kind==="boss") return Math.round(130*k/Math.max(1,C.es.filter(x=>ENEMIES[x.id].boss).length));
   if(k>1){ const base = C.kind==="elite" ? 40+rnd(18)+12*(act-1) : Math.max(6,Math.round((19+rnd(12)+7*(act-1))/n)); return Math.round(base*k); }
   if(C.kind==="elite") return 40+rnd(18)+12*(act-1);
   return Math.max(6,Math.round((19+rnd(12)+7*(act-1))/n));

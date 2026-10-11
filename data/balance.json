@@ -77,7 +77,7 @@
   },
   "gold": {
     "start": 99,
-    "normalPerFight": "total ≈ 19 + rand(0..11) + 7*(act-1), split evenly across the enemies in the fight (min 6 per enemy)",
+    "normalPerFight": "total ≈ 19 + rand(0..11) + 7*(act-1), split evenly across the enemies in the fight (min 6 per enemy); minions give 0",
     "elite": "40 + rand(0..17) + 12*(act-1)",
     "bossTotal": "130 total, split across boss enemies",
     "goldenIdolMultiplier": 1.25,

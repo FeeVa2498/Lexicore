@@ -67,7 +67,7 @@ Long after a war ended the old world, English has become a forgotten **rune lang
 
 | Act | Name | Setting | Enemy theme |
 |---|---|---|---|
-| 1 | The Outskirts | Overgrown nature at the edge of the ruins | Mutated animals and plants (slimes, bats, goblins, spiders) |
+| 1 | The Outskirts | Overgrown nature at the edge of the ruins | Mutated animals and plants (slimes, bats, goblins, a bramble-flower, spiders) |
 | 2 | The Ruined City | Broken streets, scrap and rust | Scavengers using tools, armour and weapons (rats, hounds, crows, badger knights) |
 | 3 | The Tower | Inside the Tower: detention floors | Old-world security mixed with alien tech; the **Prisoners**, captured aliens the Tower keeps for research |
 | 4 | The Lexicore Chamber | The Tower's crown, launched into orbit | LEXICORE alone. Silent; no music |
@@ -248,7 +248,10 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - Move actions: attack (optionally "heavy" for a stronger hit animation), block, buff self, debuff tiles, debuff hero.
 - **Multi-enemy fights**: the player chooses a target (click / Tab). Normal-fight enemy HP is scaled by group size (§12.4).
 - **Gemini twins (Act 2 boss)**: the twin you are *not* targeting hits **×2** ("hit from behind").
-- **The Titan**: drawn as a giant; only its foot is visible.
+- **The Titan (Act 1 boss)**: drawn as a giant; only its foot is visible.
+- **Summon (Mother Mycelia)**: her first move, *Spore Brood*, summons **2 Sporelings** that fight beside her. A fight holds at most **5 enemies**; if fewer than 2 spots are free, she fills only the remaining spots. When Mother Mycelia dies, every Sporeling withers at once.
+- **Split (Great Slime, Act 1 Elite)**: when it dies it splits into **5 Slimelets** (green, blue, pink, orange, violet: the normal slime in 5 colours, 16 HP each). The fight is won only when all of them are dead.
+- **Minions** (Sporelings, Slimelets) drop no gold.
 
 ---
 
@@ -596,16 +599,24 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Green Slime** | 1 | normal | 40 | Atk 7 + Block 6 → Poison×2 tiles → Atk 10 |
 | **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×2 tiles → Atk 12 |
 | **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 11 → Slimy×3 tiles |
+| **Thornbloom** | 1 | normal | 38 | Atk 8 → Frustrate×2 tiles + Block 6 → Atk 5 + Weaken 1 |
+| **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×1 tiles → Atk 5 |
+| **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×1 tiles → Atk 6 |
+| **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×1 tiles → Atk 6 |
+| **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×1 tiles → Atk 6 |
+| **Orange Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×1 tiles → Atk 6 |
+| **Violet Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×1 tiles → Atk 6 |
 | **Arachne Matriarch** | 1 | elite | 85 | Poison×4 tiles + Block 10 → Atk 16 → Weaken 2 → Atk 12 |
 | **Quartz Punisher** | 1 | elite | 100 | Broken 2 → Atk 16 → Block 15 + Lock×2 tiles → Atk 22! |
-| **Ancient Stone Gargoyle** | 1 | boss | 155 | **Chant of Decay**: Curse×2 tiles + Condemn×2 tiles → **Stone Slam**: Atk 16 + Block 15 → **Gaze of Frustration**: Frustrated 3 + Atk 12 → **Execute**: Atk 24! |
-| **Mother Mycelia** | 1 | boss | 165 | **Spore Cloud**: Poison×2 tiles + Weaken 1 → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
+| **Great Slime** | 1 | elite | 95 | Atk 13 → Slimy×3 tiles + Block 10 → Atk 8 + Weaken 1 → Atk 18! |
+| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×2 tiles + Block 14 → **Mega Kick**: Atk 22! → **Earthquake**: Broken 1 + Frustrated 2 |
+| **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×2 tiles + Weaken 1 → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
 | **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×2 tiles + Atk 7 |
 | **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 12 + Weaken 1 |
 | **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×2 tiles → Atk 15 → Broken 1 + Atk 7 |
 | **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×2 tiles + Atk 13 → Atk 31! |
 | **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×3 tiles + Weaken 2 → Atk 27! |
-| **The Titan** | 2 | boss | 305 | **Stomp**: Atk 27 → **Rumble**: Lock×3 tiles + Block 32 → **Mega Kick**: Atk 38! → **Earthquake**: Broken 2 + Frustrated 3 |
+| **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×2 tiles + Condemn×3 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Frustrated 3 + Atk 19 → **Execute**: Atk 38! |
 | **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 → **Crush**: Atk 21! |
 | **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×2 tiles + Atk 9 |
 | **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×3 tiles + Block 19 → Curse×2 tiles + Atk 14 |
@@ -617,14 +628,14 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×3 tiles + Block 32 → **Laser Sweep**: Atk 26 → **Purge**: Condemn×3 tiles + Atk 14 → **Overcharge**: Atk 40! |
 | **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×2 tiles + Frustrate×2 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×3 tiles + Broken 2 → **Delete**: Atk 51! |
 
-Full move cycles: `../data/enemies.json`. Example (The Titan): Stomp (27) → Rumble (Lock 3 tiles + 32 Shield) → Mega Kick (38, heavy) → Earthquake (Broken 2 + Frustrated 3) → repeat.
+Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14) → Rumble (Lock 2 tiles + 14 Shield) → Mega Kick (22, heavy) → Earthquake (Broken 1 + Frustrated 2) → repeat.
 
 ### 13.1 Boss pool per Act
 
 | Act | Boss options (one chosen per run) |
 |---|---|
-| 1 | Ancient Stone Gargoyle · Mother Mycelia |
-| 2 | The Titan · Gemini Left & Gemini Right |
+| 1 | Mother Mycelia (summons Sporelings) · The Titan |
+| 2 | Ancient Stone Gargoyle · Gemini Left & Gemini Right |
 | 3 | Prisoner Zero · The Gatekeeper |
 | 4 | LEXICORE (always) |
 
@@ -632,7 +643,7 @@ Full move cycles: `../data/enemies.json`. Example (The Titan): Stomp (27) → Ru
 
 | Act | Elites (each fought at most once per Act) |
 |---|---|
-| 1 | Arachne Matriarch · Quartz Punisher |
+| 1 | Arachne Matriarch · Quartz Punisher · Great Slime (splits into 5) |
 | 2 | Junkyard Knight · Hazmat Mantis |
 | 3 | Warden Unit · Escaped Prisoner Alpha |
 
@@ -819,7 +830,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 | File | Contents |
 |---|---|
 | `weapons.json` | All 19 weapons (source, kind, cost, crit length, effects, formulas) |
-| `enemies.json` | All 24 enemies with full move cycles and lore |
+| `enemies.json` | All 32 enemies (incl. minions) with full move cycles, summons/splits and lore |
 | `encounters.json` | Encounter pools per Act, elites, boss options |
 | `relics.json` | All 47 relics with category and Mult formulas |
 | `potions.json` | All 18 potions |
