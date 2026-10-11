@@ -1,10 +1,10 @@
 {
   "_notes": [
-    "Floor = node index + 1. Pools: floors 1-2 singles; floors 3-5 singles + pairs; floors 6+ pairs + trios. Never the same group twice in a row.",
-    "Elites: an elite already fought in this act is not picked again (2 per act, at most 2 elite nodes per path).",
-    "One boss group is picked per act at random when the act starts and shown on the map legend.",
-    "Act 4 has no random fights: Rest -> Shop -> Event -> LEXICORE.",
-    "Max 5 enemies at once. Mother Mycelia summons 2 Sporelings (fills free spots); Great Slime splits into 5 Slimelets on death."
+    "Floor = node index + 1. Pools: floors 1-2 singles+pairs; 3-4 pairs+trios; 5-6 pairs+trios(x2)+quads; 7+ trios+quads(x2). Never the same group twice in a row.",
+    "Normal-fight scaling by group size: HP x1/x1/x0.75/x0.62/x0.55 and damage x1/x1/x0.85/x0.72/x0.62 for 1/2/3/4/5 enemies.",
+    "Elites: an elite already fought in this act is not picked again.",
+    "Max 5 enemies at once. Mother Mycelia summons 2 Sporelings; Great Slime splits into 5 Slimelets.",
+    "Act 4: Rest -> Shop -> Event -> LEXICORE."
   ],
   "acts": [
     {
@@ -49,6 +49,10 @@
           [
             "thornbloom",
             "bat"
+          ],
+          [
+            "goblin",
+            "thornbloom"
           ]
         ],
         "trios": [
@@ -66,6 +70,41 @@
             "thornbloom",
             "goblin",
             "thornbloom"
+          ],
+          [
+            "bat",
+            "bat",
+            "bat"
+          ],
+          [
+            "slime",
+            "slime",
+            "slime"
+          ],
+          [
+            "thornbloom",
+            "bat",
+            "slime"
+          ]
+        ],
+        "quads": [
+          [
+            "bat",
+            "bat",
+            "bat",
+            "bat"
+          ],
+          [
+            "slime",
+            "thornbloom",
+            "slime",
+            "thornbloom"
+          ],
+          [
+            "goblin",
+            "bat",
+            "bat",
+            "goblin"
           ]
         ]
       },
@@ -110,6 +149,14 @@
           [
             "crow",
             "crow"
+          ],
+          [
+            "hound",
+            "crow"
+          ],
+          [
+            "rat",
+            "rat"
           ]
         ],
         "trios": [
@@ -122,6 +169,36 @@
             "crow",
             "hound",
             "crow"
+          ],
+          [
+            "rat",
+            "rat",
+            "rat"
+          ],
+          [
+            "hound",
+            "rat",
+            "crow"
+          ]
+        ],
+        "quads": [
+          [
+            "crow",
+            "crow",
+            "crow",
+            "crow"
+          ],
+          [
+            "rat",
+            "rat",
+            "crow",
+            "crow"
+          ],
+          [
+            "hound",
+            "rat",
+            "rat",
+            "hound"
           ]
         ]
       },
@@ -166,6 +243,10 @@
           [
             "moth",
             "moth"
+          ],
+          [
+            "drone",
+            "drone"
           ]
         ],
         "trios": [
@@ -178,6 +259,36 @@
             "moth",
             "drone",
             "moth"
+          ],
+          [
+            "drone",
+            "drone",
+            "drone"
+          ],
+          [
+            "prisoner",
+            "moth",
+            "prisoner"
+          ]
+        ],
+        "quads": [
+          [
+            "drone",
+            "drone",
+            "drone",
+            "drone"
+          ],
+          [
+            "moth",
+            "drone",
+            "moth",
+            "drone"
+          ],
+          [
+            "prisoner",
+            "drone",
+            "drone",
+            "prisoner"
           ]
         ]
       },

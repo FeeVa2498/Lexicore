@@ -1265,7 +1265,7 @@ function intentHTML(e){
   const def=ENEMIES[e.id]; const mi=e.mi%def.moves.length; const move=def.moves[mi];
   const lines=[], kws=[];
   const parts = move.map(a=>{
-    if(a.k==="atk"){ let d=a.v+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}</b></span>`; }
+    if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}</b></span>`; }
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
@@ -1793,7 +1793,7 @@ function startCombat(group, kind, opt={}){
   if(typeof group==="string") group=[group];
   const t={}; for(const tile of G.deck) t[tile.uid]={...tile,deb:null};
   const gsc = kind==="normal" ? [1,1,.75,.62,.55,.5][group.length]||.5 : 1;
-  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,broken:0,poison:0,mi:0,dead:false,gone:false}; }), target:0,
+  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,broken:0,poison:0,mi:0,dead:false,gone:false,ds:kind==="normal"?GROUP_DMG[Math.min(group.length,5)]:1}; }), target:0,
        t, draw:shuffle(Object.keys(t).map(Number)), hand:[], disc:[], bar:[], ban:[],
        energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
@@ -2145,7 +2145,7 @@ async function enemyTurn(){
     if(def.names){ log(`${def.name} uses ${def.names[mi]}.`); banner(def.names[mi],1100); await sleep(T_(500)); }
     for(const a of move){
       if(a.k==="atk"){
-        let dmg=a.v+e.might; if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
+        let dmg=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
         const behind=C.twin&&C.target!==i; if(behind){ dmg*=2; banner("Hit from behind! ×2",900); }
         const res=hurtPlayer(dmg); log(`${def.name} attacks for ${dmg}${res.absorbed?` (${res.absorbed} blocked)`:""}.`);
         snd("hurt");
@@ -2627,7 +2627,8 @@ function pickEncounter(kind){
   if(kind==="elite"){ G.eliteSeen=G.eliteSeen||[]; const fresh=A.elites.filter(e=>!G.eliteSeen.includes(e)); const e=pick(fresh.length?fresh:A.elites); G.eliteSeen.push(e); return [e]; }
   if(kind==="boss"){ if(!G.bossPick) G.bossPick=pick(A.bosses); return G.bossPick; }
   const f=G.floor;
-  const pool = f<=2 ? A.singles : f<=5 ? A.singles.concat(A.pairs) : A.pairs.concat(A.trios);
+  const Q=A.quads||[];
+  const pool = f<=1 ? A.singles.concat(A.pairs) : f<=3 ? A.pairs.concat(A.trios) : f<=5 ? A.pairs.concat(A.trios,A.trios,Q) : A.trios.concat(Q,Q);
   const opts = pool.filter(g=>g.join()!==G.lastEnemy); const g=pick(opts.length?opts:pool); G.lastEnemy=g.join(); return g;
 }
 function bossPreview(){ if(!G.bossPick) G.bossPick=pick(ACTS[G.act||1].bosses); return G.bossPick.map(id=>ENEMIES[id].name).join(" & "); }
@@ -2743,6 +2744,67 @@ async function spawnEnemies(ids){
   born.forEach(b=>{ const el=fEl("e"+C.es.indexOf(b)); if(el&&!RM) el.animate([{transform:"scale(.2)",opacity:0},{transform:"scale(1.08)",opacity:1,offset:.7},{transform:"scale(1)",opacity:1}],{duration:T_(520),easing:"ease-out"}); });
   snd("shield"); await sleep(T_(600)); return born.length;
 }
+
+/* ================= REBALANCE 3: more status effects, bigger debuffs, more multi-enemy fights ================= */
+(function(){
+  const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  const M={
+    // Act 1
+    tslime:[[A(3)],[B(4),A(3)],[A(4)]],
+    slime:[[A(7),B(6)],[T("poison",3)],[A(10)]],
+    bat:[[A(9)],[T("frustrate",3)],[A(6),P("weaken",1)]],
+    goblin:[[B(10),U("might",2)],[A(11)],[T("slimy",4)]],
+    thornbloom:[[A(8)],[T("frustrate",3),B(6)],[A(5),T("poison",2)]],
+    sporeling:[[A(4)],[T("poison",2)],[A(5)]],
+    arachne:[[T("poison",5),B(10)],[A(16)],[P("weaken",2),T("condemn",2)],[A(12)]],
+    quartz:[[P("broken",2),T("lock",3)],[A(16)],[B(15),T("lock",3)],[A(22,1)]],
+    bigslime:[[A(13)],[T("slimy",5),B(10)],[A(8),T("poison",3)],[A(18,1)]],
+    shroom:[[{k:"summon",id:"sporeling",n:2}],[T("poison",4),P("weaken",1)],[A(14),B(10)],[U("might",2),B(14),T("slimy",3)],[A(22,1)]],
+    titan:[[A(14)],[T("lock",4),B(14)],[A(22,1)],[P("broken",1),P("frustrated",2),T("condemn",2)]],
+    // Act 2
+    rat:[[A(14)],[B(13),A(8)],[T("lock",3),A(7)]],
+    hound:[[A(16)],[U("might",3),B(9)],[A(10),T("condemn",2),P("weaken",1)]],
+    crow:[[A(10),T("frustrate",3)],[A(15)],[P("broken",1),A(7),T("slimy",2)]],
+    knight:[[B(25),U("might",3)],[A(23)],[T("condemn",4),A(13)],[A(31,1)]],
+    mantis:[[A(20)],[T("poison",5),P("weaken",2)],[A(27,1)],[T("poison",3),A(12)]],
+    gargoyle:[[T("curse",3),T("condemn",4)],[A(26),B(24)],[P("frustrated",3),A(19),T("frustrate",3)],[A(38,1)]],
+    twinA:[[A(15)],[B(16),T("lock",3)],[A(21,1)]],
+    twinB:[[B(16)],[A(17)],[T("curse",2),A(9),T("slimy",3)]],
+    // Act 3
+    prisoner:[[A(22)],[T("frustrate",4),B(19)],[T("curse",2),A(14)]],
+    drone:[[A(15),P("broken",1)],[T("lock",4),B(15)],[A(26)]],
+    moth:[[T("slimy",4),A(10)],[A(17),P("poison",4),T("poison",2)],[A(24)]],
+    warden:[[B(38)],[A(34)],[T("lock",5),P("weaken",2)],[A(42,1)]],
+    alpha:[[U("might",5),B(17)],[A(27)],[T("condemn",4),A(17)],[T("frustrate",3),A(20)]],
+    zero:[[T("frustrate",5),A(18)],[B(28),U("might",3)],[P("weaken",2),P("broken",2),T("curse",2)],[A(38,1)]],
+    gatekeeper:[[T("lock",5),B(32)],[A(26)],[T("condemn",4),A(14)],[A(40,1)]],
+    lexicore:[[T("curse",3),T("frustrate",3),B(26)],[A(38),B(34)],[T("condemn",4),P("broken",2),T("slimy",3)],[A(51,1)]],
+  };
+  for(const [id,mv] of Object.entries(M)) if(ENEMIES[id]) ENEMIES[id].moves=mv;
+  ENEMIES.mantis.names=undefined;
+  // each Slimelet colour carries its own debuff
+  const kidDeb={slime_g:"poison",slime_b:"lock",slime_p:"frustrate",slime_o:"slimy",slime_v:"condemn"};
+  for(const [id,d] of Object.entries(kidDeb)) if(ENEMIES[id]) ENEMIES[id].moves=[[A(4),B(3)],[T(d,2)],[A(6)]];
+  ENEMIES.tslime.hp=30;
+  // designed encounters: lots of multi-enemy fights
+  Object.assign(ACTS[1],{
+    singles:[["slime"],["bat"],["goblin"],["thornbloom"]],
+    pairs:[["slime","bat"],["bat","bat"],["slime","slime"],["goblin","bat"],["thornbloom","slime"],["thornbloom","bat"],["goblin","thornbloom"]],
+    trios:[["bat","slime","bat"],["slime","goblin","slime"],["thornbloom","goblin","thornbloom"],["bat","bat","bat"],["slime","slime","slime"],["thornbloom","bat","slime"]],
+    quads:[["bat","bat","bat","bat"],["slime","thornbloom","slime","thornbloom"],["goblin","bat","bat","goblin"]]});
+  Object.assign(ACTS[2],{
+    singles:[["rat"],["hound"],["crow"]],
+    pairs:[["rat","crow"],["hound","rat"],["crow","crow"],["hound","crow"],["rat","rat"]],
+    trios:[["rat","crow","rat"],["crow","hound","crow"],["rat","rat","rat"],["hound","rat","crow"]],
+    quads:[["crow","crow","crow","crow"],["rat","rat","crow","crow"],["hound","rat","rat","hound"]]});
+  Object.assign(ACTS[3],{
+    singles:[["prisoner"],["drone"],["moth"]],
+    pairs:[["drone","moth"],["prisoner","drone"],["moth","moth"],["drone","drone"]],
+    trios:[["drone","prisoner","drone"],["moth","drone","moth"],["drone","drone","drone"],["prisoner","moth","prisoner"]],
+    quads:[["drone","drone","drone","drone"],["moth","drone","moth","drone"],["prisoner","drone","drone","prisoner"]]});
+})();
+/* enemy damage scales down a little in big groups (HP already does) */
+const GROUP_DMG=[1,1,1,.85,.72,.62];
 
 /* ================= COMBAT FX ================= */
 function focusOn(keys,z,cx,cy){
@@ -4333,7 +4395,7 @@ const TUT=[
   {word:"CAT",t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
   {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
   {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
-  {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 5 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
+  {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 3 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
   {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
