@@ -786,6 +786,28 @@ function layer(drawFn, wob="wobA"){
 }
 function iconSVG(vb, drawFn, cls=""){ return `<svg viewBox="${vb}" class="${cls}" aria-hidden="true">${layer(drawFn)}</svg>`; }
 
+/* hero "weapons" are really nanobot controllers in disguise: a spellbook (tablet), a greatsword (keyboard), daggers (smartphone grips) */
+function bookG(sh,ink,x,y,w,h,rot=0){ const T=rot?` transform="rotate(${rot} ${x+w/2} ${y+h/2})"`:"";
+  sh("rect",`x="${x}" y="${y}" width="${w}" height="${h}" rx="${w*.12}"${T}`,"#4b2a7a");
+  sh("rect",`x="${x+w*.84}" y="${y+h*.06}" width="${w*.1}" height="${h*.88}" rx="2"${T}`,"#f6e7c4");
+  for(const [cx,cy] of [[x,y],[x+w,y],[x,y+h],[x+w,y+h]]) sh("circle",`cx="${cx}" cy="${cy}" r="${w*.09}"${T}`,"#c8a24a");
+  sh("circle",`cx="${x+w*.42}" cy="${y+h*.45}" r="${w*.2}"${T}`,"#c8a24a");
+  sh("circle",`cx="${x+w*.42}" cy="${y+h*.45}" r="${w*.09}"${T}`,"#5fd4c4");
+  ink(`<path class="thin" style="stroke:#c8a24a" d="M${x+w*.42} ${y+h*.12} L${x+w*.42} ${y+h*.22} M${x+w*.42} ${y+h*.68} L${x+w*.42} ${y+h*.82}"${T}/>`); }
+function openBookG(sh,ink,cx,cy,s,glow){
+  sh("path",`d="M${cx} ${cy+16*s} Q${cx-26*s} ${cy+6*s} ${cx-52*s} ${cy+14*s} L${cx-52*s} ${cy-26*s} Q${cx-26*s} ${cy-34*s} ${cx} ${cy-24*s} Z"`,"#4b2a7a");
+  sh("path",`d="M${cx} ${cy+16*s} Q${cx+26*s} ${cy+6*s} ${cx+52*s} ${cy+14*s} L${cx+52*s} ${cy-26*s} Q${cx+26*s} ${cy-34*s} ${cx} ${cy-24*s} Z"`,"#4b2a7a");
+  sh("path",`d="M${cx-3*s} ${cy+10*s} Q${cx-24*s} ${cy+2*s} ${cx-46*s} ${cy+8*s} L${cx-46*s} ${cy-22*s} Q${cx-24*s} ${cy-28*s} ${cx-3*s} ${cy-20*s} Z"`,glow?"#bff7ee":"#f6e7c4");
+  sh("path",`d="M${cx+3*s} ${cy+10*s} Q${cx+24*s} ${cy+2*s} ${cx+46*s} ${cy+8*s} L${cx+46*s} ${cy-22*s} Q${cx+24*s} ${cy-28*s} ${cx+3*s} ${cy-20*s} Z"`,glow?"#bff7ee":"#f6e7c4");
+  ink(`<path class="thin" style="stroke:${glow?"#2f9d8f":"#8a6a3a"}" d="M${cx-40*s} ${cy-14*s} L${cx-10*s} ${cy-12*s} M${cx-40*s} ${cy-6*s} L${cx-14*s} ${cy-4*s} M${cx-40*s} ${cy+2*s} L${cx-10*s} ${cy+3*s} M${cx+10*s} ${cy-12*s} L${cx+40*s} ${cy-14*s} M${cx+14*s} ${cy-4*s} L${cx+40*s} ${cy-6*s} M${cx+10*s} ${cy+3*s} L${cx+40*s} ${cy+2*s}"/>`); }
+function keysAlong(ink,x1,y1,x2,y2,n,off){ // engraved "rune" squares along a blade (really keycaps)
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy), ux=dx/L, uy=dy/L, px=-uy, py=ux, a=Math.atan2(dy,dx)*180/Math.PI; let s="";
+  for(let r of [-off,off]) for(let i=0;i<n;i++){ const tt=(i+.7)/(n+.4); const x=x1+dx*tt+px*r, y=y1+dy*tt+py*r; s+=`<rect class="thin" x="${(x-2.8).toFixed(1)}" y="${(y-2.8).toFixed(1)}" width="5.6" height="5.6" rx="1.4" transform="rotate(${a.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" style="stroke:#9aa6b4;stroke-width:1.3"/>`; }
+  ink(s); }
+function phoneGrip(sh,ink,x,y,w,h,rot){ const T=` transform="rotate(${rot} ${x+w/2} ${y+h/2})"`;
+  sh("rect",`x="${x}" y="${y}" width="${w}" height="${h}" rx="${w*.3}"${T}`,"#1d1b22");
+  sh("rect",`x="${x+w*.22}" y="${y+h*.12}" width="${w*.56}" height="${h*.66}" rx="1.5"${T}`,"#2f6f7a");
+  sh("circle",`cx="${x+w/2}" cy="${y+h*.9}" r="${w*.12}"${T}`,"#c8a24a"); }
 const ARTS = {
   cat:{vb:[200,220], v:["i0","i1","atk","hurt","guard"],
     tf:{i0:"",i1:"translate(0 3)",atk:"rotate(6 100 210)",hurt:"rotate(-10 100 210) translate(-6 4)",guard:"rotate(-3 100 210) translate(0 2)"},
@@ -794,8 +816,7 @@ const ARTS = {
                hurt:{tip:10,scarf:0,eye:"x",pose:"hurt"},guard:{tip:2,scarf:0,eye:"o",pose:"guard"}}[v];
       const hatT = v==="hurt" ? ` transform="rotate(-14 104 84)"` : v==="atk" ? ` transform="rotate(5 104 84)"` : "";
       // staff behind / tail
-      if(P.pose==="idle"||P.pose==="guard"){ ink(`<path class="thick" d="M152 212 L172 98"/>`); sh("circle",`cx="174" cy="88" r="12"`,CC.gold); ink(`<path class="thin" d="M174 66 L174 59 M194 84 L201 82 M156 74 L150 70"/>`); }
-      if(P.pose==="hurt"){ ink(`<path class="thick" d="M70 206 L42 104"/>`); sh("circle",`cx="40" cy="95" r="11"`,CC.gold); }
+
       ink(`<path class="thick" d="M62 198 Q24 200 26 170 Q28 152 44 158"/>`);
       // long blue wizard robe with gold trim
       sh("path",`d="M50 216 Q50 150 102 124 Q154 150 152 216 Z"`,"#2b59c3");
@@ -805,14 +826,13 @@ const ARTS = {
       // gold collar
       sh("path",`d="M78 130 Q102 146 126 130 L124 140 Q102 154 80 140 Z"`,CC.gold);
       // front paws + props
-      if(P.pose==="idle"){ sh("rect",`x="88" y="152" width="32" height="38" rx="4"`,"#8a4b24"); ink(`<path class="thin" d="M94 162 L114 162 M94 170 L110 170 M94 178 L114 178"/>`);
-        sh("circle",`cx="92" cy="186" r="7"`,CC.char); sh("circle",`cx="158" cy="154" r="7"`,CC.char); }
-      if(P.pose==="cast"){ ink(`<path class="thick" d="M120 152 L194 112"/>`); sh("circle",`cx="198" cy="110" r="17"`,CC.gold);
-        ink(`<path d="M198 80 L198 68 M224 96 L236 90 M226 124 L238 130 M174 92 L166 82 M198 140 L200 150"/>`); sh("circle",`cx="128" cy="148" r="7"`,CC.char);
-        sh("rect",`x="80" y="160" width="24" height="30" rx="3"`,"#8a4b24"); }
-      if(P.pose==="guard"){ sh("rect",`x="118" y="92" width="52" height="66" rx="8"`,CC.blue); ink(`<path class="thin" d="M126 108 L160 108 M126 122 L154 122 M126 136 L160 136"/>`);
+      if(P.pose==="idle"){ bookG(sh,ink,82,146,44,52,-6);
+        sh("circle",`cx="86" cy="190" r="7"`,CC.char); sh("circle",`cx="124" cy="160" r="7"`,CC.char); }
+      if(P.pose==="cast"){ ink(`<path class="thick" d="M118 150 L156 132 M90 156 L150 150"/>`); openBookG(sh,ink,178,128,1,true);
+        ink(`<path style="stroke:#5fd4c4" d="M178 86 L178 72 M206 92 L218 82 M150 92 L140 82 M226 118 L240 116 M232 140 L244 146"/>`); sh("circle",`cx="152" cy="134" r="7"`,CC.char); }
+      if(P.pose==="guard"){ bookG(sh,ink,82,150,36,44,-10); sh("rect",`x="118" y="92" width="52" height="66" rx="8"`,CC.blue); ink(`<path class="thin" d="M126 108 L160 108 M126 122 L154 122 M126 136 L160 136"/>`);
         sh("circle",`cx="118" cy="150" r="7"`,CC.char); }
-      if(P.pose==="hurt"){ sh("rect",`x="126" y="190" width="28" height="18" rx="3" transform="rotate(-18 140 199)"`,"#8a4b24"); sh("circle",`cx="84" cy="168" r="7"`,CC.char); }
+      if(P.pose==="hurt"){ bookG(sh,ink,124,180,34,40,62); sh("circle",`cx="84" cy="168" r="7"`,CC.char); }
       // head
       sh("path",`d="M84 94 L76 70 L98 84 Z"`,CC.char); sh("path",`d="M126 94 L134 70 L112 84 Z"`,CC.char);
       sh("circle",`cx="104" cy="106" r="28"`,CC.char);
@@ -1134,7 +1154,7 @@ const TOPIC = {
 };
 function gemSVG(){ return iconSVG("0 0 126 118",(sh,ink)=>{ sh("path",`d="M63 6 L118 42 L98 110 L28 110 L8 42 Z"`,"#2e3b33"); sh("path",`d="M63 22 L102 48 L88 98 L38 98 L24 48 Z"`,"#3ddc84"); ink(`<path class="thin" d="M63 22 L63 6 M102 48 L118 42 M88 98 L98 110 M38 98 L28 110 M24 48 L8 42"/>`); }); }
 const WICON = {
-  sword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="45" y="34" width="10" height="62" rx="4" transform="rotate(18 50 65)"`,"#8a4b24"); sh("path",`d="M50 4 L58 22 L76 24 L62 36 L66 54 L50 44 L34 54 L38 36 L24 24 L42 22 Z"`,CC.gold); ink(`<path class="thin" d="M30 12 L24 6 M74 10 L80 4 M84 40 L92 40"/>`); }),
+  sword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ bookG(sh,ink,20,12,58,74,-8); ink(`<path class="thin" style="stroke:#5fd4c4" d="M86 20 L94 14 M88 38 L98 38 M14 70 L6 76"/>`); }),
   oldsword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M46 6 L54 6 L56 66 L44 66 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 10 L50 62"/>`); sh("rect",`x="28" y="64" width="44" height="8" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="72" width="10" height="16" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="92" r="5"`,CC.gold); }),
   shield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("circle",`cx="50" cy="52" r="42"`,"rgba(90,170,255,.35)"); sh("path",`d="M50 14 L82 30 L74 74 L50 90 L26 74 L18 30 Z"`,"#8fc1ff"); sh("path",`d="M50 28 L68 38 L64 66 L50 76 L36 66 L32 38 Z"`,CC.blue); ink(`<path class="thin" style="stroke:#fff" d="M40 40 Q46 34 54 34"/>`); }),
   oldshield:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 8 L84 20 Q84 64 50 92 Q16 64 16 20 Z"`,CC.blue); sh("path",`d="M50 18 L74 27 Q74 60 50 80 Q26 60 26 27 Z"`,"#8fc1ff"); ink(`<path d="M50 24 L50 74 M34 40 L66 40"/>`); }),
@@ -1382,7 +1402,7 @@ function bgActURI(kind,act){
 
 /* ================= DATA ================= */
 const WEAPONS = {
-  sword:{name:"Wand",cost:2,sigil:5,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict Broken 2 on the target (+50% damage taken)."},
+  sword:{name:"Spellbook",cost:2,sigil:5,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict Broken 2 on the target (+50% damage taken)."},
   shield:{name:"Barrier",cost:1,sigil:4,kind:"def",mult:1,desc:"Gain Shield.",crit:"Draw 3 tiles."},
   needle:{name:"Needle",cost:1,sigil:3,kind:"atk",mult:1,desc:"Deal damage.",crit:"Inflict 4 Poison.",price:110},
   bulwark:{name:"Bulwark",cost:2,sigil:6,kind:"def",mult:1,desc:"Gain Shield.",crit:"Gain 2 Robust.",price:120},
@@ -3596,14 +3616,14 @@ Object.assign(ARTS,{
       // the greatsword
       if(v==="atk"){
         ink(`<path class="thick" d="M140 140 L172 130"/>`);
-        sh("path",`d="M170 118 L236 40 L248 44 L250 56 L184 132 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M178 124 L240 52"/>`);
+        sh("path",`d="M170 118 L236 40 L248 44 L250 56 L184 132 Z"`,"#dfe7ef"); keysAlong(ink,180,124,240,52,6,5);
         sh("rect",`x="158" y="120" width="34" height="11" rx="3" transform="rotate(-48 175 126)"`,"#c8a24a"); sh("rect",`x="164" y="132" width="16" height="9" rx="3" transform="rotate(-48 172 136)"`,"#5b3a1e");
       } else if(v==="hurt"){ ink(`<path class="thick" d="M84 150 L54 170"/>`); sh("path",`d="M4 206 L60 168 L68 180 L12 216 Z"`,"#dfe7ef"); }
-      else if(v==="guard"){ ink(`<path class="thick" d="M140 140 L160 120"/>`); sh("path",`d="M146 20 L164 20 L166 128 L144 128 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M155 28 L155 120"/>`); sh("rect",`x="134" y="124" width="42" height="10" rx="3"`,"#c8a24a"); }
+      else if(v==="guard"){ ink(`<path class="thick" d="M140 140 L160 120"/>`); sh("path",`d="M146 20 L164 20 L166 128 L144 128 Z"`,"#dfe7ef"); keysAlong(ink,155,124,155,24,7,4); sh("rect",`x="134" y="124" width="42" height="10" rx="3"`,"#c8a24a"); }
       else {
         // resting on the shoulder, Sol-style: grip in front of the chest, blade over the shoulder
         sh("path",`d="M150 ${118+y} L8 ${46+y} L-8 ${60+y} L2 ${70+y} L144 ${142+y} Z"`,"#dfe7ef");
-        ink(`<path class="thin" d="M140 ${128+y} L12 ${60+y}"/>`);
+        keysAlong(ink,74,94+y,8,60+y,5,5);
         sh("rect",`x="138" y="${120+y}" width="12" height="34" rx="3" transform="rotate(-26 144 ${137+y})"`,"#c8a24a");
         sh("path",`d="M150 ${132+y} L176 ${146+y} L172 ${154+y} L146 ${140+y} Z"`,"#5b3a1e"); sh("circle",`cx="178" cy="${152+y}" r="6"`,"#c8a24a");
         ink(`<path class="thick" d="M144 136 L160 ${144+y}"/>`); sh("circle",`cx="160" cy="${144+y}" r="8"`,F2);
@@ -3637,7 +3657,7 @@ Object.assign(ARTS,{
       const back = v==="guard" ? `M96 150 L124 96` : v==="hurt" ? `M80 150 L60 176` : `M96 150 L118 ${140+y}`;
       ink(`<path class="thick" d="${back}"/>`);
       if(v==="guard"){ sh("path",`d="M112 96 L150 70 L154 78 L120 104 Z"`,"#dfe7ef"); sh("circle",`cx="124" cy="96" r="8"`,Fu); }
-      else if(v!=="hurt"){ sh("circle",`cx="118" cy="${140+y}" r="8"`,Fu); sh("path",`d="M112 ${146+y} L92 ${178+y} L86 ${176+y} L106 ${142+y} Z"`,"#dfe7ef"); sh("rect",`x="114" y="${130+y}" width="8" height="12" rx="2" transform="rotate(30 118 ${136+y})"`,"#5b3a1e"); }
+      else if(v!=="hurt"){ sh("circle",`cx="118" cy="${140+y}" r="8"`,Fu); sh("path",`d="M112 ${146+y} L92 ${178+y} L86 ${176+y} L106 ${142+y} Z"`,"#dfe7ef"); phoneGrip(sh,ink,113,128+y,9,16,30); }
       // hood + face pushed forward
       sh("path",`d="M98 ${106+y} Q100 ${62+y} 132 ${58+y} Q166 ${62+y} 166 ${100+y} Q150 ${120+y} 130 ${120+y} Q112 ${120+y} 98 ${106+y} Z"`,C);
       sh("path",`d="M150 ${64+y} Q164 ${44+y} 174 ${60+y} Q166 ${70+y} 156 ${74+y} Z"`,Fu); sh("path",`d="M156 ${62+y} Q164 ${52+y} 168 ${62+y} Z"`,P);
@@ -3653,13 +3673,13 @@ Object.assign(ARTS,{
         ink(`<path style="stroke:#fff;stroke-width:3" d="M200 98 Q230 110 222 140"/>`); }
       else if(v==="guard"){ ink(`<path class="thick" d="M138 148 L150 100"/>`); sh("circle",`cx="150" cy="100" r="8"`,Fu); sh("path",`d="M146 92 L120 62 L126 58 L154 90 Z"`,"#dfe7ef"); }
       else if(v==="hurt"){ ink(`<path class="thick" d="M138 150 L160 170"/>`); sh("path",`d="M160 172 L188 190 L184 196 L156 178 Z"`,"#dfe7ef"); }
-      else { ink(`<path class="thick" d="M138 148 L168 ${152+y}"/>`); sh("circle",`cx="168" cy="${152+y}" r="8"`,Fu); sh("path",`d="M174 ${146+y} L204 ${130+y} L206 ${138+y} L178 ${156+y} Z"`,"#dfe7ef"); sh("rect",`x="164" y="${140+y}" width="7" height="14" rx="2" transform="rotate(-60 168 ${147+y})"`,"#5b3a1e"); }
+      else { ink(`<path class="thick" d="M138 148 L168 ${152+y}"/>`); sh("circle",`cx="168" cy="${152+y}" r="8"`,Fu); sh("path",`d="M174 ${146+y} L204 ${130+y} L206 ${138+y} L178 ${156+y} Z"`,"#dfe7ef"); phoneGrip(sh,ink,163,138+y,9,16,-60); }
     }},
 });
 const HEROES={
   scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],relic:"journal",
     tag:"A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
-    play:"Balanced spell-caster. Shines with medium and long words: the Wand crits at 5 letters, the Barrier at 4.",
+    play:"Balanced spell-caster. Shines with medium and long words: the Spellbook crits at 5 letters, the Barrier at 4.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
     ending:["LEXICORE's test is over. Its chamber now leads a million copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it.",""]},
@@ -3689,9 +3709,9 @@ Object.assign(WEAPONS,{
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
 KIND_LABEL.util="Utility";
 Object.assign(WICON,{
-  greatsword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M44 2 L56 2 L58 70 L42 70 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 6 L50 66"/>`); sh("rect",`x="22" y="68" width="56" height="9" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="77" width="10" height="17" rx="2"`,"#8a4b24"); sh("circle",`cx="50" cy="96" r="5"`,CC.red); }),
+  greatsword:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M42 2 L58 2 L60 70 L40 70 Z"`,"#e3ebf3"); keysAlong(ink,50,66,50,6,7,4.5); sh("rect",`x="22" y="68" width="56" height="9" rx="3"`,"#c8a24a"); sh("rect",`x="45" y="77" width="10" height="17" rx="2"`,"#3d3a44"); sh("circle",`cx="50" cy="96" r="5"`,CC.red); }),
   dumbbell:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="22" y="45" width="56" height="10" rx="3"`,"#9aa6b4"); sh("rect",`x="8" y="28" width="16" height="44" rx="4"`,"#3d3a44"); sh("rect",`x="76" y="28" width="16" height="44" rx="4"`,"#3d3a44"); sh("rect",`x="22" y="34" width="10" height="32" rx="3"`,CC.red); sh("rect",`x="68" y="34" width="10" height="32" rx="3"`,CC.red); }),
-  dagger:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 6 L58 60 L42 60 Z"`,"#e3ebf3"); sh("rect",`x="32" y="58" width="36" height="8" rx="3"`,"#5b3a1e"); sh("rect",`x="45" y="66" width="10" height="22" rx="2"`,"#2f7d3e"); sh("circle",`cx="50" cy="92" r="5"`,CC.gold); }),
+  dagger:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("path",`d="M50 4 L58 56 L42 56 Z"`,"#e3ebf3"); ink(`<path class="thin" d="M50 10 L50 52"/>`); sh("rect",`x="32" y="55" width="36" height="8" rx="3"`,"#c8a24a"); phoneGrip(sh,ink,41,63,18,32,0); }),
   belt:()=>iconSVG("0 0 100 100",(sh,ink)=>{ sh("rect",`x="6" y="40" width="88" height="20" rx="5"`,"#8a4b24"); sh("rect",`x="40" y="36" width="20" height="28" rx="3"`,CC.gold); for(const x of [16,70]) sh("rect",`x="${x}" y="54" width="16" height="24" rx="3"`,"#3f9d4b"); sh("path",`d="M86 56 L92 78 L82 78 Z"`,"#dfe7ef"); }),
 });
 KW.fragile=["Fragile","This tile disappears for the rest of the combat after its first use (like Exhaust)."];
@@ -4395,7 +4415,7 @@ function oldTitle(){
         <li>Climb 15 floors of Act 1. Pick a path on the map: combat, elites, events, campfires, shops, treasure, then the boss.</li>
         <li>In combat, choose a <b>weapon</b>, click tiles from your hand (or just type) to spell a word on the sigil bar, then press <kbd>Enter</kbd>.</li>
         <li>Output = <span class="chip-n">Chips</span> × <span class="mult-n">Mult</span>. Relics add Arcana to Mult when their condition is met.</li>
-        <li>Match the weapon's sigil length exactly for a <b>Critical</b>: the Wand (5 letters) Breaks the enemy, the Barrier (4 letters) draws 3 tiles.</li>
+        <li>Match the weapon's sigil length exactly for a <b>Critical</b>: the Spellbook (5 letters) Breaks the enemy, the Barrier (4 letters) draws 3 tiles.</li>
         <li>Stuck? Any single tile is always a valid cast.</li>
       </ul>
     </div>
@@ -4415,16 +4435,14 @@ let SPLASH_URI=null;
 ARTS.catback={vb:[220,230], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)",cheer:"translate(0 -6)"},
   draw(v,sh,ink,fo){
     const t=v==="i1", ch=v==="cheer";
-    if(!ch){ ink(`<path class="thick" d="M150 222 L176 96"/>`); sh("circle",`cx="178" cy="86" r="12"`,CC.gold); ink(`<path class="thin" d="M178 64 L178 58 M198 82 L204 80 M160 72 L154 68"/>`); }
+    if(!ch) bookG(sh,ink,146,150,30,38,14);
     ink(`<path class="thick" d="M128 214 Q170 220 176 196 Q${t||ch?184:180} ${t||ch?176:180} ${t||ch?168:164} ${t||ch?172:176}"/>`);
     sh("path",`d="M56 222 Q54 160 104 128 Q154 160 152 222 Z"`,"#2b59c3");
     sh("path",`d="M56 212 Q104 224 152 212 L152 222 Q104 232 56 222 Z"`,CC.gold);
     for(const [sx,sy] of [[80,190],[128,172]]) sh("path",`d="M${sx} ${sy-6} L${sx+2} ${sy-2} L${sx+6} ${sy} L${sx+2} ${sy+2} L${sx} ${sy+6} L${sx-2} ${sy+2} L${sx-6} ${sy} L${sx-2} ${sy-2} Z"`,"#ffd166");
     sh("path",`d="M78 130 Q104 146 130 130 L128 140 Q104 154 80 140 Z"`,CC.gold);
-    if(ch){ ink(`<path class="thick" d="M124 150 L150 70"/>`);
-      sh("rect",`x="146" y="-6" width="10" height="84" rx="4" transform="rotate(10 151 36)"`,"#8a4b24");
-      sh("path",`d="M162 -44 L170 -26 L190 -24 L175 -11 L179 9 L162 -1 L145 9 L149 -11 L134 -24 L154 -26 Z"`,CC.gold);
-      ink(`<path style="stroke:#ffd23f" d="M162 -58 L162 -72 M134 -40 L122 -50 M190 -40 L202 -50 M126 -6 L112 -4 M198 -6 L212 -4"/>`); }
+    if(ch){ ink(`<path class="thick" d="M84 150 L118 50 M126 150 L136 50"/>`); openBookG(sh,ink,128,30,1.05,true);
+      ink(`<path style="stroke:#5fd4c4" d="M128 -14 L128 -30 M92 -6 L80 -18 M164 -6 L176 -18 M70 20 L56 18 M186 20 L200 18"/>`); }
     sh("path",`d="M80 104 L72 78 L94 92 Z"`,CC.char); sh("path",`d="M128 104 L136 78 L114 92 Z"`,CC.char);
     sh("circle",`cx="104" cy="110" r="27"`,CC.char);
     sh("path",`d="M40 92 Q104 70 170 88 Q160 104 104 102 Q50 104 40 92 Z"`,CC.blue);
@@ -4486,7 +4504,7 @@ function splashURI(){
 ARTS.wolfback={vb:[230,240], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)",cheer:"translate(0 -6)"},
   draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer", F="#8d929b", F2="#6b707a", R="#c1272d";
     sh("path",`d="M150 214 Q210 220 208 168 Q204 140 184 148 Q196 180 150 196 Z"`,F2);
-    if(!ch){ sh("path",`d="M66 210 L172 64 L186 74 L80 222 Z"`,"#dfe7ef"); ink(`<path class="thin" d="M76 212 L178 70"/>`); sh("rect",`x="160" y="56" width="38" height="11" rx="3" transform="rotate(-54 178 61)"`,"#c8a24a"); }
+    if(!ch){ sh("path",`d="M66 210 L172 64 L186 74 L80 222 Z"`,"#dfe7ef"); keysAlong(ink,139,125,178,70,3,4); sh("rect",`x="160" y="56" width="38" height="11" rx="3" transform="rotate(-54 178 61)"`,"#c8a24a"); }
     sh("path",`d="M58 228 Q50 160 115 128 Q180 160 172 228 Z"`,F);
     // torn red cape over the back
     sh("path",`d="M70 140 Q115 126 160 140 L${t?172:168} 226 L156 214 L148 232 L134 216 L122 234 L110 218 L96 232 L86 214 L${t?66:70} 228 Z"`,R);
@@ -4494,7 +4512,7 @@ ARTS.wolfback={vb:[230,240], v:["i0","i1","cheer"], tf:{i0:"",i1:"translate(0 2)
     sh("path",`d="M80 96 L70 54 L100 82 Z"`,F2); sh("path",`d="M150 96 L160 54 L130 82 Z"`,F2);
     sh("circle",`cx="115" cy="104" r="34"`,F);
     ink(`<path class="thin" d="M96 92 L100 104 M118 86 L118 98 M136 92 L132 104" style="stroke:#55595f"/>`);
-    if(ch){ ink(`<path class="thick" d="M80 160 L70 70 M150 160 L160 70"/>`); sh("path",`d="M104 -46 L126 -46 L128 70 L102 70 Z"`,"#dfe7ef"); sh("rect",`x="88" y="66" width="54" height="11" rx="3"`,"#c8a24a"); ink(`<path style="stroke:#ffd23f" d="M115 -66 L115 -80 M84 -46 L74 -56 M146 -46 L156 -56"/>`); }
+    if(ch){ ink(`<path class="thick" d="M80 160 L70 70 M150 160 L160 70"/>`); sh("path",`d="M104 -46 L126 -46 L128 70 L102 70 Z"`,"#dfe7ef"); keysAlong(ink,115,66,115,-42,8,4); sh("rect",`x="88" y="66" width="54" height="11" rx="3"`,"#c8a24a"); ink(`<path style="stroke:#ffd23f" d="M115 -66 L115 -80 M84 -46 L74 -56 M146 -46 L156 -56"/>`); }
   }};
 ARTS.ratback={vb:[200,220], v:["i0","i1","cheer"], tf:{i0:"translate(0 14)",i1:"translate(0 16)",cheer:"translate(0 -6)"},
   draw(v,sh,ink){ const t=v==="i1", ch=v==="cheer", Fu="#9a948c", C="#2f6b3e";
@@ -4574,18 +4592,18 @@ function tutDone(){ try{ return localStorage.getItem(TUT_KEY)==="1"; }catch(e){ 
 function setTutDone(){ try{ localStorage.setItem(TUT_KEY,"1"); }catch(e){} }
 const TUT=[
   {t:"Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and the old words turn into magic. Let's beat this <b>Training Slime</b>.", next:"Let's go"},
-  {t:"Pick a weapon first. Tap the <b>Wand</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
+  {t:"Pick a weapon first. Tap the <b>Spellbook</b> to get ready to attack.", sel:['.wslot[data-i="0"]'], allow:{selWeapon:[0]}, done:(ev,a)=>ev==="selWeapon"&&a===0},
   {t:"Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like <b>CAT</b>.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true}, done:ev=>ev==="bar"&&C.bar.length>=2},
   {word:"CAT",t:"Press <b>Cast</b> (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.", sel:["#sigilbox","#handgrid"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"},
   {t:"Damage = <span class='chip-n'>Chips</span> × <span class='mult-n'>Mult</span>. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.", sel:["#handgrid"], next:"Got it"},
-  {t:"The Wand cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
+  {t:"The Spellbook cost <b>2 Energy</b>. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.", sel:["#energy"], next:"OK"},
   {t:"Always read the enemy's <b>intent</b>. This slime will attack you for 3 when your turn ends.", sel:[".fighter.en .intent"], zoom:"e0", next:"Uh oh"},
   {t:"Block it! Tap the <b>Barrier</b>. It costs only 1 Energy.", sel:['.wslot[data-i="1"]'], allow:{selWeapon:[1]}, done:(ev,a)=>ev==="selWeapon"&&a===1},
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
   {t:"Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.", wait:2, next:"Play", done:ev=>ev==="endTurn"},
-  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Wand? Cast a word with exactly that many letters and the Wand makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
-  {word:"STONE",t:"Select the Wand and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
+  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
+  {word:"STONE",t:"Select the Spellbook and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
   {t:"Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
 ];
 function startTutorial(){
@@ -4619,7 +4637,7 @@ function tg(act,arg){
   if(al===true) return true;
   if(Array.isArray(al)&&al.includes(arg)) return true;
   if(al==="crit5"){
-    if(C.wi!==0){ toast("Select the Wand first."); return false; }
+    if(C.wi!==0){ toast("Select the Spellbook first."); return false; }
     const n=C.bar.map(u=>C.t[u].ch).filter(c=>/[A-Z?]/.test(c)).length;
     if(n!==5){ toast(`That's ${n} letters. Use exactly 5 for this lesson.`); sigilShake(); snd("buzz"); return false; }
     return true;

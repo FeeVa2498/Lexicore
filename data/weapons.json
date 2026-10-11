@@ -8,7 +8,7 @@
   "weapons": [
     {
       "id": "sword",
-      "name": "Wand",
+      "name": "Spellbook",
       "source": "starter:scholar",
       "kind": "attack",
       "energyCost": 2,
@@ -17,7 +17,8 @@
       "effect": "Deal damage.",
       "critEffect": "Inflict Broken 2 on the target (+50% damage taken).",
       "formula": "damage = output",
-      "shopPrice": null
+      "shopPrice": null,
+      "secret": "Really a tablet (nanobot controller) disguised as a spellbook."
     },
     {
       "id": "shield",
@@ -212,7 +213,8 @@
       "effect": "Deal damage. Each swing costs you 3 HP.",
       "critEffect": "+1 Spell Power for every 2 HP you are missing.",
       "formula": "damage = output; self-damage 3 HP per cast",
-      "shopPrice": null
+      "shopPrice": null,
+      "secret": "Really a giant keyboard disguised as a greatsword."
     },
     {
       "id": "dumbbell",
@@ -238,7 +240,8 @@
       "effect": "Deal damage.",
       "critEffect": "Also gain Shield equal to the output.",
       "formula": "damage = output",
-      "shopPrice": null
+      "shopPrice": null,
+      "secret": "The grips are smartphones disguised as dagger hilts."
     },
     {
       "id": "belt",

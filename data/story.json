@@ -1,18 +1,18 @@
 {
   "tutorialSteps": [
     "Welcome, Scholar! Long ago English became a lost rune-language. Spell real English words on your tablet and the old words turn into magic. Let's beat this Training Slime.",
-    "Pick a weapon first. Tap the Wand to get ready to attack.",
+    "Pick a weapon first. Tap the Spellbook to get ready to attack.",
     "Now spell any English word: tap tiles in your hand, or just type on the keyboard. Try a word like CAT.",
     "Press Cast (or Enter). If it isn't a real word the bar just shakes and nothing is spent, so experiment freely.",
     "Damage = Chips × Mult. Chips are the blue numbers on your tiles. Mult starts at 1 and only relics raise it ([ ! ] tiles add Spell Power), so treasure every one. Longer words and rare letters like Q, Z and X hit harder.",
-    "The Wand cost 2 Energy. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.",
+    "The Spellbook cost 2 Energy. You get 3 Energy each turn. You can use the same weapon again and again, as long as you still have Energy.",
     "Always read the enemy's intent. This slime will attack you for 3 when your turn ends.",
     "Block it! Tap the Barrier. It costs only 1 Energy.",
     "Spell another word and cast it. Shield soaks up damage until the start of your next turn.",
     "You're out of Energy. Press End turn and watch the slime hit your shield.",
     "Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.",
-    "Turn 3: time for a Critical. See the 5 boxes on the Wand? Cast a word with exactly that many letters and the Wand makes the enemy Broken (+50% damage taken).",
-    "Select the Wand and spell a 5-letter word, like STONE. The CRITICAL tag lights up when the length is right.",
+    "Turn 3: time for a Critical. See the 5 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook makes the enemy Broken (+50% damage taken).",
+    "Select the Spellbook and spell a 5-letter word, like STONE. The CRITICAL tag lights up when the length is right.",
     "Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!"
   ],
   "liftoffSlides": [

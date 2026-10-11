@@ -270,7 +270,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Hero | Max HP | Starting weapons | Starting relic | Character-select text |
 |---|---|---|---|---|
-| **The Scholar** (cat, colour #3a86ff) | 70 | Wand, Barrier | Journal | A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets. |
+| **The Scholar** (cat, colour #3a86ff) | 70 | Spellbook, Barrier | Journal | A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets. |
 | **The Champion** (wolf, colour #e63946) | 88 | Greatsword, Dumbbell | Berserker's Blood | A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten. |
 | **The Mercenary** (rat2, colour #57cc4d) | 60 | Parrying Dagger, Utility Belt | Quick Gloves | A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect. |
 
@@ -294,7 +294,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Weapon | Hero | Kind | Energy | Crit length | Effect | Critical |
 |---|---|---|---|---|---|---|
-| **Wand** | Scholar | attack | 2 | 5 | Deal damage. | Inflict Broken 2 on the target (+50% damage taken). |
+| **Spellbook** | Scholar | attack | 2 | 5 | Deal damage. | Inflict Broken 2 on the target (+50% damage taken). |
 | **Barrier** | Scholar | defense | 1 | 4 | Gain Shield. | Draw 3 tiles. |
 | **Greatsword** | Champion | attack | 2 | 3 | Deal damage. Each swing costs you 3 HP. | +1 Spell Power for every 2 HP you are missing. |
 | **Dumbbell** | Champion | buff | 1 | 2 | Gain Might equal to output × 0.1 (rounded down, min 1). | Heal HP equal to 2 × your Might. |
@@ -751,9 +751,10 @@ Splash/menu → character select → map → combat → reward → shop → rest
 - **2-frame idle**: every character, enemy and decoration alternates between two frames about every 0.42 s. Extra poses: attack, hurt, guard, cheer.
 - **Combat FX**: camera zoom/focus on the actor (Darkest Dungeon style), slash and impact bursts, number pops, screen shake, HP bar damage trail, gold coins flying to the counter, tiles flying to piles, a mushroom-cloud death puff for enemies.
 - **Hero looks**
-  - *The Scholar*: black cat, big blue wizard hat, long blue robe with gold trim and stars, gold collar, staff with a gold orb, spellbook.
-  - *The Champion*: grey wolf with a light muzzle, an old scar across one eye, tattered red cape and scarf. The **greatsword rests on the shoulder** (Sol Badguy style).
-  - *The Mercenary*: grey-brown rat crouched low in a dark-green hooded cloak with a stealth mask, pink tail, one dagger in a forward grip and one in a reverse grip.
+  - *The Scholar*: black cat, big blue wizard hat, long blue robe with gold trim and stars, gold collar. Carries a **Spellbook** (purple leather, gold corners, gold seal) and no staff.
+  - *The Champion*: grey wolf with a light muzzle, an old scar across one eye, tattered red cape and scarf. The **greatsword rests on the shoulder** (Sol Badguy style); its blade is engraved with two rows of small square "runes".
+  - *The Mercenary*: grey-brown rat crouched low in a dark-green hooded cloak with a stealth mask, pink tail, one dagger in a forward grip and one in a reverse grip; the grips are slim black handles with a dark glassy inlay and a gold stud.
+- **Hidden truth of the hero weapons (twist foreshadowing, never stated before Act 4)**: they are nanobot controllers in disguise. The Spellbook is a **tablet** (the gold seal is its camera, the glowing pages its screen), the Greatsword is a giant **keyboard** (the square runes are keys), and the daggers' grips are **smartphones**. Art must read first as fantasy weapons; the tech should only click in hindsight.
 - **Palette per Act**: Act 1 bright sky and greens; Act 2 sunset oranges and greys; Act 3 dark violet with teal accents; Act 4 deep space violet with a Moon window.
 - Icons: every relic, potion and weapon has a hand-drawn icon; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
 
