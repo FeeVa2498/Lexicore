@@ -77,7 +77,7 @@
   },
   "gold": {
     "start": 99,
-    "normalPerFight": "total ≈ 19 + rand(0..11) + 7*(act-1), split evenly across the enemies (min 6 per enemy); minions give 0",
+    "normalPerFight": "total ≈ 19 + rand(0..11) + 7*(act-1), split across the enemies (min 6 each); minions give 0",
     "elite": "40 + rand(0..17) + 12*(act-1)",
     "bossTotal": "130 total, split across boss enemies",
     "goldenIdolMultiplier": 1.25,
@@ -102,8 +102,8 @@
     "relicPrice": "130-179 x (1 + 0.15*(act-1))",
     "tilePrice": "(30 + letterValue*3 + 30 if Level 2) x (1 + 0.15*(act-1))",
     "potionPrice": "45-64 x (1 + 0.15*(act-1))",
-    "tossTileStart": 75,
-    "tossTileIncrease": 25,
+    "tossTileStart": 10,
+    "tossTileIncrease": 5,
     "hagglersBadge": 0.75,
     "specialTileChance": 0.1,
     "level2Chance": 0.22

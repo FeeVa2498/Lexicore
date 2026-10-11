@@ -43,11 +43,11 @@
     },
     "!": {
       "name": "Exclamation",
-      "rule": "Only at the end of a word or after a single letter. Cannot be cast alone. Consecutive ! add 2,4,6,10,16,26,42 Spell Power (FIB x2, cumulative). Counts toward crit length."
+      "rule": "End of a word, end of each comma part, or after a single letter. Never alone. Consecutive ! add 2,4,6,10,16,26,42 SP (cumulative per run). Counts toward crit length. Ignored by relic letter checks."
     },
     ",": {
       "name": "Comma",
-      "rule": "Between two words to cast both at once; both must be valid. Not counted toward crit length."
+      "rule": "Joins words and/or single letters (A!,B! is valid). All-single-letter casts score Mult 1 without relics. Not counted toward crit length."
     }
   },
   "paints": {
@@ -98,6 +98,11 @@
       "tag": "FR",
       "name": "Frustrated",
       "d": "Gives you +1 Frustrated when used."
+    },
+    "burn": {
+      "tag": "SM",
+      "name": "Smoldering",
+      "d": "Still burning: if it is in your hand at the end of your turn, you lose 1 HP. Casting it puts the fire out."
     }
   },
   "fragile": "Fragile tiles are banished for the rest of the combat after one use (created by Utility Belt, Rune Chisel, Jester's Brew, Battle Cry).",
@@ -108,5 +113,6 @@
     "level2Chance": 0.2,
     "paint": "random of red/blue/green/gold"
   },
-  "shopLetterPool": "AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ"
+  "shopLetterPool": "AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ",
+  "fortified": "Positive tile state: never discarded at end of turn, immune to tile debuffs. 10% on reward letters, 15% shop, 15% claw; Tempering Oil potion (combat only)."
 }

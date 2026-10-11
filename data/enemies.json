@@ -120,7 +120,12 @@
           "actions": [
             {
               "type": "attack",
-              "value": 11
+              "value": 9
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 2
             }
           ]
         },
@@ -513,8 +518,8 @@
             },
             {
               "type": "tileDebuff",
-              "debuff": "slimy",
-              "count": 2
+              "debuff": "burn",
+              "count": 3
             }
           ]
         }
@@ -679,6 +684,11 @@
               "type": "attack",
               "value": 22,
               "heavy": true
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 2
             }
           ]
         },
@@ -877,9 +887,9 @@
               "value": 15
             },
             {
-              "type": "playerDebuff",
-              "status": "broken",
-              "value": 1
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 3
             }
           ]
         },
@@ -1265,6 +1275,11 @@
             {
               "type": "attack",
               "value": 26
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 4
             }
           ]
         },
@@ -1336,6 +1351,11 @@
             {
               "type": "block",
               "value": 34
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 4
             }
           ]
         },

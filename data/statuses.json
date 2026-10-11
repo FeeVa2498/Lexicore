@@ -98,6 +98,14 @@
       "name": "Frustrated tile",
       "text": "Using this tile gives you +1 Frustrated."
     },
+    "burn": {
+      "name": "Smoldering tile",
+      "text": "A tile on fire. If it is still in your hand at the end of your turn, you lose 1 HP. Casting it puts the fire out."
+    },
+    "fortified": {
+      "name": "Fortified tile",
+      "text": "A tile cast in iron. It is never discarded at the end of your turn (it stays in your hand) and enemies can't put debuffs on it."
+    },
     "crit": {
       "name": "Critical",
       "text": "Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect. [ ! ] tiles count as letters for this: with a 3-sigil weapon, SAW crits but SAW! does not, and HI! does."

@@ -129,6 +129,13 @@
       "description": "Every tile in your hand becomes Level 2 for this combat.",
       "usableOutsideCombat": false,
       "passive": false
+    },
+    {
+      "id": "temper",
+      "name": "Tempering Oil",
+      "description": "Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them.",
+      "usableOutsideCombat": false,
+      "passive": false
     }
   ]
 }

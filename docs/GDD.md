@@ -169,9 +169,10 @@ A cast is the sequence of tiles on the sigil bar:
 | `CAT` | Yes | Any word in the dictionary (≈193,000 English words, 2–10 letters). |
 | `C?T` | Yes | `?` becomes whichever letter makes a valid word with the **highest** Spell Power; the `?` itself scores 0. |
 | `BIG,CAT` | Yes | A comma joins two (or more) words; **every** part must be valid. They are cast as one action. |
-| `CAT!!` | Yes | `!` tiles must be at the **end**. |
+| `CAT!!` | Yes | `!` tiles must be at the **end** of a word (or of each comma part). Relic conditions ignore `!`: a relic that checks the last letter sees `CAT!!!!` as ending in T. |
 | `U` | Yes | **Single-tile cast**: always valid, Mult fixed at 1, relics don't apply. A `?` alone becomes Q. |
 | `U!!!` | Yes | A single letter may also take trailing `!`. |
+| `A!,B!` / `A,CAT!` | Yes | Single letters can be joined with commas too, and every part may end with its own `!` run. If **all** parts are single letters the cast scores like a single tile (Mult 1, no relics); if any part is a real word, relics apply normally. |
 | `!` / `!!!!` | **No** | `!` can never be cast on its own. |
 | `C!AT` | **No** | `!` in the middle of a word. |
 | `,CAT` / `BIG,` | **No** | A comma must sit between two words. |
@@ -239,6 +240,12 @@ Enemies apply these to tiles, preferring tiles in the draw pile, then discard, t
 | Condemned | If still in hand at end of turn, banished for the rest of the combat (returns after). |
 | Cursed | Gives the hero +1 Curse when used. |
 | Frustrated | Gives the hero +1 Frustrated when used. |
+
+| Smoldering | A tile on fire: if it is still in hand at end of turn, the hero loses 1 HP per smoldering tile. Casting it puts the fire out. |
+
+**Fortified** (positive tile state): the tile is cast in iron. It is **never discarded** at end of turn (stays in hand; the hand still refills to 16) and enemies **can't put debuffs on it**. Sources: tile rewards (10% chance on letters), shop tiles (15%), claw machine (15%), and the Tempering Oil potion (fortifies up to 4 hand tiles for the current combat).
+
+Every tile state has its own look on the tile: Slimy (green goo dripping from the top), Poisoned (purple drips + green bubbles), Locked (grey with chains), Condemned (red X), Cursed (dark violet aura + skull), Frustrated (orange scribbles), Smoldering (flames + glow), Fragile (cracks + dashed border), Fortified (steel plate with rivets). Paints tint the whole tile red/blue/green/gold. The Glossary has an **Effects** tab listing all of them.
 
 Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 
@@ -350,7 +357,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 - **After every fight**: the "painter bot" offers 3 generated tiles (not taken from the deck): slot 1 a vowel (AIUEO), slot 2 a rare consonant (YZQXJWR), slot 3 any letter or a special tile. Each has a random paint and a 20% chance to be Level 2. The player takes one or **skips**. With Dry Palette (boss relic) only 1 tile is offered.
 - **Shop**: 3 tiles for sale (§11.4).
-- **Removal**: the shop's trash can removes one tile per visit for 75 gold (+25 each time, never resets).
+- **Removal**: the shop's trash can removes one tile per visit for 10 gold (+5 each time: 10, 15, 20…, never resets).
 - Some relics add special tiles: Jester Rune (+1 `?`), War Horn (+2 `!`), Hinge Pin (+1 `,`).
 
 ---
@@ -443,6 +450,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 ## 9. Potions
 
 - 3 slots by default (+2 with Bottle Rack). Potions cost no Energy and can be used at any point in the player's turn.
+- Clicking a potion opens a small menu: **Use** or **Discard** (to free the slot). Hovering shows a tooltip with its effect.
 - Sources: Elites always drop one, normal fights 50%, shop (3 for sale), wordle consolation, wheel.
 - With Cracked Flask (boss relic) potions can't be obtained.
 
@@ -466,6 +474,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Ancient Fruit** | Raise your Max HP by 5 and heal 5. Usable anywhere. | Yes |
 | **Echo Draught** | The next word you cast this turn has its output doubled. | No |
 | **Clarity Draught** | Every tile in your hand becomes Level 2 for this combat. | No |
+| **Tempering Oil** | Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them. | No |
 
 ---
 
@@ -531,7 +540,7 @@ Three raccoon brothers, each with a caravan and an instrument (they play the sho
 | Tiles (blue) | Rocco, the middle one (lute) | 3 tiles (10% special `? ! ,`, 22% Level 2, random paint) | (30 + 3 × letter value + 30 if Level 2) × act scaling |
 | Potions (green) | Bo, the youngest (drum) | 3 potions | 45–64 × act scaling |
 
-Also: the **trash can** removes one deck tile per visit (75 gold, +25 per use). Haggler's Badge: −25% on everything except the trash can. Caravan Stew: heal 15 on entering.
+Also: the **trash can** removes one deck tile per visit (**10 gold, +5 per use**, never resets). Haggler's Badge: −25% on everything except the trash can. Caravan Stew: heal 15 on entering.
 
 ### 11.5 Treasure
 
@@ -600,7 +609,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Training Slime** | Tutorial | tutorial | 30 | Atk 3 → Block 4 + Atk 3 → Atk 4 |
 | **Green Slime** | 1 | normal | 40 | Atk 7 + Block 6 → Poison×3 tiles → Atk 10 |
 | **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×3 tiles → Atk 6 + Weaken 1 |
-| **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 11 → Slimy×4 tiles |
+| **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×2 tiles → Slimy×4 tiles |
 | **Thornbloom** | 1 | normal | 38 | Atk 8 → Frustrate×3 tiles + Block 6 → Atk 5 + Poison×2 tiles |
 | **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → Atk 5 |
 | **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×2 tiles → Atk 6 |
@@ -611,24 +620,24 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Arachne Matriarch** | 1 | elite | 85 | Poison×5 tiles + Block 10 → Atk 16 → Weaken 2 + Condemn×2 tiles → Atk 12 |
 | **Quartz Punisher** | 1 | elite | 100 | Broken 2 + Lock×3 tiles → Atk 16 → Block 15 + Lock×3 tiles → Atk 22! |
 | **Great Slime** | 1 | elite | 95 | Atk 13 → Slimy×5 tiles + Block 10 → Atk 8 + Poison×3 tiles → Atk 18! |
-| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×4 tiles + Block 14 → **Mega Kick**: Atk 22! → **Earthquake**: Broken 1 + Frustrated 2 + Condemn×2 tiles |
+| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×4 tiles + Block 14 → **Mega Kick**: Atk 22! + Burn×2 tiles → **Earthquake**: Broken 1 + Frustrated 2 + Condemn×2 tiles |
 | **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×4 tiles + Weaken 1 → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 + Slimy×3 tiles → **Fungal Burst**: Atk 22! |
 | **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×3 tiles + Atk 7 |
 | **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×2 tiles + Weaken 1 |
-| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×3 tiles → Atk 15 → Broken 1 + Atk 7 + Slimy×2 tiles |
+| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×3 tiles → Atk 15 → Broken 1 + Atk 7 + Burn×3 tiles |
 | **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×4 tiles + Atk 13 → Atk 31! |
 | **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×5 tiles + Weaken 2 → Atk 27! → Poison×3 tiles + Atk 12 |
 | **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×3 tiles + Condemn×4 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Frustrated 3 + Atk 19 + Frustrate×3 tiles → **Execute**: Atk 38! |
 | **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×3 tiles → **Crush**: Atk 21! |
 | **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×2 tiles + Atk 9 + Slimy×3 tiles |
 | **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×4 tiles + Block 19 → Curse×2 tiles + Atk 14 |
-| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Broken 1 → Lock×4 tiles + Block 15 → Atk 26 |
+| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×3 tiles → Lock×4 tiles + Block 15 → Atk 26 |
 | **Cyber Moth** | 3 | normal | 85 | Slimy×4 tiles + Atk 10 → Atk 17 + Poison 4 + Poison×2 tiles → Atk 24 |
 | **Warden Unit** | 3 | elite | 225 | Block 38 → Atk 34 → Lock×5 tiles + Weaken 2 → Atk 42! |
 | **Escaped Prisoner Alpha** | 3 | elite | 205 | +5 Might + Block 17 → Atk 27 → Condemn×4 tiles + Atk 17 → Frustrate×3 tiles + Atk 20 |
 | **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×5 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Weaken 2 + Broken 2 + Curse×2 tiles → **Annihilate**: Atk 38! |
-| **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×5 tiles + Block 32 → **Laser Sweep**: Atk 26 → **Purge**: Condemn×4 tiles + Atk 14 → **Overcharge**: Atk 40! |
-| **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×3 tiles + Frustrate×3 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×4 tiles + Broken 2 + Slimy×3 tiles → **Delete**: Atk 51! |
+| **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×5 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Condemn×4 tiles + Atk 14 → **Overcharge**: Atk 40! |
+| **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×3 tiles + Frustrate×3 tiles + Block 26 → **Compile**: Atk 38 + Block 34 + Burn×4 tiles → **Overwrite**: Condemn×4 tiles + Broken 2 + Slimy×3 tiles → **Delete**: Atk 51! |
 
 Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14) → Rumble (Lock 2 tiles + 14 Shield) → Mega Kick (22, heavy) → Earthquake (Broken 1 + Frustrated 2) → repeat.
 

@@ -632,6 +632,24 @@ body.f1 .sf0{display:none}
 .ecap.on{animation:capin 1s .5s forwards}
 @keyframes capin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 #escene{cursor:pointer}
+
+/* paints: whole tile tinted */
+.tile.p-red{background:linear-gradient(#ffb3a8,#ec6a5c)!important}
+.tile.p-blue{background:linear-gradient(#b9d8ff,#5f9be8)!important}
+.tile.p-green{background:linear-gradient(#cdf3a8,#6fc152)!important}
+.tile.p-gold{background:linear-gradient(#fff0a8,#f0bf2a)!important}
+.tile.p-red,.tile.p-blue,.tile.p-green,.tile.p-gold{box-shadow:0 4px 0 color-mix(in srgb,var(--bc) 70%,#000),0 0 0 3px color-mix(in srgb,var(--bc) 60%,transparent)}
+.tile.p-red::after,.tile.p-blue::after,.tile.p-green::after,.tile.p-gold::after{opacity:.55}
+.tile .tfx{position:absolute;inset:0;width:100%;height:100%;border-radius:8px;pointer-events:none;z-index:1}
+.tile b{z-index:2}
+.tile.fort{border-color:#3a3f4a;border-width:3.5px}
+.tile.fort b{color:#1d1b22;text-shadow:0 1px 0 #fff}
+.tile.d-burn{animation:smolder 1.2s ease-in-out infinite alternate}
+@keyframes smolder{from{filter:drop-shadow(0 0 2px #ff7b00)}to{filter:drop-shadow(0 0 7px #ffb000)}}
+.tile.d-curse{filter:drop-shadow(0 0 4px #9b5de5)}
+.tile.d-lock::before{display:none}
+.db.burn{background:#ff7b00}
+.tile.fragile::before{z-index:3}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1223,6 +1241,8 @@ const KW = {
   condemn:["Condemned tile","If it is still in your hand at the end of turn, it is banished for the rest of this combat."],
   ctile:["Cursed tile","Using this tile gives you +1 Curse."],
   ftile:["Frustrated tile","Using this tile gives you +1 Frustrated."],
+  burn:["Smoldering tile","A tile on fire. If it is still in your hand at the end of your turn, you lose 1 HP. Casting it puts the fire out."],
+  fortified:["Fortified tile","A tile cast in iron. It is never discarded at the end of your turn (it stays in your hand) and enemies can't put debuffs on it."],
   crit:["Critical","Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect. [ ! ] tiles count as letters for this: with a 3-sigil weapon, SAW crits but SAW! does not, and HI! does."],
   energy:["Energy","You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."],
   wild:["Wildcard ?","Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."],
@@ -1231,7 +1251,7 @@ const KW = {
   red:["Red Paint","+1 Might each time the tile is played."], blue:["Blue Paint","+1 Robust each time the tile is played."],
   green:["Green Paint","Draw 1 extra tile when the word is cast."], gold:["Gold Paint","+1 Gold each time the tile is played."],
 };
-const DEB_KW={slimy:"slimy",poison:"ptile",lock:"lock",condemn:"condemn",curse:"ctile",frustrate:"ftile"};
+const DEB_KW={slimy:"slimy",poison:"ptile",lock:"lock",condemn:"condemn",curse:"ctile",frustrate:"ftile",burn:"burn"};
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
 const tipAttr = (text,kws=[]) => `data-tip="${esc(text)}" data-kw="${kws.join(",")}"`;
 let tipBox=null, tipFor=null;
@@ -1451,6 +1471,7 @@ const TILE_DEBUFFS = {
   condemn:{tag:"CD",name:"Condemned",d:"Banished for the rest of this combat if still unplayed in hand at end of turn. It returns to your deck after the fight."},
   curse:{tag:"CU",name:"Cursed",d:"Gives you +1 Curse when used."},
   frustrate:{tag:"FR",name:"Frustrated",d:"Gives you +1 Frustrated when used."},
+  burn:{tag:"SM",name:"Smoldering",d:"Still burning: if it is in your hand at the end of your turn, you lose 1 HP. Casting it puts the fire out."},
 };
 const STATUS = {
   block:{n:"Shield",d:"Blocks incoming damage. Clears at the start of the owner's turn."},
@@ -1495,13 +1516,13 @@ const RIDDLES = [
 let G = null;   // run state
 let C = null;   // combat state
 
-function newTile(ch, o={}){ return {uid:G.uidN++, ch, lvl:o.lvl||1, paint:o.paint||null}; }
+function newTile(ch, o={}){ return {uid:G.uidN++, ch, lvl:o.lvl||1, paint:o.paint||null, ...(o.fort?{fort:true}:{})}; }
 function newRun(heroId){
   if(!heroId) return showCharSelect();
   musicGame();
   const H=HEROES[heroId];
   G = {uidN:1, hero:heroId, hp:H.hp, maxHp:H.hp, gold:99, deck:[], relics:[H.relic], wordUses:{}, potions:["heal"], weapons:H.weapons.slice(),
-       map:null, pos:null, floor:0, act:1, screen:"map", lastEnemy:null, removeCost:75,
+       map:null, pos:null, floor:0, act:1, screen:"map", lastEnemy:null, removeCost:10,
        stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
   for(const ch of "AIUEO") { G.deck.push(newTile(ch)); G.deck.push(newTile(ch)); }
@@ -1675,7 +1696,7 @@ function renderHUD(){
     <span class="hstat" title="Gold">${IC.coin}<b>${G.gold}</b></span>
     <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/${((G.map&&G.map.F)??MAP_FLOORS)+1}</span>
     <span class="row" style="gap:4px" title="Potions">${Array.from({length:maxPotions()},(_,i)=>{const p=G.potions[i];
-      return p?`<button class="pot full" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" title="Empty potion slot"></span>`}).join("")}</span>
+      return p?`<button class="pot full" ${potTip(p)} onclick="potionMenu(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" ${tipAttr("Empty potion slot")}></span>`}).join("")}</span>
     <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)}>${relicIcon(r)}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
     <span class="spacer"></span>
     <button class="btn small" onclick="showDeck()" title="View deck">${G.deck.length} tiles</button>
@@ -1701,12 +1722,12 @@ function tileTitle(t){
 }
 function tileHTML(t, opts={}){
   const sym = !/[A-Z]/.test(t.ch);
-  const cls = ["tile", t.fragile?"fragile":"", opts.mini?"mini":"", t.lvl===2?"L2":"", t.paint?"p-"+t.paint:"", t.deb?"d-"+t.deb.t:"", sym?"sym":"", opts.cls||""].join(" ");
+  const cls = ["tile", t.fragile?"fragile":"", t.fort?"fort":"", opts.mini?"mini":"", t.lvl===2?"L2":"", t.paint?"p-"+t.paint:"", t.deb?"d-"+t.deb.t:"", sym?"sym":"", opts.cls||""].join(" ");
   const chip = sym ? "" : `<span class="val">${tileChip(t)}</span>`;
-  const db = t.deb ? `<span class="db ${t.deb.t}">${SI[TILE_DEB_ICON[t.deb.t]]}${t.deb.n?`<i>${t.deb.n}</i>`:""}</span>` : "";
+  const db = (t.deb ? `<span class="db ${t.deb.t}">${SI[TILE_DEB_ICON[t.deb.t]]}${t.deb.n?`<i>${t.deb.n}</i>`:""}</span>` : "") + tileFx(t);
   const on = opts.click ? `onclick="${opts.click}"` : "";
   const tag = opts.click ? "button" : "div";
-  const kws=[]; if(t.fragile) kws.push("fragile"); if(t.paint) kws.push(t.paint); if(t.deb) kws.push(DEB_KW[t.deb.t]); if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma");
+  const kws=[]; if(t.fort) kws.push("fortified"); if(t.fragile) kws.push("fragile"); if(t.paint) kws.push(t.paint); if(t.deb) kws.push(DEB_KW[t.deb.t]); if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma");
   const tipTxt = `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${tileChip(t)}`}${t.deb&&t.deb.t==="lock"?`<br>Locked for ${t.deb.n} more turn(s).`:""}`;
   return `<${tag} class="${cls}${opts.as?" wild-on":""}" ${on} ${opts.noTip?"":tipAttr(opts.as?`<b>Wildcard ?</b> → ${opts.as}`:tipTxt,kws)} aria-label="${esc(tileTitle(t))}"><b>${opts.as||t.ch}</b>${chip}${t.lvl===2?`<span class="lv">II</span>`:""}${db}</${tag}>`;
 }
@@ -1773,6 +1794,7 @@ async function usePotion(i){
     case "smoke": C.over=true; C.busy=false; log("You vanish in a puff of smoke."); toast("You escaped!"); C=null; closeStage(); showMap(); return;
     case "fruit": G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); await healAnim("p",5); break;
     case "echo": C.echo=true; await buffAnim("p","Next word ×2"); break;
+    case "temper": { const c=shuffle(C.hand.filter(u=>!C.t[u].fort&&/[A-Z?]/.test(C.t[u].ch))).slice(0,4); c.forEach(u=>{ C.t[u].fort=true; C.t[u].deb=null; }); await buffAnim("p",`Fortified ×${c.length}`); break; }
     case "clarity": for(const u of C.hand){ if(/[A-Z]/.test(C.t[u].ch)) C.t[u].lvl=2; } await buffAnim("p","Hand → Level 2"); break;
   }
   C.busy=false; renderCombat();
@@ -1855,24 +1877,30 @@ function evaluate(tiles, w, check){
     R.valid=true; R.easter=EASTER[raw]; R.L=raw.replace(/[^A-Z]/g,""); R.words=[raw];
     const sp=tiles.map(t=>tileChip(t)); R.chips=sp.reduce((a,b)=>a+b,0)+(w.kind==="atk"?C.p.might:w.kind==="def"?C.p.robust:0);
     R.mult=w.mult; R.total=Math.floor(R.chips*R.mult); R.crit=raw.length===w.sigil; R.notes.push(R.easter==="close"?"…that was close":"Close enough!"); return R; }
-  let k=0; while(k<chars.length && chars[chars.length-1-k]==="!") k++;
-  const bodyT = tiles.slice(0, tiles.length-k);
-  if(bodyT.some(t=>t.ch==="!")){ R.reason="[ ! ] tiles must sit at the end of the word."; return R; }
-  if(!bodyT.length){ R.reason="[ ! ] can't be cast on its own. Put a letter before it."; return R; }
-  if(bodyT.length===1 && /[A-Z?]/.test(bodyT[0].ch)){
-    // a single tile, optionally followed by ! tiles (U, U!, U!!!!!)
-    const t=bodyT[0]; const letter = t.ch==="?" ? "Q" : t.ch;
-    R.valid=true; R.fallback=true; R.L=letter; R.resolved[t.uid]=letter; R.words=[letter+"!".repeat(k)];
-    R.chips = tileChip(t,letter); R.mult=1; R.notes.push("Single tile: Mult 1, no relics");
-    if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
-    R.total=R.chips; R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
+  // split on commas; each part = letters + optional trailing [ ! ] tiles
+  const partsT=[[]]; for(const t of tiles){ if(t.ch===",") partsT.push([]); else partsT[partsT.length-1].push(t); }
+  if(partsT.some(p=>!p.length)){ R.reason="A comma must sit between two words (or letters)."; return R; }
+  const parts=[], runs=[];
+  for(const p of partsT){ let kk=0; while(kk<p.length&&p[p.length-1-kk].ch==="!") kk++; const body=p.slice(0,p.length-kk);
+    if(body.some(t=>t.ch==="!")){ R.reason="[ ! ] tiles must sit at the end of a word or letter."; return R; }
+    if(!body.length){ R.reason="[ ! ] can't be cast on its own. Put a letter before it."; return R; }
+    parts.push(body); runs.push(kk); }
+  const k=runs.reduce((a,b)=>a+b,0);
+  const bangBonus=runs.reduce((s,kk)=>{ let b=0; for(let i=0;i<kk;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; return s+b; },0);
+  if(parts.every(p=>p.length===1)){
+    // single tiles (U, U!!, A!,B!): Mult 1, no relics
+    const letters=parts.map(p=>{ const t=p[0]; const L=t.ch==="?"?"Q":t.ch; R.resolved[t.uid]=L; return L; });
+    R.valid=true; R.fallback=true; R.L=letters.join(""); R.words=letters.map((L,i)=>L+"!".repeat(runs[i]));
+    R.chips=parts.reduce((s,p,i)=>s+tileChip(p[0],letters[i]),0); R.mult=1; R.notes.push(parts.length>1?"Single letters: Mult 1, no relics":"Single tile: Mult 1, no relics");
+    if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
+    R.total=R.chips; R.crit=(R.L.length+k)===w.sigil;
     return R;
   }
-  const parts=[[]]; for(const t of bodyT){ if(t.ch===",") parts.push([]); else parts[parts.length-1].push(t); }
-  if(parts.some(p=>!p.length)){ R.reason="A comma must sit between two words."; return R; }
+  const bodyT=partsT.flat().filter(t=>t.ch!=="!");
   const words=[];
   for(const part of parts){
     const pat = part.map(t=>t.ch);
+    if(part.length===1){ const L=pat[0]==="?"?"Q":pat[0]; R.resolved[part[0].uid]=L; words.push(L); continue; }
     const wild = pat.map((c,i)=>c==="?"?i:-1).filter(i=>i>=0);
     if(!check){ words.push(pat.join("")); continue; }
     if(!wild.length){
@@ -1899,7 +1927,7 @@ function evaluate(tiles, w, check){
   R.mult = w.mult;
   const ctx = {L:R.L.replace(/\?/g,"_"), sp};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; const v=rel.f(ctx); if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}`);} }
-  if(k){ let b=0; for(let i=0;i<k;i++) b+=FIB[Math.min(i,FIB.length-1)]*2; R.chips+=b; R.bang=k; R.notes.push(`${"!".repeat(k)} +${b} Spell Power`); }
+  if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
   if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
   R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
   if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
@@ -1951,7 +1979,7 @@ async function cast(){
       if(t.deb.t==="poison") C.p.poison++;
       if(t.deb.t==="curse") C.p.curse++;
       if(t.deb.t==="frustrate") C.p.frustrated++;
-      if(t.deb.t==="slimy"||t.deb.t==="condemn") t.deb=null;
+      if(t.deb.t==="slimy"||t.deb.t==="condemn"||t.deb.t==="burn") t.deb=null;
     }
   }
   C.hand=C.hand.filter(u=>!C.bar.includes(u));
@@ -2108,7 +2136,7 @@ async function tileFlyFx(uids,label,col="#8b3fd9"){
   for(const w of ["draw","disc"]){ const el=document.querySelectorAll(".pilebtn")[w==="draw"?0:1]; if(el&&uids.some(u=>where(u)===w)) el.animate([{transform:"scale(1.15)"},{transform:"none"}],{duration:250}); }
 }
 function applyTileDebuff(type,n){
-  const fresh = ids => ids.filter(u=>C.t[u]&&!C.t[u].deb);
+  const fresh = ids => ids.filter(u=>C.t[u]&&!C.t[u].deb&&!C.t[u].fort);
   let pool = shuffle(fresh(C.draw));
   if(pool.length<n) pool = pool.concat(shuffle(fresh(C.disc)));
   if(pool.length<n) pool = pool.concat(shuffle(fresh(C.hand)));
@@ -2127,7 +2155,9 @@ async function endTurn(){
     const t=C.t[u];
     if(t.deb&&t.deb.t==="condemn"){ t.deb.n--; if(t.deb.n<=0){ C.hand.splice(C.hand.indexOf(u),1); t.deb=null; C.ban.push(u); log(`Condemned ${t.ch} is banished until this fight ends.`); } }
   }
-  if(!hasR("satchel")){ C.disc.push(...C.hand); C.hand=[]; }
+  const burning=C.hand.filter(u=>C.t[u].deb&&C.t[u].deb.t==="burn").length;
+  if(burning){ G.hp=Math.max(0,G.hp-burning); log(`Smoldering tiles burn you for ${burning}.`); const pc=center("p"); numPop(pc.x,pc.top+20,`-${burning}`,6,"#ff7b00"); updateBar("p"); snd("hurt"); if(G.hp<=0&&!undying()) return gameOver("a smoldering tile"); }
+  if(!hasR("satchel")){ const keep=C.hand.filter(u=>C.t[u].fort); C.disc.push(...C.hand.filter(u=>!C.t[u].fort)); C.hand=keep; }
   for(const u in C.t){ const d=C.t[u].deb; if(d&&d.t==="lock"){ d.n--; if(d.n<=0) C.t[u].deb=null; } }
   const p=C.p;
   if(p.poison>0){ const d=p.poison; G.hp=Math.max(0,G.hp-d); p.poison--; log(`Poison deals ${d} at the end of your turn.`); renderCombat(); await poisonAnim("p",d); if(G.hp<=0&&!undying()) return gameOver("Poison"); medkitCheck(); }
@@ -2253,7 +2283,7 @@ function renderCombat(){
       <span class="cost">${W.cost}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
   const pots = Array.from({length:maxPotions()},(_,i)=>{ const p=G.potions[i];
-    return p?`<button class="pslot" title="${POTIONS[p].name}: ${POTIONS[p].d}" onclick="usePotion(${i})">${potionIcon(p)}</button>`:`<span class="pslot" title="Empty potion slot"></span>`; }).join("");
+    return p?`<button class="pslot" ${potTip(p)} onclick="potionMenu(${i})">${potionIcon(p)}</button>`:`<span class="pslot" ${tipAttr("Empty potion slot")}></span>`; }).join("");
   const n=C.hand.length, cols=n>16?5:4, rows=Math.max(4,Math.ceil(n/cols));
   const rowh = Math.floor((262-24-(rows-1)*9)/rows);
   const fresh=new Set(C.fresh); C.fresh=[];
@@ -2455,10 +2485,11 @@ function glossaryTab(tab){
       <h3>${R.name}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`).join("");
   if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>`<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div>
       <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.passive?"Works by itself":P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · ${maxPotions()} slots max</div></div></div>`).join("");
+  if(tab==="effects") return glossaryEffects();
   if(tab==="keywords") return Object.entries(KW).map(([k,v])=>`<div class="gcard small">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]?`<div class="gart sm">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`).join("");
 }
 function showGlossary(tab="monsters"){
-  const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Potions",keywords:"Keywords"};
+  const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Potions",effects:"Effects",keywords:"Keywords"};
   openModal(`<h2>Glossary</h2>
     <div class="gtabs" role="tablist">${Object.entries(tabs).map(([k,v])=>`<button class="btn small ${k===tab?"primary":""}" role="tab" aria-selected="${k===tab}" onclick="showGlossary('${k}')">${v}</button>`).join("")}</div>
     <div class="glist">${glossaryTab(tab)}</div>
@@ -2809,6 +2840,63 @@ async function spawnEnemies(ids){
 /* enemy damage scales down a little in big groups (HP already does) */
 const GROUP_DMG=[1,1,1,.85,.72,.62];
 
+/* ================= TILE EFFECT VISUALS, POTION MENU, EFFECTS GLOSSARY ================= */
+SI.burn=iconSVG("0 0 24 24",(sh)=>{ sh("path",`d="M12 2 Q20 10 18 16 Q16 22 12 22 Q6 22 6 16 Q6 11 10 8 Q10 13 12 13 Q11 8 12 2 Z"`,"#ff7b00"); sh("path",`d="M12 12 Q16 16 14 19 Q12 21 10 19 Q9 16 12 12 Z"`,"#ffd000"); });
+SI.fortified=iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 2 L21 5 L20 14 Q18 19 12 22 Q6 19 4 14 L3 5 Z"`,"#9aa6b4"); ink(`<circle cx="8" cy="8" r="1.2"/><circle cx="16" cy="8" r="1.2"/><circle cx="8" cy="15" r="1.2"/><circle cx="16" cy="15" r="1.2"/>`); });
+SI.fragile=iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="4" y="4" width="16" height="16" rx="3"`,"#e9d8ff"); ink(`<path class="thin" style="stroke:#6b2fb3" d="M12 4 L10 10 L14 13 L11 20 M10 10 L5 12 M14 13 L20 15"/>`); });
+TILE_DEB_ICON.burn="burn";
+Object.assign(POTION_COLOR,{temper:"#9aa6b4"});
+const TFX={
+  slimy:`<path d="M0 0 H54 V10 Q49 18 46 10 Q42 24 37 10 Q30 16 26 10 Q21 22 16 10 Q10 15 7 10 Q4 20 0 10 Z" fill="#8ccf2a" opacity=".85"/><circle cx="46" cy="16" r="2.6" fill="#8ccf2a"/><circle cx="16" cy="19" r="3" fill="#8ccf2a"/>`,
+  poison:`<rect width="54" height="58" fill="#7a3fc0" opacity=".28"/><path d="M8 0 Q10 12 8 16 Q6 12 8 0 Z M26 0 Q29 16 26 22 Q23 16 26 0 Z M44 0 Q46 10 44 14 Q42 10 44 0 Z" fill="#9b5de5"/><circle cx="26" cy="27" r="3" fill="#9b5de5"/><circle cx="12" cy="50" r="4" fill="#57cc4d" opacity=".7"/><circle cx="40" cy="46" r="3" fill="#57cc4d" opacity=".7"/>`,
+  lock:`<rect width="54" height="58" fill="#3d3a44" opacity=".35"/><path d="M-4 14 L58 40 M-4 40 L58 14" stroke="#717d8c" stroke-width="5" stroke-dasharray="7 3"/>`,
+  condemn:`<rect width="54" height="58" fill="#5a0f18" opacity=".25"/><path d="M8 10 L46 48 M46 10 L8 48" stroke="#c1272d" stroke-width="6" stroke-linecap="round" opacity=".75"/>`,
+  curse:`<rect width="54" height="58" fill="#3a1053" opacity=".38"/><g transform="translate(36 38)" opacity=".9"><circle r="10" fill="#efe6ff"/><rect x="-5" y="6" width="10" height="7" rx="2" fill="#efe6ff"/><circle cx="-3.5" cy="-1" r="2.8" fill="#3a1053"/><circle cx="3.5" cy="-1" r="2.8" fill="#3a1053"/><path d="M-3 9 V13 M0 9 V13 M3 9 V13" stroke="#3a1053" stroke-width="1.2"/></g>`,
+  frustrate:`<path d="M6 46 Q14 36 22 46 T38 46 T52 42 M4 52 Q12 44 20 52 T36 52" stroke="#fb8b24" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 6 L44 12 L48 6 M42 14 L46 18" stroke="#e5352b" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+  burn:`<rect width="54" height="58" fill="#ff7b00" opacity=".18"/><path d="M0 58 Q2 40 8 46 Q8 32 16 40 Q18 26 26 38 Q30 24 36 38 Q42 28 44 42 Q50 34 54 44 V58 Z" fill="#ff7b00" opacity=".85"/><path d="M6 58 Q10 48 14 52 Q18 42 24 50 Q28 44 32 52 Q38 46 40 52 Q46 48 48 58 Z" fill="#ffd000"/>`,
+};
+const TFX_FRAGILE=`<path d="M27 0 L23 14 L30 22 L24 34 L29 44 L26 58 M23 14 L10 20 L4 30 M30 22 L44 26 L52 20 M24 34 L12 40 M29 44 L42 48" stroke="#6b2fb3" stroke-width="1.6" fill="none"/>`;
+const TFX_FORT=`<rect width="54" height="58" fill="url(#steelg)"/><circle cx="7" cy="7" r="2.4" fill="#5b6472"/><circle cx="47" cy="7" r="2.4" fill="#5b6472"/><circle cx="7" cy="51" r="2.4" fill="#5b6472"/><circle cx="47" cy="51" r="2.4" fill="#5b6472"/><path d="M4 18 L50 14" stroke="#fff" stroke-width="2" opacity=".55"/>`;
+function tileFx(t){
+  let s=""; if(t.fort) s+=TFX_FORT; if(t.deb&&TFX[t.deb.t]) s+=TFX[t.deb.t]; if(t.fragile) s+=TFX_FRAGILE;
+  return s?`<svg class="tfx" viewBox="0 0 54 58" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="steelg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dfe7ef"/><stop offset=".5" stop-color="#9aa6b4"/><stop offset="1" stop-color="#c7d0db"/></linearGradient></defs>${s}</svg>`:"";
+}
+function potTip(p){ const P=POTIONS[p]; return tipAttr(`<b>${P.name}</b><br>${P.d}<br><i>${P.passive?"Works by itself.":P.any?"Usable anywhere.":"Combat only."} Click to use or discard.</i>`); }
+function potionMenu(i){
+  const id=G.potions[i]; if(!id) return; const P=POTIONS[id];
+  if(C&&(C.busy||C.over)) return;
+  const canUse=!P.passive&&(C||P.any)&&!(C&&id==="smoke"&&C.kind==="boss");
+  openModal(`<div style="display:grid;gap:10px;justify-items:center;max-width:460px;margin:0 auto">
+    <div style="width:90px">${potionIcon(id)}</div><h2 style="margin:0">${P.name}</h2><div style="font-size:19px;text-align:center">${P.d}</div>
+    <div class="row" style="justify-content:center;gap:10px">
+      <button class="btn primary" ${canUse?"":"disabled"} onclick="closeModal();usePotion(${i})">${P.passive?"Passive":"Use"}</button>
+      <button class="btn" onclick="discardPotion(${i})">Discard</button>
+      <button class="btn small" onclick="closeModal()">Cancel</button></div></div>`);
+}
+function discardPotion(i){ const id=G.potions[i]; if(!id) return; G.potions.splice(i,1); closeModal(); toast(`${POTIONS[id].name} discarded.`); snd("tap"); if(C) renderCombat(); else renderHUD(); }
+function glossaryEffects(){
+  const demo=(o)=>tileHTML({uid:-1,ch:o.ch||"A",lvl:1,paint:o.paint||null,deb:o.deb||null,fragile:o.fragile,fort:o.fort},{noTip:true});
+  const card=(art,title,tag,txt)=>`<div class="gcard small"><div class="gart sm" style="display:grid;place-items:center">${art}</div><div><h3>${title} <span class="gtag">${tag}</span></h3><div>${txt}</div></div></div>`;
+  const out=[];
+  out.push(`<h3 style="grid-column:1/-1;margin:4px 0">On tiles</h3>`);
+  for(const [k,D] of Object.entries(TILE_DEBUFFS)) out.push(card(demo({deb:{t:k,n:k==="lock"?2:0}}),D.name,"Debuff",D.d));
+  out.push(card(demo({fragile:true}),"Fragile","Tile",KW.fragile?KW.fragile[1]:"Vanishes for the rest of the combat after one use."));
+  out.push(card(demo({fort:true}),"Fortified","Buff",KW.fortified[1]));
+  for(const [k,Pn] of Object.entries(PAINTS)) out.push(card(demo({paint:k}),Pn.name,"Paint",Pn.d));
+  out.push(`<h3 style="grid-column:1/-1;margin:10px 0 4px">On you and enemies</h3>`);
+  for(const [k,S] of Object.entries(STATUS)) out.push(card(SI[k]||"",S.n,["might","robust","thorns","block"].includes(k)?"Buff":"Debuff",S.d));
+  return out.join("");
+}
+/* new Smoldering users + spread of debuffs */
+(function(){ const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  ENEMIES.goblin.moves=[[B(10),U("might",2)],[A(9),T("burn",2)],[T("slimy",4)]];
+  ENEMIES.crow.moves=[[A(10),T("frustrate",3)],[A(15)],[P("broken",1),A(7),T("burn",3)]];
+  ENEMIES.drone.moves=[[A(15),T("burn",3)],[T("lock",4),B(15)],[A(26)]];
+  ENEMIES.gatekeeper.moves=[[T("lock",5),B(32)],[A(26),T("burn",4)],[T("condemn",4),A(14)],[A(40,1)]];
+  ENEMIES.titan.moves=[[A(14)],[T("lock",4),B(14)],[A(22,1),T("burn",2)],[P("broken",1),P("frustrated",2),T("condemn",2)]];
+  ENEMIES.lexicore.moves[1]=[A(38),B(34),T("burn",4)];
+})();
+
 /* ================= COMBAT FX ================= */
 function focusOn(keys,z,cx,cy){
   const w=$("#world"); if(!w) return;
@@ -3071,7 +3159,7 @@ function rollPaintSlots(){
   const s1=pick([...SLOT1]);
   const s2=pick([...SLOT2].filter(c=>c!==s1));
   const s3=pick([...ALPHA,"?","!",","].filter(c=>c!==s1&&c!==s2));
-  return (hasR("crown")?[pick([s1,s2,s3])]:[s1,s2,s3]).map(ch=>({ch, paint:pick(Object.keys(PAINTS)), lvl:(/[A-Z]/.test(ch)&&Math.random()<LV2_REWARD_CHANCE)?2:1}));
+  return (hasR("crown")?[pick([s1,s2,s3])]:[s1,s2,s3]).map(ch=>({ch, paint:pick(Object.keys(PAINTS)), lvl:(/[A-Z]/.test(ch)&&Math.random()<LV2_REWARD_CHANCE)?2:1, ...(/[A-Z]/.test(ch)&&Math.random()<.1?{fort:true}:{})}));
 }
 function normSlots(rw){ rw.slots=rw.slots.map(x=>typeof x==="string"?{ch:x,paint:rw.paint||"red",lvl:1}:x); return rw.slots; }
 function rerollCost(){ if(!G.rerollCost) G.rerollCost=5; return G.rerollCost; }
@@ -3084,7 +3172,7 @@ const EASEL_ART = (ch,p) => `<svg class="art" viewBox="0 0 140 160">${layer((sh,
 function slotInfo(t){
   const sym={"?":"Wildcard: becomes the best letter that makes a word.","!":"Exclamation: put at the end of a word for bonus Spell Power (+2, +4, +6, +10…).",",":"Comma: put between two words to cast both at once."}[t.ch];
   return `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}`}${sym?`<br><span style="font-size:16px">${sym}</span>`:""}<br>
-    <span class="muted" style="font-size:16px"><b>${PAINTS[t.paint].name}:</b> ${PAINTS[t.paint].d}</span>`;
+    <span class="muted" style="font-size:16px"><b>${PAINTS[t.paint].name}:</b> ${PAINTS[t.paint].d}</span>${t.fort?`<br><span style="font-size:16px"><b>Fortified:</b> never discarded at end of turn, immune to tile debuffs.</span>`:""}`;
 }
 function renderReward(){
   const rw=G.reward; renderHUD(); normSlots(rw);
@@ -3100,7 +3188,7 @@ function renderReward(){
     <div class="box" style="max-width:520px;display:grid;gap:4px"><span style="font-size:16px">The painter bot made three new tiles. Pick one to add to your deck, or skip.</span>
       <div id="slotinfo">${slotInfo(first)}</div></div>
     <div class="row" style="justify-content:center;gap:22px">
-      ${rw.slots.map((t,i)=>`<button class="tile p-${t.paint} ${t.lvl===2?"L2":""} ${/[A-Z]/.test(t.ch)?"":"sym"} floaty" style="animation-delay:${i*-.5}s" onclick="claimPaintLetter(${i})"
+      ${rw.slots.map((t,i)=>`<button class="tile p-${t.paint} ${t.fort?"fort":""} ${t.lvl===2?"L2":""} ${/[A-Z]/.test(t.ch)?"":"sym"} floaty" style="animation-delay:${i*-.5}s" onclick="claimPaintLetter(${i})"
         onmouseenter="previewEasel(${i})" onfocus="previewEasel(${i})" aria-label="Take ${t.lvl===2?"Level 2 ":""}${t.paint} ${t.ch} tile"><b>${t.ch}</b>${VAL[t.ch]?`<span class="val">${VAL[t.ch]+(t.lvl===2?LV2_BONUS:0)}</span>`:""}${t.lvl===2?`<span class="lv">II</span>`:""}</button>`).join("")}
       <button class="btn small" onclick="skipReward()" title="Leave without adding a tile (press S). A thin deck draws your best letters more often.">Skip · S</button>
     </div>
@@ -3118,7 +3206,7 @@ function rerollPaint(){
 function claimPaintLetter(i){
   const rw=G.reward; if(!rw) return;
   const t=normSlots(rw)[i];
-  G.deck.push(newTile(t.ch,{lvl:t.lvl,paint:t.paint})); snd("coin");
+  G.deck.push(newTile(t.ch,{lvl:t.lvl,paint:t.paint,fort:t.fort})); snd("coin");
   toast(`New ${t.lvl===2?"Level 2 ":""}${t.paint} ${t.ch} tile added to your deck.`);
   G.reward=null; showMap();
 }
@@ -3172,6 +3260,7 @@ Object.assign(POTIONS,{
   fruit:{name:"Ancient Fruit",d:"Raise your Max HP by 5 and heal 5. Usable anywhere.",any:true},
   echo:{name:"Echo Draught",d:"The next word you cast this turn has its output doubled."},
   clarity:{name:"Clarity Draught",d:"Every tile in your hand becomes Level 2 for this combat."},
+  temper:{name:"Tempering Oil",d:"Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them."},
 });
 Object.assign(POTION_COLOR,{phoenix:"#ff7b00",tonic:"#ffd166",pages:"#f6e7c4",venom:"#7fd34a",bomb:"#3d3a44",brittle:"#bfe0ff",jester:"#9b5de5",shout:"#e63946",smoke:"#9aa6b4",fruit:"#57cc4d",echo:"#5fd4c4",clarity:"#fff8df"});
 Object.assign(RELICS,{
@@ -3615,7 +3704,7 @@ async function throwDaggers(ti,n,word){
 /* ================= SHOP: the Caravan Brothers ================= */
 const SHOP_LETTERS="AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ";
 function genShopTile(){ const ch=Math.random()<.1?pick(["?","!",","]):pick([...SHOP_LETTERS]); const lvl=/[A-Z]/.test(ch)&&Math.random()<.22?2:1;
-  return {ch,paint:pick(Object.keys(PAINTS)),lvl}; }
+  return {ch,paint:pick(Object.keys(PAINTS)),lvl,...(/[A-Z]/.test(ch)&&Math.random()<.15?{fort:true}:{})}; }
 function shopTilePrice(t){ return Math.round((30+(VAL[t.ch]||4)*3+(t.lvl===2?30:0))*(1+.15*((G.act||1)-1))); }
 function showShop(){
   G.screen="shop";
@@ -3660,14 +3749,14 @@ function shopBuy(kind,i){
   if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your potion slots are full."); snd("buzz"); return; }
   G.gold-=it.price; it.sold=true;
   if(kind==="relics") gainRelic(it.id);
-  if(kind==="tiles"){ G.deck.push(newTile(it.t.ch,{paint:it.t.paint,lvl:it.t.lvl})); toast(`${it.t.ch} tile added to your deck.`); }
+  if(kind==="tiles"){ G.deck.push(newTile(it.t.ch,{paint:it.t.paint,lvl:it.t.lvl,fort:it.t.fort})); toast(`${it.t.ch} tile added to your deck.`); }
   if(kind==="potions") addPotion(it.id);
   snd("coin"); renderShop();
 }
 function shopToss(){
   if(G.shop.tossed) return;
   if(G.gold<G.removeCost){ toast(`Tossing a tile costs ${G.removeCost} gold.`); snd("buzz"); return; }
-  pickTile(`Throw a tile in the trash (${G.removeCost} gold)`, t=>true, t=>{ G.gold-=G.removeCost; G.removeCost+=25; G.deck=G.deck.filter(x=>x.uid!==t.uid); G.shop.tossed=true; toast(`${t.ch} tile tossed. Next toss: ${G.removeCost} gold.`); snd("hurt"); renderShop(); });
+  pickTile(`Throw a tile in the trash (${G.removeCost} gold)`, t=>true, t=>{ G.gold-=G.removeCost; G.removeCost+=5; G.deck=G.deck.filter(x=>x.uid!==t.uid); G.shop.tossed=true; toast(`${t.ch} tile tossed. Next toss: ${G.removeCost} gold.`); snd("hurt"); renderShop(); });
 }
 
 /* ================= REST SITE ================= */
@@ -3738,7 +3827,7 @@ function startClaw(){
   G.screen="claw"; renderHUD();
   const letters=Object.keys(VAL), bodies=[];
   for(let i=0;i<42;i++) bodies.push({kind:"coin",r:10+Math.random()*3});
-  for(let i=0;i<6;i++){ const ch=Math.random()<.12?pick(["?","!",","]):pick(letters); bodies.push({kind:"tile",r:18,t:{ch,paint:Math.random()<.65?pick(Object.keys(PAINTS)):null,lvl:ch!=="!"&&ch!==","&&Math.random()<.25?2:1}}); }
+  for(let i=0;i<6;i++){ const ch=Math.random()<.12?pick(["?","!",","]):pick(letters); bodies.push({kind:"tile",r:18,t:{ch,paint:Math.random()<.65?pick(Object.keys(PAINTS)):null,lvl:ch!=="!"&&ch!==","&&Math.random()<.25?2:1,...(/[A-Z]/.test(ch)&&Math.random()<.15?{fort:true}:{})}}); }
   const rel=randomRelic(); if(rel) bodies.push({kind:"relic",r:19,rel});
   shuffle(bodies).forEach((b,i)=>{ b.x=CLW.WALL+30+Math.random()*(CLW.W-CLW.WALL-60); b.y=40+i*8; b.vx=0; b.vy=0; b.rot=Math.random()*6; });
   CL={bodies,X:330,vX:0,aX:0,L:70,th:0,om:0,state:"move",grabs:5,held:[],open:1,keys:{},won:[],gold:0,t:0,msg:""};
@@ -3821,7 +3910,7 @@ function clawStep(dt){
 function clawCollect(b){
   const S=CL; let label="";
   if(b.kind==="coin"){ G.gold+=1; S.gold++; label=`+1 gold (${S.gold} total)`; }
-  if(b.kind==="tile"){ const t=newTile(b.t.ch,{paint:b.t.paint,lvl:b.t.lvl}); G.deck.push(t); label=`${t.lvl===2?"Level 2 ":""}${t.paint?t.paint+" ":""}${t.ch} tile added to your deck`; S.won.push(tileHTML(t,{mini:true})); }
+  if(b.kind==="tile"){ const t=newTile(b.t.ch,{paint:b.t.paint,lvl:b.t.lvl,fort:b.t.fort}); G.deck.push(t); label=`${t.lvl===2?"Level 2 ":""}${t.paint?t.paint+" ":""}${t.ch} tile added to your deck`; S.won.push(tileHTML(t,{mini:true})); }
   if(b.kind==="relic"){ gainRelic(b.rel); unlock("claw_relic"); label=`Relic: ${RELICS[b.rel].name}`; S.won.push(`<span class="relic" ${tipAttr(`<b>${RELICS[b.rel].name}</b><br>${RELICS[b.rel].d}`)}>${relicIcon(b.rel)}</span>`); }
   snd("coin"); clawMsg(`Prize! ${label}.`); $("#clawwon").innerHTML=(S.gold?`<span class="clawprize">+${S.gold}g</span>`:"")+S.won.join(""); renderHUD(); keepClawUI();
 }
@@ -4409,7 +4498,7 @@ const TUT=[
 ];
 function startTutorial(){
   closeSplash();
-  G={uidN:1,hp:70,maxHp:70,gold:0,deck:[],relics:[],potions:[],weapons:["sword","shield"],map:null,pos:null,floor:1,screen:"combat",lastEnemy:null,removeCost:75,tutorial:true,
+  G={uidN:1,hp:70,maxHp:70,gold:0,deck:[],relics:[],potions:[],weapons:["sword","shield"],map:null,pos:null,floor:1,screen:"combat",lastEnemy:null,removeCost:10,tutorial:true,
      stats:{words:0,best:"",bestScore:0,dmg:0,kills:0}};
   for(const ch of "BCDFGHJKLMNPQRSTVWXYZ") G.deck.push(newTile(ch));
   for(const ch of "AIUEO") { G.deck.push(newTile(ch)); G.deck.push(newTile(ch)); }
