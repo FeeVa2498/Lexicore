@@ -2492,13 +2492,27 @@ const MON_LORE={tslime:"A gentle practice blob kept by the Tablet for new spell-
   bat:"Screeches in frequencies that scramble a caster's patience.",goblin:"A thorny scavenger. It buffs itself, then smears slime on your tiles.",
   arachne:"Queen of the overgrown subway. Her webs poison whole hands of tiles.",quartz:"A pre-war defense robot with a crystal brain and a very big hammer.",
   gargoyle:"Stone guardian at the foot of The Tower. It curses, condemns and executes."};
+/* glossary monster order: type (normal > elite > boss) → act of first appearance → A–Z */
+function monAct(id,seen={}){
+  if(id==="tslime") return 0;
+  for(const n of Object.keys(ACTS).map(Number).sort((x,y)=>x-y)){ const A=ACTS[n];
+    const groups=[...(A.singles||[]),...(A.pairs||[]),...(A.trios||[]),...(A.quads||[]),...(A.bosses||[]),(A.elites||[])];
+    if(groups.some(g=>g.includes(id))) return n; }
+  if(seen[id]) return 99; seen[id]=true;
+  const par=Object.entries(ENEMIES).filter(([pid,E])=>(E.split||[]).includes(id)||E.moves.some(m=>m.some(a=>a.k==="summon"&&a.id===id))).map(([pid])=>monAct(pid,seen));
+  return par.length?Math.min(...par):99;
+}
+function monsterOrder(){
+  const rank=E=>E.boss?2:E.elite?1:0;
+  return Object.entries(ENEMIES).sort(([ia,a],[ib,b])=>rank(a)-rank(b)||monAct(ia)-monAct(ib)||a.name.localeCompare(b.name));
+}
 function glossaryTab(tab){
-  if(tab==="monsters") return Object.entries(ENEMIES).map(([id,E])=>id==="lexicore"&&!achGet().act4?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
+  if(tab==="monsters") return monsterOrder().map(([id,E])=>id==="lexicore"&&!achGet().act4?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
       <h3>??? <span class="gtag">Boss</span></h3><div class="muted">Whoever waits at the very top of The Tower. Some say a great sorcerer. Nobody who climbed that far has come back to tell.</div></div></div>`:`<div class="gcard"><div class="gart">${artSVG(E.art,{...(E.artO||{}),only:"i0"})}</div><div>
       <h3>${E.name} <span class="gtag">${E.boss?"Boss":E.elite?"Elite":id==="tslime"?"Tutorial":"Normal"}</span></h3>
       <div class="gstat">HP <b>${E.hp}</b> · ${E.moves.length}-turn cycle</div><div class="muted">${MON_LORE[id]||""}</div>
       <ol class="gmoves">${E.moves.map((m,i)=>`<li>${E.names?`<b>${E.names[i]}:</b> `:""}${m.map(moveText).join(" + ")}</li>`).join("")}</ol></div></div>`).join("");
-  if(tab==="weapons") return Object.entries(WEAPONS).map(([id,W])=>`<div class="gcard"><div class="gart">${WICON[id]()}</div><div>
+  if(tab==="weapons") return [...STARTERS.filter(id=>WEAPONS[id]),...Object.keys(WEAPONS).filter(id=>!STARTERS.includes(id))].map(id=>[id,WEAPONS[id]]).map(([id,W])=>`<div class="gcard"><div class="gart">${WICON[id]()}</div><div>
       <h3>${W.name} <span class="gtag k-${W.kind}">${KIND_LABEL[W.kind]}</span></h3>
       <div class="gstat">Energy <b>${W.cost}</b> · Mult <b>×${W.mult}</b> · Sigil <b>${W.sigil}</b> letters</div>
       <div>${W.desc}</div><div><b>Critical (${W.sigil} letters):</b> ${W.crit}</div>
@@ -4115,7 +4129,7 @@ const END_TALK={
     ["L","<span class='sys'>TEST COMPLETE. SUBJECT: {NAME}. RESULT: ACCEPTED.</span>"]],
   react1:{
     scholar:"A test? The slimes, the ruined city, the whole Tower… it was all an exam?",
-    champion:"A test?! I was fighting for my life up here!",
+    champion:"A test? There are no tests. Every fight on this Tower was real, and I fought every one to the death. That is the only way a fight is worth having.",
     mercenary:"A test. Nobody said anything about a test. I charge extra for tests."},
   common2:[
     ["L","Every battle was measured. Every word you cast was recorded."],
@@ -4125,7 +4139,7 @@ const END_TALK={
     ["L","The swarm answers only a mind strong enough to command it. For four thousand years, nothing that climbed this Tower was strong enough."],
     ["L","Until you."]],
   react2:{
-    scholar:"So every spell I ever learned was… a line of code. Fascinating. And terrifying. What do you want from me?",
+    scholar:"So the old letters are the magic of the world before, the spells of the people who lived on this earth long before us? Then there is a whole lost library waiting to be read! What do you want from me?",
     champion:"So the strength was never mine? …No. I am the one who swung it. What do you want?",
     mercenary:"Nanobots. Sure. And what does a giant computer want with a rat like me?"},
   common3:[
