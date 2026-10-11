@@ -474,6 +474,7 @@ body.actbg .screen>.muted,body.actbg .screen>#clawmsg,body.actbg #altarhint,.pap
 #stage.twin #sigilbox{bottom:auto;top:118px}
 .fighter.flip .art{transform:scaleX(-1)}
 .fighter.giant .over{bottom:auto;top:28%;left:-30%;transform:none}
+.fighter.huge .over,.fighter.huge.giant .over{left:0;top:24%;bottom:auto;transform:none;align-items:flex-start}
 .behind{color:#ff3b30;font:16px var(--f-display);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
 
 
@@ -2208,7 +2209,7 @@ function fighterHTML(key){
     : `<div class="ename">${def.name}</div>${C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","broken","poison"],false)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
-  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
+  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})"`}>
     <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?heroArt():def.art,isP?{}:(def.artO||{}))}
     <div class="under"><div class="hpbar">${hpBarInner(key)}${block>0?`<em class="blk" ${tipAttr(`<b>Shield ${block}</b><br>Blocks the next ${block} damage.`,["block"])}>${block}</em>`:""}<span>${hp[0]}/${hp[1]}</span></div></div></div>`;
@@ -2441,7 +2442,7 @@ const MON_LORE={tslime:"A gentle practice blob kept by the Tablet for new spell-
   gargoyle:"Stone guardian at the foot of The Tower. It curses, condemns and executes."};
 function glossaryTab(tab){
   if(tab==="monsters") return Object.entries(ENEMIES).map(([id,E])=>id==="lexicore"&&!achGet().act4?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
-      <h3>??? <span class="gtag">Boss</span></h3><div class="muted">Whoever waits at the very top of The Tower. Some say a great sorcerer. Nobody who climbed that far has come back to tell.</div></div></div>`:`<div class="gcard"><div class="gart">${artSVG(E.art,{only:"i0"})}</div><div>
+      <h3>??? <span class="gtag">Boss</span></h3><div class="muted">Whoever waits at the very top of The Tower. Some say a great sorcerer. Nobody who climbed that far has come back to tell.</div></div></div>`:`<div class="gcard"><div class="gart">${artSVG(E.art,{...(E.artO||{}),only:"i0"})}</div><div>
       <h3>${E.name} <span class="gtag">${E.boss?"Boss":E.elite?"Elite":id==="tslime"?"Tutorial":"Normal"}</span></h3>
       <div class="gstat">HP <b>${E.hp}</b> · ${E.moves.length}-turn cycle</div><div class="muted">${MON_LORE[id]||""}</div>
       <ol class="gmoves">${E.moves.map((m,i)=>`<li>${E.names?`<b>${E.names[i]}:</b> `:""}${m.map(moveText).join(" + ")}</li>`).join("")}</ol></div></div>`).join("");
@@ -2688,19 +2689,32 @@ Object.assign(ARTS,{
 (function(){ const S=ARTS.slime, base=S.draw;
   S.draw=function(v,sh,ink,fo,o={}){
     const sh2=(t,a,c)=>sh(t,a,c===CC.slime&&o.tint?o.tint:c);
-    base.call(this,v,sh2,ink,fo,o);
+    if(o.fierce){
+      // the Great Slime: same blob, but furious
+      sh("path",`d="M28 208 Q20 150 62 134 Q96 94 138 130 Q182 150 174 208 Z"`,o.tint||CC.slime);
+      fo(`<ellipse cx="62" cy="150" rx="11" ry="7" style="fill:#fff"/>`);
+      ink(`<path d="M44 208 Q47 222 54 208 M98 208 Q102 224 108 208 M144 208 Q148 220 154 208"/>`);
+      if(v==="hurt") ink(`<path class="thick" d="M70 156 L88 172 M88 156 L70 172 M112 156 L130 172 M130 156 L112 172"/>`);
+      else { sh("path",`d="M66 158 L92 166 L88 176 L68 172 Z"`,"#fff4c2"); sh("path",`d="M134 158 L108 166 L112 176 L132 172 Z"`,"#fff4c2");
+        ink(`<circle cx="${v==="atk"?82:80}" cy="169" r="4" style="fill:#e5352b"/><circle cx="${v==="atk"?118:120}" cy="169" r="4" style="fill:#e5352b"/>`);
+        ink(`<path class="thick" d="M58 144 L94 160 M142 144 L106 160"/>`); }
+      const open=v==="atk"?14:v==="i1"?6:4;
+      sh("path",`d="M62 ${186-open*.3} Q100 ${180-open*.5} 138 ${186-open*.3} Q132 ${200+open} 100 ${202+open} Q68 ${200+open} 62 ${186-open*.3} Z"`,"#5a0f18");
+      ink(`<path style="fill:#fff;stroke:#1d1b22;stroke-width:1.5" d="M66 ${186-open*.3} L72 ${194} L78 ${185-open*.4} L84 ${194} L90 ${184-open*.45} L96 ${193} L102 ${184-open*.45} L108 ${193} L114 ${184-open*.45} L120 ${194} L126 ${185-open*.4} L132 ${194} L136 ${186-open*.3} Z"/>`);
+      if(v==="atk") for(const [x,y] of [[40,150],[24,170],[34,128]]) sh("circle",`cx="${x}" cy="${y}" r="5"`,o.tint||CC.slime);
+    } else base.call(this,v,sh2,ink,fo,o);
     if(o.crown){ sh("path",`d="M70 ${v==="i1"?112:104} L74 ${v==="i1"?80:72} L88 ${v==="i1"?96:88} L100 ${v==="i1"?72:64} L112 ${v==="i1"?96:88} L126 ${v==="i1"?80:72} L130 ${v==="i1"?112:104} Z"`,"#ffbe0b"); sh("circle",`cx="100" cy="${v==="i1"?92:84}" r="5"`,"#e63946"); }
   };
 })();
 const SLIME_KIDS=[["slime_g","Green Slimelet","#8ccf2a"],["slime_b","Blue Slimelet","#5aa9ff"],["slime_p","Pink Slimelet","#ff8fc8"],["slime_o","Orange Slimelet","#ffa94d"],["slime_v","Violet Slimelet","#b07cff"]];
 Object.assign(ENEMIES,{
   thornbloom:{name:"Thornbloom",hp:38,art:"thornbloom",moves:[[{k:"atk",v:8}],[{k:"tile",d:"frustrate",n:2},{k:"blk",v:6}],[{k:"atk",v:5},{k:"pdeb",s:"weaken",v:1}]]},
-  bigslime:{name:"Great Slime",hp:95,art:"slime",artO:{crown:true,tint:"#6fbf2a"},elite:true,split:SLIME_KIDS.map(s=>s[0]),
+  bigslime:{name:"Great Slime",hp:95,art:"slime",artO:{crown:true,fierce:true,tint:"#5aa61f"},elite:true,huge:true,split:SLIME_KIDS.map(s=>s[0]),
     moves:[[{k:"atk",v:13}],[{k:"tile",d:"slimy",n:3},{k:"blk",v:10}],[{k:"atk",v:8},{k:"pdeb",s:"weaken",v:1}],[{k:"atk",v:18,heavy:true}]]},
   sporeling:{name:"Sporeling",hp:14,art:"sporeling",minion:true,moves:[[{k:"atk",v:4}],[{k:"tile",d:"poison",n:1}],[{k:"atk",v:5}]]},
 });
 for(const [id,nm,col] of SLIME_KIDS) ENEMIES[id]={name:nm,hp:16,art:"slime",artO:{tint:col},minion:true,moves:[[{k:"atk",v:4},{k:"blk",v:3}],[{k:"tile",d:"poison",n:1}],[{k:"atk",v:6}]]};
-Object.assign(ENC_W,{thornbloom:220,bigslime:330,sporeling:130,slime_g:150,slime_b:150,slime_p:150,slime_o:150,slime_v:150});
+Object.assign(ENC_W,{thornbloom:220,bigslime:560,sporeling:130,slime_g:150,slime_b:150,slime_p:150,slime_o:150,slime_v:150});
 Object.assign(MON_LORE,{thornbloom:"A bramble bush that grew a face, and a temper. Its pollen frustrates your letters.",
   bigslime:"The slime that ate all the other slimes. Hit it hard enough and it remembers it was five of them.",
   sporeling:"One of Mother Mycelia's children. Small, angry, and poisonous.",
