@@ -100,7 +100,7 @@
     },
     {
       "id": "mirror",
-      "name": "Mirror Ward",
+      "name": "Spike Shield",
       "source": "weapon_altar",
       "kind": "defense",
       "energyCost": 1,
@@ -208,7 +208,7 @@
       "source": "starter:champion",
       "kind": "attack",
       "energyCost": 2,
-      "critLength": 3,
+      "critLength": 5,
       "mult": 1,
       "effect": "Deal damage. Each swing costs you 3 HP.",
       "critEffect": "+1 Spell Power for every 2 HP you are missing.",
@@ -275,11 +275,11 @@
       "source": "weapon_altar",
       "kind": "attack",
       "energyCost": 1,
-      "critLength": 5,
+      "critLength": 9,
       "mult": 1,
-      "effect": "Deal damage equal to 100% of your current Shield (the word itself only needs to be valid).",
-      "critEffect": "Also add the word's output to the damage.",
-      "formula": "damage = current Shield (crit: + output)",
+      "effect": "Deal damage equal to 50% of your current Shield plus the word's output.",
+      "critEffect": "Stun the target: it skips its next turn.",
+      "formula": "damage = output + floor(Shield/2); crit: target stun +1",
       "shopPrice": 120
     }
   ]

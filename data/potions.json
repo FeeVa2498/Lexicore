@@ -35,7 +35,7 @@
     {
       "id": "purge",
       "name": "Purge Salts",
-      "description": "Cleanse all tile debuffs and your Poison.",
+      "description": "Cleanse every debuff from the tiles in your hand.",
       "usableOutsideCombat": false,
       "passive": false
     },
@@ -98,7 +98,7 @@
     {
       "id": "shout",
       "name": "Battle Cry",
-      "description": "Add 3 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full).",
+      "description": "Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full).",
       "usableOutsideCombat": false,
       "passive": false
     },

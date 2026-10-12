@@ -6,7 +6,8 @@
     "Rival's Banner (boss relic) gives every enemy +2 Might at combat start.",
     "Enemy Thorns (Needle Hog, Tesla Jelly): every hit of an attack word on that enemy deals its Thorns to the player (Shield absorbs). Enemy Thorns last the whole fight.",
     "Enemy Shield clears for every enemy at the start of the enemy phase, so Shield given by an ally lasts through the player's next turn.",
-    "Support actions (allyBlock, allyBuff, allyHeal) target allies; with no living ally they target the enemy itself."
+    "Support actions (allyBlock, allyBuff, allyHeal) target allies; with no living ally they target the enemy itself.",
+    "Multi-hit attacks ('hits': N) are N separate attacks: Shield, Thorns and 'hit from behind' apply per hit."
   ],
   "enemies": [
     {
@@ -65,7 +66,8 @@
           "actions": [
             {
               "type": "attack",
-              "value": 9
+              "value": 5,
+              "hits": 2
             }
           ]
         },
@@ -481,7 +483,8 @@
           "actions": [
             {
               "type": "attack",
-              "value": 15
+              "value": 5,
+              "hits": 3
             }
           ]
         },
@@ -584,7 +587,8 @@
           "actions": [
             {
               "type": "attack",
-              "value": 20
+              "value": 7,
+              "hits": 3
             }
           ]
         },
@@ -869,7 +873,8 @@
           "actions": [
             {
               "type": "attack",
-              "value": 26
+              "value": 9,
+              "hits": 3
             }
           ]
         }
@@ -1326,18 +1331,18 @@
           "turn": 3,
           "actions": [
             {
-              "type": "attack",
-              "value": 6
+              "type": "buff",
+              "status": "thorns",
+              "value": 3
             },
             {
-              "type": "tileDebuff",
-              "debuff": "poison",
-              "count": 2
+              "type": "attack",
+              "value": 5
             }
           ]
         }
       ],
-      "lore": "A bramble bush that grew a face, and a temper. Its pollen frustrates your letters."
+      "lore": "A bramble bush that grew a face, and a temper. Its pollen poisons your letters, and it grows thorns when cornered."
     },
     {
       "id": "bigslime",
@@ -1430,13 +1435,15 @@
           "turn": 3,
           "actions": [
             {
-              "type": "attack",
-              "value": 5
+              "type": "selfDestruct",
+              "status": "poison",
+              "value": 6,
+              "note": "applies the status to the player, then this enemy dies"
             }
           ]
         }
       ],
-      "lore": "One of Mother Mycelia's children. Small, angry, and poisonous.",
+      "lore": "One of Mother Mycelia's children. Small, angry, and poisonous. If you leave it alone too long it bursts into a cloud of spores.",
       "minion": true
     },
     {
@@ -2069,7 +2076,8 @@
           "actions": [
             {
               "type": "attack",
-              "value": 16
+              "value": 6,
+              "hits": 3
             }
           ]
         },

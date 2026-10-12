@@ -10,15 +10,15 @@
       "id": "r1",
       "name": "Twin Moons",
       "category": "mult",
-      "description": "+0.5 Arcana if word length is even.",
-      "multFormulaJS": "c=>c.L.length%2===0?.5:0"
+      "description": "+0.7 Arcana if word length is even.",
+      "multFormulaJS": "c=>c.L.length%2===0?.7:0"
     },
     {
       "id": "r2",
       "name": "Odd Fang",
       "category": "mult",
-      "description": "+0.5 Arcana if word length is odd.",
-      "multFormulaJS": "c=>c.L.length%2===1?.5:0"
+      "description": "+0.7 Arcana if word length is odd.",
+      "multFormulaJS": "c=>c.L.length%2===1?.7:0"
     },
     {
       "id": "r3",
@@ -31,15 +31,15 @@
       "id": "r4",
       "name": "Vowel Prism",
       "category": "mult",
-      "description": "+0.25 Arcana per unique vowel.",
-      "multFormulaJS": "c=>.25*new Set(vowelsOf(c.L)).size"
+      "description": "+0.45 Arcana per unique vowel.",
+      "multFormulaJS": "c=>.45*new Set(vowelsOf(c.L)).size"
     },
     {
       "id": "r5",
       "name": "Consonant Coil",
       "category": "mult",
-      "description": "+0.2 Arcana per unique consonant.",
-      "multFormulaJS": "c=>.2*new Set(consOf(c.L)).size"
+      "description": "+0.4 Arcana per unique consonant.",
+      "multFormulaJS": "c=>.4*new Set(consOf(c.L)).size"
     },
     {
       "id": "r6",
@@ -52,8 +52,8 @@
       "id": "r7",
       "name": "Lone Wolf Seal",
       "category": "mult",
-      "description": "+0.5 Arcana if no letter repeats.",
-      "multFormulaJS": "c=>c.L.length>1&&new Set(c.L).size===c.L.length?.5:0"
+      "description": "+0.7 Arcana if no letter repeats.",
+      "multFormulaJS": "c=>c.L.length>1&&new Set(c.L).size===c.L.length?.7:0"
     },
     {
       "id": "r8",
@@ -66,8 +66,8 @@
       "id": "r9",
       "name": "Heavy Ink",
       "category": "mult",
-      "description": "+0.4 Arcana per played tile with Spell Power ≥ 5.",
-      "multFormulaJS": "c=>.4*c.sp.filter(v=>v>=5).length"
+      "description": "+0.6 Arcana per played tile with Spell Power ≥ 5.",
+      "multFormulaJS": "c=>.6*c.sp.filter(v=>v>=5).length"
     },
     {
       "id": "r10",
@@ -87,29 +87,29 @@
       "id": "r12",
       "name": "Ledger Stone",
       "category": "mult",
-      "description": "+0.75 Arcana if total base Spell Power ≥ 15.",
-      "multFormulaJS": "c=>c.sp.reduce((a,b)=>a+b,0)>=15?.75:0"
+      "description": "+0.95 Arcana if total base Spell Power ≥ 15.",
+      "multFormulaJS": "c=>c.sp.reduce((a,b)=>a+b,0)>=15?.95:0"
     },
     {
       "id": "r13",
       "name": "Heart Vowel",
       "category": "mult",
-      "description": "+0.75 Arcana if the exact middle letter is a vowel.",
-      "multFormulaJS": "c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?.75:0"
+      "description": "+0.95 Arcana if the exact middle letter is a vowel.",
+      "multFormulaJS": "c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?.95:0"
     },
     {
       "id": "r14",
       "name": "Dawn Glyph",
       "category": "mult",
-      "description": "+0.5 Arcana if word starts with A–F.",
-      "multFormulaJS": "c=>/^[A-F]/.test(c.L)?.5:0"
+      "description": "+0.7 Arcana if word starts with A–F.",
+      "multFormulaJS": "c=>/^[A-F]/.test(c.L)?.7:0"
     },
     {
       "id": "r15",
       "name": "Dusk Glyph",
       "category": "mult",
-      "description": "+0.5 Arcana if word ends with T–Z.",
-      "multFormulaJS": "c=>/[T-Z]$/.test(c.L)?.5:0"
+      "description": "+0.7 Arcana if word ends with T–Z.",
+      "multFormulaJS": "c=>/[T-Z]$/.test(c.L)?.7:0"
     },
     {
       "id": "r16",
@@ -293,14 +293,14 @@
       "id": "dripper",
       "name": "Insomnia Lamp",
       "category": "boss",
-      "description": "Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites.",
+      "description": "Boss relic. Gain 1 extra Energy every turn. Resting at a Rest Site heals only 15% of your Max HP (instead of 30%).",
       "extraEnergyPerTurn": 1
     },
     {
       "id": "sozu",
       "name": "Cracked Flask",
       "category": "boss",
-      "description": "Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions.",
+      "description": "Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP.",
       "extraEnergyPerTurn": 1
     },
     {
@@ -314,7 +314,7 @@
       "id": "philo",
       "name": "Rival's Banner",
       "category": "boss",
-      "description": "Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might.",
+      "description": "Boss relic. Gain 1 extra Energy every turn. You start every combat with 1 Broken.",
       "extraEnergyPerTurn": 1
     },
     {
@@ -327,15 +327,15 @@
       "id": "nametag",
       "name": "Name Tag",
       "category": "mult",
-      "description": "+0.5 Arcana for every noun you cast.",
-      "multFormulaJS": "c=>posOf(c.L)&1?.5:0"
+      "description": "+0.7 Arcana for every noun you cast.",
+      "multFormulaJS": "c=>posOf(c.L)&1?.7:0"
     },
     {
       "id": "actionfig",
       "name": "Action Figure",
       "category": "mult",
-      "description": "+0.75 Arcana for every verb you cast.",
-      "multFormulaJS": "c=>posOf(c.L)&2?.75:0"
+      "description": "+0.95 Arcana for every verb you cast.",
+      "multFormulaJS": "c=>posOf(c.L)&2?.95:0"
     },
     {
       "id": "moodring",
@@ -421,8 +421,8 @@
       "id": "lens",
       "name": "Cracked Lens",
       "category": "mult",
-      "description": "+0.5 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",
-      "multFormulaJS": "c=>.5*(c.deb||0)"
+      "description": "+0.7 Arcana for every debuffed tile in the word.",
+      "multFormulaJS": "c=>.7*(c.deb||0)"
     },
     {
       "id": "nail",
@@ -1072,13 +1072,13 @@
       "id": "sandbag",
       "name": "Sandbag",
       "category": "common",
-      "description": "Every word of 6+ letters you cast also gives you 5 Shield."
+      "description": "Every word of 6+ letters you cast also gives you 10 Shield."
     },
     {
       "id": "umbrella",
       "name": "Umbrella",
       "category": "common",
-      "description": "Every word that starts with a vowel also gives you 3 Shield."
+      "description": "Every word that starts with a vowel also gives you 8 Shield."
     },
     {
       "id": "snakecharm",

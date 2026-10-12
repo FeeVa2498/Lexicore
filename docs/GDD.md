@@ -270,6 +270,8 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Enemy Shield timing**: every enemy's Shield clears at the start of the enemy phase (not at the start of each enemy's own move), so Shield given by an ally always protects through the player's next turn.
 - **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
+- **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
+- **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **6 Poison** on the hero, and dies (no gold). Kill them early or cleanse the Poison.
 - **Layered Armor (Junkyard Knight, Act 2 Elite)**: the knight starts with 8 layers of scrap plating and bolts on 4 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
@@ -308,7 +310,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 |---|---|---|---|---|---|---|
 | **Spellbook** | Scholar | attack | 2 | 5 | Deal damage. | Inflict Broken 2 on the target (+50% damage taken). |
 | **Barrier** | Scholar | defense | 1 | 4 | Gain Shield. | Draw 3 tiles. |
-| **Greatsword** | Champion | attack | 2 | 3 | Deal damage. Each swing costs you 3 HP. | +1 Spell Power for every 2 HP you are missing. |
+| **Greatsword** | Champion | attack | 2 | 5 | Deal damage. Each swing costs you 3 HP. | +1 Spell Power for every 2 HP you are missing. |
 | **Dumbbell** | Champion | buff | 1 | 2 | Gain Might equal to output × 0.1 (rounded down, min 1). | Heal HP equal to 2 × your Might. |
 | **Parrying Dagger** | Mercenary | attack | 1 | 3 | Deal damage. | Also gain Shield equal to the output. |
 | **Utility Belt** | Mercenary | utility | 1 | 4 | Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power. | Refund 1 Energy. |
@@ -319,7 +321,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 |---|---|---|---|---|---|
 | **Flame Lance** | attack | 2 | 6 | Deal damage to the target. | The flames hit ALL enemies. |
 | **War Drum** | buff | 1 | 4 | Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat. | Gain double the Might. |
-| **Mirror Ward** (icon: round spiked shield) | defense | 1 | 5 | Gain Shield. | Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage. |
+| **Spike Shield** (was Mirror Ward; icon: round spiked shield) | defense | 1 | 5 | Gain Shield. | Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage. |
 | **Venom Quill** | poison | 1 | 4 | Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1. | Poison ALL enemies. |
 | **Healing Censer** | heal | 2 | 5 | Heal HP equal to output ÷ 4 (min 1). | Heal twice as much. |
 | **Seeker's Lantern** | draw | 1 | 3 | Draw 1 tile per 6 output (min 1, max 5). | The drawn tiles become Level 2 for this combat. |
@@ -327,7 +329,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Cleansing Bell** | cleanse | 1 | 4 | Remove every debuff from the tiles in your hand, and gain Shield equal to output ÷ 2. | Also remove all of YOUR debuffs (Poison, Weaken, Broken, Frustrated, Curse). |
 | **Sand Hourglass** | store | 1 | 5 | Store time: next turn you get +1 Energy, +1 more per 12 output (max +3). | Next turn you also draw 3 extra tiles. |
 | **Boomerang** | attack | 2 | 4 | Deal damage. The tiles you used fly back into your hand. Your hand holds at most 16 tiles; extra tiles you would draw are discarded. | It hits a second time for half damage. |
-| **Shield Slam** | attack | 1 | 5 | Deal damage equal to **100% of your current Shield**. The word only has to be valid; its output doesn't count. Shield is not spent. | Also add the word's output. |
+| **Shield Slam** | attack | 1 | 9 | Deal damage equal to **50% of your current Shield + the word's output** (Shield is not spent). | **Stun** the target: it skips its next turn. |
 | **Midas Touch** | attack | 2 | 4 | Deal damage, plus 1 extra damage for every 10 gold you hold (added after Mult: `output + floor(gold/10)`). | The gold bonus is doubled. |
 
 ### 6.3 Implemented but not obtainable
@@ -401,21 +403,21 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Relic | Effect |
 |---|---|
-| **Twin Moons** | +0.5 Mult if word length is even. |
-| **Odd Fang** | +0.5 Mult if word length is odd. |
+| **Twin Moons** | +0.7 Mult if word length is even. |
+| **Odd Fang** | +0.7 Mult if word length is odd. |
 | **Ouroboros Loop** | +1.5 Mult if first letter matches last letter. |
-| **Vowel Prism** | +0.25 Mult per unique vowel. |
-| **Consonant Coil** | +0.2 Mult per unique consonant. |
+| **Vowel Prism** | +0.45 Mult per unique vowel. |
+| **Consonant Coil** | +0.4 Mult per unique consonant. |
 | **Mirror Shard** | +1 Mult per pair of adjacent identical letters. |
-| **Lone Wolf Seal** | +0.5 Mult if no letter repeats. |
+| **Lone Wolf Seal** | +0.7 Mult if no letter repeats. |
 | **Triad Totem** | +2.5 Mult if one letter appears 3+ times. |
-| **Heavy Ink** | +0.4 Mult per played tile with Spell Power ≥ 5. |
+| **Heavy Ink** | +0.6 Mult per played tile with Spell Power ≥ 5. |
 | **Pebble Charm** | +1 Mult if ALL played tiles have Spell Power ≤ 4. |
 | **Long Scroll** | +2 Mult if word is 7+ letters. |
-| **Ledger Stone** | +0.75 Mult if total base Spell Power ≥ 15. |
-| **Heart Vowel** | +0.75 Mult if the exact middle letter is a vowel. |
-| **Dawn Glyph** | +0.5 Mult if word starts with A–F. |
-| **Dusk Glyph** | +0.5 Mult if word ends with T–Z. |
+| **Ledger Stone** | +0.95 Mult if total base Spell Power ≥ 15. |
+| **Heart Vowel** | +0.95 Mult if the exact middle letter is a vowel. |
+| **Dawn Glyph** | +0.7 Mult if word starts with A–F. |
+| **Dusk Glyph** | +0.7 Mult if word ends with T–Z. |
 | **Open Mouth** | +1.5 Mult if word starts and ends with vowels. |
 | **Choir Bell** | +1.5 Mult if vowels outnumber consonants. |
 
@@ -423,8 +425,8 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Relic | Arcana |
 |---|---|
-| **Name Tag** | +0.5 for every noun you cast |
-| **Action Figure** | +0.75 for every verb you cast |
+| **Name Tag** | +0.7 for every noun you cast |
+| **Action Figure** | +0.95 for every verb you cast |
 | **Mood Ring** | +1 for every adjective you cast |
 | **Swear Jar** | Swear words count as real words (even ones missing from the dictionary, e.g. DUMBASS), and every swear word gives +2. Also applies to the censored easter-egg spellings (FVCK, SH!T…). The list is `SWEARS` in code: profanity only, no slurs. |
 | **Field Guide** | +1 for every word that is an animal (`ANIMALS` list, ~260 words; plurals like WOLVES, MICE count). |
@@ -432,7 +434,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Paint Chart** | +1.5 for every word that is a colour (`COLORS` list, ~80 words). |
 | **Monocle** | Casting a **single tile** (U, A!, Z!!) gets +3 Mult (normally single tiles get no relics). |
 | **Parrot** | +2 if you cast exactly the same word(s) as your previous cast (`G.lastWord`). |
-| **Cracked Lens** | +0.5 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
+| **Cracked Lens** | +0.7 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
 
 Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as one character per dictionary word (bit mask: 1 noun, 2 verb, 4 adjective; inflections like CATS, RUNNING, HAPPIER, STOPPED are matched to their base word). A word can be several types at once (RUN = noun + verb), and then every matching relic fires.
 
@@ -471,8 +473,8 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Megaphone** | Each [ ! ] in an attack word counts as one more attack for per-attack effects: Chalk Tally's count and Rusty Nail's Poison (CAT!! = 3 attacks). |
 | **Paper Cut** | Every tile you draw **during** your turn (Quick Gloves, Barrier crit, Ink of Plenty, green paint…) deals 1 damage to a random enemy. The start-of-turn refill doesn't count. |
 | **Laminator** | Letter tiles you add to your deck (fight rewards, shop, claw machine) become Level 2. |
-| **Sandbag** | Every word of 6+ letters you cast also gives 5 Shield (halved by Weaken). |
-| **Umbrella** | Every word that starts with a vowel also gives 3 Shield. |
+| **Sandbag** | Every word of 6+ letters you cast also gives 10 Shield (halved by Weaken). |
+| **Umbrella** | Every word that starts with a vowel also gives 8 Shield. |
 | **Snake Charm** | Every word containing S or Z also inflicts 2 Poison on the target. |
 | **Protein Bar** | Every word with a double letter (LL, OO, SS…) also gives +1 Might. |
 | **Bounty Poster** | Elites start combat with 25% less HP (max HP too). |
@@ -485,10 +487,10 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | Relic | Effect |
 |---|---|
 | **Hollow Coin** | Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold. |
-| **Insomnia Lamp** | Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites. |
-| **Cracked Flask** | Boss relic. Gain 1 extra Energy every turn. You can no longer obtain potions. |
+| **Insomnia Lamp** | Boss relic. Gain 1 extra Energy every turn. Resting at a Rest Site heals only 15% of your Max HP (instead of 30%). |
+| **Cracked Flask** | Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP (can't drop you below 1). |
 | **Dry Palette** | Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile. |
-| **Rival's Banner** | Boss relic. Gain 1 extra Energy every turn. ALL enemies start combat with 2 Might. |
+| **Rival's Banner** | Boss relic. Gain 1 extra Energy every turn. You start every combat with 1 Broken. |
 | **Hoarder's Satchel** | Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16. |
 
 ---
@@ -498,7 +500,8 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 - 3 slots by default (+2 with Bottle Rack). Potions cost no Energy and can be used at any point in the player's turn.
 - Clicking a potion opens a small menu: **Use** or **Discard** (to free the slot). Hovering shows a tooltip with its effect.
 - Sources: Elites always drop one, normal fights 50%, shop (3 for sale), wordle consolation, wheel.
-- With Cracked Flask (boss relic) potions can't be obtained.
+- With Cracked Flask (boss relic) every potion you drink costs 10 HP.
+- **Using a potion**: click it and a small menu opens right next to the cursor with **Use** and **Discard** (like Slay the Spire). Click elsewhere or press Esc to close it.
 
 | Potion | Effect | Outside combat |
 |---|---|---|
@@ -506,7 +509,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Volatile Flask** | Deal 20 damage to the target (×Act number). | No |
 | **Iron Tonic** | Gain 15 Shield (×Act number). | No |
 | **Mighty Brew** | Gain 3 Might (+2 per Act after the first). | No |
-| **Purge Salts** | Cleanse all tile debuffs and your Poison. | No |
+| **Purge Salts** | Cleanse every debuff from the tiles **in your hand** (not your own Poison). | No |
 | **Ink of Plenty** | Draw 5 tiles. | No |
 | **Phoenix Feather** | Keep it in a slot. When you would die, it burns and brings you back with 30% HP. It can't be drunk. | Passive |
 | **Energy Tonic** | Gain 2 Energy. | No |
@@ -515,7 +518,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Blast Jar** | Deal 12 damage to ALL enemies (+6 per Act after the first). | No |
 | **Shatter Draught** | Inflict Broken 3 on ALL enemies (+50% damage taken). | No |
 | **Jester's Brew** | Add 2 Fragile [ ? ] Wildcard tiles to your hand (or your discard pile if your hand is full). | No |
-| **Battle Cry** | Add 3 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full). | No |
+| **Battle Cry** | Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full). | No |
 | **Vanishing Powder** | Escape a normal or Elite fight. You get no reward. Doesn't work on bosses. | No |
 | **Ancient Fruit** | Raise your Max HP by 5 and heal 5. Usable anywhere. | Yes |
 | **Echo Draught** | The next word you cast this turn has its output doubled. | No |
@@ -533,7 +536,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 
 Note: the "+1 Energy on turn 1" relic is **Spark Plug** and the "+Energy on turn 3" relic is **Wind-up Key** (every 3rd turn).
 
-Note: "upgrade every tile in hand" is **Clarity Draught** and "cleanse the tiles in hand" is **Purge Salts** (it cleanses every tile in the combat and your Poison).
+Note: "upgrade every tile in hand" is **Clarity Draught** and "cleanse the tiles in hand" is **Purge Salts**.
 
 ---
 
@@ -584,7 +587,7 @@ Two random weapons from the altar pool (never one the hero already owns, never a
 ### 11.3 Rest Site (Campsite; Recharge Bay in Act 4)
 
 Choose one:
-1. **Rest**: heal 30% of max HP (+15 with Sleeping Bag). Disabled by Insomnia Lamp.
+1. **Rest**: heal 30% of max HP (+15 with Sleeping Bag); only 15% with Insomnia Lamp.
 2. **Upgrade**: one letter tile becomes Level 2.
 
 Act 4 replaces the tent and campfire with a charging pod and a futuristic heater.
@@ -609,19 +612,19 @@ Pick 1 of 3 random relics, or skip.
 
 | Event | Rules | Rewards |
 |---|---|---|
-| **Word Terminal** (wordle) | Guess a 5-letter word in 6 tries (green/yellow/grey feedback; no hint). | Win: a relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard). Lose: a random potion. |
+| **The Word Stone** (wordle; the grid is carved into a rune-topped stone tablet) | Guess a 5-letter word in 6 tries (green/yellow/grey feedback; no hint). | Win: a relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard). Lose: a random potion. |
 | **Claw Machine** | Physics claw with swing momentum; 5 grabs. Arrow keys/A–D to move, Space to drop. | 42 coins (1 gold each), 6 tiles (special 12%, painted 65%, Level 2 25%), 1 relic. |
 | **Wheel of Fortune** | One spin, 6 equal slices. | Relic · Potion · Heal 15 · random tile → Level 2 · paint a random unpainted tile · **Zap −10 HP** |
 | **The Painter** | The Painter Bot brings one random paint colour. The player picks **up to 5 tiles from the deck** to paint (replaces old paint). **Reroll the colour** for 25 gold; every reroll in the run costs 25 more (25 → 50 → 75 …, `G.paintReroll`). Leaving without painting is allowed. | Up to 5 painted tiles |
 
-**Every event has an NPC** standing at the bottom-left with a speech bubble (random line). In Act 4 they are replaced by robot versions (box body on one wheel, CRT-screen face in teal line art, robotic lines in a typewriter font).
+**Every event has an NPC** standing right next to its machine (wheel, claw cabinet, word stone, paint grid) with a speech bubble (random line). In Act 4 they are replaced by robot versions (box body on one wheel, CRT-screen face in teal line art, robotic lines in a typewriter font).
 
 | Event | NPC (Acts 1–3) | Act 4 robot |
 |---|---|---|
 | Wheel of Fortune | **Lucky the Fox**: game-show host, sparkly purple tuxedo, gold bow tie, microphone | LUCKY-BOT (fox ears drawn on its screen) |
 | Word Terminal | **Professor Hoot**: owl in round glasses and a graduation cap, holding a book | HOOT-OS (owl eyes on its screen) |
 | Claw Machine | **Croaky**: frog in a red arcade vest and blue cap, cup of tokens | CROAK-3000 (frog eyes and smile on its screen) |
-| The Painter | **Painter Bot** (already a robot: teal box head, brush, bucket in the current colour) | same |
+| The Painter | **Bushy the Squirrel**: orange squirrel in a beret holding a palette; she paints with her huge bushy tail, whose tip is dipped in the current colour | BUSHY-BOT (squirrel ears and buck teeth on its screen) |
 
 **Arcade Token** (relic): every "?" node becomes the Claw Machine, with only **2 tries**, but the claw is a **magnet**: when it closes it pulls in every coin, tile and relic within 150 px and nothing slips loose.
 
@@ -679,11 +682,11 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 |---|---|---|---|---|
 | **Training Slime** | Tutorial | tutorial | 30 | Atk 3 → Block 4 + Atk 3 → Atk 4 |
 | **Green Slime** | 1 | normal | 40 | Atk 7 + Block 6 → Slimy×4 tiles → Atk 10 |
-| **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×4 tiles → Atk 11 |
+| **Gloom Bat** | 1 | normal | 32 | Atk 5×2 → Frustrate×4 tiles → Atk 11 |
 | **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×3 tiles → Atk 12 |
-| **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → Atk 6 + Poison×2 tiles |
+| **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → +3 Thorns + Atk 5 |
 | **Needle Hog** | 1 | normal | 36 | +2 Thorns + Block 6 → Atk 8 → Atk 5 + Poison×3 tiles |
-| **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → Atk 5 |
+| **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → **Self-destruct: 6 Poison to you** |
 | **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×3 tiles → Atk 6 |
 | **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×3 tiles → Atk 6 |
 | **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Frustrate×3 tiles → Atk 6 |
@@ -696,11 +699,11 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×6 tiles → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
 | **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×4 tiles + Atk 7 |
 | **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×3 tiles |
-| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 15 → Atk 7 + Frustrate×3 tiles |
+| **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 5×3 → Atk 7 + Frustrate×3 tiles |
 | **Boombox Baboon** | 2 | normal | 50 | **+2 Might to all** → Atk 9 + Frustrate×3 tiles → Atk 12 |
 | **Riot Turtle** | 2 | normal | 64 | **Shield allies 12** → Atk 9 + Block 8 → **Shield allies 10** + Lock×3 tiles |
 | **Junkyard Knight** | 2 | elite | 150 | Starts with **8 Layered Armor** · **Bolt On**: +4 Layered Armor + 2 Might → **Shield Bash**: Atk 23 → **Road Closed**: Condemn×5 tiles + Atk 13 → **STOP!**: Atk 31! |
-| **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×6 tiles + Weaken 2 → Atk 27! |
+| **Hazmat Mantis** | 2 | elite | 135 | Atk 7×3 → Poison×6 tiles + Weaken 2 → Atk 27! |
 | **Scrapipede Head** | 2 | elite | 58 | Atk 12 → Lock×5 tiles + Atk 6 → Atk 17! |
 | **Scrapipede Body** | 2 | elite | 58 | **Shield allies 10** → Atk 9 → Condemn×4 tiles + Block 8 |
 | **Scrapipede Tail** | 2 | elite | 58 | Atk 7 + Weaken 1 → Atk 11 → Broken 1 + Atk 5 |
@@ -708,14 +711,14 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×4 tiles → **Crush**: Atk 21! |
 | **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×3 tiles + Atk 9 |
 | **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×5 tiles + Block 19 → Atk 14 + Frustrate×3 tiles |
-| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×4 tiles → Lock×4 tiles + Block 15 → Atk 26 |
+| **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×4 tiles → Lock×4 tiles + Block 15 → Atk 9×3 |
 | **Cyber Moth** | 3 | normal | 85 | Slimy×5 tiles + Atk 10 → Atk 17 → Atk 24 |
 | **Tesla Jelly** | 3 | normal | 72 | +3 Thorns + Block 12 → Atk 17 → Atk 9 + Burn×4 tiles |
 | **Patch Bot** | 3 | normal | 70 | **Repair allies 12 HP** + **Shield allies 6** → Atk 11 + Slimy×4 tiles → **Shield allies 15** |
 | **Warden Unit** | 3 | elite | 225 | Block 38 → Atk 34 → Lock×6 tiles + Weaken 2 → Atk 42! |
 | **Escaped Prisoner Alpha** | 3 | elite | 205 | +5 Might + Block 17 → Atk 27 → Condemn×5 tiles + Atk 17 |
 | **Mind Jar** | 3 | elite | 86 | **+2 Might to all** → Atk 9 + Frustrate×4 tiles → **+2 Might to all** + Block 10 |
-| **Rage Jar** | 3 | elite | 86 | Atk 16 → Atk 10 + Frustrate×5 tiles → Atk 22! |
+| **Rage Jar** | 3 | elite | 86 | Atk 6×3 → Atk 10 + Frustrate×5 tiles → Atk 22! |
 | **Ward Jar** | 3 | elite | 86 | **Shield allies 14** → Atk 11 → **Shield allies 10** + Weaken 2 |
 | **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×6 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Curse×3 tiles + Atk 12 → **Annihilate**: Atk 38! |
 | **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×6 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Atk 14 → **Overcharge**: Atk 40! |
@@ -826,6 +829,15 @@ Splash/menu → character select → map → combat → reward → shop → rest
 
 ---
 
+### 15.3 Combat UI details (latest)
+
+- **Sigil bar**: a dark slate "rune bar" with brass rivets in the corners and a glowing teal trough where the tiles go (empty slots are dashed teal sockets). Weapon name in gold, sigil/target info in teal.
+- **Hand sort button** (top-right corner of the hand): 1st click sorts by Spell Power (high → low), 2nd click A–Z (letters before symbols); clicking again toggles. Buffed or debuffed tiles (painted, Level 2, Fortified, Fragile, any tile debuff) always come first. The order stays sorted as new tiles are drawn.
+- **Potion menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
+- **Weapon Altar**: after pulling a weapon, the result card and the **Go!** button are pinned to the bottom of the screen (no scrolling).
+- **Main menu**: no tagline under the logo and no tooltip on the Tower.
+- **Glossary**: the LEXICORE page is temporarily unlocked for testing (`TEST_UNLOCK_LEXICORE_GLOSSARY`, set to false before release; normally it unlocks after reaching Act 4).
+
 ## 16. Art direction
 
 - **Crayon style**: every shape is a crayon fill (noise-masked texture) plus a wobbly ink outline (SVG turbulence displacement). Backgrounds use the same treatment.
@@ -912,7 +924,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 ## 20. Open issues and recommended next steps
 
 1. **"Arcana" vs "Mult"**: relic descriptions and a few tips still say "Arcana". Unify to **Mult**.
-2. **Robust is weak for heroes without defense weapons**: blue paint (+1 Robust) does nothing for The Champion and for The Mercenary without Mirror Ward. Options: Robust also adds to every Shield gain (incl. Parrying Dagger crits), or blue paint gives +2 Shield directly.
+2. **Robust is weak for heroes without defense weapons**: blue paint (+1 Robust) does nothing for The Champion and for The Mercenary without Spike Shield. Options: Robust also adds to every Shield gain (incl. Parrying Dagger crits), or blue paint gives +2 Shield directly.
 3. **Unused weapons**: Needle, Bulwark, Hammer exist but can't be obtained (Bulwark's crit gives Robust, so it would need a rework under pillar 4).
 4. **Unused content**: a list of 28 riddles exists from an earlier event design; not used.
 5. **Balance is unverified** for the new content pack (Boomerang + Journal, Sand Hourglass, energy boss relics, Hoarder's Satchel). Run simulations/playtests.

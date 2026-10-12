@@ -95,6 +95,21 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+.potmenu{position:fixed;z-index:400;width:250px;background:#fffdf7;border:3px solid #1d1b22;border-radius:12px;padding:10px 12px;box-shadow:4px 5px 0 #1d1b22;display:grid;gap:7px;animation:rwfade .12s ease-out}
+.pm-name{font:20px var(--f-display)}.pm-d{font-size:15px;line-height:1.2}
+.pm-btn{font:18px var(--f-display);border:3px solid #1d1b22;border-radius:10px;padding:4px 10px;background:#f6e7c4;cursor:pointer;box-shadow:2px 3px 0 #1d1b22;text-align:left}
+.pm-btn.use{background:var(--orange);color:#fff;-webkit-text-stroke:4px #1d1b22;paint-order:stroke fill}.pm-btn:disabled{opacity:.45;cursor:not-allowed}
+.pm-btn:not(:disabled):hover{transform:translate(-1px,-1px)}
+.sortbtn{position:absolute;right:-6px;top:-18px;z-index:3;font:16px var(--f-display);background:#f6e7c4;border:3px solid #1d1b22;border-radius:10px;padding:1px 10px;box-shadow:2px 3px 0 #1d1b22;cursor:pointer}
+.sortbtn:hover{background:#ffe66d}
+.devrow{display:flex;align-items:flex-end;justify-content:center;gap:22px}
+.devrow .npcside{position:static;width:210px;flex:none}
+@media (max-width:900px){.devrow .npcside{width:110px}}
+#altardone:not([hidden]){position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:40;display:grid;justify-items:center;gap:6px;width:min(560px,92vw)}
+.wgrid.stele{position:relative;background:linear-gradient(160deg,#9a9ca6,#6c7385 70%,#5b6070);border:5px solid #1d1b22;border-radius:110px 110px 16px 16px;padding:58px 30px 24px;box-shadow:inset 0 0 0 5px rgba(255,255,255,.12),inset 0 -18px 30px rgba(0,0,0,.25),7px 9px 0 #1d1b22}
+.wgrid.stele .runes{position:absolute;left:0;right:0;top:20px;text-align:center;font-size:22px;letter-spacing:6px;color:#7ff3e4;text-shadow:0 0 8px #5fd4c4,0 0 2px #fff}
+.wgrid.stele .wcell{background:#4b4f5c;color:#e9f7ff;border-color:#23212b;box-shadow:inset 3px 3px 0 rgba(0,0,0,.35),inset -2px -2px 0 rgba(255,255,255,.08)}
+.wgrid.stele .wcell.g{background:#3f9d4b;box-shadow:0 0 10px #7fd34a,inset 0 0 0 2px #c3f06b}.wgrid.stele .wcell.y{background:#c8a24a;color:#1d1b22;box-shadow:0 0 10px #ffd166}.wgrid.stele .wcell.x{background:#2b2b33;color:#8d909b}
 .rwpop{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(20,16,28,.55);animation:rwfade .35s ease-out}
 @keyframes rwfade{from{opacity:0}to{opacity:1}}
 .rwbox{background:#fffdf7;border:4px solid #1d1b22;border-radius:18px;padding:22px 34px;display:grid;gap:12px;justify-items:center;max-width:min(640px,92vw);box-shadow:8px 8px 0 #1d1b22;animation:rwpop .45s cubic-bezier(.2,1.4,.4,1)}
@@ -176,8 +191,17 @@ body.f1 .art .fr.i1{display:inline}
 #energy .gem svg{width:100%;height:100%}
 #energy .gem b{position:absolute;inset:0;display:grid;place-items:center;font:38px var(--f-display);font-weight:400;color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill;padding-top:6px}
 #energy.empty .gem{filter:grayscale(.8) brightness(.85)}
-#sigilbox{left:470px;bottom:302px;width:470px;background:#fff8df;border:4px solid var(--ink);border-radius:18px 14px 20px 12px;padding:10px 12px 12px;
-  box-shadow:5px 6px 0 rgba(29,27,34,.85);display:grid;gap:8px;transition:opacity .2s, transform .2s;transform:rotate(-.6deg)}
+#sigilbox{left:470px;bottom:302px;width:470px;color:#f3ead8;border:4px solid var(--ink);border-radius:16px;padding:12px 16px 14px;
+  background:radial-gradient(circle at 12px 12px,#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at calc(100% - 12px) 12px,#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at 12px calc(100% - 12px),#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at calc(100% - 12px) calc(100% - 12px),#c8a24a 3.5px,transparent 4.5px),linear-gradient(180deg,#3d3850,#24202e 60%,#1d1a26);
+  box-shadow:inset 0 0 0 3px #5b5470,inset 0 2px 0 6px rgba(255,255,255,.04),5px 6px 0 rgba(29,27,34,.85),0 0 24px rgba(95,212,196,.18);display:grid;gap:8px;transition:opacity .2s, transform .2s}
+#sigilbox .sg-head b{color:#ffd166;-webkit-text-stroke:0}
+#sigilbox .sg-head span{color:#9fe6dc}
+#sigilbox .sg-tiles{border:3px solid #5fd4c4;background:linear-gradient(180deg,rgba(95,212,196,.06),rgba(95,212,196,.16));box-shadow:inset 0 0 16px rgba(95,212,196,.35),0 0 10px rgba(95,212,196,.25)}
+#sigilbox .sg-tiles .slot{border:2px dashed rgba(127,243,228,.55);background:rgba(0,0,0,.18)}
+#sigilbox .muted{color:#b9c3d0}
+#sigilbox .notes{color:#cfd8e3}
+#sigilbox kbd{background:#3d3850;color:#f3ead8;border-color:#7a7290}
+#sigilbox .calc b{color:#fff;-webkit-text-stroke:5px var(--ink);paint-order:stroke fill}
 #stage.zoomed #sigilbox,#stage.zoomed #energy{opacity:.08}
 .sg-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:18px}
 .sg-head b{font:21px var(--f-display);font-weight:400}
@@ -1340,7 +1364,8 @@ function intentHTML(e){
   const def=ENEMIES[e.id]; const mi=e.mi%def.moves.length; const move=def.moves[mi];
   const lines=[], kws=[];
   const parts = move.map(a=>{
-    if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}</b></span>`; }
+    if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.n>1?` <b>${a.n} times</b> (each hit is a separate attack)`:""}${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}${a.n>1?`×${a.n}`:""}</b></span>`; }
+    if(a.k==="boom"){ lines.push(`<b>self-destruct</b>, inflicting <b>${a.v} ${STATUS[a.s].n}</b> on you`); kws.push(a.s); return `<span class="ii">${SI.intentBoom}<b>${a.v}</b></span>`; }
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
@@ -1751,7 +1776,7 @@ function renderHUD(){
     <span class="hstat" title="Gold">${IC.coin}<b>${G.gold}</b></span>
     <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/${((G.map&&G.map.F)??MAP_FLOORS)+1}</span>
     <span class="row" style="gap:4px" title="Potions">${Array.from({length:maxPotions()},(_,i)=>{const p=G.potions[i];
-      return p?`<button class="pot full" ${potTip(p)} onclick="potionMenu(${i})" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" ${tipAttr("Empty potion slot")}></span>`}).join("")}</span>
+      return p?`<button class="pot full" ${potTip(p)} onclick="potionMenu(${i},event)" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" ${tipAttr("Empty potion slot")}></span>`}).join("")}</span>
     <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)}>${relicIcon(r)}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
     <span class="spacer"></span>
     <button class="btn small" onclick="showDeck()" title="View deck">${G.deck.length} tiles</button>
@@ -1819,7 +1844,7 @@ function showHelp(){
 }
 
 /* ================= POTIONS ================= */
-function addPotion(id){ if(hasR("sozu")){ toast("Cracked Flask: you can't hold potions."); return false; } if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
+function addPotion(id){ if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
 async function usePotion(i){
   const id=G.potions[i]; if(!id) return;
   const P=POTIONS[id];
@@ -1829,6 +1854,7 @@ async function usePotion(i){
   if(C && (C.busy||C.over)) return;
   if(C && !tg("potion")) return;
   G.potions.splice(i,1); snd("shield");
+  if(hasR("sozu")){ G.hp=Math.max(1,G.hp-10); flashRelics(["sozu"]); toast("Cracked Flask: −10 HP."); if(C&&$("#stage")){ const pc=center("p"); numPop(pc.x,pc.top+20,"-10",8,"#ff5a4e"); updateBar("p"); } }
   if(hasR("bird")){ G.hp=Math.min(G.maxHp,G.hp+5); flashRelics(["bird"]); }
   if(!C){ if(id==="bigheal"){ const h=Math.ceil(G.maxHp/2); G.hp=Math.min(G.maxHp,G.hp+h); toast(`Healed ${h} HP.`); renderHUD(); return; } if(id==="fruit"){ G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); toast("Max HP +5."); } else { const h=20+10*((G.act||1)-1); G.hp=Math.min(G.maxHp,G.hp+h); toast(`Healed ${h} HP.`); } renderHUD(); return; }
   C.busy=true; renderCombat(); log(`Used ${P.name}.`);
@@ -1839,14 +1865,14 @@ async function usePotion(i){
     case "fire": { const r=dealToEnemy(t,20*(G.act||1),{}); await strikeAnim("p","e"+t,r,{noLunge:true,colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); break; }
     case "iron": { const b=15*(G.act||1); C.p.block+=b; await guardAnim("p",b); break; }
     case "might": { const m=3+2*((G.act||1)-1); C.p.might+=m; await buffAnim("p",`+${m} Might`); break; }
-    case "purge": for(const u in C.t) if(C.t[u].deb) C.t[u].deb=null; C.p.poison=0; await healAnim("p",0,"Cleansed!"); break;
+    case "purge": for(const u of C.hand) if(C.t[u].deb) C.t[u].deb=null; await healAnim("p",0,"Hand cleansed!"); break;
     case "ink": draw(5); break;
     case "tonic": C.energy+=2; await buffAnim("p","+2 Energy"); break;
     case "pages": C.disc.push(...C.hand); C.hand=[]; draw(HAND_SIZE); await buffAnim("p","Fresh hand"); break;
     case "venom": { const n=8+4*((G.act||1)-1); C.es[t].poison+=n; await venomAnim([t],n,false,"Venom"); break; }
     case "bomb": { const n=12+6*((G.act||1)-1); for(let j=0;j<C.es.length;j++){ if(C.es[j].dead) continue; const r=dealToEnemy(j,n,{}); updateBar("e"+j); const c=center("e"+j); impact(c.x,c.y,r.dmg,{colors:["#ff7b00","#ffd000","#3d3a44","#fff"]}); numPop(c.x,c.top+10,`-${r.dmg}`,r.dmg,"#ffd000"); } snd("hit"); shake(18); await sleep(T_(700)); break; }
     case "brittle": C.es.forEach(e=>{ if(!e.dead) e.broken+=3; }); await skillAnim("p","e"+t,"Broken 3 to all"); break;
-    case "jester": case "shout": { const ch=id==="jester"?"?":"!", n=id==="jester"?2:3; for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; toHand(nt.uid); } flushOverflow(); await buffAnim("p",`+${n} [ ${ch} ]`); break; }
+    case "jester": case "shout": { const ch=id==="jester"?"?":"!", n=id==="jester"?2:5; for(let q=0;q<n;q++){ const nt={uid:G.uidN++,ch,lvl:1,paint:null,deb:null,fragile:true}; C.t[nt.uid]=nt; toHand(nt.uid); } flushOverflow(); await buffAnim("p",`+${n} [ ${ch} ]`); break; }
     case "smoke": C.over=true; C.busy=false; log("You vanish in a puff of smoke."); toast("You escaped!"); C=null; closeStage(); showMap(); return;
     case "fruit": G.maxHp+=5; G.hp=Math.min(G.maxHp,G.hp+5); await healAnim("p",5); break;
     case "echo": C.echo=true; await buffAnim("p","Next word ×2"); break;
@@ -1880,7 +1906,7 @@ function startCombat(group, kind, opt={}){
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
   if(opt.tut) C.tut={i:0,free:false,phase:null,ready:true};
   C.twin=group.includes("twinA");
-  if(hasR("philo")) C.es.forEach(e=>e.might+=2);
+  if(hasR("philo")) C.p.broken=(C.p.broken||0)+1;
   if(hasR("bounty")&&kind==="elite") C.es.forEach(e=>{ e.max=Math.ceil(e.max*.75); e.hp=Math.min(e.hp,e.max); });
   C.turnCasts=0; C.baseThorns=0;
   C.hpStart=G.hp;
@@ -2083,6 +2109,7 @@ async function cast(){
       if(wid==="sword"){ C.es[ti].broken+=2; log("Critical! Enemy is Broken for 2 turns."); }
       if(wid==="needle"){ C.es[ti].poison+=4; log("Critical! 4 Poison."); }
       if(wid==="hammer"){ log("Critical! The hammer smashes through block."); }
+      if(wid==="slam"&&C.es[ti].hp>0){ C.es[ti].stun=(C.es[ti].stun||0)+1; log("Critical! The target is Stunned."); }
     }
     await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
     if(await thornsBack(ti)) return;
@@ -2264,7 +2291,7 @@ async function enemyTurn(){
     if(stunned){ e.stun--; log(`${def.name} is stunned and skips its turn.`); const sc=center(key); numPop(sc.x,sc.top+10,"Stunned!",12,"#ffbe0b"); await sleep(T_(700)); }
     if(def.names&&!stunned){ log(`${def.name} uses ${def.names[mi]}.`); banner(def.names[mi],1100); await sleep(T_(500)); }
     for(const a of move){
-      if(a.k==="atk"){
+      if(a.k==="atk"){ for(let hit=0;hit<(a.n||1);hit++){
         let dmg=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
         const behind=C.twin&&C.target!==i; if(behind){ dmg*=2; banner("Hit from behind! ×2",900); }
         const res=hurtPlayer(dmg); log(`${def.name} attacks for ${dmg}${res.absorbed?` (${res.absorbed} blocked)`:""}.`);
@@ -2274,10 +2301,12 @@ async function enemyTurn(){
         if(G.hp<=0&&!undying()) return gameOver(def.name);
         medkitCheck();
         if(C.p.thorns>0){ const th=dealToEnemy(i,C.p.thorns,{pierce:true}); log(`Thorns deal ${th.dmg} back.`); updateBar(key); const c=center(key); impact(c.x,c.y,th.dmg,{colors:["#3a86ff","#bfe0ff","#fff"]}); numPop(c.x,c.top+10,`-${th.dmg}`,th.dmg,"#7fc0ff"); snd("hit"); await sleep(T_(700)); renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; if(e.dead) break; }
-      } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
+      } if(e.dead) break; } else if(a.k==="blk"){ e.block+=a.v; log(`${def.name} gains ${a.v} Block.`); snd("shield"); await guardAnim(key,a.v); }
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
       else if(a.k==="tile"){ const ch=applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); renderCombat(); await tileFlyFx(ch,`${TILE_DEBUFFS[a.d].name}!`); }
       else if(a.k==="summon"){ const n=await spawnEnemies(Array(a.n).fill(a.id)); i=C.es.indexOf(e); key="e"+i; log(n?`${def.name} summons ${n} ${ENEMIES[a.id].name}${n>1?"s":""}.`:`${def.name} tries to summon, but there is no room.`); }
+      else if(a.k==="boom"){ C.p[a.s]+=a.v; log(`${def.name} bursts! You are hit by ${a.v} ${STATUS[a.s].n}.`); const bc=center(key); particles(bc.x,bc.y,34,["#7fd34a","#c3f06b","#9b5de5","#3d3a44"],300,{size:16}); numPop(bc.x,bc.top,"BOOM!",20,"#7fd34a"); shake(16); snd("hit");
+        await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); e.hp=0; renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; break; }
       else if(a.k==="ablk"||a.k==="abuff"||a.k==="aheal"){ const tg=allyTargets(e,a);
         for(const o of tg){ if(a.k==="ablk") o.block+=a.v; else if(a.k==="abuff") o[a.s]=(o[a.s]||0)+a.v; else o.hp=Math.min(o.max,o.hp+a.v); }
         const nm=tg.length===1&&tg[0]===e?"itself":tg.map(o=>ENEMIES[o.id].name).join(", ");
@@ -2376,16 +2405,17 @@ function renderCombat(){
       <span class="cost ${wCost(id)<W.cost?"free":""}">${wCost(id)}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
   const pots = Array.from({length:maxPotions()},(_,i)=>{ const p=G.potions[i];
-    return p?`<button class="pslot" ${potTip(p)} onclick="potionMenu(${i})">${potionIcon(p)}</button>`:`<span class="pslot" ${tipAttr("Empty potion slot")}></span>`; }).join("");
+    return p?`<button class="pslot" ${potTip(p)} onclick="potionMenu(${i},event)">${potionIcon(p)}</button>`:`<span class="pslot" ${tipAttr("Empty potion slot")}></span>`; }).join("");
   const n=C.hand.length, cols=n>16?5:4, rows=Math.max(4,Math.ceil(n/cols));
   const rowh = Math.floor((262-24-(rows-1)*9)/rows);
   const fresh=new Set(C.fresh); C.fresh=[];
+  if(C.sortMode) sortHand();
   const hand = C.hand.map(u=>{ const t=C.t[u]; const on=C.bar.includes(u);
     return tileHTML(t,{click:`tapTile(${u})`,cls:(on?"ghost ":"")+(fresh.has(u)?"pop-in":"")}); }).join("") + "<span class='tile empty'></span>".repeat(Math.max(0,cols*rows-n));
   $("#bottom").innerHTML = `
     <div class="shelf"><span class="lbl">Weapons (${MAX_WEAPONS} slots)</span><div class="weapons">${ws}</div></div>
     <div class="shelf potshelf" style="grid-template-rows:repeat(${maxPotions()},1fr)">${pots}</div>
-    <div class="shelf handgrid" id="handgrid" style="--cols:${cols};--rowh:${rowh}px">${hand}</div>
+    <div class="shelf handgrid" id="handgrid" style="--cols:${cols};--rowh:${rowh}px">${hand}<button class="sortbtn" onclick="cycleSort()" ${tipAttr(`<b>Sort hand</b><br>1st click: by Spell Power · 2nd click: A–Z. Painted, Level 2, Fortified and debuffed tiles always come first.${C.sortMode?`<br>Now: <b>${C.sortMode===1?"Spell Power":"A–Z"}</b>`:""}`)} aria-label="Sort hand">⇅ ${C.sortMode===1?"SP":C.sortMode===2?"A–Z":"Sort"}</button></div>
     <div class="piles">
       <button class="pilebtn" onclick="showDeck(C.draw.map(u=>C.t[u]),'Draw pile')" title="Draw pile">${TOPIC.deck}<span class="n">${C.draw.length}</span><span class="pl">Draw</span></button>
       <button class="pilebtn" onclick="showDeck(C.disc.map(u=>C.t[u]),'Discard pile')" title="Discard pile">${TOPIC.deck}<span class="n">${C.disc.length}</span><span class="pl">Discard</span></button>
@@ -2552,7 +2582,8 @@ const EASTER = {
 
 /* ================= GLOSSARY ================= */
 function moveText(a){
-  if(a.k==="atk") return `${a.heavy?"Heavy attack":"Attack"} <b>${a.v}</b>`;
+  if(a.k==="atk") return `${a.heavy?"Heavy attack":"Attack"} <b>${a.v}${a.n>1?`×${a.n}`:""}</b>`;
+  if(a.k==="boom") return `Self-destruct: <b>${a.v}</b> ${STATUS[a.s].n} to you`;
   if(a.k==="blk") return `Shield <b>${a.v}</b>`;
   if(a.k==="buff") return `+${a.v} ${STATUS[a.s].n}`;
   if(a.k==="tile") return `${TILE_DEBUFFS[a.d].name} on <b>${a.n}</b> tiles`;
@@ -2581,7 +2612,7 @@ function monsterOrder(){
   return Object.entries(ENEMIES).sort(([ia,a],[ib,b])=>rank(a)-rank(b)||monAct(ia)-monAct(ib)||a.name.localeCompare(b.name));
 }
 function glossaryTab(tab){
-  if(tab==="monsters") return monsterOrder().map(([id,E])=>id==="lexicore"&&!achGet().act4?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
+  if(tab==="monsters") return monsterOrder().map(([id,E])=>id==="lexicore"&&!achGet().act4&&!TEST_UNLOCK_LEXICORE_GLOSSARY?`<div class="gcard"><div class="gart" style="display:grid;place-items:center;font:64px var(--f-display);color:#9b5de5">?</div><div>
       <h3>??? <span class="gtag">Boss</span></h3><div class="muted">Whoever waits at the very top of The Tower. Some say a great sorcerer. Nobody who climbed that far has come back to tell.</div></div></div>`:`<div class="gcard"><div class="gart">${artSVG(E.art,{...(E.artO||{}),only:"i0"})}</div><div>
       <h3>${E.name} <span class="gtag">${E.boss?"Boss":E.elite?"Elite":id==="tslime"?"Tutorial":"Normal"}</span></h3>
       <div class="gstat">HP <b>${E.hp}</b> · ${E.moves.length}-turn cycle</div><div class="muted">${MON_LORE[id]||""}</div>
@@ -2881,7 +2912,7 @@ async function spawnEnemies(ids){
   const alive=C.es.filter(x=>!x.dead).length; const list=ids.slice(0,Math.max(0,5-alive)); if(!list.length) return 0;
   const tgt=C.es[C.target];
   C.es=C.es.filter(x=>!x.dead||x.down);
-  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:hasR("philo")?2:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
+  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
   C.es.push(...born);
   C.target=Math.max(0,tgt&&!tgt.dead?C.es.indexOf(tgt):0);
   C.trail={}; C.trailT={};
@@ -3502,7 +3533,7 @@ function winCombat(){
   const rw={gold:got, slots:rollPaintSlots(), extras:[]};
   { const pi=piggyInterest(); if(pi){ rw.gold+=pi; rw.extras.push(`Piggy Bank interest +${pi} gold`); } }
   // GDD extras are granted automatically so the reward screen stays a single choice
-  if(!hasR("sozu")&&(kind==="elite"||Math.random()<.5)){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<maxPotions()){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
+  if((kind==="elite"||Math.random()<.5)){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<maxPotions()){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
   if(kind==="elite"){ const r=randomRelic(); if(r){ gainRelic(r); rw.extras.push(RELICS[r].name); } }
   G.reward=rw; G.screen="reward"; window._keepStage=false;
   renderReward();
@@ -3576,7 +3607,7 @@ function claimPaintLetter(i){
 }
 
 /* ================= REST ================= */
-function restHeal(){ if(hasR("dripper")){ toast("Insomnia Lamp: you can't sleep."); snd("buzz"); return; } G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*.3)+(hasR("pillow")?15:0)); snd("shield"); showMap(); }
+function restHeal(){ G.hp=Math.min(G.maxHp,G.hp+Math.floor(G.maxHp*(hasR("dripper")?.15:.3))+(hasR("pillow")?15:0)); snd("shield"); showMap(); }
 function restUpgrade(){ pickTile("Upgrade a tile to Level 2", t=>/[A-Z]/.test(t.ch)&&t.lvl===1, t=>{ t.lvl=2; snd("coin"); toast(`${t.ch} upgraded to Level 2.`); showMap(); }); }
 
 /* ================= TREASURE ================= */
@@ -3772,7 +3803,7 @@ async function pullWeapon(i){
   const d=$("#altardone"); d.hidden=false;
   d.innerHTML=`<div class="box" style="max-width:520px;display:grid;gap:8px"><b style="font:24px var(--f-display)">${W.name} joins your arsenal</b>
     <span>${W.desc} Critical at ${W.sigil} letters: ${W.crit} Costs ${W.cost} Energy.</span></div>
-    <button class="btn primary" style="margin-top:12px" onclick="G.altar=null;showMap()">Begin the climb</button>`;
+    <button class="btn primary" style="margin-top:12px" onclick="G.altar=null;showMap()">Go!</button>`;
   snd("coin");
 }
 
@@ -4090,8 +4121,8 @@ async function wordRelics(R){
   const ws=R.words.filter(w=>w.replace(/[^A-Z]/g,"").length>1).map(w=>w.replace(/[^A-Z]/g,""));
   let sh=0, ps=0, mi=0; const fired=[];
   for(const w of ws){
-    if(hasR("sandbag")&&w.length>=6){ sh+=5; fired.push("sandbag"); }
-    if(hasR("umbrella")&&VOWELS.has(w[0])){ sh+=3; fired.push("umbrella"); }
+    if(hasR("sandbag")&&w.length>=6){ sh+=10; fired.push("sandbag"); }
+    if(hasR("umbrella")&&VOWELS.has(w[0])){ sh+=8; fired.push("umbrella"); }
     if(hasR("snakecharm")&&/[SZ]/.test(w)){ ps+=2; fired.push("snakecharm"); }
     if(hasR("protein")&&/(.)\1/.test(w)){ mi+=1; fired.push("protein"); }
   }
@@ -4238,7 +4269,8 @@ Object.assign(ARTS,{
     sh("rect",`x="56" y="118" width="88" height="70" rx="12"`,"#c7d0db"); for(const [x,c] of [[74,"#e63946"],[100,"#ffbe0b"],[126,"#3ddc84"]]) sh("circle",`cx="${x}" cy="160" r="6"`,c);
     sh("rect",`x="40" y="28" width="120" height="92" rx="14"`,"#9aa6b4"); sh("rect",`x="50" y="38" width="100" height="72" rx="8"`,"#123a40");
     const C2="#5fd4c4";
-    if(f==="fox"){ ink(`<path style="stroke:${C2};stroke-width:3" d="M64 60 L70 44 L80 56 M136 60 L130 44 L120 56 M84 72 l0 6 M116 72 l0 6 M92 92 Q100 98 108 92 M96 84 L104 84"/>`); }
+    if(f==="squirrel"){ ink(`<path style="stroke:${C2};stroke-width:3" d="M62 58 L66 40 L76 54 M138 58 L134 40 L124 54 M92 90 L108 90 M96 90 L96 98 L104 98 L104 90"/><circle cx="82" cy="70" r="4" style="fill:${C2};stroke:none"/><circle cx="118" cy="70" r="4" style="fill:${C2};stroke:none"/>`); }
+    else if(f==="fox"){ ink(`<path style="stroke:${C2};stroke-width:3" d="M64 60 L70 44 L80 56 M136 60 L130 44 L120 56 M84 72 l0 6 M116 72 l0 6 M92 92 Q100 98 108 92 M96 84 L104 84"/>`); }
     else if(f==="owl"){ ink(`<circle cx="80" cy="74" r="12" style="stroke:${C2};stroke-width:3"/><circle cx="120" cy="74" r="12" style="stroke:${C2};stroke-width:3"/><circle cx="80" cy="74" r="3" style="fill:${C2};stroke:none"/><circle cx="120" cy="74" r="3" style="fill:${C2};stroke:none"/><path style="stroke:${C2};stroke-width:3" d="M96 92 L104 92 L100 100 Z"/>`); }
     else { ink(`<circle cx="76" cy="62" r="10" style="stroke:${C2};stroke-width:3"/><circle cx="124" cy="62" r="10" style="stroke:${C2};stroke-width:3"/><circle cx="76" cy="62" r="3" style="fill:${C2};stroke:none"/><circle cx="124" cy="62" r="3" style="fill:${C2};stroke:none"/><path style="stroke:${C2};stroke-width:3" d="M70 90 Q100 104 130 90"/>`); }
     ink(`<path class="thin" style="stroke:#fff" d="M56 44 L56 60"/><path d="M100 28 L100 12"/>`); sh("circle",`cx="100" cy="10" r="6"`,v==="i1"?"#ffbe0b":"#e63946");
@@ -4272,7 +4304,7 @@ function renderPainter(){
   if(!PNT) return; const P=PAINTS[PNT.col], cost=paintRerollCost(), n=PNT.sel.length;
   const deck=G.deck.slice().sort((a,b)=>a.ch.localeCompare(b.ch)||(a.uid-b.uid));
   $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Painter</h2>
-    <div class="paper">The Painter Bot has one bucket today: <b>${P.name}</b> (${P.d}) Pick up to <b>5</b> tiles from your deck to paint. Painting a tile replaces its old paint.</div>
+    <div class="paper">${(G.act||1)>=4?"BUSHY-BOT":"Bushy the Squirrel"} has one bucket today: <b>${P.name}</b> (${P.d}) Pick up to <b>5</b> tiles from your deck to paint. Painting a tile replaces its old paint.</div>
     <div class="row" style="justify-content:center;align-items:center;gap:16px">
       <span class="tile p-${PNT.col}" style="width:58px;height:64px"><b>A</b></span>
       <button class="btn small" onclick="painterReroll()" ${G.gold<cost?"disabled":""} title="Each reroll this run costs 25 gold more">Reroll color · ${cost} gold</button></div>
@@ -4321,6 +4353,124 @@ function passiveHTML(e){
   if(D.moves.some(m=>m.some(a=>a.k==="ablk"||a.k==="abuff"||a.k==="aheal"))) out.push(`<span class="sti s-ally" ${tipAttr("<b>Support</b><br>Spends some turns shielding, healing or buffing its allies.",["ally"])}>${SI.ally}</span>`);
   return out.join("");
 }
+/* ================= BATCH 5: balance pass, multi-hit, self-destruct, UI polish ================= */
+(function(){
+  const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, AN=(v,n)=>({k:"atk",v,n}), B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  // multi-hit attackers: every hit is a separate attack (Shield, Thorns, Duct Tape… trigger per hit)
+  ENEMIES.bat.moves=[[AN(5,2)],[T("frustrate",4)],[A(11)]];
+  ENEMIES.crow.moves=[[A(10),T("frustrate",4)],[AN(5,3)],[A(7),T("frustrate",3)]];
+  ENEMIES.mantis.moves=[[AN(7,3)],[T("poison",6),P("weaken",2)],[A(27,1)]];
+  ENEMIES.drone.moves=[[A(15),T("burn",4)],[T("lock",4),B(15)],[AN(9,3)]];
+  ENEMIES.jar_r.moves=[[AN(6,3)],[A(10),T("frustrate",5)],[A(22,1)]];
+  ENEMIES.thornbloom.moves=[[A(8)],[T("poison",4),B(6)],[U("thorns",3),A(5)]];
+  ENEMIES.sporeling.moves=[[A(4)],[T("poison",2)],[{k:"boom",s:"poison",v:6}]];
+  MON_LORE.sporeling="One of Mother Mycelia's children. Small, angry, and poisonous. If you leave it alone too long it bursts into a cloud of spores.";
+  MON_LORE.thornbloom="A bramble bush that grew a face, and a temper. Its pollen poisons your letters, and it grows thorns when cornered.";
+})();
+SI.intentBoom=iconSVG("0 0 24 24",(sh,ink)=>{ sh("circle",`cx="11" cy="14" r="8"`,"#3d3a44"); ink(`<path class="thin" d="M16 7 Q19 3 22 4"/>`); sh("path",`d="M21 1 L22.5 4 L21 6 L19.5 4 Z"`,"#ff7b00"); sh("circle",`cx="8" cy="12" r="2"`,"#7fd34a"); });
+/* weapons */
+Object.assign(WEAPONS.mirror,{name:"Spike Shield"});
+Object.assign(WEAPONS.greatsword,{sigil:5});
+Object.assign(WEAPONS.slam,{sigil:9,desc:"Deal damage equal to 50% of your current Shield plus the word's output.",crit:"Stun the target: it skips its next turn."});
+function midasBonus(R,w){
+  if(!w||typeof G==="undefined"||!G) return;
+  if(w.id==="midas"){ const gb=Math.floor((G.gold||0)/10)*(R.crit?2:1); if(gb){ R.total+=gb; R.notes.push(`+${gb} Midas (${G.gold} gold)`); } }
+  if(w.id==="slam"&&C){ const half=Math.floor(C.p.block/2); if(half){ R.total+=half; R.notes.push(`+${half} Shield Slam (½ of ${C.p.block} Shield)`); } }
+}
+/* potions */
+POTIONS.purge.d="Cleanse every debuff from the tiles in your hand.";
+POTIONS.shout.d="Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full).";
+/* boss relics reworked */
+RELICS.dripper.d="Boss relic. Gain 1 extra Energy every turn. Resting at a Rest Site heals only 15% of your Max HP (instead of 30%).";
+RELICS.sozu.d="Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP.";
+RELICS.philo.d="Boss relic. Gain 1 extra Energy every turn. You start every combat with 1 Broken.";
+/* word relics */
+RELICS.umbrella.d="Every word that starts with a vowel also gives you 8 Shield.";
+RELICS.sandbag.d="Every word of 6+ letters you cast also gives you 10 Shield.";
+/* every Arcana relic below +1 gets +0.2 */
+(function(){
+  const up=(id,d,f)=>{ if(RELICS[id]) Object.assign(RELICS[id],{d,f}); };
+  up("r1","+0.7 Arcana if word length is even.",c=>c.L.length%2===0?.7:0);
+  up("r2","+0.7 Arcana if word length is odd.",c=>c.L.length%2===1?.7:0);
+  up("r4","+0.45 Arcana per unique vowel.",c=>.45*new Set(vowelsOf(c.L)).size);
+  up("r5","+0.4 Arcana per unique consonant.",c=>.4*new Set(consOf(c.L)).size);
+  up("r7","+0.7 Arcana if no letter repeats.",c=>c.L.length>1&&new Set(c.L).size===c.L.length?.7:0);
+  up("r9","+0.6 Arcana per played tile with Spell Power ≥ 5.",c=>.6*c.sp.filter(v=>v>=5).length);
+  up("r12","+0.95 Arcana if total base Spell Power ≥ 15.",c=>c.sp.reduce((a,b)=>a+b,0)>=15?.95:0);
+  up("r13","+0.95 Arcana if the exact middle letter is a vowel.",c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?.95:0);
+  up("r14","+0.7 Arcana if word starts with A–F.",c=>/^[A-F]/.test(c.L)?.7:0);
+  up("r15","+0.7 Arcana if word ends with T–Z.",c=>/[T-Z]$/.test(c.L)?.7:0);
+  up("nametag","+0.7 Arcana for every noun you cast.",c=>posOf(c.L)&1?.7:0);
+  up("actionfig","+0.95 Arcana for every verb you cast.",c=>posOf(c.L)&2?.95:0);
+  up("lens","+0.7 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",c=>.7*(c.deb||0));
+})();
+/* Glossary: LEXICORE page unlocked for testing */
+const TEST_UNLOCK_LEXICORE_GLOSSARY=true; /* TEMP: set to false before release */
+
+/* ---- potion mini-menu next to the cursor (Use / Discard) ---- */
+function closePotMenu(){ document.querySelector(".potmenu")?.remove(); }
+function potionMenu(i,ev){
+  const id=G.potions[i]; if(!id) return; const P=POTIONS[id];
+  if(C&&(C.busy||C.over)) return;
+  closePotMenu(); hideTip&&hideTip();
+  const canUse=!P.passive&&(C||P.any)&&!(C&&id==="smoke"&&C.kind==="boss");
+  const m=document.createElement("div"); m.className="potmenu"; m.setAttribute("role","menu");
+  m.innerHTML=`<div class="pm-name">${P.name}</div><div class="pm-d">${P.d}${hasR("sozu")&&!P.passive?`<br><i>Cracked Flask: costs 10 HP.</i>`:""}</div>
+    <button class="pm-btn use" role="menuitem" ${canUse?"":"disabled"} onclick="closePotMenu();usePotion(${i})">${P.passive?"Passive":"Use"}</button>
+    <button class="pm-btn" role="menuitem" onclick="closePotMenu();discardPotion(${i})">Discard</button>`;
+  document.body.appendChild(m);
+  const x=ev?ev.clientX:innerWidth/2, y=ev?ev.clientY:innerHeight/2, r=m.getBoundingClientRect();
+  m.style.left=Math.max(8,Math.min(innerWidth-r.width-8,x+12))+"px"; m.style.top=Math.max(8,Math.min(innerHeight-r.height-8,y-r.height/2))+"px";
+  setTimeout(()=>document.addEventListener("pointerdown",function off(e){ if(!e.target.closest(".potmenu")){ closePotMenu(); document.removeEventListener("pointerdown",off,true); } },true),0);
+  m.querySelector("button:not(:disabled)")?.focus();
+}
+addEventListener("keydown",e=>{ if(e.key==="Escape"&&document.querySelector(".potmenu")){ e.stopPropagation(); closePotMenu(); } },true);
+
+/* ---- hand sort: 1st press by Spell Power, 2nd A–Z; buffed/debuffed tiles first ---- */
+function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
+function sortHand(){
+  const flag=t=>(t.deb||t.paint||t.fort||t.lvl===2||t.fragile)?0:1, sym=t=>/[A-Z]/.test(t.ch)?0:1;
+  C.hand.sort((a,b)=>{ const x=C.t[a], y=C.t[b];
+    return flag(x)-flag(y) || (C.sortMode===1 ? (tileChip(y)-tileChip(x) || x.ch.localeCompare(y.ch)) : (sym(x)-sym(y) || x.ch.localeCompare(y.ch))); });
+}
+
+/* ---- painter NPC: a squirrel that paints with its tail ---- */
+ARTS.squirrel={vb:[200,240],v:["i0","i1"],tf:{i0:"",i1:"translate(0 2)"},draw(v,sh,ink,fo,o={}){
+  const pc={red:CC.red,blue:CC.blue,green:CC.green,gold:CC.gold}[o.paint||"red"]||CC.red, sw=v==="i1"?10:0;
+  // tail: huge and bushy, the tip dipped in paint
+  sh("path",`d="M118 196 Q190 ${190-sw} 186 ${120-sw} Q184 ${60-sw} ${142+sw} ${36-sw} Q${120+sw} ${26-sw} ${118+sw} ${48-sw} Q150 ${66-sw} 150 ${112-sw} Q150 160 110 176 Z"`,"#c27a3a");
+  sh("path",`d="M${142+sw} ${36-sw} Q${120+sw} ${26-sw} ${118+sw} ${48-sw} Q${126+sw} ${58-sw} ${140+sw} ${60-sw} Q${150+sw} ${50-sw} ${142+sw} ${36-sw} Z"`,pc);
+  ink(`<path class="thin" d="M160 150 Q172 120 166 92 M150 176 Q168 160 176 140"/>`);
+  if(v==="i1") for(const [x,y,r] of [[112,28,5],[100,40,4],[126,18,3]]) sh("circle",`cx="${x}" cy="${y}" r="${r}"`,pc);
+  // body
+  ink(`<path class="thick" d="M80 200 L74 232 L62 232 M104 200 L108 232 L120 232"/>`);
+  sh("ellipse",`cx="92" cy="166" rx="38" ry="44"`,"#d9893f"); sh("ellipse",`cx="88" cy="176" rx="22" ry="30"`,"#f6e7c4");
+  // arms holding a palette
+  ink(`<path class="thick" d="M62 150 L40 168"/>`);
+  sh("path",`d="M18 166 Q20 150 42 152 Q60 156 56 170 Q50 186 30 184 Q16 180 18 166 Z"`,"#e9d3a8");
+  for(const [x,y,c] of [[28,164,CC.red],[38,160,CC.blue],[46,168,CC.green],[34,174,CC.gold]]) sh("circle",`cx="${x}" cy="${y}" r="3.5"`,c);
+  // head
+  sh("path",`d="M64 84 L58 58 L76 76 Z"`,"#c27a3a"); sh("path",`d="M112 84 L120 58 L102 76 Z"`,"#c27a3a");
+  sh("circle",`cx="88" cy="104" r="32"`,"#d9893f"); sh("ellipse",`cx="80" cy="116" rx="16" ry="12"`,"#f6e7c4");
+  ink(`<circle cx="78" cy="98" r="5" class="dark"/><circle cx="102" cy="98" r="5" class="dark"/><circle cx="72" cy="112" r="3" class="dark"/>`);
+  ink(v==="i1"?`<path class="thin" d="M70 122 Q80 130 90 122"/>`:`<path class="thin" d="M72 122 Q80 126 88 122"/>`);
+  sh("rect",`x="74" y="122" width="10" height="7" rx="2"`,"#ffffff");
+  // beret
+  sh("path",`d="M60 80 Q84 58 116 76 Q104 86 64 88 Z"`,pc); sh("circle",`cx="92" cy="66" r="3"`,pc);
+}};
+NPCS.painter={name:"Bushy the Squirrel",robo:"BUSHY-BOT",art:"squirrel",face:"squirrel",lines:["One bucket today! My tail's already dripping.","Pick five tiles, I'll give them a swish."],rlines:["PAINT TAIL LOADED. SELECT FIVE TILES.","SWISH PROTOCOL READY."]};
+function addNPC(kind,extra={}){
+  const N=NPCS[kind]; if(!N) return; const robo=(G.act||1)>=4;
+  const app=$("#app"); if(!app) return; app.querySelectorAll(".npcside").forEach(n=>n.remove());
+  const art=robo?artSVG("robohost",{face:N.face}):kind==="painter"?artSVG("squirrel",{paint:extra.paint||"red"}):artSVG(N.art);
+  const html=`<div class="npcside ${robo?"robo":""}" aria-hidden="true"><div class="npcbub"><b>${robo?N.robo:N.name}</b><br>${extra.line||pick(robo?N.rlines:N.lines)}</div><div class="npcart">${art}</div></div>`;
+  const dev=app.querySelector(".wheelbox, canvas.claw, .wgrid, .pntgrid");
+  if(dev){ let row=dev.parentElement.classList.contains("devrow")?dev.parentElement:null;
+    if(!row){ row=document.createElement("div"); row.className="devrow"; dev.parentElement.insertBefore(row,dev); row.appendChild(dev); }
+    row.insertAdjacentHTML("afterbegin",html); }
+  else app.insertAdjacentHTML("beforeend",html);
+}
+
 
 
 
@@ -4432,7 +4582,7 @@ function renderShop(){
 function shopBuy(kind,i){
   const S=G.shop, it=S[kind][i]; if(!it||it.sold) return;
   if(G.gold<it.price){ toast(`Not enough gold (need ${it.price}).`); snd("buzz"); return; }
-  if(kind==="potions"&&hasR("sozu")){ toast("Cracked Flask: you can't hold potions."); snd("buzz"); return; }
+
   if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your potion slots are full."); snd("buzz"); return; }
   G.gold-=it.price; it.sold=true;
   if(kind==="relics") gainRelic(it.id);
@@ -4449,14 +4599,14 @@ function shopToss(){
 /* ================= REST SITE ================= */
 function showRest(){
   G.screen="rest"; renderHUD(); const BAY=(G.act||1)>=4;
-  const heal=Math.floor(G.maxHp*0.3)+(hasR("pillow")?15:0);
+  const heal=Math.floor(G.maxHp*(hasR("dripper")?.15:.3))+(hasR("pillow")?15:0);
   $("#app").innerHTML=sceneWrap(`
     <div class="shop-title">${BAY?"Recharge Bay":"Campsite"}</div>
     <div class="tent">${BAY?POD_SVG():TENT_SVG()}</div>
     <div class="fire">${artSVG(BAY?"heater":"campfire")}</div><div class="fireglow"></div>
     <div class="restcat">${artSVG(heroArt())}</div>
     <div class="restopts">
-      <button class="restbtn" onclick="restHeal()" ${hasR("dripper")?'disabled style="opacity:.45"':""} ${tipAttr(`<b>Rest</b><br>${BAY?"Step into the charging pod and":"Sleep by the fire and"} recover ${heal} HP (30% of max). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
+      <button class="restbtn" onclick="restHeal()" ${tipAttr(`<b>Rest</b><br>${BAY?"Step into the charging pod and":"Sleep by the fire and"} recover ${heal} HP (${hasR("dripper")?"15% of max: Insomnia Lamp":"30% of max"}). Press 1.`)}><b>1 · Rest</b><span>+${heal} HP · ${G.hp}/${G.maxHp}</span></button>
       <button class="restbtn up" onclick="restUpgrade()" ${tipAttr(`<b>Upgrade</b><br>Carve one letter tile into Level 2: +${LV2_BONUS} Spell Power forever. Wildcards can't be upgraded. Press 2.`)}><b>2 · Upgrade</b><span>One tile → Level 2</span></button>
     </div>`,"restscene");
   fitScene();
@@ -4480,9 +4630,9 @@ function renderWordle(){
     else rows.push(`<div class="wrow">${"<div class='wcell'></div>".repeat(5)}</div>`);
   }
   const kb=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((r,i)=>`<div class="krow">${i===2?`<button onclick="wordleIn('Enter')">Enter</button>`:""}${[...r].map(ch=>`<button class="${W5.keys[ch]||""}" onclick="wordleIn('${ch}')">${ch}</button>`).join("")}${i===2?`<button onclick="wordleIn('Backspace')" aria-label="Delete">⌫</button>`:""}</div>`).join("");
-  $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Word Terminal</h2>
-    <div class="paper">A cracked terminal flickers: <b>guess the 5-letter word</b> in six tries. Solve it for a Major Relic; fail and you get a consolation potion.</div>
-    <div class="wgrid">${rows.join("")}</div>
+  $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Word Stone</h2>
+    <div class="paper">An ancient stone tablet hums with old-world magic: <b>guess the 5-letter word</b> in six tries. Solve it for a Major Relic; fail and you get a consolation potion.</div>
+    <div class="wgrid stele"><div class="runes">ᚠ ᛚ ᛖ ᚲ ᛟ ᚱ ᛖ</div>${rows.join("")}</div>
     ${W5.done?`<div class="box" style="max-width:520px">${W5.msg}</div><button class="btn primary" onclick="W5=null;showMap()">Continue</button>`:`<div class="kb">${kb}</div>`}
   </div>`;
 }
@@ -5168,13 +5318,12 @@ function showSplash(){
       <div class="sp-cloud sp-int" style="left:260px;top:210px" onpointerdown="event.stopPropagation();popCloud(this)" ${tipAttr("Pop!")}>${CLOUD_SVG}</div>
       <div class="sp-cloud s2 sp-int" style="left:820px;top:250px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
       <div class="sp-cloud sp-int" style="left:560px;top:120px" onpointerdown="event.stopPropagation();popCloud(this)">${CLOUD_SVG}</div>
-      <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()" ${tipAttr("The Tower. Many have tried to climb it. None have come back down.")}><i></i></div>
+      <div class="sp-tower sp-int" id="sptower" onpointerdown="event.stopPropagation();glowTower()"><i></i></div>
       <div class="sp-ring"><svg viewBox="0 0 160 60" width="160" height="60" style="overflow:visible">${layer((sh,ink)=>{ sh("path",`d="M4 30 Q80 -4 156 30 Q80 64 4 30 Z M24 30 Q80 50 136 30 Q80 12 24 30 Z"`,"#bfefff"); ink(`<path class="thin" style="stroke:#5fd4c4" d="M14 30 Q80 2 146 30"/>`); })}</svg></div>
       ${heroesUnlocked().map(h=>`<div class="sp-cat sp-int" style="${MENU_HERO[h].css}" onpointerdown="event.stopPropagation();cheerHero(this)" aria-label="${HEROES[h].name}">${artSVG(MENU_HERO[h].art)}</div>`).join("")}
     </div>
     <div class="sp-ui">
       <h1 class="sp-title">Lexicore</h1>
-      <div class="sp-sub">Far away, The Tower rises. They say a great sorcerer waits at the top.</div>
       <div class="sp-press" id="sppress">Press any key to continue</div>
       <div class="sp-menu" id="spmenu" hidden></div>
     </div>
