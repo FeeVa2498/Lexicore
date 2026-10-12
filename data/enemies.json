@@ -3,7 +3,10 @@
     "Enemies repeat their moveCycle in order, starting at turn 1.",
     "attack damage = value + enemy Might (x1.5 if the player is Broken).",
     "Normal fights scale each enemy's HP by group size: 1-2 enemies x1, 3 x0.75, 4 x0.62, 5 x0.55, 6+ x0.5.",
-    "Rival's Banner (boss relic) gives every enemy +2 Might at combat start."
+    "Rival's Banner (boss relic) gives every enemy +2 Might at combat start.",
+    "Enemy Thorns (Needle Hog, Tesla Jelly): every hit of an attack word on that enemy deals its Thorns to the player (Shield absorbs). Enemy Thorns last the whole fight.",
+    "Enemy Shield clears for every enemy at the start of the enemy phase, so Shield given by an ally lasts through the player's next turn.",
+    "Support actions (allyBlock, allyBuff, allyHeal) target allies; with no living ally they target the enemy itself."
   ],
   "enemies": [
     {
@@ -1644,6 +1647,558 @@
       ],
       "lore": "A piece of the Great Slime, still wobbling with rage.",
       "minion": true
+    },
+    {
+      "id": "needlehog",
+      "name": "Needle Hog",
+      "act": 1,
+      "tier": "normal",
+      "hp": 36,
+      "art": "needlehog",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "buff",
+              "status": "thorns",
+              "value": 2
+            },
+            {
+              "type": "block",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 8
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 5
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "poison",
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "lore": "A hedgehog that rolled through a leaking reactor. Every time it curls up, its quills grow longer. Hitting it hurts."
+    },
+    {
+      "id": "baboon",
+      "name": "Boombox Baboon",
+      "act": 2,
+      "tier": "normal",
+      "hp": 50,
+      "art": "baboon",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyBuff",
+              "status": "might",
+              "value": 2,
+              "target": "self + every living ally"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 12
+            }
+          ]
+        }
+      ],
+      "lore": "Carries a pre-war boombox on its shoulder. When the beat drops, every monster around it hits harder."
+    },
+    {
+      "id": "turtle",
+      "name": "Riot Turtle",
+      "act": 2,
+      "tier": "normal",
+      "hp": 64,
+      "art": "turtle",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 12,
+              "target": "every other living enemy (self if alone)"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            },
+            {
+              "type": "block",
+              "value": 8
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 10,
+              "target": "every other living enemy (self if alone)"
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "lore": "Still wears the helmet and riot shield of the old city police. It protects whoever stands next to it."
+    },
+    {
+      "id": "jelly",
+      "name": "Tesla Jelly",
+      "act": 3,
+      "tier": "normal",
+      "hp": 72,
+      "art": "jelly",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "buff",
+              "status": "thorns",
+              "value": 3
+            },
+            {
+              "type": "block",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 17
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "burn",
+              "count": 4
+            }
+          ]
+        }
+      ],
+      "lore": "An alien specimen that escaped its tank. Touch it and it touches back. Its sparks set your letters smoldering."
+    },
+    {
+      "id": "repairbot",
+      "name": "Patch Bot",
+      "act": 3,
+      "tier": "normal",
+      "hp": 70,
+      "art": "repairbot",
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyHeal",
+              "value": 12,
+              "target": "every injured ally (self if alone)"
+            },
+            {
+              "type": "allyBlock",
+              "value": 6,
+              "target": "every other living enemy (self if alone)"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 11
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "slimy",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 15,
+              "target": "every other living enemy (self if alone)"
+            }
+          ]
+        }
+      ],
+      "lore": "A Tower maintenance unit. It keeps repairing anything that moves, including the things trying to kill you. Leaks oil."
+    },
+    {
+      "id": "pede_h",
+      "name": "Scrapipede Head",
+      "act": 2,
+      "tier": "elite",
+      "hp": 58,
+      "art": "pede",
+      "artOptions": {
+        "part": "h"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "lock",
+              "count": 5
+            },
+            {
+              "type": "attack",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 17,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "special": [
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
+      ]
+    },
+    {
+      "id": "pede_b",
+      "name": "Scrapipede Body",
+      "act": 2,
+      "tier": "elite",
+      "hp": 58,
+      "art": "pede",
+      "artOptions": {
+        "part": "b"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 10,
+              "target": "every other living enemy (self if alone)"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 4
+            },
+            {
+              "type": "block",
+              "value": 8
+            }
+          ]
+        }
+      ],
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "special": [
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
+      ]
+    },
+    {
+      "id": "pede_t",
+      "name": "Scrapipede Tail",
+      "act": 2,
+      "tier": "elite",
+      "hp": 58,
+      "art": "pede",
+      "artOptions": {
+        "part": "t"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 7
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 11
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "playerDebuff",
+              "status": "broken",
+              "value": 1
+            },
+            {
+              "type": "attack",
+              "value": 5
+            }
+          ]
+        }
+      ],
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "special": [
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
+      ]
+    },
+    {
+      "id": "jar_r",
+      "name": "Rage Jar",
+      "act": 3,
+      "tier": "elite",
+      "hp": 86,
+      "art": "brainjar",
+      "artOptions": {
+        "tint": "#e63946"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 10
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 5
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 22,
+              "heavy": true
+            }
+          ]
+        }
+      ],
+      "lore": "Three alien brains from the Tower's interrogation lab, wired into a single mind. Each one makes the others stronger. The red one only knows how to hit.",
+      "special": [
+        "Hive Mind: always fought as the trio Mind Jar + Rage Jar + Ward Jar."
+      ]
+    },
+    {
+      "id": "jar_b",
+      "name": "Ward Jar",
+      "act": 3,
+      "tier": "elite",
+      "hp": 86,
+      "art": "brainjar",
+      "artOptions": {
+        "tint": "#3a86ff"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 14,
+              "target": "every other living enemy (self if alone)"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 11
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "allyBlock",
+              "value": 10,
+              "target": "every other living enemy (self if alone)"
+            },
+            {
+              "type": "playerDebuff",
+              "status": "weaken",
+              "value": 2
+            }
+          ]
+        }
+      ],
+      "lore": "Three alien brains from the Tower's interrogation lab, wired into a single mind. Each one makes the others stronger. The blue one shields its brothers.",
+      "special": [
+        "Hive Mind: always fought as the trio Mind Jar + Rage Jar + Ward Jar."
+      ]
+    },
+    {
+      "id": "jar_g",
+      "name": "Mind Jar",
+      "act": 3,
+      "tier": "elite",
+      "hp": 86,
+      "art": "brainjar",
+      "artOptions": {
+        "tint": "#57cc4d"
+      },
+      "moveCycle": [
+        {
+          "turn": 1,
+          "actions": [
+            {
+              "type": "allyBuff",
+              "status": "might",
+              "value": 2,
+              "target": "self + every living ally"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "actions": [
+            {
+              "type": "attack",
+              "value": 9
+            },
+            {
+              "type": "tileDebuff",
+              "debuff": "frustrate",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "actions": [
+            {
+              "type": "allyBuff",
+              "status": "might",
+              "value": 2,
+              "target": "self + every living ally"
+            },
+            {
+              "type": "block",
+              "value": 10
+            }
+          ]
+        }
+      ],
+      "lore": "Three alien brains from the Tower's interrogation lab, wired into a single mind. Each one makes the others stronger. The green one feeds them rage.",
+      "special": [
+        "Hive Mind: always fought as the trio Mind Jar + Rage Jar + Ward Jar."
+      ]
     }
   ]
 }

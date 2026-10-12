@@ -211,7 +211,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 - Damage to an enemy: `amount × 1.5` if the enemy is Broken, then reduced by its Shield.
 - Damage to the hero: enemy attack value + enemy Might, `× 1.5` if the hero is Broken, then absorbed by Shield.
 - Shield from the hero's own effects is halved while Weakened.
-- **Thorns**: every enemy attack against the hero deals Thorns damage back (ignores enemy Shield).
+- **Thorns**: every enemy attack against the hero deals Thorns damage back (ignores enemy Shield). Enemies can have Thorns too (§4.10): each hit of an attack word on them hurts the hero.
 - When hero HP would hit 0, these are checked in order: **Undying** (Champion, once per Act: survive at 16 HP), then **Phoenix Feather** potion (revive at 30% max HP). Otherwise the run ends.
 - Each enemy drops its share of gold the moment it dies (coins fly to the gold counter).
 
@@ -227,7 +227,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 | Broken | Both | Takes +50% damage. | −1 per turn. |
 | Curse | Hero | End of turn: if HP ≤ Curse, the hero dies. | Permanent in combat. |
 | Frustrated | Hero | Casting a word with fewer than (stacks + 1) letters deals 1 self-damage. | −1 per turn. |
-| Thorns | Hero | Attackers take this much damage. | Resets each turn (to base Thorns). |
+| Thorns | Hero, enemies | Attackers take this much damage (enemy Thorns: each hit of an attack word on it). | Hero: resets each turn (to base Thorns). Enemies: lasts the whole fight. |
 
 ### 4.9 Tile debuffs (enemy "curses" on tiles)
 
@@ -260,6 +260,11 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Summon (Mother Mycelia)**: her first move, *Spore Brood*, summons **2 Sporelings** that fight beside her. A fight holds at most **5 enemies**; if fewer than 2 spots are free, she fills only the remaining spots. When Mother Mycelia dies, every Sporeling withers at once.
 - **Split (Great Slime, Act 1 Elite)**: when it dies it splits into **5 Slimelets** (green, blue, pink, orange, violet: the normal slime in 5 colours, 16 HP each). The fight is won only when all of them are dead.
 - **Minions** (Sporelings, Slimelets) drop no gold. Each Slimelet colour carries its own tile debuff: green Poison, blue Lock, pink Frustrate, orange Slimy, violet Condemn.
+- **Enemy Thorns (Needle Hog, Tesla Jelly)**: an enemy with Thorns hurts the hero for its Thorns value on **every hit of an attack word** on it (Boomerang's second hit and Fire Lance's spread count too). The hero's Shield absorbs it. Enemy Thorns stack and last the whole fight, so these enemies punish slow fights.
+- **Support enemies**: some enemies spend turns on their allies. *Riot Turtle* and *Ward Jar* give Shield to every other enemy, *Boombox Baboon* and *Mind Jar* give +Might to themselves and every ally, *Patch Bot* repairs injured allies and shields them. With no ally left, a support enemy helps itself. Designed pairs: **attacker + defender** (Riot Hound + Riot Turtle, Prisoner 0451 + Patch Bot), **buffer + hitters** (Boombox Baboon + Scrap Rat / Riot Hound). Teach target priority: kill the supporter first, or race the attacker.
+- **Enemy Shield timing**: every enemy's Shield clears at the start of the enemy phase (not at the start of each enemy's own move), so Shield given by an ally always protects through the player's next turn.
+- **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
+- **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
 
 ---
@@ -603,7 +608,7 @@ Per Act 1–3: 3–4 normal fights (~2–2.5 min each), 1–2 Elites (~3.5–4 m
 
 ## 13. Enemies and bosses
 
-Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to 2 tiles; "Weaken 2" = debuff on the hero; "Might +2" = enemy buffs itself.
+Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to 2 tiles; "Weaken 2" = debuff on the hero; "Might +2" / "+2 Thorns" = enemy buffs itself; **bold** support actions target its allies ("Shield allies", "+2 Might to all" = itself and every ally, "Repair allies" = heal injured allies). Every Act has **5 normal enemies** and **3 Elites**.
 
 | Enemy | Act | Tier | HP | Move cycle (repeats) |
 |---|---|---|---|---|
@@ -612,6 +617,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Gloom Bat** | 1 | normal | 32 | Atk 9 → Frustrate×4 tiles → Atk 11 |
 | **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×3 tiles → Atk 12 |
 | **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → Atk 6 + Poison×2 tiles |
+| **Needle Hog** | 1 | normal | 36 | +2 Thorns + Block 6 → Atk 8 → Atk 5 + Poison×3 tiles |
 | **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → Atk 5 |
 | **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×3 tiles → Atk 6 |
 | **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×3 tiles → Atk 6 |
@@ -626,16 +632,26 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×4 tiles + Atk 7 |
 | **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×3 tiles |
 | **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 15 → Atk 7 + Frustrate×3 tiles |
+| **Boombox Baboon** | 2 | normal | 50 | **+2 Might to all** → Atk 9 + Frustrate×3 tiles → Atk 12 |
+| **Riot Turtle** | 2 | normal | 64 | **Shield allies 12** → Atk 9 + Block 8 → **Shield allies 10** + Lock×3 tiles |
 | **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×5 tiles + Atk 13 → Atk 31! |
 | **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×6 tiles + Weaken 2 → Atk 27! |
+| **Scrapipede Head** | 2 | elite | 58 | Atk 12 → Lock×5 tiles + Atk 6 → Atk 17! |
+| **Scrapipede Body** | 2 | elite | 58 | **Shield allies 10** → Atk 9 → Condemn×4 tiles + Block 8 |
+| **Scrapipede Tail** | 2 | elite | 58 | Atk 7 + Weaken 1 → Atk 11 → Broken 1 + Atk 5 |
 | **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×4 tiles + Condemn×4 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Atk 19 + Curse×3 tiles → **Execute**: Atk 38! |
 | **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×4 tiles → **Crush**: Atk 21! |
 | **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×3 tiles + Atk 9 |
 | **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×5 tiles + Block 19 → Atk 14 + Frustrate×3 tiles |
 | **Sentry Drone** | 3 | normal | 90 | Atk 15 + Burn×4 tiles → Lock×4 tiles + Block 15 → Atk 26 |
 | **Cyber Moth** | 3 | normal | 85 | Slimy×5 tiles + Atk 10 → Atk 17 → Atk 24 |
+| **Tesla Jelly** | 3 | normal | 72 | +3 Thorns + Block 12 → Atk 17 → Atk 9 + Burn×4 tiles |
+| **Patch Bot** | 3 | normal | 70 | **Repair allies 12 HP** + **Shield allies 6** → Atk 11 + Slimy×4 tiles → **Shield allies 15** |
 | **Warden Unit** | 3 | elite | 225 | Block 38 → Atk 34 → Lock×6 tiles + Weaken 2 → Atk 42! |
 | **Escaped Prisoner Alpha** | 3 | elite | 205 | +5 Might + Block 17 → Atk 27 → Condemn×5 tiles + Atk 17 |
+| **Mind Jar** | 3 | elite | 86 | **+2 Might to all** → Atk 9 + Frustrate×4 tiles → **+2 Might to all** + Block 10 |
+| **Rage Jar** | 3 | elite | 86 | Atk 16 → Atk 10 + Frustrate×5 tiles → Atk 22! |
+| **Ward Jar** | 3 | elite | 86 | **Shield allies 14** → Atk 11 → **Shield allies 10** + Weaken 2 |
 | **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×6 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Curse×3 tiles + Atk 12 → **Annihilate**: Atk 38! |
 | **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×6 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Atk 14 → **Overcharge**: Atk 40! |
 | **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×4 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×5 tiles + Atk 12 → **Delete**: Atk 51! |
@@ -656,8 +672,8 @@ Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14)
 | Act | Elites (each fought at most once per Act) |
 |---|---|
 | 1 | Arachne Matriarch · Quartz Punisher · Great Slime (splits into 5) |
-| 2 | Junkyard Knight · Hazmat Mantis |
-| 3 | Warden Unit · Escaped Prisoner Alpha |
+| 2 | Junkyard Knight · Hazmat Mantis · **Scrapipede** (Head + Body + Tail, Reassemble) |
+| 3 | Warden Unit · Escaped Prisoner Alpha · **Hive Mind** (Mind Jar + Rage Jar + Ward Jar) |
 
 ### 13.3 LEXICORE design
 

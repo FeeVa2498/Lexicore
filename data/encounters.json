@@ -2,9 +2,9 @@
   "_notes": [
     "Floor = node index + 1. Pools: floors 1-2 singles+pairs; 3-4 pairs+trios; 5-6 pairs+trios(x2)+quads; 7+ trios+quads(x2). Never the same group twice in a row.",
     "Normal-fight scaling by group size: HP x1/x1/x0.75/x0.62/x0.55, damage x1/x1/x0.85/x0.72/x0.62.",
-    "Elites: never repeated within an act.",
     "Max 5 enemies at once. Mother Mycelia summons 2 Sporelings; Great Slime splits into 5 Slimelets.",
-    "Act 4: Rest -> Shop -> Event -> LEXICORE."
+    "Act 4: Rest -> Shop -> Event -> LEXICORE.",
+    "Elites: never repeated within an act. An elite entry that is a list is a multi-enemy elite fight (Scrapipede, Hive Mind)."
   ],
   "acts": [
     {
@@ -23,6 +23,9 @@
           ],
           [
             "thornbloom"
+          ],
+          [
+            "needlehog"
           ]
         ],
         "pairs": [
@@ -53,6 +56,18 @@
           [
             "goblin",
             "thornbloom"
+          ],
+          [
+            "needlehog",
+            "slime"
+          ],
+          [
+            "bat",
+            "needlehog"
+          ],
+          [
+            "goblin",
+            "needlehog"
           ]
         ],
         "trios": [
@@ -85,6 +100,21 @@
             "thornbloom",
             "bat",
             "slime"
+          ],
+          [
+            "needlehog",
+            "thornbloom",
+            "bat"
+          ],
+          [
+            "slime",
+            "needlehog",
+            "slime"
+          ],
+          [
+            "goblin",
+            "bat",
+            "needlehog"
           ]
         ],
         "quads": [
@@ -105,6 +135,18 @@
             "bat",
             "bat",
             "goblin"
+          ],
+          [
+            "needlehog",
+            "bat",
+            "bat",
+            "needlehog"
+          ],
+          [
+            "slime",
+            "goblin",
+            "needlehog",
+            "thornbloom"
           ]
         ]
       },
@@ -135,6 +177,12 @@
           ],
           [
             "crow"
+          ],
+          [
+            "baboon"
+          ],
+          [
+            "turtle"
           ]
         ],
         "pairs": [
@@ -157,6 +205,22 @@
           [
             "rat",
             "rat"
+          ],
+          [
+            "hound",
+            "turtle"
+          ],
+          [
+            "rat",
+            "baboon"
+          ],
+          [
+            "turtle",
+            "crow"
+          ],
+          [
+            "baboon",
+            "hound"
           ]
         ],
         "trios": [
@@ -179,6 +243,26 @@
             "hound",
             "rat",
             "crow"
+          ],
+          [
+            "hound",
+            "turtle",
+            "rat"
+          ],
+          [
+            "crow",
+            "baboon",
+            "crow"
+          ],
+          [
+            "rat",
+            "baboon",
+            "turtle"
+          ],
+          [
+            "hound",
+            "turtle",
+            "hound"
           ]
         ],
         "quads": [
@@ -199,12 +283,35 @@
             "rat",
             "rat",
             "hound"
+          ],
+          [
+            "rat",
+            "baboon",
+            "crow",
+            "turtle"
+          ],
+          [
+            "crow",
+            "turtle",
+            "crow",
+            "baboon"
+          ],
+          [
+            "hound",
+            "baboon",
+            "rat",
+            "turtle"
           ]
         ]
       },
       "elites": [
         "knight",
-        "mantis"
+        "mantis",
+        [
+          "pede_h",
+          "pede_b",
+          "pede_t"
+        ]
       ],
       "bossOptions": [
         [
@@ -229,6 +336,12 @@
           ],
           [
             "moth"
+          ],
+          [
+            "jelly"
+          ],
+          [
+            "repairbot"
           ]
         ],
         "pairs": [
@@ -247,6 +360,22 @@
           [
             "drone",
             "drone"
+          ],
+          [
+            "jelly",
+            "drone"
+          ],
+          [
+            "prisoner",
+            "repairbot"
+          ],
+          [
+            "jelly",
+            "repairbot"
+          ],
+          [
+            "moth",
+            "repairbot"
           ]
         ],
         "trios": [
@@ -269,6 +398,21 @@
             "prisoner",
             "moth",
             "prisoner"
+          ],
+          [
+            "drone",
+            "repairbot",
+            "prisoner"
+          ],
+          [
+            "jelly",
+            "moth",
+            "jelly"
+          ],
+          [
+            "prisoner",
+            "repairbot",
+            "jelly"
           ]
         ],
         "quads": [
@@ -289,12 +433,35 @@
             "drone",
             "drone",
             "prisoner"
+          ],
+          [
+            "drone",
+            "repairbot",
+            "drone",
+            "jelly"
+          ],
+          [
+            "moth",
+            "jelly",
+            "moth",
+            "repairbot"
+          ],
+          [
+            "prisoner",
+            "jelly",
+            "repairbot",
+            "drone"
           ]
         ]
       },
       "elites": [
         "warden",
-        "alpha"
+        "alpha",
+        [
+          "jar_g",
+          "jar_r",
+          "jar_b"
+        ]
       ],
       "bossOptions": [
         [
@@ -309,7 +476,9 @@
       "act": 4,
       "name": "The Lexicore Chamber",
       "normalEncounters": null,
-      "elites": [],
+      "elites": [
+        "warden"
+      ],
       "bossOptions": [
         [
           "lexicore"
