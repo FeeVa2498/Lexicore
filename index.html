@@ -1327,7 +1327,7 @@ function statusText(k,v,isP){
     robust:`Your shield words gain +${v} Spell Power.`, thorns:isP?`Enemies that attack you take ${v} damage.`:`Attacking it hurts you for ${v} each hit.`,
     poison:`Takes ${v} damage at the end of ${isP?"your":"its"} turn, then 1 less each turn.`,
     weaken:`Shield gained is halved for ${v} more turn${v>1?"s":""}.`, broken:`Takes 50% more damage for ${v} more turn${v>1?"s":""}.`,
-    curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`})[k];
+    curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`, layers:`${v} layers: every hit deals only 1 damage and removes a layer. Poison ignores them.`, stun:`Skips its next turn.`})[k]||(STATUS[k]&&STATUS[k].d)||"";
 }
 function statusHTML(o, keys, isP){
   return keys.filter(k=>o[k]>0).map(k=>`<span class="sti s-${k}" ${tipAttr(`<b>${STATUS[k].n} ${o[k]}</b><br>${statusText(k,o[k],isP)}`,[k])}>${SI[k]}<b>${o[k]}</b></span>`).join("");
@@ -1871,7 +1871,7 @@ function startCombat(group, kind, opt={}){
   if(typeof group==="string") group=[group];
   const t={}; for(const tile of G.deck) t[tile.uid]={...tile,deb:null};
   const gsc = kind==="normal" ? [1,1,.75,.62,.55,.5][group.length]||.5 : 1;
-  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,thorns:0,broken:0,poison:0,mi:0,dead:false,gone:false,ds:kind==="normal"?GROUP_DMG[Math.min(group.length,5)]:1}; }), target:0,
+  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false,ds:kind==="normal"?GROUP_DMG[Math.min(group.length,5)]:1}; }), target:0,
        t, draw:shuffle(Object.keys(t).map(Number)), hand:[], disc:[], bar:[], ban:[],
        energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
@@ -2163,6 +2163,7 @@ function dealToEnemy(i,amount,opts){
   let dmg = e.broken>0 ? Math.floor(amount*1.5) : amount;
   let absorbed=0;
   if(!opts.pierce && e.block>0){ absorbed=Math.min(e.block,dmg); e.block-=absorbed; dmg-=absorbed; }
+  if(dmg>0&&e.layers>0){ e.layers--; dmg=1; if(typeof log==="function") log(`${ENEMIES[e.id].name} loses a layer of armor (${e.layers} left).`); }
   e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-dmg); G.stats.dmg+=dmg;
   return {dmg, absorbed};
 }
@@ -2325,7 +2326,7 @@ function fighterHTML(key){
   const hp=isP?[G.hp,G.maxHp]:[e.hp,e.max]; const block=isP?C.p.block:e.block;
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&!e.dead&&!C.over&&C.target===i;
   const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"],true)}</div>`
-    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","broken","poison"],false)}</div>`;
+    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","layers","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
   return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
@@ -2877,7 +2878,7 @@ async function spawnEnemies(ids){
   const alive=C.es.filter(x=>!x.dead).length; const list=ids.slice(0,Math.max(0,5-alive)); if(!list.length) return 0;
   const tgt=C.es[C.target];
   C.es=C.es.filter(x=>!x.dead||x.down);
-  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:hasR("philo")?2:0,thorns:0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
+  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:hasR("philo")?2:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
   C.es.push(...born);
   C.target=Math.max(0,tgt&&!tgt.dead?C.es.indexOf(tgt):0);
   C.trail={}; C.trailT={};
@@ -3207,7 +3208,7 @@ function glossaryEffects(){
   out.push(card(demo({fort:true}),"Fortified","Buff",KW.fortified[1]));
   for(const [k,Pn] of Object.entries(PAINTS)) out.push(card(demo({paint:k}),Pn.name,"Paint",Pn.d));
   out.push(`<h3 style="grid-column:1/-1;margin:10px 0 4px">On you and enemies</h3>`);
-  for(const [k,S] of Object.entries(STATUS)) out.push(card(SI[k]||"",S.n,["might","robust","thorns","block"].includes(k)?"Buff":"Debuff",S.d));
+  for(const [k,S] of Object.entries(STATUS)) out.push(card(SI[k]||"",S.n,["might","robust","thorns","block","layers"].includes(k)?"Buff":"Debuff",S.d));
   return out.join("");
 }
 /* new Smoldering users + spread of debuffs */
@@ -4280,6 +4281,44 @@ function painterToggle(uid){ if(!PNT) return; const i=PNT.sel.indexOf(uid); if(i
 function painterReroll(){ const c=paintRerollCost(); if(G.gold<c) return; G.gold-=c; G.paintReroll=c+25; const old=PNT.col; PNT.col=pick(Object.keys(PAINTS).filter(k=>k!==old)); snd("coin"); renderHUD(); renderPainter(); }
 function painterApply(){ if(!PNT||!PNT.sel.length) return; for(const t of G.deck) if(PNT.sel.includes(t.uid)) t.paint=PNT.col; toast(`${PNT.sel.length} tile${PNT.sel.length>1?"s":""} painted ${PAINTS[PNT.col].name.split(" ·")[0]}.`); snd("coin"); PNT=null; showMap(); }
 function painterLeave(){ PNT=null; showMap(); }
+/* ================= LAYERED ARMOR, extra keyword icons, spiked Mirror Ward ================= */
+Object.assign(STATUS,{
+  layers:{n:"Layered Armor",d:"Every hit deals only 1 damage and peels off 1 layer. Once all layers are gone, hits deal full damage again. Poison ignores the layers."},
+  stun:{n:"Stunned",d:"Skips its next turn."},
+});
+KW.layers=["Layered Armor","Stacks of scrap plating. While it has layers, every hit (attack words, relic hits, Thorns, Paper Cut…) deals only 1 damage and removes 1 layer. Strip them all to deal full damage. Many small hits strip them fastest; Poison ignores them."];
+KW.stun=["Stunned","The enemy skips its next turn. Its move cycle doesn't advance."];
+ENEMIES.knight.layers=8;
+ENEMIES.knight.moves=[[{k:"buff",s:"layers",v:4},{k:"buff",s:"might",v:2}],[{k:"atk",v:23}],[{k:"tile",d:"condemn",n:5},{k:"atk",v:13}],[{k:"atk",v:31,heavy:true}]];
+ENEMIES.knight.names=["Bolt On","Shield Bash","Road Closed","STOP!"];
+MON_LORE.knight="Scrap-armored badger with a STOP sign shield. It wears layer after layer of junk plating: every hit only knocks one layer off.";
+Object.assign(SI,{
+  layers:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 2 L21 5 Q21 15 12 22 Q3 15 3 5 Z"`,"#c7d0db"); ink(`<path class="thin" d="M4 9.5 L20 9.5 M5 14 L19 14 M7.5 18 L16.5 18"/>`); }),
+  stun:iconSVG("0 0 24 24",(sh,ink)=>{ for(const [x,y,r] of [[8,9,6],[17,15,5]]) sh("path",`d="M${x} ${y-r} L${x+r*.3} ${y-r*.3} L${x+r} ${y} L${x+r*.3} ${y+r*.3} L${x} ${y+r} L${x-r*.3} ${y+r*.3} L${x-r} ${y} L${x-r*.3} ${y-r*.3} Z"`,"#ffe66d"); }),
+  reform:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M10 2 L14 2 L14.6 5 L17 6 L19.5 4.2 L22 7 L20 9.5 L21 12 L22 15 L19.5 15.6 L18 18 L19.8 20.4 L17 22.6 L14.6 20.8 L12 21.6 L10 22 L9.4 19 L7 18 L4.5 19.8 L2 17 L4 14.6 L3 12 L2 9 L4.6 8.4 L6 6 L4.2 3.6 L7 1.4 L9.4 3.2 Z"`,"#ffbe0b"); sh("circle",`cx="12" cy="12" r="4"`,"#76706a"); }),
+  ally:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M9 3 L16 6 Q16 14 9 19 Q2 14 2 6 Z"`,CC.blue); ink(`<path class="thick" style="stroke:#57cc4d" d="M18 11 L18 21 M13 16 L23 16"/>`); }),
+  wild:iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="3" y="3" width="18" height="18" rx="4"`,"#9b5de5"); ink(`<text x="12" y="17" text-anchor="middle" style="font:800 14px var(--f-tile);fill:#fff;stroke:none">?</text>`); }),
+  bang:iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="3" y="3" width="18" height="18" rx="4"`,"#e63946"); ink(`<text x="12" y="17" text-anchor="middle" style="font:800 14px var(--f-tile);fill:#fff;stroke:none">!</text>`); }),
+  comma:iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="3" y="3" width="18" height="18" rx="4"`,"#9aa6b4"); ink(`<text x="12" y="16" text-anchor="middle" style="font:800 16px var(--f-tile);fill:#1d1b22;stroke:none">,</text>`); }),
+  red:iconSVG("0 0 24 24",(sh)=>sh("path",`d="M12 2 Q20 12 19 16 Q18 22 12 22 Q6 22 5 16 Q4 12 12 2 Z"`,CC.red)),
+  blue:iconSVG("0 0 24 24",(sh)=>sh("path",`d="M12 2 Q20 12 19 16 Q18 22 12 22 Q6 22 5 16 Q4 12 12 2 Z"`,CC.blue)),
+  green:iconSVG("0 0 24 24",(sh)=>sh("path",`d="M12 2 Q20 12 19 16 Q18 22 12 22 Q6 22 5 16 Q4 12 12 2 Z"`,CC.green)),
+  gold:iconSVG("0 0 24 24",(sh)=>sh("path",`d="M12 2 Q20 12 19 16 Q18 22 12 22 Q6 22 5 16 Q4 12 12 2 Z"`,CC.gold)),
+  energy:iconSVG("0 0 24 24",(sh)=>{ sh("rect",`x="9" y="1" width="6" height="3" rx="1"`,"#9aa6b4"); sh("rect",`x="5" y="3" width="14" height="20" rx="3"`,"#2e3b33"); sh("path",`d="M13 6 L8 14 L11 14 L10 20 L16 11 L13 11 Z"`,"#3ddc84"); }),
+});
+WICON.mirror=()=>iconSVG("0 0 100 100",(sh,ink)=>{
+  for(let k=0;k<12;k++){ const a=k/12*Math.PI*2, x=50+Math.cos(a)*38, y=52+Math.sin(a)*38, x1=50+Math.cos(a-.16)*30, y1=52+Math.sin(a-.16)*30, x2=50+Math.cos(a+.16)*30, y2=52+Math.sin(a+.16)*30;
+    sh("path",`d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${(50+Math.cos(a)*48).toFixed(1)} ${(52+Math.sin(a)*48).toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} Z"`,"#9aa6b4"); }
+  sh("circle",`cx="50" cy="52" r="32"`,"#76706a"); sh("circle",`cx="50" cy="52" r="24"`,"#c7d0db");
+  sh("path",`d="M50 34 L54 48 L68 52 L54 56 L50 70 L46 56 L32 52 L46 48 Z"`,"#2f7d3e");
+  ink(`<path class="thin" style="stroke:#fff" d="M36 42 Q40 34 48 32"/>`); });
+function passiveHTML(e){
+  const D=ENEMIES[e.id], out=[];
+  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP next turn unless every segment is destroyed in the same turn.",["reform"])}>${SI.reform}</span>`);
+  if(D.moves.some(m=>m.some(a=>a.k==="ablk"||a.k==="abuff"||a.k==="aheal"))) out.push(`<span class="sti s-ally" ${tipAttr("<b>Support</b><br>Spends some turns shielding, healing or buffing its allies.",["ally"])}>${SI.ally}</span>`);
+  return out.join("");
+}
+
 
 
 KIND_LABEL.util="Utility";

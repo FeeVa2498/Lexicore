@@ -512,20 +512,23 @@
       "moveCycle": [
         {
           "turn": 1,
+          "name": "Bolt On",
           "actions": [
             {
-              "type": "block",
-              "value": 25
+              "type": "buff",
+              "status": "layers",
+              "value": 4
             },
             {
               "type": "buff",
               "status": "might",
-              "value": 3
+              "value": 2
             }
           ]
         },
         {
           "turn": 2,
+          "name": "Shield Bash",
           "actions": [
             {
               "type": "attack",
@@ -535,6 +538,7 @@
         },
         {
           "turn": 3,
+          "name": "Road Closed",
           "actions": [
             {
               "type": "tileDebuff",
@@ -549,6 +553,7 @@
         },
         {
           "turn": 4,
+          "name": "STOP!",
           "actions": [
             {
               "type": "attack",
@@ -558,7 +563,13 @@
           ]
         }
       ],
-      "lore": "Scrap-armored badger with a STOP sign shield. Condemns the weak."
+      "lore": "Scrap-armored badger with a STOP sign shield. Condemns the weak.",
+      "startingStatus": {
+        "layers": 8
+      },
+      "special": [
+        "Layered Armor: while layers > 0, each hit deals exactly 1 damage (after Shield) and removes 1 layer. Poison ticks ignore layers."
+      ]
     },
     {
       "id": "mantis",

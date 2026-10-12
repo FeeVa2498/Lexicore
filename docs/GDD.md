@@ -230,6 +230,8 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 | Broken | Both | Takes +50% damage. | −1 per turn. |
 | Curse | Hero | End of turn: if HP ≤ Curse, the hero dies. | Permanent in combat. |
 | Frustrated | Hero | Casting a word with fewer than (stacks + 1) letters deals 1 self-damage. | −1 per turn. |
+| Layered Armor | Enemies (Junkyard Knight) | Each hit deals only 1 damage and removes 1 layer. Poison ignores it. | Until stripped. |
+| Stunned | Enemies | Skips its next turn (Flashbang). | 1 turn. |
 | Thorns | Hero, enemies | Attackers take this much damage (enemy Thorns: each hit of an attack word on it). | Hero: resets each turn (to base Thorns). Enemies: lasts the whole fight. |
 
 ### 4.9 Tile debuffs (enemy "curses" on tiles)
@@ -268,6 +270,8 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Enemy Shield timing**: every enemy's Shield clears at the start of the enemy phase (not at the start of each enemy's own move), so Shield given by an ally always protects through the player's next turn.
 - **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
+- **Layered Armor (Junkyard Knight, Act 2 Elite)**: the knight starts with 8 layers of scrap plating and bolts on 4 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
+- **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
 
 ---
@@ -315,7 +319,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 |---|---|---|---|---|---|
 | **Flame Lance** | attack | 2 | 6 | Deal damage to the target. | The flames hit ALL enemies. |
 | **War Drum** | buff | 1 | 4 | Gain Might equal to output ÷ 5 (min 1). Might adds Spell Power to every attack this combat. | Gain double the Might. |
-| **Mirror Ward** | defense | 1 | 5 | Gain Shield. | Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage. |
+| **Mirror Ward** (icon: round spiked shield) | defense | 1 | 5 | Gain Shield. | Gain Thorns equal to half the Shield: every enemy that attacks you takes that much damage. |
 | **Venom Quill** | poison | 1 | 4 | Inflict Poison equal to output ÷ 3 (min 1). Poison deals its stacks at the end of each enemy turn, then drops by 1. | Poison ALL enemies. |
 | **Healing Censer** | heal | 2 | 5 | Heal HP equal to output ÷ 4 (min 1). | Heal twice as much. |
 | **Seeker's Lantern** | draw | 1 | 3 | Draw 1 tile per 6 output (min 1, max 5). | The drawn tiles become Level 2 for this combat. |
@@ -695,7 +699,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 15 → Atk 7 + Frustrate×3 tiles |
 | **Boombox Baboon** | 2 | normal | 50 | **+2 Might to all** → Atk 9 + Frustrate×3 tiles → Atk 12 |
 | **Riot Turtle** | 2 | normal | 64 | **Shield allies 12** → Atk 9 + Block 8 → **Shield allies 10** + Lock×3 tiles |
-| **Junkyard Knight** | 2 | elite | 150 | Block 25 + Might +3 → Atk 23 → Condemn×5 tiles + Atk 13 → Atk 31! |
+| **Junkyard Knight** | 2 | elite | 150 | Starts with **8 Layered Armor** · **Bolt On**: +4 Layered Armor + 2 Might → **Shield Bash**: Atk 23 → **Road Closed**: Condemn×5 tiles + Atk 13 → **STOP!**: Atk 31! |
 | **Hazmat Mantis** | 2 | elite | 135 | Atk 20 → Poison×6 tiles + Weaken 2 → Atk 27! |
 | **Scrapipede Head** | 2 | elite | 58 | Atk 12 → Lock×5 tiles + Atk 6 → Atk 17! |
 | **Scrapipede Body** | 2 | elite | 58 | **Shield allies 10** → Atk 9 → Condemn×4 tiles + Block 8 |
