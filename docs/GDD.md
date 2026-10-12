@@ -187,12 +187,15 @@ Spell Power = Σ tile Spell Power (wildcards = 0, Slimy tiles = 0)
             + Exclamation bonus (consecutive ! at the end: +2, +4, +6, +10, +16, +26, +42 … cumulative)
             + Rage (Greatsword Critical only: +1 per 2 missing HP)
 
-Mult        = weapon Mult (×1) + Σ relic Mult bonuses (+0.5 Adrenaline for The Champion below 50% HP)
+Mult        = weapon Mult (×1) + Σ relic Mult bonuses, checked word by word (+0.5 Adrenaline for The Champion below 50% HP)
 
 Output      = floor(Spell Power × Mult)
             × 2 if Journal applies (2nd cast of this exact word this run)
             × 2 if Echo Draught is active
+            + Midas Touch gold bonus (floor(gold/10), ×2 on Critical)
 ```
+
+- **Comma casts and relics**: every word of a comma cast is checked by the Mult relics **on its own**, and the bonuses add up. CAT,CAT with Dusk Glyph (ends with T–Z) gets +0.5 twice = +1. Single letters inside a comma cast (CAT,A) don't trigger word relics.
 
 - **Letter values** (Level 1): A2 B4 C4 D3 E2 F5 G3 H5 I2 J9 K6 L2 M4 N2 O2 P4 Q11 R2 S2 T2 U2 V5 W5 X9 Y5 Z11. **Level 2** tiles add +3.
 - The sigil box previews Spell Power, Mult, output and every bonus that fired, *before* casting.
@@ -306,7 +309,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Parrying Dagger** | Mercenary | attack | 1 | 3 | Deal damage. | Also gain Shield equal to the output. |
 | **Utility Belt** | Mercenary | utility | 1 | 4 | Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power. | Refund 1 Energy. |
 
-### 6.2 Weapon Altar pool (10)
+### 6.2 Weapon Altar pool (11)
 
 | Weapon | Kind | Energy | Crit length | Effect | Critical |
 |---|---|---|---|---|---|
@@ -320,6 +323,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Cleansing Bell** | cleanse | 1 | 4 | Remove every debuff from the tiles in your hand, and gain Shield equal to output ÷ 2. | Also remove all of YOUR debuffs (Poison, Weaken, Broken, Frustrated, Curse). |
 | **Sand Hourglass** | store | 1 | 5 | Store time: next turn you get +1 Energy, +1 more per 12 output (max +3). | Next turn you also draw 3 extra tiles. |
 | **Boomerang** | attack | 2 | 4 | Deal damage. The tiles you used fly back into your hand. Your hand holds at most 16 tiles; extra tiles you would draw are discarded. | It hits a second time for half damage. |
+| **Midas Touch** | attack | 2 | 4 | Deal damage, plus 1 extra damage for every 10 gold you hold (added after Mult: `output + floor(gold/10)`). | The gold bonus is doubled. |
 
 ### 6.3 Implemented but not obtainable
 
@@ -409,6 +413,18 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Open Mouth** | +1.5 Mult if word starts and ends with vowels. |
 | **Choir Bell** | +1.5 Mult if vowels outnumber consonants. |
 
+**Word-type and special Mult relics** (same rules as above):
+
+| Relic | Arcana |
+|---|---|
+| **Name Tag** | +0.5 for every noun you cast |
+| **Action Figure** | +0.75 for every verb you cast |
+| **Mood Ring** | +1 for every adjective you cast |
+| **Swear Jar** | Swear words count as real words (even ones missing from the dictionary, e.g. DUMBASS), and every swear word gives +2. Also applies to the censored easter-egg spellings (FVCK, SH!T…). The list is `SWEARS` in code: profanity only, no slurs. |
+| **Cracked Lens** | +0.5 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
+
+Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as one character per dictionary word (bit mask: 1 noun, 2 verb, 4 adjective; inflections like CATS, RUNNING, HAPPIER, STOPPED are matched to their base word). A word can be several types at once (RUN = noun + verb), and then every matching relic fires.
+
 ### 8.3 Tile-grant relics
 
 | Relic | Effect |
@@ -439,6 +455,10 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Bottle Rack** | Gain 2 extra potion slots. |
 | **Bendy Straw** | Heal 5 HP whenever you use a potion. |
 | **Wind-up Key** | Every 3rd turn of a combat, gain 1 extra Energy. |
+| **Rusty Nail** | Every attack you cast also inflicts 1 Poison on the enemy it hits (Flame Lance's spread and Boomerang's second hit count as hits). |
+| **Barbed Wire** | For every 10 Shield you gain from your words (defense weapons, Cleansing Bell, Parrying Dagger's parry), gain 1 Thorns for the rest of the combat. Leftover Shield carries over within the combat. |
+| **Megaphone** | Each [ ! ] in an attack word counts as one more attack for per-attack effects: Chalk Tally's count and Rusty Nail's Poison (CAT!! = 3 attacks). |
+| **Piggy Bank** | At the end of each combat (bosses too), gain 10 gold for every full 100 gold you hold: `floor(gold/100) × 10` (125 → +10, 230 → +20). |
 
 ### 8.5 Boss relics
 
@@ -825,6 +845,7 @@ All cutscenes are **still pictures** with 2-frame idle elements (flames, smoke, 
 - Main state objects: `G` (run: hero, HP, gold, deck, relics, potions, weapons, map, stats, word history) and `C` (combat: tiles, draw/hand/discard/banished piles, enemies, statuses, energy, turn counters).
 - `evaluate(tiles, weapon)` is the single scoring function (validity, wildcard resolution, Spell Power, Mult, crit, notes for the preview). `cast()` applies the result through the weapon's `kind`.
 - Dictionary: the `an-array-of-english-words` npm package filtered to 2–10 letters (~193k words), embedded at build time.
+- Word types: at build time each dictionary word gets a part-of-speech mask from WordNet 3.1 (npm `wordnet-db`, with simple inflection rules and a short irregular-form list), embedded as one digit per word (`POS_STR`, ~190 KB). `posOf(word)` reads it. About 56k nouns, 26k verbs, 13k adjectives.
 - Build: `template.html` + dictionary → `index.html` (~2 MB). An offline build embeds the music (base64) and the fonts (Permanent Marker, Patrick Hand, Special Elite, Sniglet); the Windows build wraps it with Neutralino (WebView2).
 - Data in `../data/*.json` was exported from the running prototype. Relic Mult conditions are included as the original JavaScript (`multFormulaJS`) so they can be ported exactly.
 

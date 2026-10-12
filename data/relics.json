@@ -1,7 +1,7 @@
 {
   "_notes": [
     "'Arcana' in relic descriptions means Mult (UI wording to be unified).",
-    "mult relics: multFormulaJS receives c = {L: cast letters (wildcards resolved), sp: array of each tile's Spell Power} and returns the Mult bonus.",
+    "mult relics: multFormulaJS receives c = {L: ONE word's letters (wildcards resolved), sp: that word's tile Spell Powers, deb: number of debuffed tiles in that word} and returns the Mult bonus. It runs once per word of a comma cast and the results are summed (CAT,CAT counts twice). posOf(word) returns the WordNet part-of-speech mask (1 noun, 2 verb, 4 adjective).",
     "Mult relics do NOT apply to single-tile casts (fallback).",
     "starter and boss relics never appear in shops, chests, elite rewards or events; boss relics are offered (pick 1 of 3) after each Act 1-3 boss."
   ],
@@ -322,6 +322,131 @@
       "name": "Hoarder's Satchel",
       "category": "boss",
       "description": "Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16."
+    },
+    {
+      "id": "nametag",
+      "name": "Name Tag",
+      "category": "mult",
+      "description": "+0.5 Arcana for every noun you cast.",
+      "multFormulaJS": "c=>posOf(c.L)&1?.5:0"
+    },
+    {
+      "id": "actionfig",
+      "name": "Action Figure",
+      "category": "mult",
+      "description": "+0.75 Arcana for every verb you cast.",
+      "multFormulaJS": "c=>posOf(c.L)&2?.75:0"
+    },
+    {
+      "id": "moodring",
+      "name": "Mood Ring",
+      "category": "mult",
+      "description": "+1 Arcana for every adjective you cast.",
+      "multFormulaJS": "c=>posOf(c.L)&4?1:0"
+    },
+    {
+      "id": "swearjar",
+      "name": "Swear Jar",
+      "category": "mult",
+      "description": "Swear words count as real words, and every swear word you cast gives +2 Arcana.",
+      "multFormulaJS": "c=>SWEARS.has(c.L.toLowerCase())?2:0",
+      "swearList": [
+        "arse",
+        "arsehole",
+        "arses",
+        "ass",
+        "asses",
+        "asshole",
+        "badass",
+        "bastard",
+        "bastards",
+        "bitch",
+        "bitches",
+        "bitchy",
+        "bloody",
+        "bollocks",
+        "boobs",
+        "bugger",
+        "bullshit",
+        "cock",
+        "cocks",
+        "crap",
+        "crappy",
+        "cunt",
+        "cunts",
+        "dammit",
+        "damn",
+        "damned",
+        "dick",
+        "dickhead",
+        "dicks",
+        "douche",
+        "douchebag",
+        "dumbass",
+        "frick",
+        "frigging",
+        "fuck",
+        "fucked",
+        "fucker",
+        "fuckers",
+        "fucking",
+        "fucks",
+        "goddamn",
+        "hell",
+        "horseshit",
+        "jackass",
+        "motherfucker",
+        "piss",
+        "pissed",
+        "pisser",
+        "prick",
+        "pricks",
+        "shit",
+        "shite",
+        "shits",
+        "shitty",
+        "sod",
+        "tits",
+        "titty",
+        "tosser",
+        "turd",
+        "turds",
+        "twat",
+        "twats",
+        "wank",
+        "wanker"
+      ]
+    },
+    {
+      "id": "lens",
+      "name": "Cracked Lens",
+      "category": "mult",
+      "description": "+0.5 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",
+      "multFormulaJS": "c=>.5*(c.deb||0)"
+    },
+    {
+      "id": "nail",
+      "name": "Rusty Nail",
+      "category": "common",
+      "description": "Every attack you cast also inflicts 1 Poison on the enemy it hits."
+    },
+    {
+      "id": "barbed",
+      "name": "Barbed Wire",
+      "category": "common",
+      "description": "For every 10 Shield you gain from your words, gain 1 Thorns for the rest of the combat."
+    },
+    {
+      "id": "megaphone",
+      "name": "Megaphone",
+      "category": "common",
+      "description": "Each [ ! ] in an attack word counts as one more attack (for Chalk Tally, Rusty Nail and similar effects)."
+    },
+    {
+      "id": "piggy",
+      "name": "Piggy Bank",
+      "category": "common",
+      "description": "At the end of each combat, gain 10 gold for every 100 gold you hold (125 gold → +10, 230 gold → +20)."
     }
   ]
 }

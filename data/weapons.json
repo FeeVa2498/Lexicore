@@ -255,6 +255,19 @@
       "critEffect": "Refund 1 Energy.",
       "formula": "forge floor(output/8) Fragile [!] tiles (min 1, max 3) into discard pile",
       "shopPrice": null
+    },
+    {
+      "id": "midas",
+      "name": "Midas Touch",
+      "source": "weapon_altar",
+      "kind": "attack",
+      "energyCost": 2,
+      "critLength": 4,
+      "mult": 1,
+      "effect": "Deal damage, plus 1 extra damage for every 10 gold you hold.",
+      "critEffect": "The gold bonus is doubled.",
+      "formula": "damage = output + floor(gold/10) (crit: + 2*floor(gold/10))",
+      "shopPrice": 120
     }
   ]
 }
