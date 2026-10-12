@@ -136,6 +136,60 @@
       "description": "Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them.",
       "usableOutsideCombat": false,
       "passive": false
+    },
+    {
+      "id": "titan",
+      "name": "Titan Serum",
+      "description": "Multiply your current Might by 5.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "bastion",
+      "name": "Bastion Serum",
+      "description": "Multiply your current Robust by 5.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "ragesoda",
+      "name": "Rage Soda",
+      "description": "Gain 10 Might for this turn only.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "brickmilk",
+      "name": "Brick Milk",
+      "description": "Gain 10 Robust for this turn only.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "cluster",
+      "name": "Cluster Bomb",
+      "description": "Deal 25 damage to ALL enemies.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket Pop",
+      "description": "Deal 50 damage to the target.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "bigheal",
+      "name": "Full Flask",
+      "description": "Heal 50% of your Max HP. Usable anywhere.",
+      "usableOutsideCombat": true
+    },
+    {
+      "id": "flashbang",
+      "name": "Flashbang",
+      "description": "Stun the target: it skips its next turn.",
+      "usableOutsideCombat": false
+    },
+    {
+      "id": "overclock",
+      "name": "Overclock Chip",
+      "description": "Your selected weapon costs 0 Energy for the rest of this turn.",
+      "usableOutsideCombat": false
     }
   ]
 }

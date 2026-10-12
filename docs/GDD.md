@@ -127,7 +127,7 @@ Main menu → Choose hero → [Act 1] → Boss → boss relic → [Act 2] → Bo
 
 ### 4.1 Layout
 
-The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy gem. Right: enemies with intent bubbles and HP bars. Centre: the **sigil box** (the word being built). Bottom: weapon slots (5), potion shelf, hand grid, draw/discard piles, combat log, End Turn button.
+The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre: the **sigil box** (the word being built). Bottom: weapon slots (5), potion shelf, hand grid, draw/discard piles, combat log, End Turn button.
 
 ### 4.2 Turn structure
 
@@ -309,7 +309,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Parrying Dagger** | Mercenary | attack | 1 | 3 | Deal damage. | Also gain Shield equal to the output. |
 | **Utility Belt** | Mercenary | utility | 1 | 4 | Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power. | Refund 1 Energy. |
 
-### 6.2 Weapon Altar pool (11)
+### 6.2 Weapon Altar pool (12)
 
 | Weapon | Kind | Energy | Crit length | Effect | Critical |
 |---|---|---|---|---|---|
@@ -323,6 +323,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Cleansing Bell** | cleanse | 1 | 4 | Remove every debuff from the tiles in your hand, and gain Shield equal to output ÷ 2. | Also remove all of YOUR debuffs (Poison, Weaken, Broken, Frustrated, Curse). |
 | **Sand Hourglass** | store | 1 | 5 | Store time: next turn you get +1 Energy, +1 more per 12 output (max +3). | Next turn you also draw 3 extra tiles. |
 | **Boomerang** | attack | 2 | 4 | Deal damage. The tiles you used fly back into your hand. Your hand holds at most 16 tiles; extra tiles you would draw are discarded. | It hits a second time for half damage. |
+| **Shield Slam** | attack | 1 | 5 | Deal damage equal to **100% of your current Shield**. The word only has to be valid; its output doesn't count. Shield is not spent. | Also add the word's output. |
 | **Midas Touch** | attack | 2 | 4 | Deal damage, plus 1 extra damage for every 10 gold you hold (added after Mult: `output + floor(gold/10)`). | The gold bonus is doubled. |
 
 ### 6.3 Implemented but not obtainable
@@ -365,7 +366,8 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 ### 7.4 Getting and removing tiles
 
-- **After every fight**: the "painter bot" offers 3 generated tiles (not taken from the deck): slot 1 a vowel (AIUEO), slot 2 a rare consonant (YZQXJWR), slot 3 any letter or a special tile. Each has a random paint and a 20% chance to be Level 2. The player takes one or **skips**. With Dry Palette (boss relic) only 1 tile is offered.
+- **After every fight**: once the last enemy explodes and its gold has flown to the counter, a **Victory popup** opens over the battlefield: gold earned, extra loot (potion, relic), and **3 generated tiles** (not taken from the deck): slot 1 a vowel (AIUEO), slot 2 a rare consonant (YZQXJWR), slot 3 any letter or a special tile. Reward tiles are **unpainted**, 20% are Level 2 (always with Laminator), 10% Fortified. The player takes one (click or keys 1–3) or **skips** (S). With Dry Palette (boss relic) only 1 tile is offered.
+- **Paint** now comes from the **Painter** event on "?" nodes (§11.6).
 - **Shop**: 3 tiles for sale (§11.4).
 - **Removal**: the shop's trash can removes one tile per visit for 10 gold (+5 each time: 10, 15, 20…, never resets).
 - Some relics add special tiles: Jester Rune (+1 `?`), War Horn (+2 `!`), Hinge Pin (+1 `,`).
@@ -421,6 +423,11 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Action Figure** | +0.75 for every verb you cast |
 | **Mood Ring** | +1 for every adjective you cast |
 | **Swear Jar** | Swear words count as real words (even ones missing from the dictionary, e.g. DUMBASS), and every swear word gives +2. Also applies to the censored easter-egg spellings (FVCK, SH!T…). The list is `SWEARS` in code: profanity only, no slurs. |
+| **Field Guide** | +1 for every word that is an animal (`ANIMALS` list, ~260 words; plurals like WOLVES, MICE count). |
+| **Job Board** | +1 for every word that is a job (`JOBS` list, ~240 words). |
+| **Paint Chart** | +1.5 for every word that is a colour (`COLORS` list, ~80 words). |
+| **Monocle** | Casting a **single tile** (U, A!, Z!!) gets +3 Mult (normally single tiles get no relics). |
+| **Parrot** | +2 if you cast exactly the same word(s) as your previous cast (`G.lastWord`). |
 | **Cracked Lens** | +0.5 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
 
 Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as one character per dictionary word (bit mask: 1 noun, 2 verb, 4 adjective; inflections like CATS, RUNNING, HAPPIER, STOPPED are matched to their base word). A word can be several types at once (RUN = noun + verb), and then every matching relic fires.
@@ -458,6 +465,15 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Rusty Nail** | Every attack you cast also inflicts 1 Poison on the enemy it hits (Flame Lance's spread and Boomerang's second hit count as hits). |
 | **Barbed Wire** | For every 10 Shield you gain from your words (defense weapons, Cleansing Bell, Parrying Dagger's parry), gain 1 Thorns for the rest of the combat. Leftover Shield carries over within the combat. |
 | **Megaphone** | Each [ ! ] in an attack word counts as one more attack for per-attack effects: Chalk Tally's count and Rusty Nail's Poison (CAT!! = 3 attacks). |
+| **Paper Cut** | Every tile you draw **during** your turn (Quick Gloves, Barrier crit, Ink of Plenty, green paint…) deals 1 damage to a random enemy. The start-of-turn refill doesn't count. |
+| **Laminator** | Letter tiles you add to your deck (fight rewards, shop, claw machine) become Level 2. |
+| **Sandbag** | Every word of 6+ letters you cast also gives 5 Shield (halved by Weaken). |
+| **Umbrella** | Every word that starts with a vowel also gives 3 Shield. |
+| **Snake Charm** | Every word containing S or Z also inflicts 2 Poison on the target. |
+| **Protein Bar** | Every word with a double letter (LL, OO, SS…) also gives +1 Might. |
+| **Bounty Poster** | Elites start combat with 25% less HP (max HP too). |
+| **Big Game Trophy** | +1 Energy every turn in Elite and Boss fights. |
+| **Arcade Token** | Every "?" node becomes a Claw Machine with 2 tries and a magnet claw (§11.6). |
 | **Piggy Bank** | At the end of each combat (bosses too), gain 10 gold for every full 100 gold you hold: `floor(gold/100) × 10` (125 → +10, 230 → +20). |
 
 ### 8.5 Boss relics
@@ -501,6 +517,19 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Echo Draught** | The next word you cast this turn has its output doubled. | No |
 | **Clarity Draught** | Every tile in your hand becomes Level 2 for this combat. | No |
 | **Tempering Oil** | Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them. | No |
+| **Titan Serum** | Multiply your current Might by 5. | No |
+| **Bastion Serum** | Multiply your current Robust by 5. | No |
+| **Rage Soda** | Gain 10 Might for this turn only (removed when you end the turn). | No |
+| **Brick Milk** | Gain 10 Robust for this turn only. | No |
+| **Cluster Bomb** | Deal 25 damage to ALL enemies. | No |
+| **Rocket Pop** | Deal 50 damage to the target. | No |
+| **Full Flask** | Heal 50% of your Max HP. | Yes |
+| **Flashbang** | Stun the target: it skips its next turn (its intent shows "✦ Stunned"; its move cycle doesn't advance; Poison still ticks). | No |
+| **Overclock Chip** | Your selected weapon costs **0 Energy** for the rest of this turn (its cost badge turns green). | No |
+
+Note: the "+1 Energy on turn 1" relic is **Spark Plug** and the "+Energy on turn 3" relic is **Wind-up Key** (every 3rd turn).
+
+Note: "upgrade every tile in hand" is **Clarity Draught** and "cleanse the tiles in hand" is **Purge Salts** (it cleanses every tile in the combat and your Poison).
 
 ---
 
@@ -572,13 +601,25 @@ Also: the **trash can** removes one deck tile per visit (**10 gold, +5 per use**
 
 Pick 1 of 3 random relics, or skip.
 
-### 11.6 Events ("?" nodes): one of three, at random
+### 11.6 Events ("?" nodes): one of four, at random
 
 | Event | Rules | Rewards |
 |---|---|---|
 | **Word Terminal** (wordle) | Guess a 5-letter word in 6 tries (green/yellow/grey feedback; no hint). | Win: a relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard). Lose: a random potion. |
 | **Claw Machine** | Physics claw with swing momentum; 5 grabs. Arrow keys/A–D to move, Space to drop. | 42 coins (1 gold each), 6 tiles (special 12%, painted 65%, Level 2 25%), 1 relic. |
 | **Wheel of Fortune** | One spin, 6 equal slices. | Relic · Potion · Heal 15 · random tile → Level 2 · paint a random unpainted tile · **Zap −10 HP** |
+| **The Painter** | The Painter Bot brings one random paint colour. The player picks **up to 5 tiles from the deck** to paint (replaces old paint). **Reroll the colour** for 25 gold; every reroll in the run costs 25 more (25 → 50 → 75 …, `G.paintReroll`). Leaving without painting is allowed. | Up to 5 painted tiles |
+
+**Every event has an NPC** standing at the bottom-left with a speech bubble (random line). In Act 4 they are replaced by robot versions (box body on one wheel, CRT-screen face in teal line art, robotic lines in a typewriter font).
+
+| Event | NPC (Acts 1–3) | Act 4 robot |
+|---|---|---|
+| Wheel of Fortune | **Lucky the Fox**: game-show host, sparkly purple tuxedo, gold bow tie, microphone | LUCKY-BOT (fox ears drawn on its screen) |
+| Word Terminal | **Professor Hoot**: owl in round glasses and a graduation cap, holding a book | HOOT-OS (owl eyes on its screen) |
+| Claw Machine | **Croaky**: frog in a red arcade vest and blue cap, cup of tokens | CROAK-3000 (frog eyes and smile on its screen) |
+| The Painter | **Painter Bot** (already a robot: teal box head, brush, bucket in the current colour) | same |
+
+**Arcade Token** (relic): every "?" node becomes the Claw Machine, with only **2 tries**, but the claw is a **magnet**: when it closes it pulls in every coin, tile and relic within 150 px and nothing slips loose.
 
 ---
 
@@ -792,7 +833,8 @@ Splash/menu → character select → map → combat → reward → shop → rest
   - *The Mercenary*: grey-brown rat crouched low in a dark-green hooded cloak with a stealth mask, pink tail, one dagger in a forward grip and one in a reverse grip; the grips are slim black handles with a dark glassy inlay and a gold stud.
 - **Hidden truth of the hero weapons (twist foreshadowing, never stated before Act 4)**: they are nanobot controllers in disguise. The Spellbook is a **tablet** (the gold seal is its camera, the glowing pages its screen), the Greatsword is a giant **keyboard** (the square runes are keys), and the daggers' grips are **smartphones**. Art must read first as fantasy weapons; the tech should only click in hindsight.
 - **Palette per Act**: Act 1 bright sky and greens; Act 2 sunset oranges and greys; Act 3 dark violet with teal accents; Act 4 deep space violet with a Moon window.
-- Icons: every relic, potion and weapon has a hand-drawn icon; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
+- **Event NPCs**: Lucky the Fox, Professor Hoot, Croaky the frog and the Painter Bot, plus Act 4 robot versions (§11.6).
+- Icons: every relic, potion and weapon has a hand-drawn icon; the Energy counter is a **battery**; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
 
 ---
 
