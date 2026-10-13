@@ -6,6 +6,12 @@ Shared copies live in the Google Drive folder *Lexicore / Doc / New Version* (up
 
 ---
 
+## 2026-10-13 · Word validity: swears always valid, easter eggs invalid
+- **Swear words** (`SWEARS`, 64) are now always valid words; Swear Jar no longer unlocks them and only gives +2 Arcana per swear word. 3 of them (e.g. DUMBASS) are not in the base dictionary and were added to the valid list.
+- **Easter-egg spellings** (FVCK, SH!T, NIGERIA…) are **not** valid casts any more: the bar shakes, nothing is spent, and the attempt unlocks the secret achievement (That Was Close / Close Enough).
+- New `words/valid_words.txt`: all 193,091 valid words, one per line. `lexicon.tsv`: column `inDictionary` replaced by `source` (dictionary / swearList); every row is valid.
+- GDD: §4.4, §8.2 (Swear Jar), §14.2, Appendix A. Data: `relics.json` (Swear Jar text), `achievements.json` (descriptions + note), `words/tags.json` (notes).
+
 ## 2026-10-13 · Champion: Undying removed
 - The Champion's **Undying** passive (once per Act, survive a killing blow at 16 HP) is removed from the game: it was never an approved design. Only the Phoenix Feather consumable can revive the hero now. Adrenaline stays.
 - GDD: §4.7, §5, §20 (open issue about the Undying/Phoenix order deleted). Data: `heroes.json` (passive and playstyle text).

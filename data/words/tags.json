@@ -1,7 +1,7 @@
 {
   "_notes": [
-    "Dictionary source: npm 'an-array-of-english-words', filtered to /^[a-z]{2,10}$/ (lexicon.tsv rows with inDictionary=1). Embedded in the build as DICT.",
-    "Rows with inDictionary=0 are swear words that are only playable while holding Swear Jar (relic 'swearjar').",
+    "Every row of lexicon.tsv is a valid word (isWord = DICT or SWEARS). source=dictionary: npm 'an-array-of-english-words' filtered to /^[a-z]{2,10}$/, embedded as DICT. source=swearList: swear words missing from that package, added from SWEARS (always valid; Swear Jar only adds +2 Arcana).",
+    "Easter-egg spellings (FVCK, SH!T, NIGERIA…) are NOT valid words: trying to cast one fails (nothing is spent) and unlocks its secret achievement.",
     "Part of speech: WordNet 3.1 (npm 'wordnet-db') noun/verb/adj indexes + inflection rules (-s, -es, -ies, -ed, -ing, -er, -est, doubled consonants) + an irregular-form list. Code: posOf(word) bitmask 1 noun, 2 verb, 4 adjective; a word can have several. Builder script: pos.js.",
     "Theme tags (animal/job/color) match the base list or a plural/inflected form via inSet(): -s, -es, -ies->y, -ves->f/fe, -men->man, mice->mouse, geese->goose, oxen->ox. Swear matching is exact.",
     "baseSpellPower = sum of letter Spell Power from tiles.json (Level 1, no paint, no Might, no ! bonus).",

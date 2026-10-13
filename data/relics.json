@@ -349,7 +349,7 @@
       "id": "swearjar",
       "name": "Swear Jar",
       "category": "mult",
-      "description": "Swear words count as real words, and every swear word you cast gives +2 Arcana.",
+      "description": "Every swear word you cast gives +2 Arcana.",
       "multFormulaJS": "c=>SWEARS.has(c.L.toLowerCase())?2:0",
       "swearList": [
         "arse",
@@ -417,7 +417,8 @@
         "wank",
         "wanker"
       ],
-      "unlockLevel": 10
+      "unlockLevel": 10,
+      "note": "Swear words (swearList) are always valid words, with or without this relic."
     },
     {
       "id": "lens",

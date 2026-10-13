@@ -1,4 +1,7 @@
 {
+  "_notes": [
+    "easterEggWords are NOT valid casts: trying one fails (bar shakes, no Energy spent) and unlocks the listed achievement."
+  ],
   "achievements": [
     {
       "id": "tutorial",
@@ -105,14 +108,14 @@
     {
       "id": "close",
       "name": "That Was Close",
-      "description": "Cast NIGERIA.",
+      "description": "Try to cast NIGERIA.",
       "color": "#2fa84f",
       "secret": true
     },
     {
       "id": "close_enough",
       "name": "Close Enough",
-      "description": "Cast a censored swear word, like FVCK or SH!T.",
+      "description": "Try to cast a censored swear word, like FVCK or SH!T.",
       "color": "#ff5d8f",
       "secret": true
     }

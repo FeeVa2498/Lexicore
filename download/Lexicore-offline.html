@@ -2008,11 +2008,9 @@ function evaluate(tiles, w, check){
   if(!tiles.length){ R.reason="Place some tiles first."; return R; }
   const chars = tiles.map(t=>t.ch);
   const raw=chars.join("");
+  // easter-egg spellings are NOT valid casts: trying one only unlocks its secret achievement (see cast())
   if(EASTER[raw]&&check!==false){
-    R.valid=true; R.easter=EASTER[raw]; R.L=raw.replace(/[^A-Z]/g,""); R.words=[raw];
-    const sp=tiles.map(t=>tileChip(t)); R.chips=sp.reduce((a,b)=>a+b,0)+(w.kind==="atk"?C.p.might:w.kind==="def"?C.p.robust:0);
-    R.mult=w.mult; if(R.easter==="close_enough"&&G.relics.includes("swearjar")){ R.mult+=2; R.fired.push("swearjar"); R.notes.push("Swear Jar +2"); }
-    R.total=Math.floor(R.chips*R.mult); R.crit=raw.length===w.sigil; R.notes.push(R.easter==="close"?"…that was close":"Close enough!"); midasBonus(R,w); return R; }
+    R.easter=EASTER[raw]; R.reason=R.easter==="close"?"…that was close. The Tablet won't take that one.":"Close enough… but the Tablet won't take that spelling."; return R; }
   // split on commas; each part = letters + optional trailing [ ! ] tiles
   const partsT=[[]]; for(const t of tiles){ if(t.ch===",") partsT.push([]); else partsT[partsT.length-1].push(t); }
   if(partsT.some(p=>!p.length)){ R.reason="A comma must sit between two words (or letters)."; return R; }
@@ -2105,7 +2103,7 @@ async function cast(){
   if(C.energy<wCost(wid)){ toast(`Not enough Energy for ${w.name} (needs ${wCost(wid)}).`); snd("buzz"); sigilShake(); return; }
   const tiles=C.bar.map(u=>C.t[u]);
   const R=evaluate(tiles,w,true);
-  if(!R.valid){ toast(R.reason); snd("buzz"); sigilShake(); return; }
+  if(!R.valid){ if(R.easter&&!C.tut) achHit(R.easter); toast(R.reason); snd("buzz"); sigilShake(); return; }
   if(C.echo){ C.echo=false; R.total*=2; R.notes.push("Echo ×2"); log("Echo Draught doubles this word."); }
   C.busy=true;
   C.energy-=wCost(wid); C.used.push(C.wi);
@@ -2612,8 +2610,8 @@ const ACH = {
   act2:{n:"City Lights",d:"Defeat the boss of the Ruined City.",c:"#f4a261"},
   act3:{n:"Top Floor",d:"Defeat the boss of The Tower.",c:"#5fd4c4"},
   act4:{n:"Worthy",d:"Defeat whatever waits at the very top of The Tower.",c:"#9b5de5"},
-  close:{n:"That Was Close",d:"Cast NIGERIA.",c:"#2fa84f",secret:true},
-  close_enough:{n:"Close Enough",d:"Cast a censored swear word, like FVCK or SH!T.",c:"#ff5d8f",secret:true},
+  close:{n:"That Was Close",d:"Try to cast NIGERIA.",c:"#2fa84f",secret:true},
+  close_enough:{n:"Close Enough",d:"Try to cast a censored swear word, like FVCK or SH!T.",c:"#ff5d8f",secret:true},
 };
 const ACH_KEY="lexicore-achievements";
 function achGet(){ try{ return JSON.parse(localStorage.getItem(ACH_KEY))||{}; }catch(e){ return {}; } }
@@ -4106,12 +4104,12 @@ Object.assign(WEAPONS,{
 Object.keys(WEAPONS).forEach(k=>WEAPONS[k].id=k);
 /* ================= CONTENT PACK 3: word-type relics, swear jar, debuff relic, attack/shield counters, interest, Midas ================= */
 const SWEARS=new Set("fuck fucks fucked fucker fuckers fucking motherfucker shit shits shitty shite bullshit horseshit damn damned dammit goddamn hell ass asses arse arses asshole arsehole jackass dumbass badass bitch bitches bitchy bastard bastards crap crappy piss pissed pisser dick dicks dickhead cock cocks prick pricks twat twats wanker wank bollocks bugger bloody sod tosser douche douchebag turd turds tits titty boobs cunt cunts frick frigging".split(" "));
-const isWord=w=>{ const lc=w.toLowerCase(); return DICT.has(lc)||(typeof G!=="undefined"&&G&&G.relics&&G.relics.includes("swearjar")&&SWEARS.has(lc)); };
+const isWord=w=>{ const lc=w.toLowerCase(); return DICT.has(lc)||SWEARS.has(lc); };  // swear words are always valid; Swear Jar only adds Arcana
 Object.assign(RELICS,{
   nametag:{name:"Name Tag",sym:"N",d:"+0.5 Arcana for every noun you cast.",f:c=>posOf(c.L)&1?.5:0},
   actionfig:{name:"Action Figure",sym:"V",d:"+0.75 Arcana for every verb you cast.",f:c=>posOf(c.L)&2?.75:0},
   moodring:{name:"Mood Ring",sym:"A",d:"+1 Arcana for every adjective you cast.",f:c=>posOf(c.L)&4?1:0},
-  swearjar:{name:"Swear Jar",sym:"#",d:"Swear words count as real words, and every swear word you cast gives +2 Arcana.",f:c=>SWEARS.has(c.L.toLowerCase())?2:0},
+  swearjar:{name:"Swear Jar",sym:"#",d:"Every swear word you cast gives +2 Arcana.",f:c=>SWEARS.has(c.L.toLowerCase())?2:0},
   lens:{name:"Cracked Lens",sym:"✕",d:"+0.5 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",f:c=>.5*(c.deb||0)},
   nail:{name:"Rusty Nail",sym:"†",d:"Every attack you cast also inflicts 1 Poison on the enemy it hits."},
   barbed:{name:"Barbed Wire",sym:"#10",d:"For every 10 Shield you gain from your words, gain 1 Thorns for the rest of the combat."},

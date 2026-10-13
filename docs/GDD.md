@@ -167,7 +167,7 @@ A cast is the sequence of tiles on the sigil bar:
 
 | Pattern | Valid? | Notes |
 |---|---|---|
-| `CAT` | Yes | Any word in the dictionary (≈193,000 English words, 2–10 letters). |
+| `CAT` | Yes | Any word in the dictionary (≈193,000 English words, 2–10 letters), plus every swear word in `SWEARS` (always valid, Swear Jar not needed). Full list: `data/words/valid_words.txt`. |
 | `C?T` | Yes | `?` becomes whichever letter makes a valid word with the **highest** Spell Power; the `?` itself scores 0. |
 | `BIG,CAT` | Yes | A comma joins two (or more) words; **every** part must be valid. They are cast as one action. |
 | `CAT!!` | Yes | `!` tiles must be at the **end** of a word (or of each comma part). Relic conditions ignore `!`: a relic that checks the last letter sees `CAT!!!!` as ending in T. |
@@ -177,7 +177,7 @@ A cast is the sequence of tiles on the sigil bar:
 | `!` / `!!!!` | **No** | `!` can never be cast on its own. |
 | `C!AT` | **No** | `!` in the middle of a word. |
 | `,CAT` / `BIG,` | **No** | A comma must sit between two words. |
-| Easter-egg words | Yes | A short list of joke words (e.g. censored swears like `FVCK`, `SH!T`, and `NIGERIA`) are accepted and unlock secret achievements. |
+| Easter-egg words | **No** | A short list of joke spellings (censored swears like `FVCK`, `SH!T`, and `NIGERIA`) are **not** valid: the bar shakes and nothing is spent, but the attempt unlocks a secret achievement. |
 
 ### 4.5 Scoring
 
@@ -430,7 +430,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **Name Tag** | +0.7 for every noun you cast |
 | **Action Figure** | +0.95 for every verb you cast |
 | **Mood Ring** | +1 for every adjective you cast |
-| **Swear Jar** | Swear words count as real words (even ones missing from the dictionary, e.g. DUMBASS), and every swear word gives +2. Also applies to the censored easter-egg spellings (FVCK, SH!T…). The list is `SWEARS` in code: profanity only, no slurs. |
+| **Swear Jar** | Every swear word you cast gives +2. Swear words are always valid words (even ones missing from the dictionary, e.g. DUMBASS) with or without the relic. Censored easter-egg spellings (FVCK, SH!T…) are not valid casts. The list is `SWEARS` in code: profanity only, no slurs. |
 | **Field Guide** | +1 for every word that is an animal (`ANIMALS` list, ~260 words; plurals like WOLVES, MICE count). |
 | **Job Board** | +1 for every word that is a job (`JOBS` list, ~240 words). |
 | **Paint Chart** | +1.5 for every word that is a colour (`COLORS` list, ~80 words). |
@@ -799,8 +799,8 @@ A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4)
 | **City Lights** | Defeat the boss of the Ruined City. |
 | **Top Floor** | Defeat the boss of The Tower. |
 | **Worthy** | Defeat whatever waits at the very top of The Tower. |
-| **That Was Close** (secret) | Cast NIGERIA. |
-| **Close Enough** (secret) | Cast a censored swear word, like FVCK or SH!T. |
+| **That Was Close** (secret) | Try to cast NIGERIA (the cast fails; the attempt counts). |
+| **Close Enough** (secret) | Try to cast a censored swear word, like FVCK or SH!T (the cast fails; the attempt counts). |
 
 ### 14.3 Glossary
 
@@ -1002,6 +1002,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 | `balance.json` | Combat constants, map rules, gold, rewards, shop prices, events, scaling |
 | `achievements.json` | Achievements and easter-egg words |
 | `story.json` | Tutorial steps, liftoff and ending slides, ending dialogue, closing quotes, shopkeepers |
-| `words/lexicon.tsv` | The full playable dictionary (2–10 letters, ~193k words) with length, base Spell Power, part-of-speech flags (noun/verb/adjective) and theme tags (animal/job/color/swear) |
+| `words/lexicon.tsv` | Every valid word (193,091: dictionary 2–10 letters + swear list) with length, base Spell Power, part-of-speech flags (noun/verb/adjective), theme tags (animal/job/color/swear) and source |
+| `words/valid_words.txt` | The same valid words, one per line (for a quick validity check) |
 | `words/tags.json` | Theme word lists used by relics (animals, jobs, colors, swears), easter-egg spellings and how the POS tags are built |
 | `docs/Lexicore_Unlocks.xlsx` | Unlock spreadsheet for devs (levels, XP, heroes, pools) |
