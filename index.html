@@ -1385,7 +1385,7 @@ function statusText(k,v,isP){
     curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`, field:`${v} cells: every hit deals only 1 damage and knocks out a cell. Poison ignores it.`, layers:`${v} layers: every hit deals only 1 damage and removes a layer. Poison ignores them.`, stun:`Skips its next turn.`})[k]||(STATUS[k]&&STATUS[k].d)||"";
 }
 function statusHTML(o, keys, isP){
-  return keys.filter(k=>o[k]>0).map(k=>`<span class="sti s-${k}" ${tipAttr(`<b>${STATUS[k].n} ${o[k]}</b><br>${statusText(k,o[k],isP)}`,[k])}>${SI[k]}<b>${o[k]}</b></span>`).join("");
+  return keys.filter(k=>o[k]>0).map(k=>`<span class="sti s-${k}" ${tipAttr(`<b>${STATUS[k].n} ${o[k]}</b><br>${statusText(k,o[k],isP)}`,[k==="field"?"bp_forcefield":k])}>${SI[k]}<b>${o[k]}</b></span>`).join("");
 }
 function intentHTML(e){
   if(e.stun>0) return `<div class="intent stunned" ${tipAttr("<b>Stunned</b><br>This enemy skips its next turn.")}>✦ Stunned</div>`;
@@ -2408,7 +2408,7 @@ function fighterHTML(key){
   const hp=isP?[G.hp,G.maxHp]:[e.hp,e.max]; const block=isP?C.p.block:e.block;
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&!e.dead&&!C.over&&C.target===i;
   const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"],true)}</div>`
-    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","layers","field","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
+    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","field","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
   return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${e&&def.forms?"form-"+curForm(e):""} ${e&&def.statue?"form-"+(e.form||"normal"):""} ${e&&def.haste?"time-"+hastePhase(e):""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
@@ -2687,7 +2687,7 @@ function glossaryTab(tab){
       <h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.passive?"Works by itself":P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · ${maxPotions()} slots max</div></div></div>`).join("");
   if(tab==="effects") return glossaryEffects();
   if(tab==="endings") return glossaryEndings();
-  if(tab==="keywords") return Object.entries(KW).map(([k,v])=>`<div class="gcard small">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]?`<div class="gart sm">${SI[k==="ptile"?"poison":k==="ctile"?"curse":k==="ftile"?"frustrated":k]}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`).join("");
+  if(tab==="keywords") return Object.entries(KW).map(([k,v])=>{ const ic=kwIcon(k); return `<div class="gcard small">${ic?`<div class="gart sm">${ic}</div>`:""}<div><h3>${v[0]}</h3><div>${v[1]}</div></div></div>`; }).join("");
 }
 function showGlossary(tab="monsters"){
   const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Potions",effects:"Effects",keywords:"Keywords",endings:"Endings"};
@@ -3301,7 +3301,7 @@ function glossaryEffects(){
   out.push(card(demo({fort:true}),"Fortified","Buff",KW.fortified[1]));
   for(const [k,Pn] of Object.entries(PAINTS)) out.push(card(demo({paint:k}),Pn.name,"Paint",Pn.d));
   out.push(`<h3 style="grid-column:1/-1;margin:10px 0 4px">On you and enemies</h3>`);
-  for(const [k,S] of Object.entries(STATUS)) out.push(card(SI[k]||"",S.n,["might","robust","thorns","block","layers"].includes(k)?"Buff":"Debuff",S.d));
+  for(const [k,S] of Object.entries(STATUS)) out.push(card(SI[k]||"",S.n,["might","robust","thorns","block","layers","field"].includes(k)?"Buff":"Debuff",S.d));
   return out.join("");
 }
 /* new Smoldering users + spread of debuffs */
@@ -4731,6 +4731,16 @@ function hastePhase(e){ return ["haste","haste","slow"][(e.ph||0)%3]; }
   };
 })();
 
+
+/* keyword cleanup: retired mechanics out of the Glossary, every boss mechanic gets its icon */
+for(const k of ["layers","field","bp_timeprison","bp_forms","bp_stoneskin"]) delete KW[k];
+delete STATUS.layers;
+for(const k of ["timeprison","forms","stoneskin"]) delete BOSS_PASSIVES[k];
+function kwIcon(k){
+  if(k.startsWith("bp_")) return BP_ICON[k.slice(3)]||"";
+  const m={ptile:"poison",ctile:"curse",ftile:"frustrated",slimy:"slimy",lock:"lock",condemn:"condemn",burn:"burn"}[k]||k;
+  return SI[m]||"";
+}
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){
   const flag=t=>(t.deb||t.paint||t.fort||t.lvl===2||t.fragile)?0:1, sym=t=>/[A-Z]/.test(t.ch)?0:1;

@@ -36,10 +36,6 @@
       "n": "Frustrated",
       "d": "Casting a word shorter than (stacks + 1) letters deals 1 damage to yourself. Loses 1 stack each turn."
     },
-    "layers": {
-      "n": "Layered Armor",
-      "d": "Every hit deals only 1 damage and peels off 1 layer. Once all layers are gone, hits deal full damage again. Poison ignores the layers."
-    },
     "stun": {
       "n": "Stunned",
       "d": "Skips its next turn."

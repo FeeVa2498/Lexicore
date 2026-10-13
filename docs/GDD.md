@@ -230,7 +230,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 | Broken | Both | Takes +50% damage. | −1 per turn. |
 | Curse | Hero | End of turn: if HP ≤ Curse, the hero dies. | Permanent in combat. |
 | Frustrated | Hero | Casting a word with fewer than (stacks + 1) letters deals 1 self-damage. | −1 per turn. |
-| Layered Armor | Enemies (Junkyard Knight) | Each hit deals only 1 damage and removes 1 layer. Poison ignores it. | Until stripped. |
+| Force Field | Gatekeeper (boss) | Each hit deals only 1 damage and knocks out 1 cell. Poison ignores it. | Until knocked out; Recharge Field adds 8. |
 | Stunned | Enemies | Skips its next turn (Flashbang). | 1 turn. |
 | Thorns | Hero, enemies | Attackers take this much damage (enemy Thorns: each hit of an attack word on it). | Hero: resets each turn (to base Thorns). Enemies: lasts the whole fight. |
 
@@ -273,6 +273,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
 - **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **1 Poison per 3 HP it has left** (rounded up; 6 at full 18 HP) on the hero, and dies (no gold). Wounding it shrinks the burst.
 - **Layered Armor / Force Field (now the Gatekeeper boss, see §13.4)**: 12 cells, Recharge Field adds 8 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
+- **Glossary → Keywords** lists only live mechanics, each with its icon (boss mechanics are tagged "(boss)"); retired ones (Layered Armor, Time Prison, Two Forms, Stone Skin) were removed.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
 
