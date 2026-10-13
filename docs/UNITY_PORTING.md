@@ -2,6 +2,7 @@
 
 > For the dev team. Written from the playable prototype (13 Oct 2026). The prototype is the reference: when this guide, the GDD and the prototype disagree, **the golden tests (taken from the prototype) win**, except for the open decisions listed in §9.
 > Target: Unity **6.3 LTS (6000.3.x)**, **UI Toolkit** for all UI, C# 9.
+> Code, tests and golden files: GitHub repo FeeVa2498/Lexicore, folder `unity/Assets/Lexicore/` (https://github.com/FeeVa2498/Lexicore/tree/main/unity/Assets/Lexicore).
 
 ---
 
