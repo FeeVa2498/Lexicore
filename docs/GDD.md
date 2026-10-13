@@ -1,6 +1,6 @@
 # LEXICORE — Game Design Document
 
-> Version 0.9 (based on the playable prototype, October 2026)
+> Version 1.4 (based on the playable prototype, 13 October 2026). Changes: see CHANGELOG.
 > Playable prototype: https://feeva2498.github.io/Lexicore/
 > Data files: `../data/*.json` (generated from the prototype; treat them as the source of truth for numbers)
 
@@ -13,7 +13,7 @@
 | 1–2 | Vision, pillars, story and world |
 | 3 | The run: structure and core loop |
 | 4 | Combat rules in full (turns, words, scoring, Criticals, statuses) |
-| 5–9 | Content: heroes, weapons, tiles, relics, potions |
+| 5–9 | Content: heroes, weapons, tiles, relics, consumables |
 | 10–12 | Map, nodes and events, economy and balance |
 | 13 | Enemies and bosses |
 | 14–15 | Meta systems (tutorial, achievements, saves), UI and controls |
@@ -34,7 +34,7 @@ Terms used everywhere:
 
 ## 1. Overview
 
-**Lexicore** is a single-player **word-building roguelike deck-builder**. The player climbs a mysterious Tower across four Acts, fighting enemies by spelling real English words from a hand of letter tiles. Words are cast through **weapons**; each weapon turns the word's score into an effect (damage, shield, healing, poison, card draw…). Between fights the player shapes a deck of letter tiles, collects relics and potions, and chooses a path on a branching map, in the spirit of *Slay the Spire* with *Balatro*-style "Chips × Mult" scoring.
+**Lexicore** is a single-player **word-building roguelike deck-builder**. The player climbs a mysterious Tower across four Acts, fighting enemies by spelling real English words from a hand of letter tiles. Words are cast through **weapons**; each weapon turns the word's score into an effect (damage, shield, healing, poison, card draw…). Between fights the player shapes a deck of letter tiles, collects relics and consumables, and chooses a path on a branching map, in the spirit of *Slay the Spire* with *Balatro*-style "Chips × Mult" scoring.
 
 | | |
 |---|---|
@@ -118,7 +118,7 @@ Main menu → Choose hero → [Act 1] → Boss → boss relic → [Act 2] → Bo
 
 1. Pick the next node on the map.
 2. Resolve it: fight, shop, rest, event, treasure or altar.
-3. After a fight: gold (dropped per enemy killed), sometimes a potion, a relic from Elites, then **pick 1 of 3 new tiles or skip**.
+3. After a fight: gold (dropped per enemy killed), sometimes a consumable, a relic from Elites, then **pick 1 of 3 new tiles or skip**.
 4. Repeat until the boss.
 
 ---
@@ -127,7 +127,7 @@ Main menu → Choose hero → [Act 1] → Boss → boss relic → [Act 2] → Bo
 
 ### 4.1 Layout
 
-The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre: the **sigil box** (the word being built). Bottom: weapon slots (5), potion shelf, hand grid, draw/discard piles, combat log, End Turn button.
+The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre: the **sigil box** (the word being built). Bottom: weapon slots (5), consumable shelf, hand grid, draw/discard piles, combat log, End Turn button.
 
 ### 4.2 Turn structure
 
@@ -142,7 +142,7 @@ The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left
 - Select a weapon (click or keys 1–5).
 - Place tiles on the sigil bar (click or type the letter).
 - Cast (Enter). If the word is invalid the bar shakes and **nothing is spent**.
-- Potions can be used at any time (they do not cost Energy).
+- Consumables can be used at any time (they do not cost Energy).
 - **The same weapon can be cast repeatedly** while Energy remains.
 
 **End of player turn** (End Turn / Space; a Yes/No confirm appears if a weapon could still be cast)
@@ -216,7 +216,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 - Damage to the hero: enemy attack value + enemy Might, `× 1.5` if the hero is Broken, then absorbed by Shield.
 - Shield from the hero's own effects is halved while Weakened.
 - **Thorns**: every enemy attack against the hero deals Thorns damage back (ignores enemy Shield). Enemies can have Thorns too (§4.10): each hit of an attack word on them hurts the hero.
-- When hero HP would hit 0, these are checked in order: **Undying** (Champion, once per Act: survive at 16 HP), then **Phoenix Feather** potion (revive at 30% max HP). Otherwise the run ends.
+- When hero HP would hit 0, these are checked in order: **Undying** (Champion, once per Act: survive at 16 HP), then **Phoenix Feather** consumable (revive at 30% max HP). Otherwise the run ends.
 - Each enemy drops its share of gold the moment it dies (coins fly to the gold counter).
 
 ### 4.8 Statuses
@@ -250,11 +250,11 @@ Enemies apply these to tiles, preferring tiles in the draw pile, then discard, t
 
 | Smoldering | A tile on fire: if it is still in hand at end of turn, the hero loses 1 HP per smoldering tile. Casting it puts the fire out. |
 
-**Fortified** (positive tile state): the tile is cast in iron. It is **never discarded** at end of turn (stays in hand; the hand still refills to 16) and enemies **can't put debuffs on it**. Sources: tile rewards (10% chance on letters), shop tiles (15%), claw machine (15%), and the Tempering Oil potion (fortifies up to 4 hand tiles for the current combat).
+**Fortified** (positive tile state): the tile is cast in iron. It is **never discarded** at end of turn (stays in hand; the hand still refills to 16) and enemies **can't put debuffs on it**. Sources: tile rewards (10% chance on letters), shop tiles (15%), claw machine (15%), and the Tempering Oil consumable (fortifies up to 4 hand tiles for the current combat).
 
 Every tile state has its own look on the tile: Slimy (green goo dripping from the top), Poisoned (purple drips + green bubbles), Locked (grey with chains), Condemned (red X), Cursed (dark violet aura + skull), Frustrated (orange scribbles), Smoldering (flames + glow), Fragile (cracks + dashed border), Fortified (steel plate with rivets). Paints tint the whole tile red/blue/green/gold. The Glossary has an **Effects** tab listing all of them.
 
-Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
+Cleansing: Cleansing Bell (weapon), Purge Salts (consumable).
 
 ### 4.10 Enemy behaviour
 
@@ -282,7 +282,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 
 ## 5. Heroes
 
-All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They share every non-starter weapon, relic and potion.
+All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They share every non-starter weapon, relic and consumable (subject to unlocks, §14.6).
 
 | Hero | Max HP | Starting weapons | Starting relic | Character-select text |
 |---|---|---|---|---|
@@ -374,7 +374,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 ### 7.4 Getting and removing tiles
 
-- **After every fight**: once the last enemy explodes and its gold has flown to the counter, a **Victory popup** opens over the battlefield: gold earned, extra loot (potion, relic), and **3 generated tiles** (not taken from the deck): slot 1 a vowel (AIUEO), slot 2 a rare consonant (YZQXJWR), slot 3 any letter or a special tile. Reward tiles are **unpainted**, 20% are Level 2 (always with Laminator), 10% Fortified. The player takes one (click or keys 1–3) or **skips** (S). With Dry Palette (boss relic) only 1 tile is offered.
+- **After every fight**: once the last enemy explodes and its gold has flown to the counter, a **Victory popup** opens over the battlefield: gold earned, extra loot (consumable, relic), and **3 generated tiles** (not taken from the deck): slot 1 a vowel (AIUEO), slot 2 a rare consonant (YZQXJWR), slot 3 any letter or a special tile. Reward tiles are **unpainted**, 20% are Level 2 (always with Laminator), 10% Fortified. The player takes one (click or keys 1–3) or **skips** (S). With Dry Palette (boss relic) only 1 tile is offered.
 - **Paint** now comes from the **Painter** event on "?" nodes (§11.6).
 - **Shop**: 3 tiles for sale (§11.4).
 - **Removal**: the shop's trash can removes one tile per visit for 10 gold (+5 each time: 10, 15, 20…, never resets).
@@ -386,19 +386,19 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 - Relic slots are **unlimited**; the relic bar shrinks its icons as it fills.
 - Categories:
-  - **Mult relics** (17): add Mult when a condition on the cast is met. Never apply to single-tile casts.
+  - **Mult relics** (25: 17 letter-pattern + 8 word-type/special, §8.2): add Mult when a condition on the cast is met. Never apply to single-tile casts (except Monocle).
   - **Tile-grant relics** (3): add special tiles to the deck.
-  - **Common relics** (18): utility and economy effects.
+  - **Common relics** (34): utility and economy effects.
   - **Starter relics** (3): one per hero; never found elsewhere.
   - **Boss relics** (6): offered after each Act 1–3 boss; 5 of them give +1 Energy every turn with a real downside.
-- Sources: Elite fights (1 random), Treasure nodes (pick 1 of 3), shop (3 for sale), events (wordle, claw, wheel), boss rewards (boss relics only).
+- Sources: Elite fights (1 random), Treasure nodes (pick 1 of 3), shop (3 for sale), events (wordle, claw, wheel), boss rewards (boss relics only). Only unlocked relics can appear (§14.6).
 
 ### 8.1 Starter relics
 
-| Relic | Effect |
-|---|---|
+| Relic | Hero | Effect |
+|---|---|---|
 | **Berserker's Blood** | The Champion | Your attacks deal **+1 damage for every 4 HP you are missing** (added after Mult; shown in the score tooltip). |
-| **Quick Gloves** | Starter relic of The Mercenary. After the first word you cast in each combat, draw as many tiles as it used. |
+| **Quick Gloves** | The Mercenary | After the first word you cast in each combat, draw as many tiles as it used. |
 | **Journal** | The Scholar | The **second time you cast the same word in a combat**, its output is doubled (third time on: normal). The count resets every fight. |
 
 ### 8.2 Mult relics
@@ -604,7 +604,7 @@ Three raccoon brothers, each with a caravan and an instrument (they play the sho
 |---|---|---|---|
 | Relics (red) | Pip, the eldest (flute) | 3 relics | 130–179 × (1 + 0.15 × (Act − 1)) |
 | Tiles (blue) | Rocco, the middle one (lute) | 3 tiles (10% special `? ! ,`, 22% Level 2, random paint) | (30 + 3 × letter value + 30 if Level 2) × act scaling |
-| Potions (green) | Bo, the youngest (drum) | 3 potions | 45–64 × act scaling |
+| Consumables (green) | Bo, the youngest (drum) | 3 consumables | 45–64 × act scaling |
 
 Also: the **trash can** removes one deck tile per visit (**10 gold, +5 per use**, never resets). Haggler's Badge: −25% on everything except the trash can. Caravan Stew: heal 15 on entering.
 
@@ -616,9 +616,9 @@ Pick 1 of 3 random relics, or skip.
 
 | Event | Rules | Rewards |
 |---|---|---|
-| **The Word Stone** (wordle; the grid is carved into a rune-topped stone tablet) | Guess a 5-letter word in 6 tries (green/yellow/grey feedback; no hint). | Win: a relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard). Lose: a random potion. |
+| **The Word Stone** (wordle; the grid is carved into a rune-topped stone tablet) | Guess a 5-letter word in 6 tries (green/yellow/grey feedback; no hint). | Win: a relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard). Lose: a random consumable. |
 | **Claw Machine** | Physics claw with swing momentum; 5 grabs. Arrow keys/A–D to move, Space to drop. | 42 coins (1 gold each), 6 tiles (special 12%, painted 65%, Level 2 25%), 1 relic. |
-| **Wheel of Fortune** | One spin, 6 equal slices. | Relic · Potion · Heal 15 · random tile → Level 2 · paint a random unpainted tile · **Zap −10 HP** |
+| **Wheel of Fortune** | One spin, 6 equal slices. | Relic · Item (consumable) · Heal 15 · random tile → Level 2 · paint a random unpainted tile · **Zap −10 HP** |
 | **The Painter** | The Painter Bot brings one random paint colour. The player picks **up to 5 tiles from the deck** to paint (replaces old paint). **Reroll the colour** for 25 gold; every reroll in the run costs 25 more (25 → 50 → 75 …, `G.paintReroll`). Leaving without painting is allowed. | Up to 5 painted tiles |
 
 **Every event has an NPC** standing right next to its machine (wheel, claw cabinet, word stone, paint grid) with a speech bubble (random line). In Act 4 they are replaced by robot versions (box body on one wheel, CRT-screen face in teal line art, robotic lines in a typewriter font).
@@ -654,7 +654,7 @@ Golden-Idol-style bonus: Magpie Feather +25%. Hollow Coin: enemies drop 0.
 | | Normal | Elite | Boss |
 |---|---|---|---|
 | Gold | ✔ | ✔ | ✔ |
-| Potion | 50% | 100% | – |
+| Consumable | 50% | 100% | – |
 | Relic | – | 1 random | 1 of 3 boss relics |
 | Tile choice | 1 of 3 | 1 of 3 | – |
 | Heal | – | – | Full (Act clear) |
@@ -668,7 +668,7 @@ Best achievable Spell Power with a random 16-tile hand, by word length: 2 → 12
 - Act 2 enemies were tuned to ~80% HP / 90% damage and Act 3 to ~70% HP / 85% damage of their original values after the map was shortened to 8 floors; LEXICORE has 480 HP.
 - Normal-fight HP scaling by group size: 1–2 enemies ×1.0 · 3 ×0.75 · 4 ×0.62 · 5 ×0.55 · 6+ ×0.5.
 
-### 12.5 Potion scaling with Act
+### 12.5 Consumable scaling with Act
 
 Healing Draught 20 + 10/Act after the first · Volatile Flask 20 × Act · Iron Tonic 15 × Act · Mighty Brew 3 + 2/Act after the first · Venom Vial 8 + 4/Act after the first · Blast Jar 12 + 6/Act after the first.
 
@@ -728,7 +728,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **The Gatekeeper** | 3 | boss | 430 | *Force Field*: starts with 12 cells · **Lockdown**: Lock×6 tiles + Block 20 → **Recharge Field**: +8 Force Field + Atk 14 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Overcharge**: Atk 40! |
 | **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×4 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×5 tiles + Atk 12 → **Delete**: Atk 51! |
 
-Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14) → Rumble (Lock 2 tiles + 14 Shield) → Mega Kick (22, heavy) → Earthquake (Broken 1 + Frustrated 2) → repeat.
+Full move cycles (with move names): `../data/enemies.json`.
 
 ### 13.1 Boss pool per Act
 
@@ -765,7 +765,7 @@ Junkyard Knight (Act 2 Elite) went back to its plain kit (Block 25 + Might 3 →
 
 ### 13.3 LEXICORE design
 
-A mechanical AI core: an armoured octagonal shell with red glowing circuitry, a red lens surrounded by eight white-hot hexagonal nodes, held by four heavy struts. Idle: the lens pulses and the node ring rotates. Attack: red laser beam. Hurt: dims, cracks, sparks. Moves: Parse (Curse 2 + Frustrate 2 tiles + 26 Shield) → Compile (38 + 34 Shield) → Overwrite (Condemn 3 + Broken 2) → Delete (51, heavy). It must never look organic.
+A mechanical AI core: an armoured octagonal shell with red glowing circuitry, a red lens surrounded by eight white-hot hexagonal nodes, held by four heavy struts. Idle: the lens pulses and the node ring rotates. Attack: red laser beam. Hurt: dims, cracks, sparks. Moves: see the §13 table (Parse → Compile → Overwrite → Delete) and its gimmick in §13.4. It must never look organic.
 
 ---
 
@@ -773,9 +773,9 @@ A mechanical AI core: an armoured octagonal shell with red glowing circuitry, a 
 
 ### 14.1 Tutorial (first launch; can be replayed from the menu)
 
-A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 5-letter Critical (STONE). The UI only allows the highlighted action at each step.
+A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 2-letter Spellbook Critical (GO → +1 Energy next turn). The UI only allows the highlighted action at each step.
 
-- **Rebel popup**: if the player casts a different word than the one suggested (CAT / STONE), a popup says *"Rebellious, aren't we? … Too cool to follow the instructions."* (a second, different line for the second time). The word still counts.
+- **Rebel popup**: if the player casts a different word than the one suggested (CAT / GO), a popup says *"Rebellious, aren't we? … Too cool to follow the instructions."* (a second, different line for the second time). The word still counts.
 - "Skip tutorial" is always available.
 
 ### 14.2 Achievements (19, 2 secret)
@@ -809,7 +809,7 @@ Tabs: Monsters, Weapons, Relics, Consumables, Keywords. Every entry shows the ar
 ### 14.4 Saving
 
 - The run auto-saves whenever the map is shown (`localStorage: lexspire-run`). **Continue Run** on the main menu resumes from the map.
-- Achievements (`lexicore-achievements`), tutorial completion and volume settings persist separately.
+- Achievements (`lexicore-achievements`), unlock progression (`lexicore-progress`, §14.6), endings (`lexicore-endings`), tutorial completion and volume settings persist separately.
 
 ### 14.5 Settings
 
@@ -851,8 +851,8 @@ Everything else (the original relics and consumables, Mult relics, word-type rel
 Splash/menu → character select → map → combat → reward → shop → rest → treasure → altar → events → act clear → liftoff → ending dialogue → ending slides → quote → run summary / game over.
 
 - **Main menu**: crayon landscape with the futuristic Tower in the distance (floating ring, round walls). The three heroes stand in a **triangle formation** seen from behind (Scholar in front). Clicking a hero makes it cheer (raises its weapon). Clouds pop when clicked; clicking the Tower makes it glow. Menu music starts immediately.
-- **Character select**: three cards, each only the hero art, name and a short italic tagline. Button: **"Choose The Scholar"** (no gameplay text on this screen).
-- **Tooltips**: every keyword, status, tile, relic, potion and weapon has a hover tooltip in the style of *Slay the Spire* (keyword definitions attached).
+- **Character select**: three cards, each only the hero art, name and a short italic tagline. Button: **"Choose The Scholar"** (no gameplay text on this screen). Locked heroes show a dark silhouette, "???" and their unlock hint; the button reads **Locked** (§14.6).
+- **Tooltips**: every keyword, status, tile, relic, consumable and weapon has a hover tooltip in the style of *Slay the Spire* (keyword definitions attached).
 - **Popups** muffle the music (low-pass filter).
 
 ### 15.2 Keyboard controls
@@ -866,12 +866,12 @@ Splash/menu → character select → map → combat → reward → shop → rest
 | Tab / Shift+Tab | Switch target |
 | Space | End turn (asks first if a weapon can still be cast) |
 | A / D then Space | Choose and confirm in Yes/No popups |
-| Alt+1–3 | Use potion |
+| Alt+1–3 | Use consumable |
 | Esc | Clear the bar; if empty, open Settings |
 | W/S or ↑/↓ + Enter | Map: choose the next node / travel (drag or scroll to pan) |
 | 1 2 3 / S | Reward: take a tile / skip |
 | 1 2 | Altar and Rest Site options |
-| 1–9 · T · L | Shop: buy relics 1–3, tiles 4–6, potions 7–9 · toss a tile · leave |
+| 1–9 · T · L | Shop: buy relics 1–3, tiles 4–6, consumables 7–9 · toss a tile · leave |
 | ← → / A D, Space / ↓ | Claw machine: move, drop |
 
 ---
@@ -881,7 +881,7 @@ Splash/menu → character select → map → combat → reward → shop → rest
 - **Sigil pedestal** (where the word is built): a carved grey stone pedestal on a stone base, with a dark carved trough outlined in glowing teal and a line of glowing runes along its foot. **Almost no text**: the weapon name, a row of **sigil sockets** (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), the tiles, then `Spell Power × Mult = output` (+ a small "CRIT!" stamp), and two buttons (✕ clear, Cast). The full breakdown (Might, relic names, ! bonus…) is in the tooltip on the score line.
 - **Relic preview**: while a word is on the pedestal, every relic it would trigger **glows and drops below the relic row**; Mult relics also show their bonus as a small red badge (+0.7). Non-Mult relics are predicted too (Sandbag, Umbrella, Snake Charm, Protein Bar, Rusty Nail, Megaphone, Chalk Tally on the 10th attack, Quick Gloves on the first cast, Metronome / Rubber Stamp on the 3rd cast).
 - **Hand sort button** (top-right corner of the hand): 1st click sorts by Spell Power (high → low), 2nd click A–Z (letters before symbols); clicking again toggles. Buffed or debuffed tiles (painted, Level 2, Fortified, Fragile, any tile debuff) always come first. The order stays sorted as new tiles are drawn.
-- **Potion menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
+- **Consumable menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
 - **Weapon Altar**: after pulling a weapon, the result card and the **Go!** button are pinned to the bottom of the screen (no scrolling).
 - **Main menu**: no tagline under the logo and no tooltip on the Tower.
 - **Glossary**: the LEXICORE page is temporarily unlocked for testing (`TEST_UNLOCK_LEXICORE_GLOSSARY`, set to false before release; normally it unlocks after reaching Act 4).
@@ -898,8 +898,8 @@ Splash/menu → character select → map → combat → reward → shop → rest
 - **Hidden truth of the hero weapons (twist foreshadowing, never stated before Act 4)**: they are nanobot controllers in disguise. The Spellbook is a **tablet** (the gold seal is its camera, the glowing pages its screen), the Greatsword is a giant **keyboard** (the square runes are keys), and the daggers' grips are **smartphones**. Art must read first as fantasy weapons; the tech should only click in hindsight.
 - **Palette per Act**: Act 1 bright sky and greens; Act 2 sunset oranges and greys; Act 3 dark violet with teal accents; Act 4 deep space violet with a Moon window.
 - **Event NPCs**: Lucky the Fox, Professor Hoot, Croaky the frog and the Painter Bot, plus Act 4 robot versions (§11.6).
-- **Potion icons** each have their own silhouette and emblem (heart bottle, round flask, square bottle, test tube, jar, bomb, scroll, soda can, milk carton, microchip, feather, apple…) so they read apart at a glance, not just by liquid colour.
-- Icons: every relic, potion and weapon has a hand-drawn icon; the Energy counter is a **battery**; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
+- **Consumable icons** each have their own silhouette and emblem (heart bottle, round flask, square bottle, test tube, jar, bomb, scroll, soda can, milk carton, microchip, feather, apple…) so they read apart at a glance, not just by liquid colour.
+- Icons: every relic, consumable and weapon has a hand-drawn icon; the Energy counter is a **battery**; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
 
 ---
 
@@ -963,7 +963,7 @@ All cutscenes are **still pictures** with 2-frame idle elements (flames, smoke, 
 | Weapon | id, name, kind, energyCost, critLength, mult, effect params, critEffect params, source |
 | Enemy | id, name, act, tier, hp, moveCycle[{name, actions[]}], flags |
 | Relic | id, name, category, trigger (onCastValidate / onTurnStart / onCombatStart / onShopEnter / passive…), params |
-| Potion | id, name, target, effect params, usableOutsideCombat, passive |
+| Consumable (`potions.json`) | id, name, target, effect params, usableOutsideCombat, passive |
 | Tile | char, level, paint, debuff, fragile |
 
 Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast, onHurt, onDeath, onShopEnter, onRest, onGoldGain, onTileReward) instead of the prototype's inline `hasR()` checks.
@@ -977,7 +977,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 3. **Unused weapons**: Needle, Bulwark, Hammer exist but can't be obtained (Bulwark's crit gives Robust, so it would need a rework under pillar 4).
 4. **Unused content**: a list of 28 riddles exists from an earlier event design; not used.
 5. **Balance is unverified** for the new content pack (Boomerang + Journal, Sand Hourglass, energy boss relics, Hoarder's Satchel). Run simulations/playtests.
-6. **Alt+1–3** potion hotkeys don't cover slots 4–5 when Bottle Rack is owned.
+6. **Alt+1–3** consumable hotkeys don't cover slots 4–5 when Bottle Rack is owned.
 7. **Comma and Crit length**: commas are currently not counted. Confirm the design intent.
 8. **Journal** ignores single-tile casts on purpose (anti-exploit); document in the tooltip.
 9. **Undying + Phoenix Feather** order: Undying is checked first. Confirm.

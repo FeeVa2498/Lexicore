@@ -8,7 +8,7 @@
     "brokenMultiplier": 1.5,
     "weakenShieldMultiplier": 0.5,
     "singleTile": "Mult 1, no relics; trailing ! allowed",
-    "journalSecondCast": "output x2 on the 2nd cast of the same word in a run"
+    "journalSecondCast": "output x2 on the 2nd cast of the same word in a combat (count resets every fight)"
   },
   "map": {
     "floorsPerAct": 8,
@@ -112,18 +112,21 @@
     "pool": [
       "wordle",
       "claw",
-      "wheel"
+      "wheel",
+      "painter"
     ],
-    "wordle": "6 guesses at a 5-letter word; win = relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard), lose = random potion",
+    "wordle": "6 guesses at a 5-letter word; win = relic (prefers Triad Totem, Long Scroll, Choir Bell, Ouroboros Loop, Open Mouth, Mirror Shard), lose = random consumable",
     "claw": "5 grabs; 42 coins (1 gold each), 6 tiles (12% special, 65% painted, 25% Level 2), 1 relic",
     "wheel": [
       "Relic",
-      "Potion",
+      "Item (consumable)",
       "Heal 15",
       "Random tile -> Level 2",
       "Paint a random unpainted tile",
       "Zap -10 HP"
-    ]
+    ],
+    "painter": "Paint up to 5 deck tiles with one random colour; reroll the colour for 25 gold, +25 per reroll in the run (G.paintReroll)",
+    "arcadeToken": "With the Arcade Token relic every ? node is the Claw Machine: 2 grabs, magnet claw (pulls everything within 150 px)"
   },
   "groupHpScaling": {
     "1": 1,

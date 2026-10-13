@@ -1,8 +1,9 @@
 {
   "_notes": [
     "Shown in game as 'Consumables' (formerly Potions); ids keep the old 'potion' naming.",
-    "Default 3 potion slots (+2 with Bottle Rack). Shop price 45-64 gold x (1 + 0.15 x (act-1)).",
-    "Drop: Elites always drop a potion; normal fights 50%. No potions with Cracked Flask."
+    "Default 3 slots (+2 with Bottle Rack). Shop price 45-64 gold x (1 + 0.15 x (act-1)).",
+    "Drop: Elites always drop one; normal fights 50%. With Cracked Flask (boss relic) each use costs 10 HP.",
+    "unlockLevel: only in the pools once the player reaches that unlock level (see progression.json); items without it are available from the start."
   ],
   "potions": [
     {

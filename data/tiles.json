@@ -111,8 +111,10 @@
     "slot2": "YZQXJWR",
     "slot3": "any letter or ? ! ,",
     "level2Chance": 0.2,
-    "paint": "random of red/blue/green/gold"
+    "paint": "none: reward tiles are unpainted (paint comes from the Painter event, shop and wheel)",
+    "fortifiedChance": 0.1,
+    "level2Note": "always Level 2 with the Laminator relic"
   },
   "shopLetterPool": "AAEEIIOOUURSTLNDCMPBGHKWYFVJXQZ",
-  "fortified": "Positive tile state: never discarded at end of turn, immune to tile debuffs. 10% on reward letters, 15% shop, 15% claw; Tempering Oil potion (combat only)."
+  "fortified": "Positive tile state: never discarded at end of turn, immune to tile debuffs. 10% on reward letters, 15% shop, 15% claw; Tempering Oil consumable (combat only)."
 }
