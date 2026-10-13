@@ -3,7 +3,8 @@
     "'Arcana' in relic descriptions means Mult (UI wording to be unified).",
     "mult relics: multFormulaJS receives c = {L: ONE word's letters (wildcards resolved), sp: that word's tile Spell Powers, deb: number of debuffed tiles in that word} and returns the Mult bonus. It runs once per word of a comma cast and the results are summed (CAT,CAT counts twice). posOf(word) returns the WordNet part-of-speech mask (1 noun, 2 verb, 4 adjective).",
     "Mult relics do NOT apply to single-tile casts (fallback).",
-    "starter and boss relics never appear in shops, chests, elite rewards or events; boss relics are offered (pick 1 of 3) after each Act 1-3 boss."
+    "starter and boss relics never appear in shops, chests, elite rewards or events; boss relics are offered (pick 1 of 3) after each Act 1-3 boss.",
+    "unlockLevel: the relic only enters the pools once the player's unlock level reaches it (see GDD 14.6)."
   ],
   "relics": [
     {
@@ -129,7 +130,7 @@
       "id": "blood",
       "name": "Berserker's Blood",
       "category": "starter",
-      "description": "Starter relic of The Champion. Heal 5 HP at the end of every combat.",
+      "description": "Starter relic of The Champion. Your attacks deal +1 damage for every 4 HP you are missing.",
       "hero": "champion"
     },
     {
@@ -143,7 +144,7 @@
       "id": "journal",
       "name": "Journal",
       "category": "starter",
-      "description": "Starter relic of The Scholar. The second time you cast a word in this run, its output is doubled. From the third time on it scores normally.",
+      "description": "Starter relic of The Scholar. The second time you cast the same word in a combat, its output is doubled. From the third time on it scores normally.",
       "hero": "scholar"
     },
     {
@@ -415,7 +416,8 @@
         "twats",
         "wank",
         "wanker"
-      ]
+      ],
+      "unlockLevel": 10
     },
     {
       "id": "lens",
@@ -428,25 +430,29 @@
       "id": "nail",
       "name": "Rusty Nail",
       "category": "common",
-      "description": "Every attack you cast also inflicts 1 Poison on the enemy it hits."
+      "description": "Every attack you cast also inflicts 1 Poison on the enemy it hits.",
+      "unlockLevel": 5
     },
     {
       "id": "barbed",
       "name": "Barbed Wire",
       "category": "common",
-      "description": "For every 10 Shield you gain from your words, gain 1 Thorns for the rest of the combat."
+      "description": "For every 10 Shield you gain from your words, gain 1 Thorns for the rest of the combat.",
+      "unlockLevel": 6
     },
     {
       "id": "megaphone",
       "name": "Megaphone",
       "category": "common",
-      "description": "Each [ ! ] in an attack word counts as one more attack (for Chalk Tally, Rusty Nail and similar effects)."
+      "description": "Each [ ! ] in an attack word counts as one more attack (for Chalk Tally, Rusty Nail and similar effects).",
+      "unlockLevel": 8
     },
     {
       "id": "piggy",
       "name": "Piggy Bank",
       "category": "common",
-      "description": "At the end of each combat, gain 10 gold for every 100 gold you hold (125 gold → +10, 230 gold → +20)."
+      "description": "At the end of each combat, gain 10 gold for every 100 gold you hold (125 gold → +10, 230 gold → +20).",
+      "unlockLevel": 2
     },
     {
       "id": "fieldguide",
@@ -1060,13 +1066,15 @@
       "id": "papercut",
       "name": "Paper Cut",
       "category": "common",
-      "description": "Every tile you draw during your turn deals 1 damage to a random enemy. (Refilling your hand at the start of the turn doesn't count.)"
+      "description": "Every tile you draw during your turn deals 1 damage to a random enemy. (Refilling your hand at the start of the turn doesn't count.)",
+      "unlockLevel": 4
     },
     {
       "id": "laminator",
       "name": "Laminator",
       "category": "common",
-      "description": "Letter tiles you add to your deck (rewards, shop, claw machine) become Level 2."
+      "description": "Letter tiles you add to your deck (rewards, shop, claw machine) become Level 2.",
+      "unlockLevel": 3
     },
     {
       "id": "sandbag",
@@ -1096,19 +1104,28 @@
       "id": "bounty",
       "name": "Bounty Poster",
       "category": "common",
-      "description": "Elites start combat with 25% less HP."
+      "description": "Elites start combat with 25% less HP.",
+      "unlockLevel": 1
     },
     {
       "id": "trophy",
       "name": "Big Game Trophy",
       "category": "common",
-      "description": "Gain 1 extra Energy every turn in Elite and Boss fights."
+      "description": "Gain 1 extra Energy every turn in Elite and Boss fights.",
+      "unlockLevel": 7
     },
     {
       "id": "magnet",
       "name": "Arcade Token",
       "category": "common",
-      "description": "Every ? node becomes the Claw Machine. It only gives 2 tries, but the claw becomes a magnet that pulls in everything around it."
+      "description": "Every ? node becomes the Claw Machine. It only gives 2 tries, but the claw becomes a magnet that pulls in everything around it.",
+      "unlockLevel": 9
+    },
+    {
+      "id": "thermos",
+      "name": "Thermos",
+      "category": "common",
+      "description": "Heal 8 HP at the end of every combat."
     }
   ]
 }

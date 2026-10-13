@@ -185,7 +185,6 @@ A cast is the sequence of tiles on the sigil bar:
 Spell Power = Σ tile Spell Power (wildcards = 0, Slimy tiles = 0)
             + Might   (attack weapons only)   or   + Robust (defense weapons only)
             + Exclamation bonus (consecutive ! at the end: +2, +4, +6, +10, +16, +26, +42 … cumulative)
-            + Rage (Greatsword Critical only: +1 per 2 missing HP)
 
 Mult        = weapon Mult (×1) + Σ relic Mult bonuses, checked word by word (+0.5 Adrenaline for The Champion below 50% HP)
 
@@ -193,6 +192,8 @@ Output      = floor(Spell Power × Mult)
             × 2 if Journal applies (2nd cast of this exact word this run)
             × 2 if Echo Draught is active
             + Midas Touch gold bonus (floor(gold/10), ×2 on Critical)
+            + Berserker's Blood (attacks: +1 per 4 missing HP)
+            + Shield Slam (½ of current Shield)
 ```
 
 - **Comma casts and relics**: every word of a comma cast is checked by the Mult relics **on its own**, and the bonuses add up. CAT,CAT with Dusk Glyph (ends with T–Z) gets +0.5 twice = +1. Single letters inside a comma cast (CAT,A) don't trigger word relics.
@@ -309,10 +310,10 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Weapon | Hero | Kind | Energy | Crit length | Effect | Critical |
 |---|---|---|---|---|---|---|
-| **Spellbook** | Scholar | attack | 2 | 5 | Deal damage. | Inflict Broken 2 on the target (+50% damage taken). |
+| **Spellbook** | Scholar | attack | 2 | 2 | Deal damage. | Gain **+1 Energy next turn**. |
 | **Barrier** | Scholar | defense | 1 | 4 | Gain Shield. | Draw 3 tiles. |
-| **Greatsword** | Champion | attack | 2 | 5 | Deal damage. Each swing costs you 3 HP. | +1 Spell Power for every 2 HP you are missing. |
-| **Dumbbell** | Champion | buff | 1 | 2 | Gain Might equal to output × 0.1 (rounded down, min 1). | Heal HP equal to 2 × your Might. |
+| **Greatsword** | Champion | attack | 2 | 3 | Deal damage. | Inflict **3 Broken** on the target, but you lose HP equal to 20% of the output (min 2). |
+| **Dumbbell** | Champion | buff | 1 | 5 | Gain Might equal to output ÷ 5 (min 1). | Heal HP equal to 2 × your Might. |
 | **Parrying Dagger** | Mercenary | attack | 1 | 3 | Deal damage. | Also gain Shield equal to the output. |
 | **Utility Belt** | Mercenary | utility | 1 | 4 | Forge Fragile [ ! ] tiles into your discard pile: 1 per 8 output (min 1, max 3). Put ! at the end of a word for bonus Spell Power. | Refund 1 Energy. |
 
@@ -396,9 +397,9 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Relic | Effect |
 |---|---|
-| **Berserker's Blood** | Starter relic of The Champion. Heal 5 HP at the end of every combat. |
+| **Berserker's Blood** | The Champion | Your attacks deal **+1 damage for every 4 HP you are missing** (added after Mult; shown in the score tooltip). |
 | **Quick Gloves** | Starter relic of The Mercenary. After the first word you cast in each combat, draw as many tiles as it used. |
-| **Journal** | Starter relic of The Scholar. The second time you cast a word in this run, its output is doubled. From the third time on it scores normally. |
+| **Journal** | The Scholar | The **second time you cast the same word in a combat**, its output is doubled (third time on: normal). The count resets every fight. |
 
 ### 8.2 Mult relics
 
@@ -467,8 +468,9 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Metronome** | Every 3rd word you cast in a turn gives +1 Might. |
 | **Canned Peaches** | Raise your Max HP by 7 when you pick it up. |
 | **Bottle Rack** | Gain 2 extra potion slots. |
-| **Bendy Straw** | Heal 5 HP whenever you use a potion. |
+| **Bendy Straw** | Heal 5 HP whenever you use a consumable. |
 | **Wind-up Key** | Every 3rd turn of a combat, gain 1 extra Energy. |
+| **Thermos** | Heal 8 HP at the end of every combat. |
 | **Rusty Nail** | Every attack you cast also inflicts 1 Poison on the enemy it hits (Flame Lance's spread and Boomerang's second hit count as hits). |
 | **Barbed Wire** | For every 10 Shield you gain from your words (defense weapons, Cleansing Bell, Parrying Dagger's parry), gain 1 Thorns for the rest of the combat. Leftover Shield carries over within the combat. |
 | **Megaphone** | Each [ ! ] in an attack word counts as one more attack for per-attack effects: Chalk Tally's count and Rusty Nail's Poison (CAT!! = 3 attacks). |
@@ -496,7 +498,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 
 ---
 
-## 9. Potions
+## 9. Consumables (formerly Potions)
 
 - 3 slots by default (+2 with Bottle Rack). Potions cost no Energy and can be used at any point in the player's turn.
 - Clicking a potion opens a small menu: **Use** or **Discard** (to free the slot). Hovering shows a tooltip with its effect.
@@ -814,6 +816,32 @@ Tabs: Monsters, Weapons, Relics, Potions, Keywords. Every entry shows the art/ic
 Music and SFX volume (0–10 each), Controls table, Map, Deck, Rules, Glossary. Reduced-motion users get shortened animations.
 
 ---
+
+### 14.6 Unlock progression
+
+- **Heroes**: only **The Scholar** is available at first. Reaching the **Act 1 boss** (entering the boss fight, win or lose) unlocks **The Champion**; reaching the **Act 2 boss** unlocks **The Mercenary**. Locked heroes appear as dark silhouettes with "???" and the unlock hint on the hero select screen.
+- **Unlock levels (0–10)**: each level adds **1 relic and 1 consumable** to the pools (shop, chests, elite rewards, events, claw machine, wheel). Locked content never drops.
+- **XP** (never shown as numbers): every fight won during a run adds XP: normal 9 (+2 per Act after the first), Elite 22 (+5), boss 45 (+10). It is banked when the run ends (death or victory). Level *n → n+1* needs `80 + 15·n` XP (80, 95, 110 … 215; ~1,475 total), so a decent run gives 1–2 levels.
+- **Run summary**: the death and victory screens show an **Unlocks** bar that fills up; every level-up pops a card with the new relic and consumable.
+
+| Level | Relic unlocked | Consumable unlocked |
+|---|---|---|
+| 1 | Bounty Poster | Rage Soda |
+| 2 | Piggy Bank | Brick Milk |
+| 3 | Laminator | Rocket Pop |
+| 4 | Paper Cut | Cluster Bomb |
+| 5 | Rusty Nail | Full Flask |
+| 6 | Barbed Wire | Panacea |
+| 7 | Big Game Trophy | Flashbang |
+| 8 | Megaphone | Titan Serum |
+| 9 | Arcade Token | Bastion Serum |
+| 10 | **Swear Jar** (always last) | Overclock Chip |
+
+Everything else (the original relics and consumables, Mult relics, word-type relics, starter and boss relics) is available from the start, so new players learn the basic systems before the complex or swingy items arrive.
+
+- **Glossary discovery**: monsters, weapons, relics and consumables show as **???** until the player has seen them in a run (fought, offered in a shop/chest/altar, or obtained). Locked items say which unlock level brings them. Starter relics are listed first in the Relics tab.
+- **Testing**: the Glossary has a **Cheat: unlock all** button (every hero, all unlock levels, whole Glossary revealed) and **Reset progress**. Remove both before release.
+- Storage: `localStorage["lexicore-progress"] = {xp, level, heroes[], seen:{e,w,r,p}}`.
 
 ## 15. UI, UX and controls
 

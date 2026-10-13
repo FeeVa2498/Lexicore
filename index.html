@@ -92,6 +92,14 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+.ubox{background:#fffdf7;border:3px solid #1d1b22;border-radius:14px;padding:10px 16px;width:min(520px,92vw);display:grid;gap:8px;box-shadow:4px 5px 0 #1d1b22}
+.uhead{display:flex;justify-content:space-between;font:20px var(--f-display)}
+.ubar{height:22px;border:3px solid #1d1b22;border-radius:12px;background:#3d3a44;overflow:hidden}.ubar i{display:block;height:100%;background:linear-gradient(90deg,#ffbe0b,#ffd166);box-shadow:inset 0 -4px 0 rgba(0,0,0,.15)}
+.unew{display:grid;gap:6px}.ucard{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff4c2;border:2.5px solid #1d1b22;border-radius:10px;padding:4px 10px;animation:rwpop .45s cubic-bezier(.2,1.4,.4,1)}
+.ucard .relic{width:40px;height:40px}
+.gcard.unseen{opacity:.75}.gart.qmark{display:grid;place-items:center;font:44px var(--f-display);color:#9b5de5;background:#efe6ff;border-radius:12px}
+.herocard.locked .heroart svg{filter:brightness(0) opacity(.55)}.herocard.locked{cursor:not-allowed}
+.btn.cheat{background:#ffe3e6}
 .fighter.form-statue .art{filter:grayscale(1) brightness(.9) contrast(1.1) drop-shadow(0 0 10px #c9c3ad)}
 .fighter.time-haste .art{filter:drop-shadow(-10px 0 0 rgba(95,212,196,.45)) drop-shadow(-20px 0 0 rgba(95,212,196,.2));animation:hastejit .25s infinite alternate}
 @keyframes hastejit{from{transform:translateX(0)}to{transform:translateX(3px)}}
@@ -1806,8 +1814,8 @@ function renderHUD(){
     <span class="hstat" title="Health">${IC.heart}<b>${G.hp}</b>/${G.maxHp}</span>
     <span class="hstat" title="Gold">${IC.coin}<b>${G.gold}</b></span>
     <span class="hstat" title="Act and floor">Act <b>${G.act||1}</b> · Floor <b>${G.floor||"–"}</b>/${((G.map&&G.map.F)??MAP_FLOORS)+1}</span>
-    <span class="row" style="gap:4px" title="Potions">${Array.from({length:maxPotions()},(_,i)=>{const p=G.potions[i];
-      return p?`<button class="pot full" ${potTip(p)} onclick="potionMenu(${i},event)" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" ${tipAttr("Empty potion slot")}></span>`}).join("")}</span>
+    <span class="row" style="gap:4px" title="Consumables">${Array.from({length:maxPotions()},(_,i)=>{const p=G.potions[i];
+      return p?`<button class="pot full" ${potTip(p)} onclick="potionMenu(${i},event)" aria-label="${POTIONS[p].name}">${potionIcon(p)}</button>`:`<span class="pot" ${tipAttr("Empty consumable slot")}></span>`}).join("")}</span>
     <span class="relics" id="relicbar">${G.relics.map(r=>`<span class="relic" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)}>${relicIcon(r)}</span>`).join("")||`<span class="muted" style="font-size:15px">No relics yet</span>`}</span>
     <span class="spacer"></span>
     <button class="btn small" onclick="showDeck()" title="View deck">${G.deck.length} tiles</button>
@@ -1875,7 +1883,7 @@ function showHelp(){
 }
 
 /* ================= POTIONS ================= */
-function addPotion(id){ if(G.potions.length>=maxPotions()){ toast("Potion slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
+function addPotion(id){ if(G.potions.length>=maxPotions()){ toast("Consumable slots are full."); return false; } G.potions.push(id); if(!C) renderHUD(); else renderCombat(); return true; }
 async function usePotion(i){
   const id=G.potions[i]; if(!id) return;
   const P=POTIONS[id];
@@ -1982,7 +1990,7 @@ async function startPlayerTurn(){
   C.p.thorns=C.baseThorns||0;
   C.filling=true; draw(HAND_SIZE - C.hand.length + extra); C.filling=false;
   if(C.tut&&C.turn===1) ensureLetters("CATDOG");
-  if(C.tut&&C.turn===3) ensureLetters("STONE");
+  if(C.tut&&C.turn===3) ensureLetters("GO");
   C.wi = C.tut&&C.turn===1?1:0;
   renderCombat(); if(fired.length) flashRelics(fired);
   banner(`Turn ${C.turn}`, 700);
@@ -2059,12 +2067,12 @@ function evaluate(tiles, w, check){
   if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
   if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
   R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
-  if(R.crit&&w.id==="greatsword"&&typeof G!=="undefined"&&G){ const bonus=Math.floor((G.maxHp-G.hp)/2); if(bonus){ R.chips+=bonus; R.notes.push(`+${bonus} Rage (missing HP)`); } }
+
   R.mult=+R.mult.toFixed(2);
   R.total = Math.floor(R.chips*R.mult);
   if(parts.length>1) R.notes.push(`${parts.length} words`);
   midasBonus(R,w);
-  if(check&&typeof G!=="undefined"&&G&&G.relics.includes("journal")&&((G.wordUses||{})[words.join(",")]||0)===1){ R.total*=2; R.journal=true; R.fired.push("journal"); R.notes.push("Journal: second time ×2"); }
+  if(check&&typeof G!=="undefined"&&G&&G.relics.includes("journal")&&((C&&C.wordUses||{})[words.join(",")]||0)===1){ R.total*=2; R.journal=true; R.fired.push("journal"); R.notes.push("Journal: second time ×2"); }
   R.valid = true; R.words=words;
   return R;
 }
@@ -2119,7 +2127,7 @@ async function cast(){
     if(R.crit&&!R.fallback) achHit("crit"); if(R.words&&R.words.length>1) achHit("comma"); if(tiles.filter(t=>t.ch==="?").length>=3) achHit("wild3"); }
   G.stats.words++;
   C.turnCasts=(C.turnCasts||0)+1; const thirdCast=C.turnCasts%3===0;
-  if(!R.fallback&&R.words){ G.wordUses=G.wordUses||{}; const key=R.words.join(","); G.wordUses[key]=(G.wordUses[key]||0)+1; }
+  if(!R.fallback&&R.words){ G.wordUses=G.wordUses||{}; C.wordUses=C.wordUses||{}; const key=R.words.join(","); G.wordUses[key]=(G.wordUses[key]||0)+1; C.wordUses[key]=(C.wordUses[key]||0)+1; }
   G.lastWord=(!R.fallback&&R.words)?R.words.join(","):null;
   if(!C.firstCast){ C.firstCast=true; if(G.relics.includes("gloves")){ extraDraw+=tiles.length; R.fired.push("gloves"); log(`Quick Gloves: draw ${tiles.length}.`); } }
   const label = R.words?R.words.join(", "):R.L;
@@ -2139,7 +2147,8 @@ async function cast(){
     if(res.dmg>=100) achHit("big100");
     if(R.crit){
       snd("crit");
-      if(wid==="sword"){ C.es[ti].broken+=2; log("Critical! Enemy is Broken for 2 turns."); }
+      if(wid==="sword"){ C.nextEnergy=(C.nextEnergy||0)+1; log("Critical! +1 Energy next turn."); }
+      if(wid==="greatsword"&&C.es[ti].hp>0){ C.es[ti].broken+=3; const self=Math.max(2,Math.floor(R.total*.2)); G.hp=Math.max(0,G.hp-self); log(`Critical! Broken 3, but the Greatsword bites back: −${self} HP.`); const pc=center("p"); numPop(pc.x,pc.top+20,`-${self}`,8,"#ff5a4e"); updateBar("p"); if(G.hp<=0&&!undying()){ renderCombat(); return gameOver("their own Greatsword"); } }
       if(wid==="needle"){ C.es[ti].poison+=4; log("Critical! 4 Poison."); }
       if(wid==="hammer"){ log("Critical! The hammer smashes through block."); }
       if(wid==="slam"&&C.es[ti].hp>0){ C.es[ti].stun=(C.es[ti].stun||0)+1; log("Critical! The target is Stunned."); }
@@ -2150,7 +2159,7 @@ async function cast(){
     let dealt=res.dmg;
     if(wid==="boomerang"&&R.crit&&C.es[ti].hp>0){ log("Critical! The boomerang comes back around."); const r2=dealToEnemy(ti,Math.floor(dmg/2),{}); await strikeAnim("p","e"+ti,r2,{word:"↺"}); dealt+=r2.dmg; if(await thornsBack(ti)) return; if(hasR("nail")&&C.es[ti].hp>0) C.es[ti].poison+=1; }
     if(wid==="dagger"&&R.crit){ let sh=R.total; if(C.p.weaken>0) sh=Math.floor(sh/2); C.p.block+=sh; log(`Parry! +${sh} Shield.`); await guardAnim("p",sh,{}); const bw=barbGain(sh); if(bw) await buffAnim("p",`+${bw} Thorns`); }
-    if(wid==="greatsword"){ G.hp=Math.max(0,G.hp-3); log("The Greatsword bites back: −3 HP."); const pc=center("p"); numPop(pc.x,pc.top+20,"-3",8,"#ff5a4e"); updateBar("p"); snd("hurt"); if(G.hp<=0&&!undying()){ renderCombat(); return gameOver("their own Greatsword"); } }
+
     if(R.crit && wid==="lance"){ log("Critical! The flames spread to every enemy.");
       for(let j=0;j<C.es.length;j++){ if(j===ti||C.es[j].dead) continue; const full2=C.es[j].hp===C.es[j].max; const r2=dealToEnemy(j,dmg,{}); if(hasR("nail")&&C.es[j].hp>0) C.es[j].poison+=hits; updateBar("e"+j); if(full2&&C.es[j].hp<=0) achOneShot(); const c=center("e"+j); impact(c.x,c.y,r2.dmg,{colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); numPop(c.x,c.top+10,r2.dmg?`-${r2.dmg}`:"Blocked!",r2.dmg,"#ffd23f"); fEl("e"+j)?.classList.add("flash"); }
       snd("hit"); shake(20); await sleep(T_(800));
@@ -2164,7 +2173,7 @@ async function cast(){
     if(R.crit){ snd("crit"); C.energy+=1; log("Critical! +1 Energy refunded."); stamp(c.x,c.top-40,"+1 ENERGY!"); renderCombat(); }
     await sleep(T_(500)); delete fEl("p").dataset.pose; unfocus(); await sleep(T_(200)); renderCombat(); await tileFlyFx(made,"Forged!","#2f7d3e");
   } else if(w.kind==="buff"){
-    const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total*0.1)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
+    const gain = wid==="dumbbell" ? Math.max(1,Math.floor(R.total/5)) : Math.max(1,Math.floor(R.total/5)); C.p.might+=gain; log(`${wid==="dumbbell"?"Reps":"War drums"}: +${gain} Might.`);
     let healDB=0; if(R.crit&&wid==="dumbbell"){ snd("crit"); healDB=2*C.p.might; G.hp=Math.min(G.maxHp,G.hp+healDB); log(`Critical! Heal ${healDB} (2 × Might).`); updateBar("p"); }
     else if(R.crit){ snd("crit"); C.p.might+=gain; log(`Critical! Might doubled: +${gain} more.`); }
     const c=center("p"); focusOn(["p"],1.2,c.x,c.y-30); await sleep(T_(220)); fEl("p").dataset.pose="atk";
@@ -2461,7 +2470,7 @@ function renderCombat(){
       <span class="cost ${wCost(id)<W.cost?"free":""}">${wCost(id)}</span>${WICON[id]()}<span class="wn">${i+1}. ${W.name}</span>
       <span class="wm">×${W.mult} · <span class="dots">${"<i></i>".repeat(W.sigil)}</span></span><span class="wc"><b>Crit ${W.sigil}:</b> ${W.crit}</span></button>`; }).join("");
   const pots = Array.from({length:maxPotions()},(_,i)=>{ const p=G.potions[i];
-    return p?`<button class="pslot" ${potTip(p)} onclick="potionMenu(${i},event)">${potionIcon(p)}</button>`:`<span class="pslot" ${tipAttr("Empty potion slot")}></span>`; }).join("");
+    return p?`<button class="pslot" ${potTip(p)} onclick="potionMenu(${i},event)">${potionIcon(p)}</button>`:`<span class="pslot" ${tipAttr("Empty consumable slot")}></span>`; }).join("");
   const n=C.hand.length, cols=n>16?5:4, rows=Math.max(4,Math.ceil(n/cols));
   const rowh = Math.floor((262-24-(rows-1)*9)/rows);
   const fresh=new Set(C.fresh); C.fresh=[];
@@ -2515,13 +2524,13 @@ function showControls(){
       ${r("<kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd>","Switch target enemy")}
       ${r("<kbd>Space</kbd>","End turn (asks first if a weapon can still be cast)")}
       ${r("<kbd>A</kbd> / <kbd>D</kbd> then <kbd>Space</kbd>","In a Yes / No popup: choose, then confirm")}
-      ${r("<kbd>Alt</kbd>+<kbd>1</kbd>–<kbd>3</kbd>","Drink the potion in that slot")}
+      ${r("<kbd>Alt</kbd>+<kbd>1</kbd>–<kbd>3</kbd>","Use the consumable in that slot")}
       ${r("<kbd>Esc</kbd>","Clear the sigil bar; if it's empty, open Settings (Map, Deck, Rules)")}
       <tr><th colspan="2">Map &amp; screens</th></tr>
       ${r("<kbd>W</kbd><kbd>S</kbd> / <kbd>↑</kbd><kbd>↓</kbd> · <kbd>Enter</kbd>","Map: pick the next node, then travel (drag with the mouse or scroll to pan)")}
       ${r("<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>S</kbd>","Reward: take a tile / skip")}
       ${r("<kbd>1</kbd> <kbd>2</kbd>","Weapon Altar and Rest Site: choose an option")}
-      ${r("<kbd>1</kbd>–<kbd>9</kbd> · <kbd>T</kbd> · <kbd>L</kbd>","Shop: buy relics 1–3, tiles 4–6, potions 7–9 · toss a tile · leave")}
+      ${r("<kbd>1</kbd>–<kbd>9</kbd> · <kbd>T</kbd> · <kbd>L</kbd>","Shop: buy relics 1–3, tiles 4–6, consumables 7–9 · toss a tile · leave")}
       ${r("<kbd>Tab</kbd> + <kbd>Enter</kbd>","Move between and press any button (shop, events, menus)")}
       ${r("<kbd>Esc</kbd>","Close a popup · open Settings on the map")}
       <tr><th colspan="2">Claw machine</th></tr>
@@ -3586,13 +3595,14 @@ function screenKey(e){
 function winCombat(){
   if(C&&!G.tutorial){ unlock("first_blood"); if(G.hp>=(C.hpStart??0)) unlock("untouched"); if(C.kind==="boss") unlock(["act1","act2","act3","act4"][(G.act||1)-1]); }
   if(G.tutorial){ unlock("tutorial"); setTutDone(); C=null; G=null; toast("Tutorial complete! The Tower awaits."); showSplash(); return; }
-  if(G.relics.includes("blood")&&G.hp>0){ const h=Math.min(5,G.maxHp-G.hp); if(h>0){ G.hp+=h; toast(`Berserker's Blood: +${h} HP.`); } }
+  if(G.relics.includes("thermos")&&G.hp>0){ const h=Math.min(8,G.maxHp-G.hp); if(h>0){ G.hp+=h; toast(`Thermos: +${h} HP.`); } }
+  if(C) G.runXp=(G.runXp||0)+fightXp(C.kind);
   const kind=C.kind, got=C.goldGot||0; C=null; window._keepStage=kind!=="boss";
   if(kind==="boss"){ const pi=piggyInterest(); if(pi) toast(`Piggy Bank interest: +${pi} gold.`); return actCleared(); }
   const rw={gold:got, slots:rollPaintSlots(), extras:[]};
   { const pi=piggyInterest(); if(pi){ rw.gold+=pi; rw.extras.push(`Piggy Bank interest +${pi} gold`); } }
   // GDD extras are granted automatically so the reward screen stays a single choice
-  if((kind==="elite"||Math.random()<.5)){ const pid=pick(Object.keys(POTIONS)); if(G.potions.length<maxPotions()){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
+  if((kind==="elite"||Math.random()<.5)){ const pid=pick(potionPool()); if(G.potions.length<maxPotions()){ G.potions.push(pid); rw.extras.push(POTIONS[pid].name); } }
   if(kind==="elite"){ const r=randomRelic(); if(r){ gainRelic(r); rw.extras.push(RELICS[r].name); } }
   G.reward=rw; G.screen="reward"; window._keepStage=false;
   renderReward();
@@ -3733,8 +3743,8 @@ Object.assign(RELICS,{
   opener:{name:"Rubber Stamp",sym:"3",d:"Every 3rd word you cast in a turn deals 5 damage to ALL enemies."},
   shuriken:{name:"Metronome",sym:"✦",d:"Every 3rd word you cast in a turn gives +1 Might."},
   berry:{name:"Canned Peaches",sym:"♣",d:"Raise your Max HP by 7 when you pick it up."},
-  potbelt:{name:"Bottle Rack",sym:"B",d:"Gain 2 extra potion slots."},
-  bird:{name:"Bendy Straw",sym:"^",d:"Heal 5 HP whenever you use a potion."},
+  potbelt:{name:"Bottle Rack",sym:"B",d:"Gain 2 extra consumable slots."},
+  bird:{name:"Bendy Straw",sym:"^",d:"Heal 5 HP whenever you use a consumable."},
   flower:{name:"Wind-up Key",sym:"✿",d:"Every 3rd turn of a combat, gain 1 extra Energy."},
   ecto:{name:"Hollow Coin",sym:"E",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold."},
   dripper:{name:"Insomnia Lamp",sym:"C",boss:true,d:"Boss relic. Gain 1 extra Energy every turn. You can no longer Rest at Rest Sites."},
@@ -4063,13 +4073,13 @@ Object.assign(ARTS,{
 const HEROES={
   scholar:{name:"The Scholar",art:"cat",color:"#3a86ff",hp:70,weapons:["sword","shield"],relic:"journal",
     tag:"A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
-    play:"Balanced spell-caster. Shines with medium and long words: the Spellbook crits at 5 letters, the Barrier at 4.",
+    play:"Balanced spell-caster. The Spellbook crits on 2-letter words for +1 Energy next turn, the Barrier crits at 4 letters and draws 3 tiles. The Journal doubles the second cast of the same word in a fight.",
     who:"A curious wizard cat who found the ancient Tablet and never put it down.",
     why:"Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
     ending:["LEXICORE's test is over. Its chamber now leads a million copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it.",""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],relic:"blood",
     tag:"A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
-    play:"Berserker with no shield. Short brutal words: the Greatsword costs 3 HP per swing but crits at 3 letters and hits harder the more HP you are missing. The Dumbbell builds Might, and a 2-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
+    play:"Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's test is over. Its chamber now leads a million copies of The Champion on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original wolf watches the Moon grow larger and grins. For once, the next fight is bigger than the one who will fight it.",""]},
@@ -4443,7 +4453,7 @@ POTIONS.purge.d="Cleanse every debuff from the tiles in your hand.";
 POTIONS.shout.d="Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full).";
 /* boss relics reworked */
 RELICS.dripper.d="Boss relic. Gain 1 extra Energy every turn. Resting at a Rest Site heals only 15% of your Max HP (instead of 30%).";
-RELICS.sozu.d="Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP.";
+RELICS.sozu.d="Boss relic. Gain 1 extra Energy every turn. Using a consumable costs you 10 HP.";
 RELICS.philo.d="Boss relic. Gain 1 extra Energy every turn. You start every combat with 1 Broken.";
 /* word relics */
 RELICS.umbrella.d="Every word that starts with a vowel also gives you 8 Shield.";
@@ -4741,6 +4751,126 @@ function kwIcon(k){
   const m={ptile:"poison",ctile:"curse",ftile:"frustrated",slimy:"slimy",lock:"lock",condemn:"condemn",burn:"burn"}[k]||k;
   return SI[m]||"";
 }
+/* ================= REWORK: hero kits, unlock progression, Glossary discovery, Consumables ================= */
+/* ---- hero kits ---- */
+Object.assign(WEAPONS.sword,{sigil:2,crit:"Gain +1 Energy next turn."});
+Object.assign(WEAPONS.greatsword,{sigil:3,desc:"Deal damage.",crit:"Inflict 3 Broken on the target, but you lose HP equal to 20% of the output (min 2)."});
+Object.assign(WEAPONS.dumbbell,{sigil:5,desc:"Gain Might equal to output ÷ 5 (min 1).",crit:"Heal HP equal to 2 × your Might."});
+RELICS.blood.d="Starter relic of The Champion. Your attacks deal +1 damage for every 4 HP you are missing.";
+RELICS.journal.d="Starter relic of The Scholar. The second time you cast the same word in a combat, its output is doubled. From the third time on it scores normally.";
+RELICS.thermos={name:"Thermos",sym:"♨",d:"Heal 8 HP at the end of every combat."};
+RELIC_DRAW.thermos=(sh,ink)=>{ sh("rect",`x="11" y="9" width="18" height="27" rx="5"`,"#3a86ff"); sh("rect",`x="13" y="4" width="14" height="6" rx="2"`,"#9aa6b4"); sh("rect",`x="11" y="18" width="18" height="6"`,"#dfe7ef"); ink(`<path class="thin" style="stroke:#fff" d="M17 3 Q15 0 18 -2 M23 3 Q21 0 24 -2"/>`); };
+(function(){ const mb=midasBonus; midasBonus=function(R,w){ mb(R,w);
+  if(w&&w.kind==="atk"&&typeof G!=="undefined"&&G&&G.relics&&G.relics.includes("blood")){ const b=Math.floor((G.maxHp-G.hp)/4); if(b){ R.total+=b; R.fired.push("blood"); R.notes.push(`+${b} Berserker's Blood (${G.maxHp-G.hp} HP missing)`); } } }; })();
+
+/* ---- persistent progression ---- */
+const PROG_KEY="lexicore-progress";
+function progGet(){ let p=null; try{ p=JSON.parse(localStorage.getItem(PROG_KEY)); }catch(e){} return Object.assign({xp:0,level:0,heroes:["scholar"],seen:{e:[],w:[],r:[],p:[]}},p||{}); }
+function progSet(p){ try{ localStorage.setItem(PROG_KEY,JSON.stringify(p)); }catch(e){} }
+let PROG=progGet();
+const MAX_UNLOCK=10;
+const xpNeed=lv=>80+15*lv;   // xp needed to go from level lv to lv+1: 80, 95, 110 … 215
+const LOCK_R={bounty:1,piggy:2,laminator:3,papercut:4,nail:5,barbed:6,trophy:7,megaphone:8,magnet:9,swearjar:10};
+const LOCK_P={ragesoda:1,brickmilk:2,rocket:3,cluster:4,bigheal:5,panacea:6,flashbang:7,titan:8,bastion:9,overclock:10};
+const relicUnlocked=id=>!(id in LOCK_R)||PROG.level>=LOCK_R[id];
+const potUnlocked=id=>!(id in LOCK_P)||PROG.level>=LOCK_P[id];
+function potionPool(){ return Object.keys(POTIONS).filter(potUnlocked); }
+function randomRelic(exclude=[]){
+  const pool=Object.keys(RELICS).filter(r=>!RELICS[r].starter&&!RELICS[r].boss&&relicUnlocked(r)&&!G.relics.includes(r)&&!exclude.includes(r));
+  return pool.length?pick(pool):null;
+}
+function heroesUnlocked(){ return HERO_ORDER.filter(h=>PROG.heroes.includes(h)); }
+const HERO_UNLOCK_HINT={champion:"Reach the Act 1 boss to unlock.",mercenary:"Reach the Act 2 boss to unlock."};
+function unlockHero(h){ if(PROG.heroes.includes(h)) return; PROG.heroes.push(h); progSet(PROG); toast(`New hero unlocked: ${HEROES[h].name}!`); snd("crit"); }
+/* seen content (Glossary shows ??? until you meet it) */
+function markSeen(type,id){ if(!id) return; const s=PROG.seen[type]||(PROG.seen[type]=[]); if(!s.includes(id)){ s.push(id); progSet(PROG); } }
+const isSeen=(type,id)=>(PROG.seen[type]||[]).includes(id);
+(function(){
+  const ri=relicIcon; relicIcon=function(id){ markSeen("r",id); return ri(id); };
+  const pi=potionIcon; potionIcon=function(id){ markSeen("p",id); return pi(id); };
+  for(const k of Object.keys(WICON)){ const f=WICON[k]; WICON[k]=function(){ markSeen("w",k); return f.apply(this,arguments); }; }
+})();
+/* XP: every fight you win counts; Elites and bosses count more. Shown only as the bar at the end of the run. */
+function fightXp(kind){ const a=(G.act||1)-1; return kind==="boss"?45+10*a:kind==="elite"?22+5*a:9+2*a; }
+function applyRunXp(){
+  const gained=G.runXp||0; G.runXp=0;
+  const before={xp:PROG.xp,level:PROG.level}, unlocks=[];
+  PROG.xp+=gained;
+  while(PROG.level<MAX_UNLOCK&&PROG.xp>=xpNeed(PROG.level)){ PROG.xp-=xpNeed(PROG.level); PROG.level++;
+    unlocks.push({level:PROG.level,relic:Object.keys(LOCK_R).find(k=>LOCK_R[k]===PROG.level),pot:Object.keys(LOCK_P).find(k=>LOCK_P[k]===PROG.level)}); }
+  if(PROG.level>=MAX_UNLOCK) PROG.xp=0;
+  progSet(PROG); return {before,after:{xp:PROG.xp,level:PROG.level},gained,unlocks};
+}
+function unlockBarHTML(res){
+  const lv=res.after.level, max=lv>=MAX_UNLOCK;
+  return `<div class="ubox" id="ubox"><div class="uhead"><b>Unlocks</b><span id="ulv">Level ${res.before.level}${res.before.level>=MAX_UNLOCK?" (max)":""}</span></div>
+    <div class="ubar"><i id="ufill" style="width:${res.before.level>=MAX_UNLOCK?100:Math.round(res.before.xp/xpNeed(res.before.level)*100)}%"></i></div>
+    <div class="unew" id="unew"></div></div>`;
+}
+async function animateUnlockBar(res){
+  const fill=$("#ufill"), lvEl=$("#ulv"), nw=$("#unew"); if(!fill) return;
+  const steps=[]; let L=res.before.level, X=res.before.xp, left=res.gained;
+  while(left>0&&L<MAX_UNLOCK){ const need=xpNeed(L)-X, take=Math.min(left,need); X+=take; left-=take; steps.push({L,pct:X/xpNeed(L)*100,up:X>=xpNeed(L)}); if(X>=xpNeed(L)){ L++; X=0; } else break; }
+  await sleep(500);
+  for(const s of steps){
+    fill.style.transition="width .9s ease-out"; fill.style.width=s.pct+"%"; snd("tap"); await sleep(1000);
+    if(s.up){ const u=res.unlocks.find(x=>x.level===s.L+1); lvEl.textContent=`Level ${s.L+1}${s.L+1>=MAX_UNLOCK?" (max)":""}`; snd("crit");
+      if(u) nw.insertAdjacentHTML("beforeend",`<div class="ucard"><b>Unlock level ${u.level}</b>${u.relic?`<span class="relic">${relicIcon(u.relic)}</span><span>${RELICS[u.relic].name}</span>`:""}${u.pot?`<span class="gart sm" style="width:40px;height:40px">${potionIcon(u.pot)}</span><span>${POTIONS[u.pot].name}</span>`:""}</div>`);
+      fill.style.transition="none"; fill.style.width=(s.L+1>=MAX_UNLOCK?100:0)+"%"; await sleep(80); }
+  }
+}
+/* hook: run summary screens */
+(function(){
+  const go=gameOver; gameOver=function(cause){ const tut=G&&G.tutorial; const r=go(cause); if(!tut&&G){ const res=applyRunXp(); setTimeout(()=>{ const st=$("#app .screen .box"); if(st){ st.insertAdjacentHTML("afterend",unlockBarHTML(res)); animateUnlockBar(res); } },760); } return r; };
+  const sv=showVictory; showVictory=function(){ const res=applyRunXp(); sv(); const st=$("#app .screen .box"); if(st){ st.insertAdjacentHTML("afterend",unlockBarHTML(res)); animateUnlockBar(res); } };
+  const sc=startCombat; startCombat=function(group,kind,opt){ if(typeof group==="string") group=[group]; group.forEach(id=>markSeen("e",id));
+    if(kind==="boss"&&G&&!G.tutorial){ if((G.act||1)===1) unlockHero("champion"); if((G.act||1)===2) unlockHero("mercenary"); }
+    return sc(group,kind,opt); };
+})();
+/* cheat: unlock everything (testing) */
+function cheatUnlockAll(){
+  PROG.level=MAX_UNLOCK; PROG.xp=0; PROG.heroes=HERO_ORDER.slice();
+  PROG.seen={e:Object.keys(ENEMIES),w:Object.keys(WEAPONS),r:Object.keys(RELICS),p:Object.keys(POTIONS)}; progSet(PROG);
+  toast("Cheat: every hero, relic and consumable is unlocked."); snd("crit");
+  if(!$("#modal").hidden) showGlossary(window._gtab||"monsters");
+}
+function cheatResetProgress(){ PROG={xp:0,level:0,heroes:["scholar"],seen:{e:[],w:[],r:[],p:[]}}; progSet(PROG); toast("Progress reset."); if(!$("#modal").hidden) showGlossary(window._gtab||"monsters"); }
+/* Glossary with discovery */
+const UNSEEN=(tag,txt)=>`<div class="gcard small unseen"><div class="gart sm qmark">?</div><div><h3>??? ${tag?`<span class="gtag">${tag}</span>`:""}</h3><div class="muted">${txt}</div></div></div>`;
+(function(){
+  const gt=glossaryTab;
+  glossaryTab=function(tab){
+    if(tab==="relics"){ const ids=Object.keys(RELICS), st=ids.filter(id=>RELICS[id].starter), rest=ids.filter(id=>!RELICS[id].starter);
+      return [...st,...rest].map(id=>{ const R=RELICS[id];
+        if(!relicUnlocked(id)) return UNSEEN("Locked",`Unlocks at unlock level ${LOCK_R[id]}. Keep playing runs to fill the unlock bar.`);
+        if(!isSeen("r",id)) return UNSEEN(R.starter?"Starter":R.boss?"Boss relic":"","You haven't found this relic yet.");
+        return `<div class="gcard small"><span class="relic big">${relicIcon(id)}</span><div><h3>${R.name}${R.starter?' <span class="gtag">Starter</span>':R.boss?' <span class="gtag">Boss</span>':""}${G&&G.relics&&G.relics.includes(id)?' <span class="gtag">Owned</span>':""}</h3><div>${R.d}</div></div></div>`; }).join(""); }
+    if(tab==="potions") return Object.entries(POTIONS).map(([id,P])=>{
+        if(!potUnlocked(id)) return UNSEEN("Locked",`Unlocks at unlock level ${LOCK_P[id]}.`);
+        if(!isSeen("p",id)) return UNSEEN("","You haven't found this consumable yet.");
+        return `<div class="gcard small"><div class="gart sm">${potionIcon(id)}</div><div><h3>${P.name}</h3><div>${P.d}</div><div class="muted">${P.passive?"Works by itself":P.any?"Usable anywhere":"Combat only"} · Bo's caravan 45–70g · ${maxPotions()} slots max</div></div></div>`; }).join("");
+    if(tab==="weapons"){ const html=gt(tab), ids=[...STARTERS.filter(id=>WEAPONS[id]),...Object.keys(WEAPONS).filter(id=>!STARTERS.includes(id))];
+      const parts=html.split('<div class="gcard">').slice(1);
+      return parts.map((p,i)=>isSeen("w",ids[i])?'<div class="gcard">'+p:UNSEEN("","You haven't found this weapon yet.")).join(""); }
+    if(tab==="monsters"){ const html=gt(tab), ids=monsterOrder().map(x=>x[0]);
+      const parts=html.split('<div class="gcard">').slice(1);
+      return parts.map((p,i)=>{ const E=ENEMIES[ids[i]]; return isSeen("e",ids[i])?'<div class="gcard">'+p:UNSEEN(E.boss?"Boss":E.elite?"Elite":"",ids[i]==="lexicore"?"Whoever waits at the very top of The Tower. Some say a great sorcerer.":"You haven't met this creature yet."); }).join(""); }
+    return gt(tab);
+  };
+})();
+function showGlossary(tab="monsters"){
+  window._gtab=tab;
+  const tabs={monsters:"Monsters",weapons:"Weapons",relics:"Relics",potions:"Consumables",effects:"Effects",keywords:"Keywords",endings:"Endings"};
+  openModal(`<h2>Glossary</h2>
+    <div class="gtabs" role="tablist">${Object.entries(tabs).map(([k,v])=>`<button class="btn small ${k===tab?"primary":""}" role="tab" aria-selected="${k===tab}" onclick="showGlossary('${k}')">${v}</button>`).join("")}</div>
+    <div class="muted" style="font-size:15px">Unlock level <b>${PROG.level}</b> / ${MAX_UNLOCK} · ${HERO_ORDER.filter(h=>PROG.heroes.includes(h)).length}/3 heroes</div>
+    <div class="glist">${glossaryTab(tab)}</div>
+    <div class="row" style="justify-content:center;gap:10px"><button class="btn primary" onclick="closeModal()">Close</button>
+      <button class="btn small cheat" onclick="cheatUnlockAll()" title="Testing only: unlock every hero, relic and consumable and reveal the whole Glossary">Cheat: unlock all</button>
+      <button class="btn small" onclick="cheatResetProgress()" title="Testing only">Reset progress</button></div>`);
+  $("#modal .box").classList.add("wide");
+}
+
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){
   const flag=t=>(t.deb||t.paint||t.fort||t.lvl===2||t.fragile)?0:1, sym=t=>/[A-Z]/.test(t.ch)?0:1;
@@ -4807,13 +4937,14 @@ function showCharSelect(){
 function renderCharSelect(){
   $("#app").innerHTML=`<div class="screen charsel">
     <h2 class="pagetitle">Choose your hero</h2>
-    <div class="herorow">${HERO_ORDER.map((id,i)=>{ const H=HEROES[id], on=i===SEL.i;
+    <div class="herorow">${HERO_ORDER.map((id,i)=>{ const H=HEROES[id], on=i===SEL.i, lk=!PROG.heroes.includes(id);
+      if(lk) return `<button class="herocard locked ${on?"on":""}" style="--hc:#76706a" onclick="SEL.i=${i}; snd('buzz'); toast('${HERO_UNLOCK_HINT[id]}'); renderCharSelect();" aria-pressed="${on}"><div class="heroart">${artSVG(H.art)}</div><b class="heroname">???</b><span class="herotxt herotag">🔒 ${HERO_UNLOCK_HINT[id]}</span></button>`;
       return `<button class="herocard ${on?"on":""}" style="--hc:${H.color}" onclick="if(SEL.i===${i}) startHero('${id}'); else { SEL.i=${i}; snd('tap'); renderCharSelect(); }" aria-pressed="${on}">
         <div class="heroart fighter" ${on?'data-pose="atk"':""}>${artSVG(H.art)}</div>
         <b class="heroname">${H.name}</b>
         <span class="herotxt herotag">${H.tag}</span>
       </button>`; }).join("")}</div>
-    <div class="row" style="justify-content:center"><button class="btn" onclick="showSplash()">Back</button><button class="btn primary" onclick="startHero(HERO_ORDER[SEL.i])">Choose ${HEROES[HERO_ORDER[SEL.i]].name}</button></div>
+    <div class="row" style="justify-content:center"><button class="btn" onclick="showSplash()">Back</button><button class="btn primary" onclick="startHero(HERO_ORDER[SEL.i])" ${PROG.heroes.includes(HERO_ORDER[SEL.i])?"":"disabled"}>${PROG.heroes.includes(HERO_ORDER[SEL.i])?`Choose ${HEROES[HERO_ORDER[SEL.i]].name}`:"Locked"}</button></div>
     <div class="paper" style="font-size:15px"><kbd>A</kbd>/<kbd>D</kbd> to choose · <kbd>Enter</kbd> or <kbd>Space</kbd> to start</div>
   </div>`;
   clearInterval(window._selAtk);
@@ -4824,7 +4955,7 @@ document.addEventListener("keydown",e=>{ if(!document.querySelector(".charsel")|
   else if(k==="d"||k==="arrowright"){ SEL.i=(SEL.i+1)%3; snd("tap"); renderCharSelect(); e.preventDefault(); }
   else if(k==="enter"||k===" "){ e.preventDefault(); startHero(HERO_ORDER[SEL.i]); }
   else if(k==="escape") showSplash(); },true);
-function startHero(id){ clearInterval(window._selAtk); newRun(id); }
+function startHero(id){ if(!PROG.heroes.includes(id)){ toast(HERO_UNLOCK_HINT[id]||"Locked."); snd("buzz"); return; } clearInterval(window._selAtk); newRun(id); }
 
 /* --- dagger throws --- */
 const DAGGER_PROJ=`<svg viewBox="0 0 80 24" width="80" height="24" style="overflow:visible">${layer((sh)=>{ sh("path",`d="M4 12 L50 6 L50 18 Z"`,"#e3ebf3"); sh("rect",`x="50" y="4" width="6" height="16" rx="2"`,"#5b3a1e"); sh("rect",`x="56" y="9" width="20" height="6" rx="2"`,"#2f7d3e"); })}</svg>`;
@@ -4862,7 +4993,7 @@ function showShop(){
   const relics=[]; for(let i=0;i<3;i++){ const r=randomRelic(relics); if(r) relics.push(r); }
   G.shop={relics:relics.map(r=>({id:r,price:Math.round((130+rnd(50))*(1+.15*((G.act||1)-1))),sold:false})),
           tiles:[0,1,2].map(()=>{ const t=genShopTile(); return {t,price:shopTilePrice(t),sold:false}; }),
-          potions:shuffle(Object.keys(POTIONS)).slice(0,3).map(p=>({id:p,price:Math.round((45+rnd(20))*(1+.15*((G.act||1)-1))),sold:false})),
+          potions:shuffle(potionPool()).slice(0,3).map(p=>({id:p,price:Math.round((45+rnd(20))*(1+.15*((G.act||1)-1))),sold:false})),
           tossed:false};
   if(hasR("coupon")) for(const k of ["relics","tiles","potions"]) G.shop[k].forEach(it=>it.price=Math.round(it.price*.75));
   if(hasR("ticket")){ const h=Math.min(15,G.maxHp-G.hp); G.hp+=h; if(h) toast(`Caravan Stew: +${h} HP.`); }
@@ -4897,7 +5028,7 @@ function shopBuy(kind,i){
   const S=G.shop, it=S[kind][i]; if(!it||it.sold) return;
   if(G.gold<it.price){ toast(`Not enough gold (need ${it.price}).`); snd("buzz"); return; }
 
-  if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your potion slots are full."); snd("buzz"); return; }
+  if(kind==="potions"&&G.potions.length>=maxPotions()){ toast("Your consumable slots are full."); snd("buzz"); return; }
   G.gold-=it.price; it.sold=true;
   if(kind==="relics") gainRelic(it.id);
   if(kind==="tiles"){ deckAdd(newTile(it.t.ch,{paint:it.t.paint,lvl:it.t.lvl,fort:it.t.fort})); toast(`${it.t.ch} tile added to your deck.`); }
@@ -4945,7 +5076,7 @@ function renderWordle(){
   }
   const kb=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((r,i)=>`<div class="krow">${i===2?`<button onclick="wordleIn('Enter')">Enter</button>`:""}${[...r].map(ch=>`<button class="${W5.keys[ch]||""}" onclick="wordleIn('${ch}')">${ch}</button>`).join("")}${i===2?`<button onclick="wordleIn('Backspace')" aria-label="Delete">⌫</button>`:""}</div>`).join("");
   $("#app").innerHTML=`<div class="screen"><h2 style="font-size:36px">The Word Stone</h2>
-    <div class="paper">An ancient stone tablet hums with old-world magic: <b>guess the 5-letter word</b> in six tries. Solve it for a Major Relic; fail and you get a consolation potion.</div>
+    <div class="paper">An ancient stone tablet hums with old-world magic: <b>guess the 5-letter word</b> in six tries. Solve it for a Major Relic; fail and you get a consolation consumable.</div>
     <div class="wgrid stele"><div class="runes">ᚠ ᛚ ᛖ ᚲ ᛟ ᚱ ᛖ</div>${rows.join("")}</div>
     ${W5.done?`<div class="box" style="max-width:520px">${W5.msg}</div><button class="btn primary" onclick="W5=null;showMap()">Continue</button>`:`<div class="kb">${kb}</div>`}
   </div>`;
@@ -4964,7 +5095,7 @@ function wordleIn(k){
     W5.rows.push([...g].map((ch,i)=>{ if(!W5.keys[ch]||rank[res[i]]>rank[W5.keys[ch]]) W5.keys[ch]=res[i]; return {ch,s:res[i]}; }));
     W5.cur=""; snd("tap");
     if(g===a){ W5.done=true; const r=pick(["r8","r11","r17","r3","r16","r6"].filter(x=>!G.relics.includes(x)))||randomRelic(); if(r){ gainRelic(r); W5.msg=`Solved! The terminal dispenses <b>${RELICS[r].name}</b>: ${RELICS[r].d}`; } else W5.msg="Solved! (You already own every relic.)"; snd("win"); }
-    else if(W5.rows.length>=6){ W5.done=true; const p=pick(Object.keys(POTIONS)); const ok=addPotion(p); W5.msg=`The answer was <b>${a}</b>. ${ok?`A consolation ${POTIONS[p].name} rolls out.`:"Your potion slots are full, so you get nothing."}`; }
+    else if(W5.rows.length>=6){ W5.done=true; const p=pick(potionPool()); const ok=addPotion(p); W5.msg=`The answer was <b>${a}</b>. ${ok?`A consolation ${POTIONS[p].name} rolls out.`:"Your consumable slots are full, so you get nothing."}`; }
   }
   else if(/^[A-Z]$/.test(k) && W5.cur.length<5){ W5.cur+=k; }
   renderWordle();
@@ -5109,7 +5240,7 @@ function clawLoop(now){
 }
 
 /* --- Wheel of fortune --- */
-const WHEEL=[["Relic","var(--gold)"],["Potion","var(--violet)"],["Heal 15","var(--green)"],["Lv 2 tile","var(--blue)"],["Paint","var(--orange)"],["Zap −10","var(--red)"]];
+const WHEEL=[["Relic","var(--gold)"],["Item","var(--violet)"],["Heal 15","var(--green)"],["Lv 2 tile","var(--blue)"],["Paint","var(--orange)"],["Zap −10","var(--red)"]];
 function startWheel(){
   G.screen="wheel"; renderHUD();
   const seg=WHEEL.map(([label,col],i)=>{ const a0=(i*60-90)*Math.PI/180, a1=((i+1)*60-90)*Math.PI/180, am=((i+.5)*60-90)*Math.PI/180;
@@ -5131,7 +5262,7 @@ function spinWheel(){
     let msg="";
     switch(i){
       case 0:{ const r=randomRelic(); if(r){ gainRelic(r); msg=`Relic: <b>${RELICS[r].name}</b>. ${RELICS[r].d}`; } else msg="Relic... but you own them all."; break; }
-      case 1:{ const p=pick(Object.keys(POTIONS)); msg = addPotion(p)?`Potion: <b>${POTIONS[p].name}</b>.`:"A potion, but your slots are full."; break; }
+      case 1:{ const p=pick(potionPool()); msg = addPotion(p)?`Consumable: <b>${POTIONS[p].name}</b>.`:"A consumable, but your slots are full."; break; }
       case 2:{ G.hp=Math.min(G.maxHp,G.hp+15); msg="You feel restored: +15 HP."; break; }
       case 3:{ const c=G.deck.filter(t=>t.lvl===1&&/[A-Z]/.test(t.ch)); if(c.length){ const t=pick(c); t.lvl=2; msg=`Your <b>${t.ch}</b> tile is now Level 2.`; } else msg="All your tiles are already Level 2."; break; }
       case 4:{ const c=G.deck.filter(t=>!t.paint&&/[A-Z]/.test(t.ch)); if(c.length){ const t=pick(c); t.paint=pick(Object.keys(PAINTS)); msg=`Your <b>${t.ch}</b> tile got ${PAINTS[t.paint].name}.`; } else msg="No unpainted tiles left."; break; }
@@ -5498,7 +5629,7 @@ function oldTitle(){
         <li>Climb 15 floors of Act 1. Pick a path on the map: combat, elites, events, campfires, shops, treasure, then the boss.</li>
         <li>In combat, choose a <b>weapon</b>, click tiles from your hand (or just type) to spell a word on the sigil bar, then press <kbd>Enter</kbd>.</li>
         <li>Output = <span class="chip-n">Chips</span> × <span class="mult-n">Mult</span>. Relics add Arcana to Mult when their condition is met.</li>
-        <li>Match the weapon's sigil length exactly for a <b>Critical</b>: the Spellbook (5 letters) Breaks the enemy, the Barrier (4 letters) draws 3 tiles.</li>
+        <li>Match the weapon's sigil length exactly for a <b>Critical</b>: the Spellbook (2 letters) gives +1 Energy next turn, the Barrier (4 letters) draws 3 tiles.</li>
         <li>Stuck? Any single tile is always a valid cast.</li>
       </ul>
     </div>
@@ -5611,7 +5742,6 @@ ARTS.ratback={vb:[200,220], v:["i0","i1","cheer"], tf:{i0:"translate(0 14)",i1:"
     else { ink(`<path class="thick" d="M60 150 L40 176 M140 150 L160 176"/>`); sh("path",`d="M36 174 L28 204 L44 180 Z"`,"#dfe7ef"); sh("path",`d="M164 174 L172 204 L156 180 Z"`,"#dfe7ef"); }
   }};
 const MENU_HERO={scholar:{art:"catback",css:"left:250px;top:470px;width:270px;z-index:3"},champion:{art:"wolfback",css:"left:80px;top:395px;width:215px;z-index:1"},mercenary:{art:"ratback",css:"left:450px;top:428px;width:165px;z-index:1"}};
-function heroesUnlocked(){ return HERO_ORDER.slice(); }
 function cheerHero(el){ if(!el) return; el.dataset.pose="cheer"; snd("win"); clearTimeout(el._t); el._t=setTimeout(()=>{ delete el.dataset.pose; },1500); }
 function splashFx(host,x,y,n,cols){ for(let i=0;i<n;i++){ const p=document.createElement("div"); p.className="puff"; const s=18+Math.random()*26;
   p.style.cssText=`left:${x-s/2}px;top:${y-s/2}px;width:${s}px;height:${s}px;background:${cols[i%cols.length]}`; host.appendChild(p);
@@ -5684,8 +5814,8 @@ const TUT=[
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
   {t:"Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.", wait:2, next:"Play", done:ev=>ev==="endTurn"},
-  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook makes the enemy <b>Broken</b> (+50% damage taken).", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
-  {word:"STONE",t:"Select the Spellbook and spell a <b>5-letter</b> word, like <b>STONE</b>. The CRITICAL tag lights up when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
+  {t:"Turn 3: time for a <b>Critical</b>. See the 2 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook gives you <b>+1 Energy next turn</b>.", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
+  {word:"GO",t:"Select the Spellbook and spell a <b>2-letter</b> word, like <b>GO</b>. The sockets turn gold when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
   {t:"Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
 ];
 function startTutorial(){
@@ -5721,7 +5851,7 @@ function tg(act,arg){
   if(al==="crit5"){
     if(C.wi!==0){ toast("Select the Spellbook first."); return false; }
     const n=C.bar.map(u=>C.t[u].ch).filter(c=>/[A-Z?]/.test(c)).length;
-    if(n!==5){ toast(`That's ${n} letters. Use exactly 5 for this lesson.`); sigilShake(); snd("buzz"); return false; }
+    if(n!==2){ toast(`That's ${n} letters. Use exactly 2 for this lesson.`); sigilShake(); snd("buzz"); return false; }
     return true;
   }
   toast(st.next&&!st.allow?"Read the tip and press the button first.":"Follow the highlighted step.");
@@ -5749,7 +5879,7 @@ function tutAdvance(){
   C.tut.i++; C.tut.phase=null;
   const st=TUT[C.tut.i];
   C.tut.ready = !st.wait || C.turn>=st.wait;
-  if(st.wait===3&&C.turn>=3) ensureLetters("STONE");
+  if(st.wait===3&&C.turn>=3) ensureLetters("GO");
   tutRender();
 }
 function tutNext(){
