@@ -190,6 +190,12 @@
       "name": "Overclock Chip",
       "description": "Your selected weapon costs 0 Energy for the rest of this turn.",
       "usableOutsideCombat": false
+    },
+    {
+      "id": "panacea",
+      "name": "Panacea",
+      "description": "Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated.",
+      "usableOutsideCombat": false
     }
   ]
 }

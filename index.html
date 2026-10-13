@@ -191,6 +191,24 @@ body.f1 .art .fr.i1{display:inline}
 #sigilbox{left:470px;bottom:302px;width:470px;color:#f3ead8;border:4px solid var(--ink);border-radius:16px;padding:12px 16px 14px;
   background:radial-gradient(circle at 12px 12px,#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at calc(100% - 12px) 12px,#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at 12px calc(100% - 12px),#c8a24a 3.5px,transparent 4.5px),radial-gradient(circle at calc(100% - 12px) calc(100% - 12px),#c8a24a 3.5px,transparent 4.5px),linear-gradient(180deg,#3d3850,#24202e 60%,#1d1a26);
   box-shadow:inset 0 0 0 3px #5b5470,inset 0 2px 0 6px rgba(255,255,255,.04),5px 6px 0 rgba(29,27,34,.85),0 0 24px rgba(95,212,196,.18);display:grid;gap:8px;transition:opacity .2s, transform .2s}
+#sigilbox{padding:12px 18px 30px!important;border-radius:26px 26px 12px 12px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(127,243,228,.16),transparent 60%),repeating-linear-gradient(100deg,rgba(255,255,255,.035) 0 6px,rgba(0,0,0,.035) 6px 13px),linear-gradient(180deg,#8f919c,#6a6f80 55%,#565a69)!important;
+  box-shadow:inset 0 0 0 4px rgba(255,255,255,.1),inset 0 -14px 0 rgba(0,0,0,.18),6px 7px 0 rgba(29,27,34,.85),0 0 26px rgba(95,212,196,.2)!important;gap:7px!important}
+#sigilbox:after{content:"";position:absolute;left:-14px;right:-14px;bottom:-16px;height:18px;background:linear-gradient(#6a6f80,#4b4f5c);border:4px solid var(--ink);border-radius:6px;z-index:-1}
+.sg-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sg-wname{font:21px var(--f-display);color:#fff;-webkit-text-stroke:5px var(--ink);paint-order:stroke fill}
+.sg-dots{display:flex;gap:5px;cursor:help}.sg-dots i{width:15px;height:15px;border-radius:50%;border:2.5px solid #1d1b22;background:#3d3a44;box-shadow:inset 1px 1px 0 rgba(0,0,0,.4)}
+.sg-dots i.on{background:#7ff3e4;box-shadow:0 0 7px #5fd4c4}.sg-dots.crit i{background:#ffbe0b;box-shadow:0 0 9px #ff9f1c}
+#sigilbox .sg-tiles{background:linear-gradient(180deg,#2b2b36,#3a3846)!important;border:4px solid #1d1b22!important;box-shadow:inset 0 4px 10px rgba(0,0,0,.55),0 0 0 3px #7ff3e4,0 0 14px rgba(95,212,196,.45)!important}
+#sigilbox .calc{min-height:40px;gap:6px}#sigilbox .calc .x{font:24px var(--f-display);color:#1d1b22}
+#sigilbox .calc .tot{font:34px var(--f-display);color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill}
+#sigilbox .cbtn{padding:4px 18px}
+.sg-runes{position:absolute;left:0;right:0;bottom:4px;text-align:center;font-size:15px;letter-spacing:8px;color:#7ff3e4;text-shadow:0 0 6px #5fd4c4;pointer-events:none;opacity:.85}
+#topbar .relicrow{overflow:visible;max-height:none;padding-bottom:4px}
+#topbar .relicbox{position:relative}
+#topbar .rel{transition:transform .18s cubic-bezier(.3,1.6,.5,1),box-shadow .18s;position:relative}
+#topbar .rel.will{transform:translateY(20px);box-shadow:0 0 0 4px #fff4c2,0 0 18px 6px #ffd166,3px 4px 0 var(--ink);z-index:2}
+.rbadge{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);font:15px var(--f-display);color:#fff;background:var(--red);border:2.5px solid var(--ink);border-radius:8px;padding:0 5px;white-space:nowrap;pointer-events:none}
 #sigilbox .sg-head b{color:#ffd166;-webkit-text-stroke:0}
 #sigilbox .sg-head span{color:#9fe6dc}
 #sigilbox .sg-tiles{border:3px solid #5fd4c4;background:linear-gradient(180deg,rgba(95,212,196,.06),rgba(95,212,196,.16));box-shadow:inset 0 0 16px rgba(95,212,196,.35),0 0 10px rgba(95,212,196,.25)}
@@ -2019,7 +2037,8 @@ function evaluate(tiles, w, check){
   R.mult = w.mult;
   // word relics check EACH word of a comma cast on its own (CAT,CAT = two words that end in T); single letters don't count
   const ctxs = parts.map((p,i)=>({L:words[i].replace(/\?/g,"_"), sp:p.map(t=>t.ch==="?"?(R.resolved[t.uid]?tileChip(t,R.resolved[t.uid]):0):tileChip(t)), deb:p.filter(t=>t.deb).length})).filter(c=>c.L.length>1);
-  for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; let v=0,n=0; for(const c of ctxs){ const x=rel.f(c); if(x){ v+=x; n++; } } if(v){ R.mult+=v; R.fired.push(rid); R.notes.push(`${rel.name} +${+v.toFixed(2)}${n>1?` (${n} words)`:""}`);} }
+  R.relicVals={};
+  for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; let v=0,n=0; for(const c of ctxs){ const x=rel.f(c); if(x){ v+=x; n++; } } if(v){ R.mult+=v; R.fired.push(rid); R.relicVals[rid]=+v.toFixed(2); R.notes.push(`${rel.name} +${+v.toFixed(2)}${n>1?` (${n} words)`:""}`);} }
   if(G.relics.includes("parrot")&&G.lastWord&&G.lastWord===words.join(",")){ R.mult+=2; R.fired.push("parrot"); R.notes.push("Parrot +2"); }
   if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
   if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
@@ -2386,14 +2405,20 @@ function renderCombat(){
   let prev = barTiles.length ? evaluate(barTiles,w,false) : null, wres={};
   if(barTiles.some(t=>t.ch==="?")){ const Rv=evaluate(barTiles,w,true); if(Rv.valid){ prev=Rv; wres=Rv.resolved; } }
   const slots = Math.max(w.sigil - C.bar.length, 0);
-  $("#sigilbox").innerHTML = `
-    <div class="sg-head"><b>${w.name}</b><span>Sigil ${w.sigil} = Critical · ${w.kind==="atk"||w.kind==="psn"?(C.es.filter(x=>!x.dead).length>1?"target: "+ENEMIES[C.es[aliveTarget()].id].name:KIND_LABEL[w.kind].toLowerCase()):KIND_LABEL[w.kind].toLowerCase()}</span></div>
+  { const lit=barTiles.length, full=prev&&(prev.L.length+(prev.bang||0))===w.sigil;
+    const tipNotes=prev?`<b>${prev.chips} × ${prev.mult} = ${prev.total}</b>${prev.notes.length?"<br>"+prev.notes.join("<br>"):""}`:"";
+    $("#sigilbox").innerHTML = `
+    <div class="sg-top"><span class="sg-wname">${w.name}</span>
+      <span class="sg-dots ${full?"crit":""}" ${tipAttr(`<b>Sigil ${w.sigil}</b><br>Cast exactly ${w.sigil} letters ( [ ! ] count too ) for a Critical: ${w.crit}`,["crit"])}>${Array.from({length:w.sigil},(_,k)=>`<i class="${k<lit?"on":""}"></i>`).join("")}</span></div>
     <div class="sg-tiles" id="sgtiles">${barTiles.map(t=>tileHTML(t,{click:`tapTile(${t.uid})`,as:wres[t.uid]})).join("")}${"<span class='slot'></span>".repeat(slots)}</div>
-    <div class="calc">${prev?`<span class="chip-n" title="Chips">${prev.chips}</span> × <span class="mult-n" title="Mult">${prev.mult}</span> = <b style="font:30px var(--f-display)">${prev.total}</b>
-      ${prev.crit&&!prev.fallback?`<span class="crit-tag">CRITICAL</span>`:""}`:`<span class="muted">Click tiles or type a word</span>`}</div>
-    <div class="notes">${prev?prev.notes.join(" · "):`Turn ${C.turn} · <kbd>Enter</kbd> cast · <kbd>⌫</kbd> undo`}</div>
-    <div class="sg-btns"><button class="cbtn" onclick="clearBar()" ${C.bar.length&&!C.busy?"":"disabled"}>Clear</button>
-      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""}>Cast ${w.name}</button></div>`;
+    <div class="calc" ${prev?tipAttr(tipNotes):""}>${prev?`<span class="chip-n">${prev.chips}</span><span class="x">×</span><span class="mult-n">${prev.mult}</span><span class="x">=</span><b class="tot">${prev.total}</b>${prev.crit&&!prev.fallback?`<span class="crit-tag">CRIT!</span>`:""}`:""}</div>
+    <div class="sg-btns"><button class="cbtn" onclick="clearBar()" ${C.bar.length&&!C.busy?"":"disabled"} aria-label="Clear" title="Clear (Backspace)">✕</button>
+      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""} title="Cast (Enter)">Cast</button></div>
+    <div class="sg-runes" aria-hidden="true">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ</div>`;
+    // relics that this word would trigger glow and drop below the relic row
+    const will=new Set(prev?[...prev.fired,...predictRelics(prev,w,G.weapons[C.wi])]:[]);
+    document.querySelectorAll("#topbar .rel[data-r]").forEach(el=>{ const r=el.dataset.r, on=will.has(r); el.classList.toggle("will",on);
+      el.querySelector(".rbadge")?.remove(); if(on&&prev&&prev.relicVals&&prev.relicVals[r]) el.insertAdjacentHTML("beforeend",`<span class="rbadge">+${prev.relicVals[r]}</span>`); }); }
   // bottom shelf
   const ws = Array.from({length:MAX_WEAPONS},(_,i)=>{ const id=G.weapons[i];
     if(!id) return `<div class="wslot emptyw" title="Empty weapon slot"></div>`;
@@ -4142,8 +4167,9 @@ Object.assign(POTIONS,{
   bigheal:{name:"Full Flask",d:"Heal 50% of your Max HP. Usable anywhere.",any:true},
   flashbang:{name:"Flashbang",d:"Stun the target: it skips its next turn."},
   overclock:{name:"Overclock Chip",d:"Your selected weapon costs 0 Energy for the rest of this turn."},
+  panacea:{name:"Panacea",d:"Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated."},
 });
-Object.assign(POTION_COLOR,{titan:"#c1272d",bastion:"#1d4fb8",ragesoda:"#ff5d8f",brickmilk:"#bfe0ff",cluster:"#5b6472",rocket:"#ff7b00",bigheal:"#e63946",flashbang:"#ffe66d",overclock:"#3ddc84"});
+Object.assign(POTION_COLOR,{titan:"#c1272d",bastion:"#1d4fb8",ragesoda:"#ff5d8f",brickmilk:"#bfe0ff",cluster:"#5b6472",rocket:"#ff7b00",bigheal:"#e63946",flashbang:"#ffe66d",overclock:"#3ddc84",panacea:"#f6e7c4"});
 const wCost = id => (C&&C.freeW===id)?0:WEAPONS[id].cost;
 async function usePotion4(id,t){
   switch(id){
@@ -4155,6 +4181,7 @@ async function usePotion4(id,t){
     case "rocket": { const r=dealToEnemy(t,50,{}); await strikeAnim("p","e"+t,r,{noLunge:true,colors:["#ff7b00","#ffd000","#e5352b","#fff"]}); return true; }
     case "bigheal": { const h=Math.ceil(G.maxHp/2); G.hp=Math.min(G.maxHp,G.hp+h); await healAnim("p",h); return true; }
     case "flashbang": { C.es[t].stun=(C.es[t].stun||0)+1; const c=center("e"+t); particles(c.x,c.y,26,["#ffe66d","#ffffff","#fff4c2"],260,{size:14}); numPop(c.x,c.top+10,"Stunned!",14,"#ffbe0b"); snd("crit"); await sleep(T_(800)); return true; }
+    case "panacea": { const had=["poison","weaken","broken","curse","frustrated"].filter(k=>C.p[k]>0); for(const k of had) C.p[k]=0; await healAnim("p",0,had.length?"Debuffs cleared!":"Nothing to cure"); return true; }
     case "overclock": { const id2=G.weapons[C.wi]; C.freeW=id2; await buffAnim("p",`${WEAPONS[id2].name}: 0 Energy`); return true; }
   }
   return false;
@@ -4424,6 +4451,21 @@ function potionMenu(i,ev){
 addEventListener("keydown",e=>{ if(e.key==="Escape"&&document.querySelector(".potmenu")){ e.stopPropagation(); closePotMenu(); } },true);
 
 /* ---- hand sort: 1st press by Spell Power, 2nd A–Z; buffed/debuffed tiles first ---- */
+function predictRelics(R,w,wid){
+  const out=[]; if(!R||!C) return out;
+  const ws=(R.fallback||!R.words)?[]:R.words.map(x=>x.replace(/[^A-Z]/g,"")).filter(x=>x.length>1);
+  const atk=w.kind==="atk";
+  if(hasR("sandbag")&&ws.some(x=>x.length>=6)) out.push("sandbag");
+  if(hasR("umbrella")&&ws.some(x=>VOWELS.has(x[0]))) out.push("umbrella");
+  if(hasR("snakecharm")&&ws.some(x=>/[SZ]/.test(x))) out.push("snakecharm");
+  if(hasR("protein")&&ws.some(x=>/(.)\1/.test(x))) out.push("protein");
+  if(atk&&hasR("nail")) out.push("nail");
+  if(atk&&hasR("megaphone")&&R.bang) out.push("megaphone");
+  if(atk&&hasR("nib")){ const h=1+(hasR("megaphone")?(R.bang||0):0), n0=G.nib||0; if(Math.floor((n0+h)/10)>Math.floor(n0/10)) out.push("nib"); }
+  if(hasR("gloves")&&!C.firstCast) out.push("gloves");
+  if(((C.turnCasts||0)+1)%3===0){ if(hasR("shuriken")) out.push("shuriken"); if(hasR("opener")) out.push("opener"); }
+  return out;
+}
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){
   const flag=t=>(t.deb||t.paint||t.fort||t.lvl===2||t.fragile)?0:1, sym=t=>/[A-Z]/.test(t.ch)?0:1;

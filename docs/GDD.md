@@ -532,6 +532,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Rocket Pop** | Deal 50 damage to the target. | No |
 | **Full Flask** | Heal 50% of your Max HP. | Yes |
 | **Flashbang** | Stun the target: it skips its next turn (its intent shows "✦ Stunned"; its move cycle doesn't advance; Poison still ticks). | No |
+| **Panacea** | Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated. | No |
 | **Overclock Chip** | Your selected weapon costs **0 Energy** for the rest of this turn (its cost badge turns green). | No |
 
 Note: the "+1 Energy on turn 1" relic is **Spark Plug** and the "+Energy on turn 3" relic is **Wind-up Key** (every 3rd turn).
@@ -831,7 +832,8 @@ Splash/menu → character select → map → combat → reward → shop → rest
 
 ### 15.3 Combat UI details (latest)
 
-- **Sigil bar**: a dark slate "rune bar" with brass rivets in the corners and a glowing teal trough where the tiles go (empty slots are dashed teal sockets). Weapon name in gold, sigil/target info in teal.
+- **Sigil pedestal** (where the word is built): a carved grey stone pedestal on a stone base, with a dark carved trough outlined in glowing teal and a line of glowing runes along its foot. **Almost no text**: the weapon name, a row of **sigil sockets** (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), the tiles, then `Spell Power × Mult = output` (+ a small "CRIT!" stamp), and two buttons (✕ clear, Cast). The full breakdown (Might, relic names, ! bonus…) is in the tooltip on the score line.
+- **Relic preview**: while a word is on the pedestal, every relic it would trigger **glows and drops below the relic row**; Mult relics also show their bonus as a small red badge (+0.7). Non-Mult relics are predicted too (Sandbag, Umbrella, Snake Charm, Protein Bar, Rusty Nail, Megaphone, Chalk Tally on the 10th attack, Quick Gloves on the first cast, Metronome / Rubber Stamp on the 3rd cast).
 - **Hand sort button** (top-right corner of the hand): 1st click sorts by Spell Power (high → low), 2nd click A–Z (letters before symbols); clicking again toggles. Buffed or debuffed tiles (painted, Level 2, Fortified, Fragile, any tile debuff) always come first. The order stays sorted as new tiles are drawn.
 - **Potion menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
 - **Weapon Altar**: after pulling a weapon, the result card and the **Go!** button are pinned to the bottom of the screen (no scrolling).

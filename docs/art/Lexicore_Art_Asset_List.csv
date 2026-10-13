@@ -19,7 +19,7 @@
 18,ui_npc_bubble,Bong bóng thoại NPC,UI,Event,Mọi sự kiện ?,"normal; robot (nền xanh ngọc nhạt, font máy chữ)",2,520x160,"Hộp giấy kem viền đen có đuôi nhọn chỉ xuống NPC, tên NPC in đậm dòng đầu.",,P1
 19,ui_reward_popup,Popup Victory chọn tile,UI,Reward,Combat (sau khi quái nổ và vàng bay về),appear (bật lên); tile hover,2,1280x900,"Popup giấy kem viền đen dày đổ bóng, nền chiến trường tối mờ phía sau. Tiêu đề 'Victory!', dòng vàng nhận được + đồ nhặt thêm, 3 ô tile to có phím số 1-3, mô tả tile, nút Skip.",,P1
 20,ui_word_stone,Phiến đá chữ (Wordle),UI,Event,Sự kiện ? – The Word Stone,"static; ô chữ: trống / xanh (đúng chỗ, phát sáng) / vàng (sai chỗ) / tối (không có)",2,700x900,"Bia đá xám đỉnh vòm (stele) viền đen dày, dòng rune phát sáng xanh ngọc khắc trên đỉnh, 6×5 ô chữ khắc lõm vào đá. Ô đúng phát sáng xanh lá, ô sai chỗ ánh vàng.",,P1
-21,ui_sigil_bar,Thanh Sigil (khung ghép chữ),UI,Combat,Combat,normal; critical (sáng hơn); shake khi sai,3,960x560,"Thanh đá/kim loại tối màu tím than, 4 đinh tán đồng ở góc, rãnh ghép chữ phát sáng xanh ngọc ở giữa (ô trống là hốc viền xanh đứt nét), tên vũ khí chữ vàng, nút Clear / Cast bên dưới.",,P1
+21,ui_sigil_bar,Bệ đá Sigil (khung ghép chữ),UI,Combat,Combat,normal; tile slot trống; socket sigil tắt / sáng xanh / vàng (crit); shake khi sai,4,960x600,"BỆ ĐÁ RUNE xám khắc vân, đặt trên một bậc đá rộng hơn. Rãnh ghép chữ khắc lõm tối màu, viền phát sáng xanh ngọc. Góc trên phải là hàng socket tròn (1 socket/1 chữ của sigil) sáng dần khi thêm tile, chuyển vàng khi đủ crit. Dòng rune phát sáng chạy dọc chân bệ. Hầu như KHÔNG có chữ: chỉ tên vũ khí, dòng điểm Spell Power × Mult = output, nút ✕ và Cast.",Relic nào sẽ kích hoạt với từ đang ghép thì sáng viền vàng và tụt xuống dưới hàng relic (kèm nhãn +Arcana) – cần FX glow cho icon relic.,P1
 22,ui_sort_button,Nút Sort tay bài,UI,Combat,Combat (góc trên phải khung tay bài),Sort; SP; A–Z; hover,4,140x60,Nút giấy kem nhỏ có mũi tên ⇅ và chữ chế độ hiện tại.,,P2
 23,ui_potion_menu,Menu nhỏ dùng potion,UI,Combat,Combat; HUD,normal; nút Use (cam); nút Discard; disabled,4,520x300,"Hộp giấy kem nhỏ hiện ngay cạnh con trỏ chuột: tên potion, mô tả ngắn, 2 nút Use / Discard (kiểu Slay the Spire, không phải popup giữa màn hình).",,P1
 24,ui_painter_screen,Màn hình The Painter,UI,Event,Sự kiện ? – The Painter,"normal; tile selected (viền đỏ, nhấc lên)",2,3200x1800,"Bố cục: mẫu màu sơn hôm nay + nút Reroll (giá tăng 25 mỗi lần), lưới toàn bộ tile trong deck để chọn tối đa 5, nút Paint / Leave. Bushy the Squirrel đứng cạnh lưới tile, chóp đuôi đúng màu sơn.",,P1
@@ -318,78 +318,79 @@
 317,icon_potion_bigheal,Potion: Full Flask,Icon,Potion,Potion shelf; HUD; Shop; Glossary,static,1,120x120,Lọ potion màu bình đỏ to đầy. Hiệu ứng: Heal 50% of your Max HP. Usable anywhere.,Prototype dùng chung 1 hình bình tam giác đổi màu; khuyến nghị mỗi potion 1 dáng chai riêng.,P2
 318,icon_potion_flashbang,Potion: Flashbang,Icon,Potion,Potion shelf; HUD; Shop; Glossary,static,1,120x120,Lọ potion màu lựu đạn choáng vàng chớp sáng. Hiệu ứng: Stun the target: it skips its next turn.,Prototype dùng chung 1 hình bình tam giác đổi màu; khuyến nghị mỗi potion 1 dáng chai riêng.,P2
 319,icon_potion_overclock,Potion: Overclock Chip,Icon,Potion,Potion shelf; HUD; Shop; Glossary,static,1,120x120,Lọ potion màu chip mạch xanh lá có mũi tên đi lên. Hiệu ứng: Your selected weapon costs 0 Energy for the rest of this turn.,Prototype dùng chung 1 hình bình tam giác đổi màu; khuyến nghị mỗi potion 1 dáng chai riêng.,P2
-320,icon_ach_tutorial,Achievement: Class Dismissed,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #57cc4d: Finish the tutorial.,,P3
-321,icon_ach_first_blood,Achievement: First Blood,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #e63946: Win your first fight in a run.,,P3
-322,icon_ach_crit,Achievement: Precision,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #fb8b24: Land your first Critical.,,P3
-323,icon_ach_one_shot,Achievement: One and Done,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ffbe0b: Defeat a normal enemy from full HP with a single word.,,P3
-324,icon_ach_one_shot_elite,Achievement: Elite Eraser,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #9b5de5: Defeat an Elite from full HP with a single word.,,P3
-325,icon_ach_one_shot_boss,Achievement: Boss? What Boss?,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ff006e: Defeat the Act 1 boss from full HP with a single word.,,P3
-326,icon_ach_long7,Achievement: Wordsmith,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #3a86ff: Cast a word with 7 or more letters.,,P3
-327,icon_ach_long10,Achievement: Sesquipedalian,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #1747b8: Cast a word with 10 or more letters.,,P3
-328,icon_ach_big100,Achievement: Triple Digits,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #e5352b: Deal 100 or more damage with one word.,,P3
-329,icon_ach_comma,Achievement: Comma Chameleon,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #5fd4c4: Cast two words at once with a comma tile.,,P3
-330,icon_ach_wild3,Achievement: Wild at Heart,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #c79bff: Cast a word that uses 3 wildcard tiles.,,P3
-331,icon_ach_untouched,Achievement: Untouchable,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #8ccf2a: Win a fight without losing any HP.,,P3
-332,icon_ach_claw_relic,Achievement: Claw Master,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ffd166: Win a relic from the claw machine.,,P3
-333,icon_ach_act1,Achievement: Foot of The Tower,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #76706a: Defeat the boss of the Outskirts.,,P3
-334,icon_ach_act2,Achievement: City Lights,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #f4a261: Defeat the boss of the Ruined City.,,P3
-335,icon_ach_act3,Achievement: Top Floor,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #5fd4c4: Defeat the boss of The Tower.,,P3
-336,icon_ach_act4,Achievement: Worthy,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #9b5de5: Defeat whatever waits at the very top of The Tower.,,P3
-337,icon_ach_close,Achievement: That Was Close,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #2fa84f: Cast NIGERIA.,Secret,P3
-338,icon_ach_close_enough,Achievement: Close Enough,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,"Huy hiệu tròn màu #ff5d8f: Cast a censored swear word, like FVCK or SH!T.",Secret,P3
-339,prop_caravan,Xe caravan bán hàng (3 màu + bản robot),Prop,Scene,Shop,"red RELICS; blue TILES; green POTIONS; robot (xám kim loại, mái xanh ngọc)",4,840x640,"Xe ngựa gỗ mái vòm, mái hiên sọc, biển tên trên nóc, bánh xe gỗ, quầy để 3 món hàng.",,P1
-340,prop_trash_can,Thùng rác (bỏ tile),Prop,Scene,Shop,normal; used (mờ),2,240x300,"Thùng rác kim loại có nắp, chút rác xanh lòi ra.",,P1
-341,prop_music_notes,Nốt nhạc bay,Prop,Scene,Shop,♪; ♫,2,80x80,Nốt nhạc trắng viền đen bay lên khi anh em chơi nhạc.,,P3
-342,prop_tent,Lều cắm trại,Prop,Scene,Rest (Act 1–3),static,1,720x520,Lều vải tam giác bên đống lửa.,,P1
-343,prop_campfire,Lửa trại,Prop,Scene,Rest (Act 1–3),idle_1; idle_2,2,400x400,"Củi chéo, ngọn lửa cam vàng lay động 2 frame, quầng sáng ấm.",,P1
-344,prop_charge_pod,Buồng sạc năng lượng,Prop,Scene,Rest (Act 4),static (+ vòng năng lượng có thể animate),1,720x520,"Khoang kính cyan dựng đứng, vòng năng lượng bên trong, dây cáp, cột pin xanh.",,P1
-345,prop_heater,Đèn sưởi futuristic,Prop,Scene,Rest (Act 4),idle_1; idle_2,2,400x400,"Quả cầu sưởi trên chân ba càng, cuộn nhiệt cam đỏ phát sáng, hơi nóng bốc lên.",,P1
-346,prop_easel,Giá vẽ + canvas,Prop,Scene,Reward,static (chữ trên canvas đổi theo tile),1,280x320,"Giá vẽ gỗ 3 chân, canvas trắng hiện tile đang chọn.",,P1
-347,prop_altar_shrine,Đền thờ vũ khí hình nấm,Prop,Scene,Weapon Altar,"idle; pulled (1 vũ khí rút ra, vũ khí kia bị nuốt)",2,900x700,"Bệ đá hình cây nấm cổ, 2 vũ khí cắm sâu vào; khi rút có đá vụn văng ra.",,P1
-348,prop_treasure_chest,Rương báu,Prop,Scene,Treasure,closed; open,2,400x320,"Rương gỗ viền vàng. (Prototype chưa vẽ rương, chỉ có thẻ relic.)",,P3
-349,prop_word_terminal,Màn hình Word Terminal,Prop,Scene,Event: Wordle,static,1,1000x900,"Máy tính CRT cũ nứt vỡ, lưới 6x5 ô chữ, bàn phím ảo.",,P2
-350,ui_wordle_cell,Ô chữ Wordle,Prop,Scene,Event: Wordle,empty; typed; green (đúng); yellow (sai chỗ); grey (không có),5,100x100,Ô vuông chữ cái.,,P2
-351,ui_wordle_key,Phím bàn phím Wordle,Prop,Scene,Event: Wordle,normal; green; yellow; grey,4,80x100,Phím chữ.,,P2
-352,prop_claw_machine,Máy gắp thú,Prop,Scene,Event: Claw,cabinet; claw open; claw closed; chute,4,1120x880,"Tủ máy gắp kính, móc gắp 3 càng có dây (lắc lư), máng nhả quà bên trái.",,P2
-353,prop_claw_prizes,Quà trong máy gắp,Prop,Scene,Event: Claw,coin; tile ball; relic ball,3,80x80,"Đồng xu vàng, bóng chứa tile, bóng chứa relic.",,P2
-354,prop_wheel,Vòng quay may mắn,Prop,Scene,Event: Wheel,wheel (6 ô); pointer; center cap,3,800x800,"Vòng quay 6 ô: Relic (vàng), Potion (tím), Heal 15 (xanh lá), Lv 2 tile (xanh dương), Paint (cam), Zap −10 (đỏ).",,P2
-355,prop_dagger_proj,Dao ném,Prop,Scene,Combat FX,static,1,160x48,Dao găm bay xoay (dùng cho dagger).,,P3
-356,prop_gold_coin,Đồng vàng rơi,Prop,Scene,Combat (quái chết),spin_1; spin_2,2,60x60,Đồng xu vàng bay về ô gold.,,P1
-357,fx_slash,Vệt chém,FX,Combat,Combat,slash_1; slash_2; slash_3,3,256x256 / frame,Vệt chém trắng nhiều đường khi đánh trúng.,,P2
-358,fx_impact,Vụ nổ va chạm,FX,Combat,Combat,burst_1; burst_2; burst_3,3,256x256 / frame,"Ngôi sao nổ nhiều màu + hạt văng ra, to nhỏ theo sát thương.",,P2
-359,fx_particles,Hạt màu,FX,Combat,Combat,sheet 6 màu,1,256x256 / frame,Hạt tròn/sao nhỏ dùng chung cho mọi hiệu ứng.,,P2
-360,fx_shield,Khiên năng lượng,FX,Combat,Combat,appear; hold; break,3,256x256 / frame,Bong bóng/khiên xanh hiện quanh nhân vật khi nhận Shield.,,P2
-361,fx_heal,Hồi máu,FX,Combat,Combat,sparkle_1; sparkle_2,2,256x256 / frame,Dấu cộng và lấp lánh xanh lá bay lên.,,P2
-362,fx_buff,Tăng chỉ số,FX,Combat,Combat,arrows_1; arrows_2,2,256x256 / frame,Mũi tên đỏ/xanh bay lên.,,P2
-363,fx_poison,Độc,FX,Combat,Combat,drip_1; drip_2; cloud,3,256x256 / frame,"Giọt độc xanh, mây độc.",,P2
-364,fx_venom,Phun độc,FX,Combat,Combat,spray,1,256x256 / frame,Tia độc xanh bay tới quái.,,P2
-365,fx_debuff_tile,Debuff bay vào tile,FX,Combat,Combat,orb_trail,1,256x256 / frame,Quả cầu tím bay từ quái vào tay bài.,,P2
-366,fx_tile_fly,Tile bay vào chồng bài,FX,Combat,Combat,trail,1,256x256 / frame,Tile thu nhỏ bay vào draw/discard kèm vệt sáng.,,P2
-367,fx_death_mushroom,Mây nấm khi quái chết,FX,Combat,Combat,frame_1; frame_2; frame_3; frame_4; frame_5; frame_6,6,256x256 / frame,"Đám mây hình nấm nhiều lớp + chớp sáng, bụi.",,P2
-368,fx_laser,Tia laser,FX,Combat,Combat,beam; flare,2,256x256 / frame,"Tia laser đỏ (Gatekeeper, LEXICORE).",,P2
-369,fx_flame,Lửa Flame Lance,FX,Combat,Combat,flame_1; flame_2,2,256x256 / frame,Lửa cam vàng lan sang mọi quái.,,P2
-370,fx_psychic,Sóng tâm linh,FX,Combat,Combat,wave_1; wave_2,2,256x256 / frame,Vòng sóng tím (Prisoner Zero).,,P2
-371,fx_spores,Bào tử nấm,FX,Combat,Combat,spores,1,256x256 / frame,Bào tử xanh nhạt (Mother Mycelia).,,P2
-372,fx_rubble,Đá vụn,FX,Combat,Combat,rocks,1,256x256 / frame,Đá vụn văng ra khi rút vũ khí ở Altar.,,P2
-373,fx_screen_flash,Chớp màn hình,FX,Combat,Combat,white flash,1,256x256 / frame,Chớp trắng khi crit/nổ.,,P2
-374,fx_numpop,Số sát thương bay,FX,Combat,Combat,(dùng font),1,256x256 / frame,"Số đỏ/xanh to viền đen bật lên. Dùng font Permanent Marker, không cần vẽ.",,P2
-375,fx_gold_burst,Vàng toé,FX,Combat,Combat,burst,1,256x256 / frame,Lấp lánh vàng khi nhận gold.,,P2
-376,cs_lift_1,Liftoff 1: Tháp rung chuyển,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Đêm, The Tower cao vút, phần đỉnh (Chamber) phát sáng, bụi và mảnh vỡ rơi.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-377,cs_lift_2,Liftoff 2: Đỉnh tháp tách ra,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Phần đỉnh tách khỏi thân tháp (thân tháp cụt có vết gãy vàng), phóng lên bằng 3 cột lửa, khói mù mịt.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-378,cs_lift_3,Liftoff 3: Chamber vào quỹ đạo,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Vũ trụ, Trái Đất cong phía dưới, Mặt Trăng xa, Chamber lơ lửng với cửa tròn mở sáng.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-379,cs_end_1,Ending 1: Cánh đồng hầm tên lửa mở,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Mặt đất đêm, tháp cụt đỉnh phía sau, CẢ MỘT CÁNH ĐỒNG hầm tên lửa tròn (5 hàng phối cảnh xa gần, hàng chục hầm) mở nắp, mũi tên lửa (màu theo hero) nhô lên, đèn cảnh báo đỏ nhấp nháy.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-380,cs_end_2,Ending 2: Tên lửa phóng hàng loạt,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Hàng chục tên lửa bay lên ở nhiều độ sâu (xa nhỏ cao, gần to thấp), khói phủ cánh đồng hầm.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-381,cs_end_3,Ending 3: Chamber dẫn đầu hạm đội,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Vũ trụ trên Trái Đất: Chamber (tàu chỉ huy) bật hết động cơ, quay mũi về phía Mặt Trăng; đoàn tên lửa xếp đội hình theo sau.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-382,cs_end_4,Ending 4: Chuyến đi một chiều,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Chamber dẫn đầu, phía sau là dải tên lửa dài bay chéo về Mặt Trăng lớn có căn cứ alien (mái vòm xanh, đèn đỏ), Trái Đất ở góc.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
-383,cs_rocket,Tên lửa (màu theo hero),Cutscene,Element,Cutscene ending,body; flame_1; flame_2; 3 biến thể màu hero (xanh dương/đỏ/xanh lá),4,160x460,"Tên lửa trắng, mũi và cánh theo màu hero, cửa sổ tròn xanh ngọc, sọc màu.",,P1
-384,cs_chamber_exterior,Chamber nhìn từ ngoài (đỉnh tháp),Cutscene,Element,Cutscene liftoff/ending,normal; thrusters (lửa 2 frame); dark (khi nổ),3,1000x700,"Khối giống vương miện đĩa bay: đĩa vành ngoài, mái vòm, cửa sổ tròn tím có lõi đỏ, mạch đỏ, 3 động cơ phía dưới, ăng-ten đèn.",,P1
-385,cs_moon_hq,Mặt Trăng + căn cứ alien,Cutscene,Element,Cutscene; nền Act 4,light_1; light_2,2,800x800,"Mặt Trăng kem có hố, căn cứ alien mái vòm xanh lá, ăng-ten, đèn đỏ nhấp nháy.",,P1
-386,cs_earth,Trái Đất cong,Cutscene,Element,Cutscene,static,1,3200x800,Đường cong Trái Đất xanh dương có lục địa xanh lá và quầng khí quyển.,,P2
-387,cs_dialogue_bg,Nền hội thoại cuối,Cutscene,Dialogue,Ending dialogue,static,1,3200x1800,"Phòng Chamber tối (bản boss của nền Act 4) có lớp phủ tối; chân dung hero trái, LEXICORE phải.",Chân dung dùng lại sprite hero và LEXICORE.,P2
-388,ui_dialogue_box,Hộp thoại + bảng tên,UI,Dialogue,Ending dialogue,box; nameplate hero (màu hero); nameplate LEXICORE (tím),3,2700x380,"Hộp giấy kem lớn viền đen, bảng tên ở góc, chữ chạy kiểu máy đánh chữ.",,P2
-389,ui_caption_box,Hộp caption cutscene,UI,Cutscene,Cutscene,9-slice,1,2400x140,Hộp giấy kem viền đen chứa câu dẫn chuyện.,,P2
-390,ui_quote_screen,Màn câu kết,UI,Cutscene,Ending,(chữ trên nền đen),1,3200x1800,"Nền đen, câu kết in nghiêng font serif hiện dần từng cụm. Không cần vẽ, dùng font.",,P3
-391,font_permanent_marker,Font Permanent Marker,Font,Font,Toàn game,regular,1,-,"Font mã nguồn mở Google Fonts dùng cho: Tiêu đề, số sát thương, tên nhân vật. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.",,P3
-392,font_patrick_hand,Font Patrick Hand,Font,Font,Toàn game,regular,1,-,"Font mã nguồn mở Google Fonts dùng cho: Chữ thân bài, mô tả. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.",,P3
-393,font_sniglet,Font Sniglet,Font,Font,Toàn game,regular; extrabold,2,-,Font mã nguồn mở Google Fonts dùng cho: Chữ trên tile và số. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.,,P3
-394,font_special_elite,Font Special Elite,Font,Font,Toàn game,regular,1,-,Font mã nguồn mở Google Fonts dùng cho: Chữ máy đánh chữ (terminal). Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.,,P3
+320,icon_potion_panacea,Potion: Panacea,Icon,Potion,Potion shelf; HUD; Shop; Glossary,static,1,120x120,"Lọ potion màu lọ trắng ngà có chữ thập xanh lá (giải debuff). Hiệu ứng: Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated.",Prototype dùng chung 1 hình bình tam giác đổi màu; khuyến nghị mỗi potion 1 dáng chai riêng.,P2
+321,icon_ach_tutorial,Achievement: Class Dismissed,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #57cc4d: Finish the tutorial.,,P3
+322,icon_ach_first_blood,Achievement: First Blood,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #e63946: Win your first fight in a run.,,P3
+323,icon_ach_crit,Achievement: Precision,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #fb8b24: Land your first Critical.,,P3
+324,icon_ach_one_shot,Achievement: One and Done,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ffbe0b: Defeat a normal enemy from full HP with a single word.,,P3
+325,icon_ach_one_shot_elite,Achievement: Elite Eraser,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #9b5de5: Defeat an Elite from full HP with a single word.,,P3
+326,icon_ach_one_shot_boss,Achievement: Boss? What Boss?,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ff006e: Defeat the Act 1 boss from full HP with a single word.,,P3
+327,icon_ach_long7,Achievement: Wordsmith,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #3a86ff: Cast a word with 7 or more letters.,,P3
+328,icon_ach_long10,Achievement: Sesquipedalian,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #1747b8: Cast a word with 10 or more letters.,,P3
+329,icon_ach_big100,Achievement: Triple Digits,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #e5352b: Deal 100 or more damage with one word.,,P3
+330,icon_ach_comma,Achievement: Comma Chameleon,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #5fd4c4: Cast two words at once with a comma tile.,,P3
+331,icon_ach_wild3,Achievement: Wild at Heart,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #c79bff: Cast a word that uses 3 wildcard tiles.,,P3
+332,icon_ach_untouched,Achievement: Untouchable,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #8ccf2a: Win a fight without losing any HP.,,P3
+333,icon_ach_claw_relic,Achievement: Claw Master,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #ffd166: Win a relic from the claw machine.,,P3
+334,icon_ach_act1,Achievement: Foot of The Tower,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #76706a: Defeat the boss of the Outskirts.,,P3
+335,icon_ach_act2,Achievement: City Lights,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #f4a261: Defeat the boss of the Ruined City.,,P3
+336,icon_ach_act3,Achievement: Top Floor,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #5fd4c4: Defeat the boss of The Tower.,,P3
+337,icon_ach_act4,Achievement: Worthy,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #9b5de5: Defeat whatever waits at the very top of The Tower.,,P3
+338,icon_ach_close,Achievement: That Was Close,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,Huy hiệu tròn màu #2fa84f: Cast NIGERIA.,Secret,P3
+339,icon_ach_close_enough,Achievement: Close Enough,Icon,Achievement,Achievements; toast,unlocked; locked,2,160x160,"Huy hiệu tròn màu #ff5d8f: Cast a censored swear word, like FVCK or SH!T.",Secret,P3
+340,prop_caravan,Xe caravan bán hàng (3 màu + bản robot),Prop,Scene,Shop,"red RELICS; blue TILES; green POTIONS; robot (xám kim loại, mái xanh ngọc)",4,840x640,"Xe ngựa gỗ mái vòm, mái hiên sọc, biển tên trên nóc, bánh xe gỗ, quầy để 3 món hàng.",,P1
+341,prop_trash_can,Thùng rác (bỏ tile),Prop,Scene,Shop,normal; used (mờ),2,240x300,"Thùng rác kim loại có nắp, chút rác xanh lòi ra.",,P1
+342,prop_music_notes,Nốt nhạc bay,Prop,Scene,Shop,♪; ♫,2,80x80,Nốt nhạc trắng viền đen bay lên khi anh em chơi nhạc.,,P3
+343,prop_tent,Lều cắm trại,Prop,Scene,Rest (Act 1–3),static,1,720x520,Lều vải tam giác bên đống lửa.,,P1
+344,prop_campfire,Lửa trại,Prop,Scene,Rest (Act 1–3),idle_1; idle_2,2,400x400,"Củi chéo, ngọn lửa cam vàng lay động 2 frame, quầng sáng ấm.",,P1
+345,prop_charge_pod,Buồng sạc năng lượng,Prop,Scene,Rest (Act 4),static (+ vòng năng lượng có thể animate),1,720x520,"Khoang kính cyan dựng đứng, vòng năng lượng bên trong, dây cáp, cột pin xanh.",,P1
+346,prop_heater,Đèn sưởi futuristic,Prop,Scene,Rest (Act 4),idle_1; idle_2,2,400x400,"Quả cầu sưởi trên chân ba càng, cuộn nhiệt cam đỏ phát sáng, hơi nóng bốc lên.",,P1
+347,prop_easel,Giá vẽ + canvas,Prop,Scene,Reward,static (chữ trên canvas đổi theo tile),1,280x320,"Giá vẽ gỗ 3 chân, canvas trắng hiện tile đang chọn.",,P1
+348,prop_altar_shrine,Đền thờ vũ khí hình nấm,Prop,Scene,Weapon Altar,"idle; pulled (1 vũ khí rút ra, vũ khí kia bị nuốt)",2,900x700,"Bệ đá hình cây nấm cổ, 2 vũ khí cắm sâu vào; khi rút có đá vụn văng ra.",,P1
+349,prop_treasure_chest,Rương báu,Prop,Scene,Treasure,closed; open,2,400x320,"Rương gỗ viền vàng. (Prototype chưa vẽ rương, chỉ có thẻ relic.)",,P3
+350,prop_word_terminal,Màn hình Word Terminal,Prop,Scene,Event: Wordle,static,1,1000x900,"Máy tính CRT cũ nứt vỡ, lưới 6x5 ô chữ, bàn phím ảo.",,P2
+351,ui_wordle_cell,Ô chữ Wordle,Prop,Scene,Event: Wordle,empty; typed; green (đúng); yellow (sai chỗ); grey (không có),5,100x100,Ô vuông chữ cái.,,P2
+352,ui_wordle_key,Phím bàn phím Wordle,Prop,Scene,Event: Wordle,normal; green; yellow; grey,4,80x100,Phím chữ.,,P2
+353,prop_claw_machine,Máy gắp thú,Prop,Scene,Event: Claw,cabinet; claw open; claw closed; chute,4,1120x880,"Tủ máy gắp kính, móc gắp 3 càng có dây (lắc lư), máng nhả quà bên trái.",,P2
+354,prop_claw_prizes,Quà trong máy gắp,Prop,Scene,Event: Claw,coin; tile ball; relic ball,3,80x80,"Đồng xu vàng, bóng chứa tile, bóng chứa relic.",,P2
+355,prop_wheel,Vòng quay may mắn,Prop,Scene,Event: Wheel,wheel (6 ô); pointer; center cap,3,800x800,"Vòng quay 6 ô: Relic (vàng), Potion (tím), Heal 15 (xanh lá), Lv 2 tile (xanh dương), Paint (cam), Zap −10 (đỏ).",,P2
+356,prop_dagger_proj,Dao ném,Prop,Scene,Combat FX,static,1,160x48,Dao găm bay xoay (dùng cho dagger).,,P3
+357,prop_gold_coin,Đồng vàng rơi,Prop,Scene,Combat (quái chết),spin_1; spin_2,2,60x60,Đồng xu vàng bay về ô gold.,,P1
+358,fx_slash,Vệt chém,FX,Combat,Combat,slash_1; slash_2; slash_3,3,256x256 / frame,Vệt chém trắng nhiều đường khi đánh trúng.,,P2
+359,fx_impact,Vụ nổ va chạm,FX,Combat,Combat,burst_1; burst_2; burst_3,3,256x256 / frame,"Ngôi sao nổ nhiều màu + hạt văng ra, to nhỏ theo sát thương.",,P2
+360,fx_particles,Hạt màu,FX,Combat,Combat,sheet 6 màu,1,256x256 / frame,Hạt tròn/sao nhỏ dùng chung cho mọi hiệu ứng.,,P2
+361,fx_shield,Khiên năng lượng,FX,Combat,Combat,appear; hold; break,3,256x256 / frame,Bong bóng/khiên xanh hiện quanh nhân vật khi nhận Shield.,,P2
+362,fx_heal,Hồi máu,FX,Combat,Combat,sparkle_1; sparkle_2,2,256x256 / frame,Dấu cộng và lấp lánh xanh lá bay lên.,,P2
+363,fx_buff,Tăng chỉ số,FX,Combat,Combat,arrows_1; arrows_2,2,256x256 / frame,Mũi tên đỏ/xanh bay lên.,,P2
+364,fx_poison,Độc,FX,Combat,Combat,drip_1; drip_2; cloud,3,256x256 / frame,"Giọt độc xanh, mây độc.",,P2
+365,fx_venom,Phun độc,FX,Combat,Combat,spray,1,256x256 / frame,Tia độc xanh bay tới quái.,,P2
+366,fx_debuff_tile,Debuff bay vào tile,FX,Combat,Combat,orb_trail,1,256x256 / frame,Quả cầu tím bay từ quái vào tay bài.,,P2
+367,fx_tile_fly,Tile bay vào chồng bài,FX,Combat,Combat,trail,1,256x256 / frame,Tile thu nhỏ bay vào draw/discard kèm vệt sáng.,,P2
+368,fx_death_mushroom,Mây nấm khi quái chết,FX,Combat,Combat,frame_1; frame_2; frame_3; frame_4; frame_5; frame_6,6,256x256 / frame,"Đám mây hình nấm nhiều lớp + chớp sáng, bụi.",,P2
+369,fx_laser,Tia laser,FX,Combat,Combat,beam; flare,2,256x256 / frame,"Tia laser đỏ (Gatekeeper, LEXICORE).",,P2
+370,fx_flame,Lửa Flame Lance,FX,Combat,Combat,flame_1; flame_2,2,256x256 / frame,Lửa cam vàng lan sang mọi quái.,,P2
+371,fx_psychic,Sóng tâm linh,FX,Combat,Combat,wave_1; wave_2,2,256x256 / frame,Vòng sóng tím (Prisoner Zero).,,P2
+372,fx_spores,Bào tử nấm,FX,Combat,Combat,spores,1,256x256 / frame,Bào tử xanh nhạt (Mother Mycelia).,,P2
+373,fx_rubble,Đá vụn,FX,Combat,Combat,rocks,1,256x256 / frame,Đá vụn văng ra khi rút vũ khí ở Altar.,,P2
+374,fx_screen_flash,Chớp màn hình,FX,Combat,Combat,white flash,1,256x256 / frame,Chớp trắng khi crit/nổ.,,P2
+375,fx_numpop,Số sát thương bay,FX,Combat,Combat,(dùng font),1,256x256 / frame,"Số đỏ/xanh to viền đen bật lên. Dùng font Permanent Marker, không cần vẽ.",,P2
+376,fx_gold_burst,Vàng toé,FX,Combat,Combat,burst,1,256x256 / frame,Lấp lánh vàng khi nhận gold.,,P2
+377,cs_lift_1,Liftoff 1: Tháp rung chuyển,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Đêm, The Tower cao vút, phần đỉnh (Chamber) phát sáng, bụi và mảnh vỡ rơi.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+378,cs_lift_2,Liftoff 2: Đỉnh tháp tách ra,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Phần đỉnh tách khỏi thân tháp (thân tháp cụt có vết gãy vàng), phóng lên bằng 3 cột lửa, khói mù mịt.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+379,cs_lift_3,Liftoff 3: Chamber vào quỹ đạo,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Vũ trụ, Trái Đất cong phía dưới, Mặt Trăng xa, Chamber lơ lửng với cửa tròn mở sáng.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+380,cs_end_1,Ending 1: Cánh đồng hầm tên lửa mở,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Mặt đất đêm, tháp cụt đỉnh phía sau, CẢ MỘT CÁNH ĐỒNG hầm tên lửa tròn (5 hàng phối cảnh xa gần, hàng chục hầm) mở nắp, mũi tên lửa (màu theo hero) nhô lên, đèn cảnh báo đỏ nhấp nháy.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+381,cs_end_2,Ending 2: Tên lửa phóng hàng loạt,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Hàng chục tên lửa bay lên ở nhiều độ sâu (xa nhỏ cao, gần to thấp), khói phủ cánh đồng hầm.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+382,cs_end_3,Ending 3: Chamber dẫn đầu hạm đội,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Vũ trụ trên Trái Đất: Chamber (tàu chỉ huy) bật hết động cơ, quay mũi về phía Mặt Trăng; đoàn tên lửa xếp đội hình theo sau.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+383,cs_end_4,Ending 4: Chuyến đi một chiều,Cutscene,Slide,"Cutscene (ảnh tĩnh, fade đen giữa các cảnh)","frame_1; frame_2 (lửa, khói, đèn, sao nhấp nháy)",2,3200x1800,"Chamber dẫn đầu, phía sau là dải tên lửa dài bay chéo về Mặt Trăng lớn có căn cứ alien (mái vòm xanh, đèn đỏ), Trái Đất ở góc.",Mỗi cảnh là ảnh tĩnh; chỉ vài chi tiết đổi giữa 2 frame. Có hộp caption phía dưới.,P1
+384,cs_rocket,Tên lửa (màu theo hero),Cutscene,Element,Cutscene ending,body; flame_1; flame_2; 3 biến thể màu hero (xanh dương/đỏ/xanh lá),4,160x460,"Tên lửa trắng, mũi và cánh theo màu hero, cửa sổ tròn xanh ngọc, sọc màu.",,P1
+385,cs_chamber_exterior,Chamber nhìn từ ngoài (đỉnh tháp),Cutscene,Element,Cutscene liftoff/ending,normal; thrusters (lửa 2 frame); dark (khi nổ),3,1000x700,"Khối giống vương miện đĩa bay: đĩa vành ngoài, mái vòm, cửa sổ tròn tím có lõi đỏ, mạch đỏ, 3 động cơ phía dưới, ăng-ten đèn.",,P1
+386,cs_moon_hq,Mặt Trăng + căn cứ alien,Cutscene,Element,Cutscene; nền Act 4,light_1; light_2,2,800x800,"Mặt Trăng kem có hố, căn cứ alien mái vòm xanh lá, ăng-ten, đèn đỏ nhấp nháy.",,P1
+387,cs_earth,Trái Đất cong,Cutscene,Element,Cutscene,static,1,3200x800,Đường cong Trái Đất xanh dương có lục địa xanh lá và quầng khí quyển.,,P2
+388,cs_dialogue_bg,Nền hội thoại cuối,Cutscene,Dialogue,Ending dialogue,static,1,3200x1800,"Phòng Chamber tối (bản boss của nền Act 4) có lớp phủ tối; chân dung hero trái, LEXICORE phải.",Chân dung dùng lại sprite hero và LEXICORE.,P2
+389,ui_dialogue_box,Hộp thoại + bảng tên,UI,Dialogue,Ending dialogue,box; nameplate hero (màu hero); nameplate LEXICORE (tím),3,2700x380,"Hộp giấy kem lớn viền đen, bảng tên ở góc, chữ chạy kiểu máy đánh chữ.",,P2
+390,ui_caption_box,Hộp caption cutscene,UI,Cutscene,Cutscene,9-slice,1,2400x140,Hộp giấy kem viền đen chứa câu dẫn chuyện.,,P2
+391,ui_quote_screen,Màn câu kết,UI,Cutscene,Ending,(chữ trên nền đen),1,3200x1800,"Nền đen, câu kết in nghiêng font serif hiện dần từng cụm. Không cần vẽ, dùng font.",,P3
+392,font_permanent_marker,Font Permanent Marker,Font,Font,Toàn game,regular,1,-,"Font mã nguồn mở Google Fonts dùng cho: Tiêu đề, số sát thương, tên nhân vật. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.",,P3
+393,font_patrick_hand,Font Patrick Hand,Font,Font,Toàn game,regular,1,-,"Font mã nguồn mở Google Fonts dùng cho: Chữ thân bài, mô tả. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.",,P3
+394,font_sniglet,Font Sniglet,Font,Font,Toàn game,regular; extrabold,2,-,Font mã nguồn mở Google Fonts dùng cho: Chữ trên tile và số. Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.,,P3
+395,font_special_elite,Font Special Elite,Font,Font,Toàn game,regular,1,-,Font mã nguồn mở Google Fonts dùng cho: Chữ máy đánh chữ (terminal). Không phải vẽ; chỉ cần kiểm tra license (OFL) hoặc thay bằng font tự vẽ.,,P3
