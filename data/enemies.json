@@ -320,21 +320,6 @@
         },
         {
           "turn": 2,
-          "name": "Petrify",
-          "actions": [
-            {
-              "type": "buff",
-              "status": "layers",
-              "value": 6
-            },
-            {
-              "type": "attack",
-              "value": 18
-            }
-          ]
-        },
-        {
-          "turn": 3,
           "name": "Stone Gaze",
           "actions": [
             {
@@ -349,22 +334,83 @@
           ]
         },
         {
-          "turn": 4,
+          "turn": 3,
           "name": "Execute",
           "actions": [
             {
               "type": "attack",
-              "value": 38,
+              "value": 34,
               "heavy": true
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "name": "Petrify",
+          "actions": [
+            {
+              "type": "changeForm",
+              "to": "statue"
+            },
+            {
+              "type": "block",
+              "value": 30
+            },
+            {
+              "type": "buff",
+              "status": "thorns",
+              "value": 8
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "name": "Stone Watch",
+          "actions": [
+            {
+              "type": "block",
+              "value": 18
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "name": "Cursed Glare",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "curse",
+              "count": 3
+            },
+            {
+              "type": "block",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "name": "Awaken",
+          "actions": [
+            {
+              "type": "changeForm",
+              "to": "normal"
+            },
+            {
+              "type": "attack",
+              "value": 14,
+              "plusPerThorn": 2,
+              "heavy": true
+            },
+            {
+              "type": "clearStatus",
+              "status": "thorns"
             }
           ]
         }
       ],
-      "lore": "A stone guardian that once watched the city gates. Its skin is layer upon layer of stone: every hit only chips one layer off.",
-      "bossGimmick": "Stone Skin: starts with 10 Layered Armor (1 damage per hit, removes a layer; Poison ignores).",
-      "startingStatus": {
-        "layers": 10
-      }
+      "lore": "A stone guardian that once watched the city gates. When hurt it turns back into a spiked statue; when it wakes, the spikes burst out of it.",
+      "bossGimmick": "Living Statue: Normal Form (attacks) -> Petrify: Statue Form (+30 Shield, +8 Thorns) -> Awaken: back to Normal, heavy hit 14 + 2 per Thorn, then Thorns cleared."
     },
     {
       "id": "rat",
@@ -1113,25 +1159,26 @@
             {
               "type": "tileDebuff",
               "debuff": "frustrate",
-              "count": 6
+              "count": 5
             },
             {
               "type": "attack",
-              "value": 18
+              "value": 14
             }
           ]
         },
         {
           "turn": 2,
-          "name": "Rewind",
+          "name": "Psychic Shell",
           "actions": [
             {
-              "type": "rewind",
-              "healPctOfLastTurnDamage": 0.5
+              "type": "block",
+              "value": 18
             },
             {
-              "type": "block",
-              "value": 20
+              "type": "buff",
+              "status": "might",
+              "value": 2
             }
           ]
         },
@@ -1146,7 +1193,7 @@
             },
             {
               "type": "attack",
-              "value": 12
+              "value": 10
             }
           ]
         },
@@ -1156,14 +1203,14 @@
           "actions": [
             {
               "type": "attack",
-              "value": 38,
+              "value": 28,
               "heavy": true
             }
           ]
         }
       ],
-      "lore": "The first alien ever caught. Its mind bends time inside its cell: your turns run on its hourglass, and it can rewind its own wounds.",
-      "bossGimmick": "Time Prison: 30-second real-time limit per player turn (paused during animations/menus); Rewind heals 50% of damage taken during the player's last turn."
+      "lore": "The first alien ever caught. Its mind bends time inside its cell: it speeds up and acts twice, then the time it borrowed runs out and it freezes in place.",
+      "bossGimmick": "Time Haste / Time Slow: 3-turn loop. Haste (2 turns): acts twice per turn. Slow (1 turn): does nothing and takes double damage. No real-time limit."
     },
     {
       "id": "gatekeeper",
@@ -1190,12 +1237,12 @@
         },
         {
           "turn": 2,
-          "name": "Purge",
+          "name": "Recharge Field",
           "actions": [
             {
-              "type": "tileDebuff",
-              "debuff": "condemn",
-              "count": 4
+              "type": "buff",
+              "status": "field",
+              "value": 8
             },
             {
               "type": "attack",
@@ -1230,8 +1277,11 @@
           ]
         }
       ],
-      "lore": "A walking vault door. Closed, it shrugs off half of every blow. Open, its laser core is exposed and takes extra damage.",
-      "bossGimmick": "Two Forms: move cycle turns 1-2 Vault Form (takes 50% damage), 3-4 Laser Form (takes 150% damage)."
+      "lore": "A walking vault door wrapped in a humming force field. Every hit only knocks out one field cell, and it keeps recharging them.",
+      "bossGimmick": "Force Field: starts with 12 cells, Recharge Field +8; while > 0 every hit deals 1 damage and removes 1 cell; poison ignores it.",
+      "startingStatus": {
+        "field": 12
+      }
     },
     {
       "id": "lexicore",

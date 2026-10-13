@@ -43,6 +43,10 @@
     "stun": {
       "n": "Stunned",
       "d": "Skips its next turn."
+    },
+    "field": {
+      "n": "Force Field",
+      "d": "Every hit deals only 1 damage and knocks out 1 cell. Poison ignores it."
     }
   },
   "keywords": {

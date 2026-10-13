@@ -95,6 +95,12 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+.fighter.form-statue .art{filter:grayscale(1) brightness(.9) contrast(1.1) drop-shadow(0 0 10px #c9c3ad)}
+.fighter.time-haste .art{filter:drop-shadow(-10px 0 0 rgba(95,212,196,.45)) drop-shadow(-20px 0 0 rgba(95,212,196,.2));animation:hastejit .25s infinite alternate}
+@keyframes hastejit{from{transform:translateX(0)}to{transform:translateX(3px)}}
+.fighter.time-slow .art{filter:sepia(.6) hue-rotate(170deg) saturate(.6) brightness(1.05) drop-shadow(0 0 16px #bfe0ff)}
+.intentpair{display:flex;gap:3px;align-items:center;flex-wrap:nowrap;transform:scale(.82);transform-origin:50% 100%;white-space:nowrap}.intentpair .intent{display:flex;flex-wrap:nowrap;gap:4px;padding:2px 8px}.intentpair .hasteb{font:18px var(--f-display);color:#5fd4c4;-webkit-text-stroke:4px #1d1b22;paint-order:stroke fill}
+.intent.slowed{background:#d6efff}
 #zclock{left:66px;top:262px;display:grid;justify-items:center;gap:0;pointer-events:none;z-index:6}
 #zclock b{font:30px var(--f-display);color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill;margin-top:-6px}
 #zclock.urgent{animation:clockpulse .5s infinite alternate}#zclock.urgent b{color:#ff5a4e}
@@ -1379,7 +1385,7 @@ function statusText(k,v,isP){
     robust:`Your shield words gain +${v} Spell Power.`, thorns:isP?`Enemies that attack you take ${v} damage.`:`Attacking it hurts you for ${v} each hit.`,
     poison:`Takes ${v} damage at the end of ${isP?"your":"its"} turn, then 1 less each turn.`,
     weaken:`Shield gained is halved for ${v} more turn${v>1?"s":""}.`, broken:`Takes 50% more damage for ${v} more turn${v>1?"s":""}.`,
-    curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`, layers:`${v} layers: every hit deals only 1 damage and removes a layer. Poison ignores them.`, stun:`Skips its next turn.`})[k]||(STATUS[k]&&STATUS[k].d)||"";
+    curse:`Dies instantly if HP is ${v} or less at the end of turn.`, frustrated:`Words shorter than ${v+1} letters deal 1 damage to you.`, field:`${v} cells: every hit deals only 1 damage and knocks out a cell. Poison ignores it.`, layers:`${v} layers: every hit deals only 1 damage and removes a layer. Poison ignores them.`, stun:`Skips its next turn.`})[k]||(STATUS[k]&&STATUS[k].d)||"";
 }
 function statusHTML(o, keys, isP){
   return keys.filter(k=>o[k]>0).map(k=>`<span class="sti s-${k}" ${tipAttr(`<b>${STATUS[k].n} ${o[k]}</b><br>${statusText(k,o[k],isP)}`,[k])}>${SI[k]}<b>${o[k]}</b></span>`).join("");
@@ -1389,11 +1395,13 @@ function intentHTML(e){
   const def=ENEMIES[e.id]; const mi=e.mi%def.moves.length; const move=def.moves[mi];
   const lines=[], kws=[];
   const parts = move.map(a=>{
-    if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.n>1?` <b>${a.n} times</b> (each hit is a separate attack)`:""}${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}${a.n>1?`×${a.n}`:""}</b></span>`; }
+    if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might+(a.addThorns?(e.thorns||0)*a.addThorns:0); if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.n>1?` <b>${a.n} times</b> (each hit is a separate attack)`:""}${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}${a.n>1?`×${a.n}`:""}</b></span>`; }
     if(a.k==="boom"){ const bv=a.per?Math.ceil(e.hp/a.per):a.v; lines.push(`<b>self-destruct</b>, inflicting <b>${bv} ${STATUS[a.s].n}</b> on you${a.per?` (1 per ${a.per} HP it has left: wound it first!)`:""}`); kws.push(a.s); return `<span class="ii">${SI.intentBoom}<b>${bv}</b></span>`; }
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
+    if(a.k==="form"){ lines.push(a.to==="statue"?"<b>turn to stone</b> (Statue Form)":"<b>awaken</b> (back to Normal Form)"); kws.push("bp_statue"); return `<span class="ii">${SI.intentForm}</span>`; }
+    if(a.k==="clear"){ lines.push(`drop all its ${STATUS[a.s].n}`); return ""; }
     if(a.k==="rewind"){ const h=Math.min(e.max-e.hp,Math.floor((e.dmgTaken||0)*a.pct)); lines.push(`<b>rewind time</b>, healing back ${Math.round(a.pct*100)}% of the damage you deal it this turn (now ${h})`); kws.push("bp_timeprison"); return `<span class="ii">${SI.intentRewind}<b>${h}</b></span>`; }
     if(a.k==="ablk"){ lines.push(`give <b>${a.v}</b> Shield to each of its allies (itself if alone)`); kws.push("ally","block"); return `<span class="ii">${SI.intentAlly}<b>${a.v}</b></span>`; }
     if(a.k==="abuff"){ lines.push(`give <b>+${a.v} ${STATUS[a.s].n}</b> to ${a.all?"itself and every ally":"each of its allies"}`); kws.push("ally",a.s); return `<span class="ii">${SI.intentRally}<b>${a.v}</b></span>`; }
@@ -1926,7 +1934,7 @@ function startCombat(group, kind, opt={}){
   if(typeof group==="string") group=[group];
   const t={}; for(const tile of G.deck) t[tile.uid]={...tile,deb:null};
   const gsc = kind==="normal" ? [1,1,.75,.62,.55,.5][group.length]||.5 : 1;
-  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false,ds:kind==="normal"?GROUP_DMG[Math.min(group.length,5)]:1}; }), target:0,
+  C = {kind, es:group.map(id=>{ const hp=Math.round(ENEMIES[id].hp*gsc); return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,field:ENEMIES[id].field||0,broken:0,poison:0,mi:0,dead:false,gone:false,ds:kind==="normal"?GROUP_DMG[Math.min(group.length,5)]:1}; }), target:0,
        t, draw:shuffle(Object.keys(t).map(Number)), hand:[], disc:[], bar:[], ban:[],
        energy:BASE_ENERGY, used:[], wi:0, p:{block:0,might:0,robust:0,poison:0,weaken:0,broken:0,curse:0,frustrated:0,thorns:0},
        turn:0, busy:true, over:false, fresh:[], log:[`${group.map(id=>ENEMIES[id].name).join(", ")} block${group.length>1?"":"s"} the path.`]};
@@ -2222,7 +2230,9 @@ function dealToEnemy(i,amount,opts){
   let absorbed=0;
   if(!opts.pierce && e.block>0){ absorbed=Math.min(e.block,dmg); e.block-=absorbed; dmg-=absorbed; }
   if(dmg>0&&ENEMIES[e.id].forms) dmg=Math.floor(dmg*(curForm(e)==="vault"?.5:1.5));
-  if(dmg>0&&e.layers>0){ e.layers--; dmg=1; if(typeof log==="function") log(`${ENEMIES[e.id].name} loses a layer of armor (${e.layers} left).`); }
+  if(dmg>0&&ENEMIES[e.id].haste&&hastePhase(e)==="slow") dmg*=2;
+  if(dmg>0&&e.field>0){ e.field--; dmg=1; if(typeof log==="function") log(`Force Field: one cell knocked out (${e.field} left).`); }
+  else if(dmg>0&&e.layers>0){ e.layers--; dmg=1; if(typeof log==="function") log(`${ENEMIES[e.id].name} loses a layer of armor (${e.layers} left).`); }
   if(ENEMIES[e.id].cap&&dmg>0){ const left=Math.max(0,ENEMIES[e.id].cap-(e.capTaken||0)); if(dmg>=left){ dmg=left; C.capHit=true; } e.capTaken=(e.capTaken||0)+dmg; }
   e.dmgTaken=(e.dmgTaken||0)+Math.min(dmg,e.hp);
   e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-dmg); G.stats.dmg+=dmg;
@@ -2311,19 +2321,24 @@ async function endTurn(){
   await enemyTurn();
 }
 async function enemyTurn(){
-  const order=C.es.slice();
+  const order=C.es.flatMap(x=>(ENEMIES[x.id].haste&&!x.dead&&!(x.stun>0)&&hastePhase(x)==="haste")?[x,x]:[x]);
+  const seen=new Map();
   for(const x of C.es) if(!x.dead) x.block=0;
   for(const e of order){
     if(!C||C.over) return;
     if(e.dead||!C.es.includes(e)) continue;
     let i=C.es.indexOf(e); const def=ENEMIES[e.id]; let key="e"+i;
+    seen.set(e,(seen.get(e)||0)+1); const pass=seen.get(e), lastPass=pass===order.filter(x=>x===e).length;
     renderCombat();
-    const mi=e.mi%def.moves.length, stunned=e.stun>0, move=stunned?[]:def.moves[mi];
-    if(stunned){ e.stun--; log(`${def.name} is stunned and skips its turn.`); const sc=center(key); numPop(sc.x,sc.top+10,"Stunned!",12,"#ffbe0b"); await sleep(T_(700)); }
+    const slowed=def.haste&&hastePhase(e)==="slow"&&!(e.stun>0);
+    const mi=e.mi%def.moves.length, stunned=e.stun>0||slowed, move=stunned?[]:def.moves[mi];
+    if(def.haste&&!stunned&&pass===1&&!lastPass){ banner("TIME HASTE! (acts twice)",1000); await sleep(T_(450)); }
+    if(slowed){ log(`Time Slow: ${def.name} is frozen in slowed time.`); const sc=center(key); numPop(sc.x,sc.top+10,"Time Slow…",12,"#bfe0ff"); await sleep(T_(800)); }
+    else if(stunned){ e.stun--; log(`${def.name} is stunned and skips its turn.`); const sc=center(key); numPop(sc.x,sc.top+10,"Stunned!",12,"#ffbe0b"); await sleep(T_(700)); }
     if(def.names&&!stunned){ log(`${def.name} uses ${def.names[mi]}.`); banner(def.names[mi],1100); await sleep(T_(500)); }
     for(const a of move){
       if(a.k==="atk"){ for(let hit=0;hit<(a.n||1);hit++){
-        let dmg=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
+        let dmg=Math.round(a.v*(e.ds||1))+e.might+(a.addThorns?(e.thorns||0)*a.addThorns:0); if(C.p.broken>0) dmg=Math.floor(dmg*1.5);
         const behind=C.twin&&C.target!==i; if(behind){ dmg*=2; banner("Hit from behind! ×2",900); }
         const res=hurtPlayer(dmg); log(`${def.name} attacks for ${dmg}${res.absorbed?` (${res.absorbed} blocked)`:""}.`);
         snd("hurt");
@@ -2338,6 +2353,8 @@ async function enemyTurn(){
       else if(a.k==="summon"){ const n=await spawnEnemies(Array(a.n).fill(a.id)); i=C.es.indexOf(e); key="e"+i; log(n?`${def.name} summons ${n} ${ENEMIES[a.id].name}${n>1?"s":""}.`:`${def.name} tries to summon, but there is no room.`); }
       else if(a.k==="boom"){ const bv=a.per?Math.ceil(e.hp/a.per):a.v; C.p[a.s]+=bv; log(`${def.name} bursts! You are hit by ${bv} ${STATUS[a.s].n}.`); const bc=center(key); particles(bc.x,bc.y,34,["#7fd34a","#c3f06b","#9b5de5","#3d3a44"],300,{size:16}); numPop(bc.x,bc.top,"BOOM!",20,"#7fd34a"); shake(16); snd("hit");
         await skillAnim(key,"p",`${STATUS[a.s].n} ${bv}`); e.hp=0; renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; break; }
+      else if(a.k==="form"){ e.form=a.to; renderCombat(); banner(a.to==="statue"?"PETRIFY: STATUE FORM":"AWAKEN: NORMAL FORM",1200); snd(a.to==="statue"?"shield":"crit"); const fc=center(key); particles(fc.x,fc.y,26,["#aaa39b","#76706a","#fff"],240,{size:14}); await sleep(T_(700)); }
+      else if(a.k==="clear"){ e[a.s]=0; log(`${def.name}'s ${STATUS[a.s].n} crumble away.`); renderCombat(); }
       else if(a.k==="rewind"){ const h=Math.min(e.max-e.hp,Math.floor((e.dmgTaken||0)*a.pct)); e.hp+=h; log(`${def.name} rewinds time and recovers ${h} HP.`); banner("REWIND",900); await healAnim(key,h,h?`⟲ +${h}`:"⟲ Nothing to rewind"); e.dmgTaken=0; }
       else if(a.k==="ablk"||a.k==="abuff"||a.k==="aheal"){ const tg=allyTargets(e,a);
         for(const o of tg){ if(a.k==="ablk") o.block+=a.v; else if(a.k==="abuff") o[a.s]=(o[a.s]||0)+a.v; else o.hp=Math.min(o.max,o.hp+a.v); }
@@ -2348,10 +2365,12 @@ async function enemyTurn(){
       else if(a.k==="pdeb"){ C.p[a.s]+=a.v; log(`You are ${STATUS[a.s].n} (${a.v}).`); await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); }
       renderCombat();
     }
+    if(!lastPass){ if(!stunned) e.mi++; continue; }
     if(!e.dead&&def.regrow){ const n=C.es.filter(o=>!o.dead&&ENEMIES[o.id].minion).length, h=Math.min(e.max-e.hp,def.regrow*n); if(h>0){ e.hp+=h; log(`Regrowth: ${def.name} heals ${h} (${n} Sporeling${n>1?"s":""}).`); await healAnim(key,h); } }
     if(!e.dead&&e.poison>0){ const d=e.poison; e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-d); e.poison--; log(`${def.name} takes ${d} Poison.`); renderCombat(); await poisonAnim(key,d); if(await resolveDeaths()) return; if(e.dead) continue; }
     if(e.broken>0) e.broken--;
     if(!stunned) e.mi++;
+    if(def.haste&&!e.dead) e.ph=(e.ph||0)+1;
     if(def.forms&&!e.dead){ const f=curForm(e); if(f!==(e.lastForm||"vault")){ e.lastForm=f; renderCombat(); banner(f==="laser"?"LASER FORM! (takes 150%)":"VAULT FORM (takes 50%)",1300); snd(f==="laser"?"crit":"shield"); await sleep(T_(600)); } }
     renderCombat();
     await sleep(T_(150));
@@ -2392,10 +2411,10 @@ function fighterHTML(key){
   const hp=isP?[G.hp,G.maxHp]:[e.hp,e.max]; const block=isP?C.p.block:e.block;
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&!e.dead&&!C.over&&C.target===i;
   const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"],true)}</div>`
-    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","layers","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
+    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","layers","field","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
-  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${e&&def.forms?"form-"+curForm(e):""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
+  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${e&&def.forms?"form-"+curForm(e):""} ${e&&def.statue?"form-"+(e.form||"normal"):""} ${e&&def.haste?"time-"+hastePhase(e):""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})"`}>
     <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?heroArt():def.art,isP?{}:(def.artO||{}))}
     <div class="under"><div class="hpbar">${hpBarInner(key)}${block>0?`<em class="blk" ${tipAttr(`<b>Shield ${block}</b><br>Blocks the next ${block} damage.`,["block"])}>${block}</em>`:""}<span>${hp[0]}/${hp[1]}</span></div></div></div>`;
@@ -2622,12 +2641,14 @@ const EASTER = {
 
 /* ================= GLOSSARY ================= */
 function moveText(a){
-  if(a.k==="atk") return `${a.heavy?"Heavy attack":"Attack"} <b>${a.v}${a.n>1?`×${a.n}`:""}</b>`;
+  if(a.k==="atk") return `${a.heavy?"Heavy attack":"Attack"} <b>${a.v}${a.n>1?`×${a.n}`:""}</b>${a.addThorns?` (+${a.addThorns} per Thorn)`:""}`;
   if(a.k==="boom") return a.per?`Self-destruct: <b>1 ${STATUS[a.s].n} per ${a.per} HP</b> it has left`:`Self-destruct: <b>${a.v}</b> ${STATUS[a.s].n} to you`;
   if(a.k==="blk") return `Shield <b>${a.v}</b>`;
   if(a.k==="buff") return `+${a.v} ${STATUS[a.s].n}`;
   if(a.k==="tile") return `${TILE_DEBUFFS[a.d].name} on <b>${a.n}</b> tiles`;
   if(a.k==="pdeb") return `Inflict ${a.v} ${STATUS[a.s].n}`;
+  if(a.k==="form") return a.to==="statue"?"<b>Statue Form</b>":"<b>Normal Form</b>";
+  if(a.k==="clear") return `Lose all ${STATUS[a.s].n}`;
   if(a.k==="rewind") return `Rewind: heal <b>${Math.round(a.pct*100)}%</b> of the damage taken last turn`;
   if(a.k==="ablk") return `Shield allies <b>${a.v}</b>`;
   if(a.k==="abuff") return `+${a.v} ${STATUS[a.s].n} to ${a.all?"all":"allies"}`;
@@ -2953,7 +2974,7 @@ async function spawnEnemies(ids){
   const alive=C.es.filter(x=>!x.dead).length; const list=ids.slice(0,Math.max(0,5-alive)); if(!list.length) return 0;
   const tgt=C.es[C.target];
   C.es=C.es.filter(x=>!x.dead||x.down);
-  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
+  const born=list.map(id=>{ const hp=ENEMIES[id].hp; return {id,hp,max:hp,block:0,might:0,thorns:0,layers:ENEMIES[id].layers||0,field:ENEMIES[id].field||0,broken:0,poison:0,mi:0,dead:false,gone:false}; });
   C.es.push(...born);
   C.target=Math.max(0,tgt&&!tgt.dead?C.es.indexOf(tgt):0);
   C.trail={}; C.trailT={};
@@ -4665,6 +4686,52 @@ function halveDebuffs(e){
   const firewallEnd=async()=>{ if(C&&!C.over&&C.capHit){ C.capHit=false; await sleep(T_(300)); banner("FIREWALL: TURN OVER",1200); snd("buzz"); log("Firewall: the damage cap is reached, your turn ends."); await sleep(T_(900)); if(C&&!C.over){ C.busy=false; await endTurn(); } } };
   const ca=cast; cast=async function(){ await ca(); await firewallEnd(); };
   const up=usePotion; usePotion=async function(i){ await up(i); await firewallEnd(); };
+})();
+
+/* ================= BOSS GIMMICKS v3: Zero Haste/Slow, Gatekeeper Force Field, Gargoyle Statue form ================= */
+(function(){
+  const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  // Prisoner Zero: Time Haste (2 turns, acts twice) → Time Slow (1 turn, frozen, takes ×2)
+  Object.assign(ENEMIES.zero,{clock:undefined,haste:true,bossPassive:"timeflux",
+    moves:[[T("frustrate",5),A(14)],[B(18),U("might",2)],[T("curse",3),A(10)],[A(28,1)]],names:["Mind Spike","Psychic Shell","Scream","Annihilate"]});
+  MON_LORE.zero="The first alien ever caught. Its mind bends time inside its cell: it speeds up and acts twice, then the time it borrowed runs out and it freezes in place.";
+  // Gatekeeper: Force Field (Layered-Armor style shield it can recharge)
+  Object.assign(ENEMIES.gatekeeper,{forms:false,field:12,bossPassive:"forcefield",
+    moves:[[T("lock",6),B(20)],[{k:"buff",s:"field",v:8},A(14)],[A(26),T("burn",4)],[A(40,1)]],names:["Lockdown","Recharge Field","Laser Sweep","Overcharge"]});
+  MON_LORE.gatekeeper="A walking vault door wrapped in a humming force field. Every hit only knocks out one field cell, and it keeps recharging them.";
+  // Gargoyle: Normal form (attack) ↔ Statue form (Shield + Thorns); waking up hits hard and drops the Thorns
+  Object.assign(ENEMIES.gargoyle,{layers:0,statue:true,bossPassive:"statue",
+    moves:[[T("curse",4),T("condemn",4)],[A(19),T("curse",3)],[A(34,1)],
+      [{k:"form",to:"statue"},B(30),U("thorns",8)],[B(18)],[T("curse",3),B(10)],
+      [{k:"form",to:"normal"},{k:"atk",v:14,addThorns:2,heavy:true},{k:"clear",s:"thorns"}]],
+    names:["Chant of Decay","Stone Gaze","Execute","Petrify","Stone Watch","Cursed Glare","Awaken"]});
+  MON_LORE.gargoyle="A stone guardian that once watched the city gates. When hurt it turns back into a spiked statue; when it wakes, the spikes burst out of it.";
+})();
+Object.assign(BOSS_PASSIVES,{
+  timeflux:{n:"Time Haste / Time Slow",d:"Zero bends time in a 3-turn loop. TIME HASTE (2 turns): it acts twice per turn (both moves are shown in its intent). TIME SLOW (1 turn): it is frozen, does nothing, and takes DOUBLE damage. Shield up during Haste, unload during Slow."},
+  forcefield:{n:"Force Field",d:"Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."},
+  statue:{n:"Living Statue",d:"NORMAL FORM: it attacks and curses. Then it Petrifies into STATUE FORM: +30 Shield and 8 Thorns (every hit you land on it costs you 8 HP). After 3 turns it Awakens: back to Normal Form with a heavy hit that grows with its Thorns (14 + 2 per Thorn), then the Thorns are gone."},
+});
+for(const k of ["timeflux","forcefield","statue"]) KW["bp_"+k]=[BOSS_PASSIVES[k].n+" (boss)",BOSS_PASSIVES[k].d];
+STATUS.field={n:"Force Field",d:"Every hit deals only 1 damage and knocks out 1 cell. Poison ignores it."};
+KW.field=["Force Field","Energy cells around the Gatekeeper. While it has any, every hit deals only 1 damage and removes 1 cell. Poison ignores it."];
+Object.assign(BP_ICON,{
+  timeflux:iconSVG("0 0 24 24",(sh,ink)=>{ sh("circle",`cx="12" cy="12" r="10"`,"#c79bff"); ink(`<path class="thin" d="M12 5 L12 12 L17 15"/>`); sh("path",`d="M18 2 L23 6 L18 9 Z"`,"#5fd4c4"); sh("path",`d="M6 15 L1 18 L6 21 Z"`,"#9aa6b4"); }),
+  forcefield:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 2 L21 7 L21 17 L12 22 L3 17 L3 7 Z"`,"#7ff3e4"); ink(`<path class="thin" d="M12 2 L12 22 M3 7 L21 17 M21 7 L3 17"/>`); }),
+  statue:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 3 L20 9 L18 21 L6 21 L4 9 Z"`,"#aaa39b"); for(const [x,y] of [[12,1],[22,8],[2,8]]) sh("path",`d="M${x} ${y} l2 4 l-4 0 Z"`,"#76706a"); ink(`<circle cx="9.5" cy="12" r="1.3" class="dark"/><circle cx="14.5" cy="12" r="1.3" class="dark"/>`); }),
+});
+SI.field=iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 2 L21 7 L21 17 L12 22 L3 17 L3 7 Z"`,"#7ff3e4"); ink(`<path class="thin" d="M12 7 L16 9.5 L16 14.5 L12 17 L8 14.5 L8 9.5 Z"/>`); });
+SI.intentForm=iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M3 8 L15 8 L15 4 L21 10 L15 16 L15 12 L3 12 Z"`,"#aaa39b"); sh("path",`d="M21 16 L9 16 L9 20 L3 14 L9 8 L9 12 L21 12 Z"`,"#ffbe0b"); });
+SI.intentSlow=iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="5" y="2" width="14" height="3" rx="1"`,CC.wood); sh("rect",`x="5" y="19" width="14" height="3" rx="1"`,CC.wood); sh("path",`d="M7 5 L17 5 Q17 10 12 12 Q17 14 17 19 L7 19 Q7 14 12 12 Q7 10 7 5 Z"`,"#bfe0ff"); });
+function hastePhase(e){ return ["haste","haste","slow"][(e.ph||0)%3]; }
+(function(){
+  const ih=intentHTML;
+  intentHTML=function(e){
+    const D=ENEMIES[e.id]; if(!D.haste||e.stun>0) return ih(e);
+    if(hastePhase(e)==="slow") return `<div class="intent slowed" ${tipAttr("<b>Time Slow</b><br>Frozen in slowed time: it does nothing next turn and takes <b>double damage</b> right now.",["bp_timeflux"])}><span class="ii">${SI.intentSlow}<b>×2 dmg</b></span></div>`;
+    const a=ih(e), b=ih({...e,mi:e.mi+1});
+    return `<div class="intentpair" ${tipAttr("<b>Time Haste</b><br>It acts twice next turn: both moves are shown.",["bp_timeflux"])}><span class="hasteb">⏩</span>${a}${b}</div>`;
+  };
 })();
 
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
