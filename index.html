@@ -92,6 +92,13 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+#zclock{left:66px;top:262px;display:grid;justify-items:center;gap:0;pointer-events:none;z-index:6}
+#zclock b{font:30px var(--f-display);color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill;margin-top:-6px}
+#zclock.urgent{animation:clockpulse .5s infinite alternate}#zclock.urgent b{color:#ff5a4e}
+@keyframes clockpulse{from{transform:scale(1)}to{transform:scale(1.12)}}
+.tile.filtered{filter:grayscale(1) brightness(.85)}.tile.filtered:after{content:"";position:absolute;left:8%;right:8%;top:50%;height:4px;background:#e63946;transform:rotate(-30deg);border-radius:2px;pointer-events:none}
+.fighter.form-vault .art{filter:drop-shadow(0 0 14px #3a86ff)}.fighter.form-laser .art{filter:drop-shadow(0 0 18px #ff3b30) saturate(1.3)}
+.sti.s-boss{background:#ffe9a8}.sti.s-boss.f-laser{background:#ffc9c4}.sti.s-boss.f-vault{background:#cfe3ff}
 .potmenu{position:fixed;z-index:400;width:250px;background:#fffdf7;border:3px solid #1d1b22;border-radius:12px;padding:10px 12px;box-shadow:4px 5px 0 #1d1b22;display:grid;gap:7px;animation:rwfade .12s ease-out}
 .pm-name{font:20px var(--f-display)}.pm-d{font-size:15px;line-height:1.2}
 .pm-btn{font:18px var(--f-display);border:3px solid #1d1b22;border-radius:10px;padding:4px 10px;background:#f6e7c4;cursor:pointer;box-shadow:2px 3px 0 #1d1b22;text-align:left}
@@ -1384,6 +1391,7 @@ function intentHTML(e){
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
+    if(a.k==="rewind"){ const h=Math.min(e.max-e.hp,Math.floor((e.dmgTaken||0)*a.pct)); lines.push(`<b>rewind time</b>, healing back ${Math.round(a.pct*100)}% of the damage you deal it this turn (now ${h})`); kws.push("bp_timeprison"); return `<span class="ii">${SI.intentRewind}<b>${h}</b></span>`; }
     if(a.k==="ablk"){ lines.push(`give <b>${a.v}</b> Shield to each of its allies (itself if alone)`); kws.push("ally","block"); return `<span class="ii">${SI.intentAlly}<b>${a.v}</b></span>`; }
     if(a.k==="abuff"){ lines.push(`give <b>+${a.v} ${STATUS[a.s].n}</b> to ${a.all?"itself and every ally":"each of its allies"}`); kws.push("ally",a.s); return `<span class="ii">${SI.intentRally}<b>${a.v}</b></span>`; }
     if(a.k==="aheal"){ lines.push(`repair its injured allies for <b>${a.v}</b> HP each (itself if alone)`); kws.push("ally"); return `<span class="ii">${SI.intentHeal}<b>${a.v}</b></span>`; }
@@ -2113,6 +2121,7 @@ async function cast(){
   if(w.kind==="atk"){
     const ti=aliveTarget();
     let dmg=R.total, opts={};
+    if(ENEMIES[C.es[ti].id].tall&&R.L.length<4){ dmg=Math.floor(dmg/2); log("Too Tall: a short word only reaches its ankle (half damage)."); }
     if(R.crit && wid==="hammer"){ dmg*=2; opts.pierce=true; }
     const hits=1+(hasR("megaphone")?(R.bang||0):0); if(hits>1) flashRelics(["megaphone"]);
     if(hasR("nib")){ const nb0=G.nib||0; G.nib=nb0+hits; if(Math.floor(G.nib/10)>Math.floor(nb0/10)){ dmg*=2; log("Chalk Tally: the 10th mark! Double damage."); flashRelics(["nib"]); } }
@@ -2209,7 +2218,9 @@ function dealToEnemy(i,amount,opts){
   let dmg = e.broken>0 ? Math.floor(amount*1.5) : amount;
   let absorbed=0;
   if(!opts.pierce && e.block>0){ absorbed=Math.min(e.block,dmg); e.block-=absorbed; dmg-=absorbed; }
+  if(dmg>0&&ENEMIES[e.id].forms) dmg=Math.floor(dmg*(curForm(e)==="vault"?.5:1.5));
   if(dmg>0&&e.layers>0){ e.layers--; dmg=1; if(typeof log==="function") log(`${ENEMIES[e.id].name} loses a layer of armor (${e.layers} left).`); }
+  e.dmgTaken=(e.dmgTaken||0)+Math.min(dmg,e.hp);
   e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-dmg); G.stats.dmg+=dmg;
   return {dmg, absorbed};
 }
@@ -2323,6 +2334,7 @@ async function enemyTurn(){
       else if(a.k==="summon"){ const n=await spawnEnemies(Array(a.n).fill(a.id)); i=C.es.indexOf(e); key="e"+i; log(n?`${def.name} summons ${n} ${ENEMIES[a.id].name}${n>1?"s":""}.`:`${def.name} tries to summon, but there is no room.`); }
       else if(a.k==="boom"){ C.p[a.s]+=a.v; log(`${def.name} bursts! You are hit by ${a.v} ${STATUS[a.s].n}.`); const bc=center(key); particles(bc.x,bc.y,34,["#7fd34a","#c3f06b","#9b5de5","#3d3a44"],300,{size:16}); numPop(bc.x,bc.top,"BOOM!",20,"#7fd34a"); shake(16); snd("hit");
         await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); e.hp=0; renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; break; }
+      else if(a.k==="rewind"){ const h=Math.min(e.max-e.hp,Math.floor((e.dmgTaken||0)*a.pct)); e.hp+=h; log(`${def.name} rewinds time and recovers ${h} HP.`); banner("REWIND",900); await healAnim(key,h,h?`⟲ +${h}`:"⟲ Nothing to rewind"); e.dmgTaken=0; }
       else if(a.k==="ablk"||a.k==="abuff"||a.k==="aheal"){ const tg=allyTargets(e,a);
         for(const o of tg){ if(a.k==="ablk") o.block+=a.v; else if(a.k==="abuff") o[a.s]=(o[a.s]||0)+a.v; else o.hp=Math.min(o.max,o.hp+a.v); }
         const nm=tg.length===1&&tg[0]===e?"itself":tg.map(o=>ENEMIES[o.id].name).join(", ");
@@ -2332,9 +2344,11 @@ async function enemyTurn(){
       else if(a.k==="pdeb"){ C.p[a.s]+=a.v; log(`You are ${STATUS[a.s].n} (${a.v}).`); await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); }
       renderCombat();
     }
+    if(!e.dead&&def.regrow){ const n=C.es.filter(o=>!o.dead&&ENEMIES[o.id].minion).length, h=Math.min(e.max-e.hp,def.regrow*n); if(h>0){ e.hp+=h; log(`Regrowth: ${def.name} heals ${h} (${n} Sporeling${n>1?"s":""}).`); await healAnim(key,h); } }
     if(!e.dead&&e.poison>0){ const d=e.poison; e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-d); e.poison--; log(`${def.name} takes ${d} Poison.`); renderCombat(); await poisonAnim(key,d); if(await resolveDeaths()) return; if(e.dead) continue; }
     if(e.broken>0) e.broken--;
     if(!stunned) e.mi++;
+    if(def.forms&&!e.dead){ const f=curForm(e); if(f!==(e.lastForm||"vault")){ e.lastForm=f; renderCombat(); banner(f==="laser"?"LASER FORM! (takes 150%)":"VAULT FORM (takes 50%)",1300); snd(f==="laser"?"crit":"shield"); await sleep(T_(600)); } }
     renderCombat();
     await sleep(T_(150));
   }
@@ -2377,7 +2391,7 @@ function fighterHTML(key){
     : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","layers","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
-  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
+  return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${e&&def.forms?"form-"+curForm(e):""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
     ${isP?"":`onclick="setTarget(${i})"`}>
     <div class="over">${tgt?`<div class="tarrow" aria-label="Current target">${TARROW}</div>`:""}${over}</div>${tgt?`<div class="ring"><i></i></div>`:""}${artSVG(isP?heroArt():def.art,isP?{}:(def.artO||{}))}
     <div class="under"><div class="hpbar">${hpBarInner(key)}${block>0?`<em class="blk" ${tipAttr(`<b>Shield ${block}</b><br>Blocks the next ${block} damage.`,["block"])}>${block}</em>`:""}<span>${hp[0]}/${hp[1]}</span></div></div></div>`;
@@ -2610,6 +2624,7 @@ function moveText(a){
   if(a.k==="buff") return `+${a.v} ${STATUS[a.s].n}`;
   if(a.k==="tile") return `${TILE_DEBUFFS[a.d].name} on <b>${a.n}</b> tiles`;
   if(a.k==="pdeb") return `Inflict ${a.v} ${STATUS[a.s].n}`;
+  if(a.k==="rewind") return `Rewind: heal <b>${Math.round(a.pct*100)}%</b> of the damage taken last turn`;
   if(a.k==="ablk") return `Shield allies <b>${a.v}</b>`;
   if(a.k==="abuff") return `+${a.v} ${STATUS[a.s].n} to ${a.all?"all":"allies"}`;
   if(a.k==="aheal") return `Repair allies <b>${a.v}</b> HP`;
@@ -4509,6 +4524,113 @@ const POT_ART={
   panacea:(sh,ink)=>{ sh("path",`d="M16 6 L24 6 L24 13 Q31 17 31 26 Q31 37 20 37 Q9 37 9 26 Q9 17 16 13 Z"`,"#fff8df"); sh("path",`d="M18 18 L22 18 L22 22 L26 22 L26 26 L22 26 L22 30 L18 30 L18 26 L14 26 L14 22 L18 22 Z"`,CC.green); PB.cork(sh,15,2,10,5); ink(`<path class="thin" style="stroke:#c8a24a" d="M10 30 Q20 33 30 30"/>`); },
 };
 function potionIcon(id){ const f=POT_ART[id]; return iconSVG("0 0 40 40",f?f:(sh,ink)=>PB.cone(sh,POTION_COLOR[id]||CC.violet)); }
+
+/* ================= BOSS GIMMICKS: one mechanic only bosses have ================= */
+(function(){
+  const A=(v,h)=>h?{k:"atk",v,heavy:true}:{k:"atk",v}, B=v=>({k:"blk",v}), T=(d,n)=>({k:"tile",d,n}), P=(s,v)=>({k:"pdeb",s,v}), U=(s,v)=>({k:"buff",s,v});
+  // Junkyard Knight goes back to its plain kit
+  Object.assign(ENEMIES.knight,{layers:0,moves:[[B(25),U("might",3)],[A(23)],[T("condemn",5),A(13)],[A(31,1)]],names:undefined});
+  MON_LORE.knight="Scrap-armored badger with a STOP sign shield. Condemns the weak.";
+  // Act 2 – Gargoyle: Stone Skin (Layered Armor)
+  Object.assign(ENEMIES.gargoyle,{layers:10,boss:true,bossPassive:"stoneskin",
+    moves:[[T("curse",4),T("condemn",4)],[U("layers",6),A(18)],[A(19),T("curse",3)],[A(38,1)]],names:["Chant of Decay","Petrify","Stone Gaze","Execute"]});
+  MON_LORE.gargoyle="A stone guardian that once watched the city gates. Its skin is layer upon layer of stone: every hit only chips one layer off.";
+  // Act 3 – Prisoner Zero: Time Prison (turn hourglass) + Rewind
+  Object.assign(ENEMIES.zero,{bossPassive:"timeprison",clock:30,
+    moves:[[T("frustrate",6),A(18)],[{k:"rewind",pct:.5},B(20)],[T("curse",3),A(12)],[A(38,1)]],names:["Mind Spike","Rewind","Scream","Annihilate"]});
+  MON_LORE.zero="The first alien ever caught. Its mind bends time inside its cell: your turns run on its hourglass, and it can rewind its own wounds.";
+  // Act 3 – Gatekeeper: Two Forms (Vault ↔ Laser)
+  Object.assign(ENEMIES.gatekeeper,{bossPassive:"forms",forms:true,
+    moves:[[T("lock",6),B(20)],[T("condemn",4),A(14)],[A(26),T("burn",4)],[A(40,1)]],names:["Lockdown","Purge","Laser Sweep","Overcharge"]});
+  MON_LORE.gatekeeper="A walking vault door. Closed, it shrugs off half of every blow. Open, its laser core is exposed and takes extra damage.";
+  // Act 1 – Titan: Too Tall
+  Object.assign(ENEMIES.titan,{bossPassive:"tall",tall:true});
+  // Act 1 – Mother Mycelia: Regrowth
+  Object.assign(ENEMIES.shroom,{bossPassive:"regrow",regrow:6});
+  // Act 2 – Gemini: Twin Bond
+  Object.assign(ENEMIES.twinA,{bossPassive:"bond",bond:true}); Object.assign(ENEMIES.twinB,{bossPassive:"bond",bond:true});
+  // Act 4 – LEXICORE: Syntax Filter
+  Object.assign(ENEMIES.lexicore,{bossPassive:"filter",filter:true});
+})();
+const BOSS_PASSIVES={
+  stoneskin:{n:"Stone Skin",d:"Starts with 10 Layered Armor and Petrifies for 6 more. While it has layers, every hit deals only 1 damage and chips off 1 layer. Poison ignores the layers."},
+  timeprison:{n:"Time Prison",d:"Your turns run on its hourglass: you have 30 seconds per turn (the sand stops while animations play). When the sand runs out, your turn ends. Its Rewind heals back half of the damage you dealt it during your last turn."},
+  forms:{n:"Two Forms",d:"VAULT FORM (blue, 2 turns): takes only 50% damage. LASER FORM (red, 2 turns): its core is open and takes 150% damage. Save your big words for Laser Form."},
+  tall:{n:"Too Tall",d:"Words shorter than 4 letters only reach its ankle: they deal half damage to it."},
+  regrow:{n:"Regrowth",d:"At the end of each of her turns she heals 6 HP for every living Sporeling."},
+  bond:{n:"Twin Bond",d:"The twin you are not facing hits you twice as hard. When one twin falls, the other is ENRAGED: +6 Might."},
+  filter:{n:"Syntax Filter",d:"At the start of each of your turns it filters one letter in your hand: tiles of that letter are worth 0 Spell Power this turn (they look grey)."},
+};
+for(const [k,v] of Object.entries(BOSS_PASSIVES)) KW["bp_"+k]=[v.n+" (boss)",v.d];
+const BP_ICON={
+  stoneskin:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M3 8 L10 3 L19 5 L22 13 L17 21 L7 21 L2 15 Z"`,"#aaa39b"); ink(`<path class="thin" d="M7 9 L12 12 L10 17 M12 12 L18 10"/>`); }),
+  timeprison:iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="5" y="2" width="14" height="3" rx="1"`,CC.wood); sh("rect",`x="5" y="19" width="14" height="3" rx="1"`,CC.wood); sh("path",`d="M7 5 L17 5 Q17 10 12 12 Q17 14 17 19 L7 19 Q7 14 12 12 Q7 10 7 5 Z"`,"#e8f4ff"); sh("path",`d="M9 17 Q12 14 15 17 L15 19 L9 19 Z"`,"#ffbe0b"); }),
+  forms:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M12 2 A10 10 0 0 0 12 22 Z"`,CC.blue); sh("path",`d="M12 2 A10 10 0 0 1 12 22 Z"`,CC.red); ink(`<path class="thin" d="M12 2 L12 22"/>`); }),
+  tall:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M8 2 L16 2 L16 15 L21 18 L21 22 L5 22 L5 18 L8 15 Z"`,"#c9b29a"); ink(`<path class="thin" d="M9 22 L9 19 M13 22 L13 19 M17 22 L17 19"/>`); }),
+  regrow:iconSVG("0 0 24 24",(sh,ink)=>{ ink(`<path class="thick" style="stroke:#2f7d3e" d="M12 22 L12 10"/>`); sh("path",`d="M12 12 Q4 12 4 4 Q12 4 12 12 Z"`,CC.green); sh("path",`d="M12 10 Q20 10 20 3 Q12 3 12 10 Z"`,"#7fd34a"); }),
+  bond:iconSVG("0 0 24 24",(sh,ink)=>{ sh("path",`d="M8 20 C2 15 1 11 3 8 C5 5 8 6 8 8 C8 6 11 5 13 8 C15 11 14 15 8 20 Z"`,CC.red); sh("path",`d="M16 20 C10 15 9 11 11 8 C13 5 16 6 16 8 C16 6 19 5 21 8 C23 11 22 15 16 20 Z"`,CC.blue); }),
+  filter:iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="3" y="3" width="18" height="18" rx="4"`,"#f8bb75"); ink(`<text x="12" y="17" text-anchor="middle" style="font:800 13px var(--f-tile);fill:#1d1b22;stroke:none">A</text><path class="thick" style="stroke:#e63946" d="M4 20 L20 4"/>`); }),
+};
+SI.intentRewind=iconSVG("0 0 24 24",(sh,ink)=>{ sh("circle",`cx="12" cy="12" r="9"`,"#c79bff"); ink(`<path class="thin" d="M12 6 L12 12 L16 14"/><path class="thick" style="stroke:#3a2b5e" d="M3 7 L3 2 M3 7 L8 7"/>`); });
+function curForm(e){ return ENEMIES[e.id].forms ? ((e.mi%4)<2?"vault":"laser") : null; }
+function passiveHTML(e){
+  const D=ENEMIES[e.id], out=[];
+  if(D.bossPassive){ const P=BOSS_PASSIVES[D.bossPassive]; let extra="";
+    if(D.forms) extra=`<br>Now: <b>${curForm(e)==="vault"?"VAULT FORM · takes 50%":"LASER FORM · takes 150%"}</b>`;
+    if(D.filter&&C&&C.banLetter) extra=`<br>Filtered this turn: <b>${C.banLetter}</b>`;
+    out.push(`<span class="sti s-boss ${D.forms?"f-"+curForm(e):""}" ${tipAttr(`<b>${P.n}</b><br>${P.d}${extra}`,["bp_"+D.bossPassive])}>${BP_ICON[D.bossPassive]}${D.filter&&C&&C.banLetter?`<b>${C.banLetter}</b>`:""}</span>`); }
+  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP next turn unless every segment is destroyed in the same turn.",["reform"])}>${SI.reform}</span>`);
+  if(D.moves.some(m=>m.some(a=>a.k==="ablk"||a.k==="abuff"||a.k==="aheal"))) out.push(`<span class="sti s-ally" ${tipAttr("<b>Support</b><br>Spends some turns shielding, healing or buffing its allies.",["ally"])}>${SI.ally}</span>`);
+  return out.join("");
+}
+/* Syntax Filter: banned letter is worth 0 and looks grey */
+(function(){
+  const tc=tileChip; tileChip=function(t,letter){ const v=tc(t,letter); const L=letter||t.ch; return (typeof C!=="undefined"&&C&&C.banLetter&&L===C.banLetter)?0:v; };
+  const th=tileHTML; tileHTML=function(t,o={}){ if(typeof C!=="undefined"&&C&&C.banLetter&&t.ch===C.banLetter) o={...o,cls:(o.cls||"")+" filtered"}; return th(t,o); };
+})();
+/* Time Prison hourglass */
+function stopClock(){ if(typeof C!=="undefined"&&C&&C.clockT){ clearInterval(C.clockT); C.clockT=null; } document.getElementById("zclock")?.remove(); }
+function renderClock(){
+  const st=$("#stage"); if(!st||!C) return; let el=$("#zclock");
+  if(!el){ el=document.createElement("div"); el.id="zclock"; el.className="ui"; st.appendChild(el); }
+  const s=Math.max(0,C.clock), max=C.clockMax||30, f=s/max;
+  el.className="ui"+(s<8?" urgent":""); el.setAttribute("aria-label",`${Math.ceil(s)} seconds left`);
+  el.innerHTML=`<svg viewBox="0 0 60 90" width="60" height="90">${layer((sh,ink)=>{ sh("rect",`x="6" y="2" width="48" height="8" rx="3"`,CC.wood); sh("rect",`x="6" y="80" width="48" height="8" rx="3"`,CC.wood);
+    sh("path",`d="M12 10 L48 10 Q48 34 30 45 Q48 56 48 80 L12 80 Q12 56 30 45 Q12 34 12 10 Z"`,"#e8f4ff");
+    if(f>0) sh("path",`d="M${30-16*f} ${44-28*f} L${30+16*f} ${44-28*f} L30 44 Z"`,"#ffbe0b");
+    sh("path",`d="M${30-14*(1-f)-2} 79 Q30 ${79-30*(1-f)} ${30+14*(1-f)+2} 79 Z"`,"#ffbe0b"); })}</svg><b>${Math.ceil(s)}</b>`;
+}
+function startClock(){
+  stopClock(); if(!C||C.over||C.tut) return;
+  const z=C.es.find(e=>!e.dead&&ENEMIES[e.id].clock); if(!z) return;
+  C.clockMax=ENEMIES[z.id].clock; C.clock=C.clockMax; renderClock();
+  C.clockT=setInterval(()=>{ if(!C||C.over||!$("#stage")){ stopClock(); return; }
+    if(C.busy||!$("#modal").hidden||document.querySelector(".potmenu")||document.hidden) return;
+    C.clock-=.1; renderClock();
+    if(C.clock<=0){ stopClock(); log("Time Prison: the sand ran out. Your turn ends."); banner("TIME'S UP!",1000); snd("buzz"); endTurn(); } },100);
+}
+(function(){
+  const spt=startPlayerTurn;
+  startPlayerTurn=async function(){
+    if(C) C.es.forEach(e=>e.dmgTaken=0);
+    await spt();
+    if(!C||C.over) return;
+    // Syntax Filter
+    const lx=C.es.find(e=>!e.dead&&ENEMIES[e.id].filter);
+    if(lx){ const letters=[...new Set(C.hand.map(u=>C.t[u].ch).filter(ch=>/[A-Z]/.test(ch)))]; C.banLetter=letters.length?pick(letters):null;
+      if(C.banLetter){ log(`Syntax Filter: ${C.banLetter} tiles are worth 0 this turn.`); banner(`FILTERED: ${C.banLetter}`,1100); } renderCombat(); }
+    else C.banLetter=null;
+    startClock();
+  };
+  const rd=resolveDeaths;
+  resolveDeaths=async function(){
+    const r=await rd(); if(r||!C) return r;
+    if(!C.bondDone){ const tw=C.es.filter(e=>ENEMIES[e.id].bond); if(tw.length>1&&tw.some(e=>e.dead)&&tw.some(e=>!e.dead)){ C.bondDone=true; const a=tw.find(e=>!e.dead); a.might+=6; log(`Twin Bond: ${ENEMIES[a.id].name} is ENRAGED (+6 Might)!`); banner("ENRAGED!",1100); renderCombat(); const k="e"+C.es.indexOf(a); await buffAnim(k,"+6 Might"); } }
+    if(!C.es.some(e=>!e.dead&&ENEMIES[e.id].filter)) C.banLetter=null;
+    return r;
+  };
+  const et=endTurn; endTurn=async function(){ if(C&&!C.busy&&!C.over) stopClock(); return et(); };
+})();
 
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){

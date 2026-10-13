@@ -320,21 +320,22 @@
         },
         {
           "turn": 2,
-          "name": "Stone Slam",
+          "name": "Petrify",
           "actions": [
             {
-              "type": "attack",
-              "value": 26
+              "type": "buff",
+              "status": "layers",
+              "value": 6
             },
             {
-              "type": "block",
-              "value": 24
+              "type": "attack",
+              "value": 18
             }
           ]
         },
         {
           "turn": 3,
-          "name": "Gaze of Frustration",
+          "name": "Stone Gaze",
           "actions": [
             {
               "type": "attack",
@@ -359,7 +360,11 @@
           ]
         }
       ],
-      "lore": "A stone guardian that once watched the city gates. It curses, condemns and executes."
+      "lore": "A stone guardian that once watched the city gates. Its skin is layer upon layer of stone: every hit only chips one layer off.",
+      "bossGimmick": "Stone Skin: starts with 10 Layered Armor (1 damage per hit, removes a layer; Poison ignores).",
+      "startingStatus": {
+        "layers": 10
+      }
     },
     {
       "id": "rat",
@@ -515,23 +520,20 @@
       "moveCycle": [
         {
           "turn": 1,
-          "name": "Bolt On",
           "actions": [
             {
-              "type": "buff",
-              "status": "layers",
-              "value": 4
+              "type": "block",
+              "value": 25
             },
             {
               "type": "buff",
               "status": "might",
-              "value": 2
+              "value": 3
             }
           ]
         },
         {
           "turn": 2,
-          "name": "Shield Bash",
           "actions": [
             {
               "type": "attack",
@@ -541,7 +543,6 @@
         },
         {
           "turn": 3,
-          "name": "Road Closed",
           "actions": [
             {
               "type": "tileDebuff",
@@ -556,7 +557,6 @@
         },
         {
           "turn": 4,
-          "name": "STOP!",
           "actions": [
             {
               "type": "attack",
@@ -566,13 +566,7 @@
           ]
         }
       ],
-      "lore": "Scrap-armored badger with a STOP sign shield. Condemns the weak.",
-      "startingStatus": {
-        "layers": 8
-      },
-      "special": [
-        "Layered Armor: while layers > 0, each hit deals exactly 1 damage (after Shield) and removes 1 layer. Poison ticks ignore layers."
-      ]
+      "lore": "Scrap-armored badger with a STOP sign shield. Condemns the weak."
     },
     {
       "id": "mantis",
@@ -683,7 +677,8 @@
       "special": [
         "giant"
       ],
-      "lore": "Something enormous walks the outskirts. All you can see is its foot."
+      "lore": "Something enormous walks the outskirts. All you can see is its foot.",
+      "bossGimmick": "Too Tall: attack words under 4 letters deal half damage."
     },
     {
       "id": "twinA",
@@ -733,7 +728,8 @@
       "special": [
         "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
       ],
-      "lore": "One half of the Gemini brutes. They fight back to back… or front to back."
+      "lore": "One half of the Gemini brutes. They fight back to back… or front to back.",
+      "bossGimmick": "Twin Bond: off-target twin hits x2; when one dies the other gains +6 Might."
     },
     {
       "id": "twinB",
@@ -782,7 +778,8 @@
       "special": [
         "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
       ],
-      "lore": "The other half. Whichever twin you turn your back on hits twice as hard."
+      "lore": "The other half. Whichever twin you turn your back on hits twice as hard.",
+      "bossGimmick": "Twin Bond: off-target twin hits x2; when one dies the other gains +6 Might."
     },
     {
       "id": "prisoner",
@@ -1098,7 +1095,8 @@
         }
       ],
       "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children.",
-      "minionsDieWithIt": true
+      "minionsDieWithIt": true,
+      "bossGimmick": "Regrowth: heals 6 per living Sporeling at the end of her turn."
     },
     {
       "id": "zero",
@@ -1125,16 +1123,15 @@
         },
         {
           "turn": 2,
-          "name": "Psychic Shell",
+          "name": "Rewind",
           "actions": [
             {
-              "type": "block",
-              "value": 28
+              "type": "rewind",
+              "healPctOfLastTurnDamage": 0.5
             },
             {
-              "type": "buff",
-              "status": "might",
-              "value": 3
+              "type": "block",
+              "value": 20
             }
           ]
         },
@@ -1165,7 +1162,8 @@
           ]
         }
       ],
-      "lore": "The first alien ever caught. Its mind is too big for its cell, and it leaks."
+      "lore": "The first alien ever caught. Its mind bends time inside its cell: your turns run on its hourglass, and it can rewind its own wounds.",
+      "bossGimmick": "Time Prison: 30-second real-time limit per player turn (paused during animations/menus); Rewind heals 50% of damage taken during the player's last turn."
     },
     {
       "id": "gatekeeper",
@@ -1186,12 +1184,27 @@
             },
             {
               "type": "block",
-              "value": 32
+              "value": 20
             }
           ]
         },
         {
           "turn": 2,
+          "name": "Purge",
+          "actions": [
+            {
+              "type": "tileDebuff",
+              "debuff": "condemn",
+              "count": 4
+            },
+            {
+              "type": "attack",
+              "value": 14
+            }
+          ]
+        },
+        {
+          "turn": 3,
           "name": "Laser Sweep",
           "actions": [
             {
@@ -1202,16 +1215,6 @@
               "type": "tileDebuff",
               "debuff": "burn",
               "count": 4
-            }
-          ]
-        },
-        {
-          "turn": 3,
-          "name": "Purge",
-          "actions": [
-            {
-              "type": "attack",
-              "value": 14
             }
           ]
         },
@@ -1227,7 +1230,8 @@
           ]
         }
       ],
-      "lore": "A walking vault door. Nothing reaches the top of The Tower unless it says so."
+      "lore": "A walking vault door. Closed, it shrugs off half of every blow. Open, its laser core is exposed and takes extra damage.",
+      "bossGimmick": "Two Forms: move cycle turns 1-2 Vault Form (takes 50% damage), 3-4 Laser Form (takes 150% damage)."
     },
     {
       "id": "lexicore",
@@ -1294,7 +1298,8 @@
         }
       ],
       "lore": "The supercomputer that waited above The Tower. Its test is over.",
-      "glossaryHiddenUntil": "achievement act4"
+      "glossaryHiddenUntil": "achievement act4",
+      "bossGimmick": "Syntax Filter: each player turn one random letter in hand is worth 0 Spell Power."
     },
     {
       "id": "thornbloom",

@@ -272,7 +272,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
 - **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
 - **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **6 Poison** on the hero, and dies (no gold). Kill them early or cleanse the Poison.
-- **Layered Armor (Junkyard Knight, Act 2 Elite)**: the knight starts with 8 layers of scrap plating and bolts on 4 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
+- **Layered Armor (now the Gargoyle boss's "Stone Skin", see §13.4)**: starts with 10 layers and Petrifies for 6 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
 
@@ -703,12 +703,12 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 5×3 → Atk 7 + Frustrate×3 tiles |
 | **Boombox Baboon** | 2 | normal | 50 | **+2 Might to all** → Atk 9 + Frustrate×3 tiles → Atk 12 |
 | **Riot Turtle** | 2 | normal | 64 | **Shield allies 12** → Atk 9 + Block 8 → **Shield allies 10** + Lock×3 tiles |
-| **Junkyard Knight** | 2 | elite | 150 | Starts with **8 Layered Armor** · **Bolt On**: +4 Layered Armor + 2 Might → **Shield Bash**: Atk 23 → **Road Closed**: Condemn×5 tiles + Atk 13 → **STOP!**: Atk 31! |
+| **Junkyard Knight** | 2 | elite | 150 | Block 25 + +3 Might → Atk 23 → Condemn×5 tiles + Atk 13 → Atk 31! |
 | **Hazmat Mantis** | 2 | elite | 135 | Atk 7×3 → Poison×6 tiles + Weaken 2 → Atk 27! |
 | **Scrapipede Head** | 2 | elite | 58 | Atk 12 → Lock×5 tiles + Atk 6 → Atk 17! |
 | **Scrapipede Body** | 2 | elite | 58 | **Shield allies 10** → Atk 9 → Condemn×4 tiles + Block 8 |
 | **Scrapipede Tail** | 2 | elite | 58 | Atk 7 + Weaken 1 → Atk 11 → Broken 1 + Atk 5 |
-| **Ancient Stone Gargoyle** | 2 | boss | 300 | **Chant of Decay**: Curse×4 tiles + Condemn×4 tiles → **Stone Slam**: Atk 26 + Block 24 → **Gaze of Frustration**: Atk 19 + Curse×3 tiles → **Execute**: Atk 38! |
+| **Ancient Stone Gargoyle** | 2 | boss | 300 | *Stone Skin*: starts with 10 Layered Armor · **Chant of Decay**: Curse×4 tiles + Condemn×4 tiles → **Petrify**: +6 Layered Armor + Atk 18 → **Stone Gaze**: Atk 19 + Curse×3 tiles → **Execute**: Atk 38! |
 | **Gemini Left** | 2 | boss | 150 | **Pinch**: Atk 15 → **Brace**: Block 16 + Lock×4 tiles → **Crush**: Atk 21! |
 | **Gemini Right** | 2 | boss | 150 | **Brace**: Block 16 → **Pinch**: Atk 17 → **Hex**: Curse×3 tiles + Atk 9 |
 | **Prisoner 0451** | 3 | normal | 105 | Atk 22 → Frustrate×5 tiles + Block 19 → Atk 14 + Frustrate×3 tiles |
@@ -721,8 +721,8 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Mind Jar** | 3 | elite | 86 | **+2 Might to all** → Atk 9 + Frustrate×4 tiles → **+2 Might to all** + Block 10 |
 | **Rage Jar** | 3 | elite | 86 | Atk 6×3 → Atk 10 + Frustrate×5 tiles → Atk 22! |
 | **Ward Jar** | 3 | elite | 86 | **Shield allies 14** → Atk 11 → **Shield allies 10** + Weaken 2 |
-| **Prisoner Zero** | 3 | boss | 400 | **Mind Spike**: Frustrate×6 tiles + Atk 18 → **Psychic Shell**: Block 28 + Might +3 → **Scream**: Curse×3 tiles + Atk 12 → **Annihilate**: Atk 38! |
-| **The Gatekeeper** | 3 | boss | 430 | **Lockdown**: Lock×6 tiles + Block 32 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Purge**: Atk 14 → **Overcharge**: Atk 40! |
+| **Prisoner Zero** | 3 | boss | 400 | *Time Prison*: 30 s per player turn · **Mind Spike**: Frustrate×6 tiles + Atk 18 → **Rewind**: **Rewind** (heal 50% of last turn's damage) + Block 20 → **Scream**: Curse×3 tiles + Atk 12 → **Annihilate**: Atk 38! |
+| **The Gatekeeper** | 3 | boss | 430 | *Two Forms*: turns 1–2 VAULT (takes 50%), 3–4 LASER (takes 150%) · **Lockdown**: Lock×6 tiles + Block 20 → **Purge**: Condemn×4 tiles + Atk 14 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Overcharge**: Atk 40! |
 | **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×4 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×5 tiles + Atk 12 → **Delete**: Atk 51! |
 
 Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14) → Rumble (Lock 2 tiles + 14 Shield) → Mega Kick (22, heavy) → Earthquake (Broken 1 + Frustrated 2) → repeat.
@@ -743,6 +743,22 @@ Full move cycles: `../data/enemies.json`. Example (The Titan, Act 1): Stomp (14)
 | 1 | Arachne Matriarch · Quartz Punisher · Great Slime (splits into 5) |
 | 2 | Junkyard Knight · Hazmat Mantis · **Scrapipede** (Head + Body + Tail, Reassemble) |
 | 3 | Warden Unit · Escaped Prisoner Alpha · **Hive Mind** (Mind Jar + Rage Jar + Ward Jar) |
+
+### 13.4 Boss gimmicks (mechanics only bosses have)
+
+Every boss has one signature mechanic, shown as a gold passive icon under its HP bar (tooltip explains it; Glossary → Keywords lists them as "(boss)").
+
+| Boss | Act | Gimmick | Rules | How to beat it |
+|---|---|---|---|---|
+| **Mother Mycelia** | 1 | **Regrowth** | At the end of each of her turns she heals 6 HP per living Sporeling (Sporelings also self-destruct for 6 Poison on their 3rd turn; when she dies they wither). | Kill Sporelings fast, then burst her. |
+| **The Titan** | 1 | **Too Tall** | Attack words shorter than 4 letters deal half damage (they only reach its ankle). | Long words. |
+| **Ancient Stone Gargoyle** | 2 | **Stone Skin** | Starts with 10 **Layered Armor**; *Petrify* adds 6 more. While it has layers every hit deals 1 damage and removes 1 layer. Poison ignores layers. | Many small hits (single letters, Paper Cut, Rubber Stamp), then big words; Poison. |
+| **Gemini Left & Right** | 2 | **Twin Bond** | The twin you're not targeting hits ×2. When one twin dies the other is ENRAGED (+6 Might). | Damage both evenly, finish them close together. |
+| **Prisoner Zero** | 3 | **Time Prison** | Each player turn has a **30-second hourglass** (shown above the Energy battery; pauses while animations, menus or modals are open; turns red under 8 s). When it runs out the turn ends automatically. Its move **Rewind** heals back 50% of the damage it took during the player's previous turn (the intent shows the exact amount). | Think fast; deal your biggest damage on the turn before an Attack move, not right before Rewind. |
+| **The Gatekeeper** | 3 | **Two Forms** | Alternates every 2 turns: **VAULT FORM** (blue glow, Lockdown/Purge) takes **50%** damage; **LASER FORM** (red glow, Laser Sweep/Overcharge) takes **150%** damage. A banner announces each switch. | Shield up in Vault Form, unload during Laser Form. |
+| **LEXICORE** | 4 | **Syntax Filter** | At the start of each player turn it filters one random letter present in the hand: those tiles are worth 0 Spell Power that turn (greyed out with a red slash; the letter is shown on its passive icon). | Build words around the filtered letter. |
+
+Junkyard Knight (Act 2 Elite) went back to its plain kit (Block 25 + Might 3 → Atk 23 → Condemn 5 + Atk 13 → Atk 31!).
 
 ### 13.3 LEXICORE design
 
