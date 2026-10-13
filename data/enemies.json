@@ -678,7 +678,7 @@
         "giant"
       ],
       "lore": "Something enormous walks the outskirts. All you can see is its foot.",
-      "bossGimmick": "Too Tall: attack words under 4 letters deal half damage."
+      "bossGimmick": "Too Tall: attack words under 5 letters deal half damage; debuffs it receives (poison, broken, stun) are halved, rounded up."
     },
     {
       "id": "twinA",
@@ -1096,7 +1096,7 @@
       ],
       "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children.",
       "minionsDieWithIt": true,
-      "bossGimmick": "Regrowth: heals 6 per living Sporeling at the end of her turn."
+      "bossGimmick": "Regrowth: heals 5 per living Sporeling at the end of her turn."
     },
     {
       "id": "zero",
@@ -1299,7 +1299,8 @@
       ],
       "lore": "The supercomputer that waited above The Tower. Its test is over.",
       "glossaryHiddenUntil": "achievement act4",
-      "bossGimmick": "Syntax Filter: each player turn one random letter in hand is worth 0 Spell Power."
+      "bossGimmick": "Syntax Filter: each player turn one random letter in hand is worth 0 Spell Power. Firewall: takes at most 70 damage per player turn (poison ignores); reaching the cap ends the player's turn.",
+      "damageCapPerTurn": 70
     },
     {
       "id": "thornbloom",
@@ -1414,7 +1415,7 @@
       "name": "Sporeling",
       "act": 1,
       "tier": "minion",
-      "hp": 14,
+      "hp": 18,
       "art": "sporeling",
       "moveCycle": [
         {
@@ -1442,8 +1443,8 @@
             {
               "type": "selfDestruct",
               "status": "poison",
-              "value": 6,
-              "note": "applies the status to the player, then this enemy dies"
+              "perHpLeft": 3,
+              "note": "poison = ceil(current HP / 3), then this enemy dies"
             }
           ]
         }

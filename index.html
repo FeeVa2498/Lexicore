@@ -1387,7 +1387,7 @@ function intentHTML(e){
   const lines=[], kws=[];
   const parts = move.map(a=>{
     if(a.k==="atk"){ let d=Math.round(a.v*(e.ds||1))+e.might; if(C.p.broken>0) d=Math.floor(d*1.5); const bh=C.twin&&C.target!==C.es.indexOf(e); if(bh) d*=2; lines.push(`deal <b>${d}</b> damage${a.n>1?` <b>${a.n} times</b> (each hit is a separate attack)`:""}${a.heavy?" with a heavy blow":""}${bh?" — <b>your back is turned, so it hits ×2!</b> Target this twin to face it":""}`); if(e.might) kws.push("might"); if(C.p.broken) kws.push("broken"); return `<span class="ii">${SI.intentAtk}<b>${d}${a.n>1?`×${a.n}`:""}</b></span>`; }
-    if(a.k==="boom"){ lines.push(`<b>self-destruct</b>, inflicting <b>${a.v} ${STATUS[a.s].n}</b> on you`); kws.push(a.s); return `<span class="ii">${SI.intentBoom}<b>${a.v}</b></span>`; }
+    if(a.k==="boom"){ const bv=a.per?Math.ceil(e.hp/a.per):a.v; lines.push(`<b>self-destruct</b>, inflicting <b>${bv} ${STATUS[a.s].n}</b> on you${a.per?` (1 per ${a.per} HP it has left: wound it first!)`:""}`); kws.push(a.s); return `<span class="ii">${SI.intentBoom}<b>${bv}</b></span>`; }
     if(a.k==="blk"){ lines.push(`gain <b>${a.v}</b> Shield`); kws.push("block"); return `<span class="ii">${SI.intentBlk}<b>${a.v}</b></span>`; }
     if(a.k==="buff"){ lines.push(`gain <b>${a.v}</b> ${STATUS[a.s].n}`); kws.push(a.s); return `<span class="ii">${SI.intentBuff}<b>${a.v}</b></span>`; }
     if(a.k==="tile"){ lines.push(`turn <b>${a.n}</b> of your tiles into <b>${TILE_DEBUFFS[a.d].name}</b> tiles`); kws.push(DEB_KW[a.d]); return `<span class="ii">${SI.intentTile}<span class="mini-i">${SI[TILE_DEB_ICON[a.d]]}</span><b>${a.n}</b></span>`; }
@@ -2121,7 +2121,7 @@ async function cast(){
   if(w.kind==="atk"){
     const ti=aliveTarget();
     let dmg=R.total, opts={};
-    if(ENEMIES[C.es[ti].id].tall&&R.L.length<4){ dmg=Math.floor(dmg/2); log("Too Tall: a short word only reaches its ankle (half damage)."); }
+    if(ENEMIES[C.es[ti].id].tall&&R.L.length<5){ dmg=Math.floor(dmg/2); log("Too Tall: a word under 5 letters only reaches its ankle (half damage)."); }
     if(R.crit && wid==="hammer"){ dmg*=2; opts.pierce=true; }
     const hits=1+(hasR("megaphone")?(R.bang||0):0); if(hits>1) flashRelics(["megaphone"]);
     if(hasR("nib")){ const nb0=G.nib||0; G.nib=nb0+hits; if(Math.floor(G.nib/10)>Math.floor(nb0/10)){ dmg*=2; log("Chalk Tally: the 10th mark! Double damage."); flashRelics(["nib"]); } }
@@ -2220,6 +2220,7 @@ function dealToEnemy(i,amount,opts){
   if(!opts.pierce && e.block>0){ absorbed=Math.min(e.block,dmg); e.block-=absorbed; dmg-=absorbed; }
   if(dmg>0&&ENEMIES[e.id].forms) dmg=Math.floor(dmg*(curForm(e)==="vault"?.5:1.5));
   if(dmg>0&&e.layers>0){ e.layers--; dmg=1; if(typeof log==="function") log(`${ENEMIES[e.id].name} loses a layer of armor (${e.layers} left).`); }
+  if(ENEMIES[e.id].cap&&dmg>0){ const left=Math.max(0,ENEMIES[e.id].cap-(e.capTaken||0)); if(dmg>=left){ dmg=left; C.capHit=true; } e.capTaken=(e.capTaken||0)+dmg; }
   e.dmgTaken=(e.dmgTaken||0)+Math.min(dmg,e.hp);
   e.hp=Math.max(C.tut&&!C.tut.free?1:0,e.hp-dmg); G.stats.dmg+=dmg;
   return {dmg, absorbed};
@@ -2332,8 +2333,8 @@ async function enemyTurn(){
       else if(a.k==="buff"){ e[a.s]+=a.v; log(`${def.name} gains ${a.v} ${STATUS[a.s].n}.`); await buffAnim(key,`+${a.v} ${STATUS[a.s].n}`); }
       else if(a.k==="tile"){ const ch=applyTileDebuff(a.d,a.n); await skillAnim(key,"hand",`${TILE_DEBUFFS[a.d].name} ×${a.n}`); renderCombat(); await tileFlyFx(ch,`${TILE_DEBUFFS[a.d].name}!`); }
       else if(a.k==="summon"){ const n=await spawnEnemies(Array(a.n).fill(a.id)); i=C.es.indexOf(e); key="e"+i; log(n?`${def.name} summons ${n} ${ENEMIES[a.id].name}${n>1?"s":""}.`:`${def.name} tries to summon, but there is no room.`); }
-      else if(a.k==="boom"){ C.p[a.s]+=a.v; log(`${def.name} bursts! You are hit by ${a.v} ${STATUS[a.s].n}.`); const bc=center(key); particles(bc.x,bc.y,34,["#7fd34a","#c3f06b","#9b5de5","#3d3a44"],300,{size:16}); numPop(bc.x,bc.top,"BOOM!",20,"#7fd34a"); shake(16); snd("hit");
-        await skillAnim(key,"p",`${STATUS[a.s].n} ${a.v}`); e.hp=0; renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; break; }
+      else if(a.k==="boom"){ const bv=a.per?Math.ceil(e.hp/a.per):a.v; C.p[a.s]+=bv; log(`${def.name} bursts! You are hit by ${bv} ${STATUS[a.s].n}.`); const bc=center(key); particles(bc.x,bc.y,34,["#7fd34a","#c3f06b","#9b5de5","#3d3a44"],300,{size:16}); numPop(bc.x,bc.top,"BOOM!",20,"#7fd34a"); shake(16); snd("hit");
+        await skillAnim(key,"p",`${STATUS[a.s].n} ${bv}`); e.hp=0; renderCombat(); if(await resolveDeaths()) return; i=C.es.indexOf(e); key="e"+i; break; }
       else if(a.k==="rewind"){ const h=Math.min(e.max-e.hp,Math.floor((e.dmgTaken||0)*a.pct)); e.hp+=h; log(`${def.name} rewinds time and recovers ${h} HP.`); banner("REWIND",900); await healAnim(key,h,h?`⟲ +${h}`:"⟲ Nothing to rewind"); e.dmgTaken=0; }
       else if(a.k==="ablk"||a.k==="abuff"||a.k==="aheal"){ const tg=allyTargets(e,a);
         for(const o of tg){ if(a.k==="ablk") o.block+=a.v; else if(a.k==="abuff") o[a.s]=(o[a.s]||0)+a.v; else o.hp=Math.min(o.max,o.hp+a.v); }
@@ -2619,7 +2620,7 @@ const EASTER = {
 /* ================= GLOSSARY ================= */
 function moveText(a){
   if(a.k==="atk") return `${a.heavy?"Heavy attack":"Attack"} <b>${a.v}${a.n>1?`×${a.n}`:""}</b>`;
-  if(a.k==="boom") return `Self-destruct: <b>${a.v}</b> ${STATUS[a.s].n} to you`;
+  if(a.k==="boom") return a.per?`Self-destruct: <b>1 ${STATUS[a.s].n} per ${a.per} HP</b> it has left`:`Self-destruct: <b>${a.v}</b> ${STATUS[a.s].n} to you`;
   if(a.k==="blk") return `Shield <b>${a.v}</b>`;
   if(a.k==="buff") return `+${a.v} ${STATUS[a.s].n}`;
   if(a.k==="tile") return `${TILE_DEBUFFS[a.d].name} on <b>${a.n}</b> tiles`;
@@ -4630,6 +4631,37 @@ function startClock(){
     return r;
   };
   const et=endTurn; endTurn=async function(){ if(C&&!C.busy&&!C.over) stopClock(); return et(); };
+})();
+
+/* ================= BOSS GIMMICKS v2 ================= */
+// Sporelings: sturdier, and their burst scales with the HP they have left (1 Poison per 3 HP, rounded up)
+Object.assign(ENEMIES.sporeling,{hp:18,moves:[[{k:"atk",v:4}],[{k:"tile",d:"poison",n:2}],[{k:"boom",s:"poison",per:3}]]});
+MON_LORE.sporeling="One of Mother Mycelia's children. On its 3rd turn it bursts into spores: the more HP it has left, the more Poison you take (1 per 3 HP). Wound it before it pops.";
+ENEMIES.shroom.regrow=5;
+BOSS_PASSIVES.regrow={n:"Regrowth",d:"At the end of each of her turns she heals 5 HP for every living Sporeling. Sporelings burst on their 3rd turn for 1 Poison per 3 HP they have left."};
+// Titan: words under 5 letters deal half damage; debuffs it receives are halved (rounded up)
+BOSS_PASSIVES.tall={n:"Too Tall",d:"Words shorter than 5 letters only reach its ankle: they deal half damage. Its thick hide also halves every debuff it receives (Poison, Broken, Stun, rounded up)."};
+// LEXICORE: Syntax Filter + Firewall (max damage per player turn)
+ENEMIES.lexicore.cap=70;
+BOSS_PASSIVES.filter={n:"Syntax Filter + Firewall",d:"Each of your turns it filters one letter in your hand (those tiles are worth 0 Spell Power). Its Firewall lets through at most 70 damage per turn: once you hit the cap, your turn ends immediately."};
+for(const k of ["regrow","tall","filter"]) KW["bp_"+k]=[BOSS_PASSIVES[k].n+" (boss)",BOSS_PASSIVES[k].d];
+SI.firewall=iconSVG("0 0 24 24",(sh,ink)=>{ sh("rect",`x="2" y="4" width="20" height="16" rx="2"`,"#c1272d"); ink(`<path class="thin" style="stroke:#fff" d="M2 9.5 L22 9.5 M2 14.5 L22 14.5 M8 4 L8 9.5 M15 9.5 L15 14.5 M8 14.5 L8 20 M17 14.5 L17 20"/>`); sh("path",`d="M14 2 Q19 6 17 10 Q15 6 14 2 Z"`,"#ffbe0b"); });
+function halveDebuffs(e){
+  for(const s of ["poison","broken","stun"]){ let v=e[s]||0; delete e[s];
+    Object.defineProperty(e,s,{enumerable:true,configurable:true,get(){ return v; },set(n){ v = n>v ? v+Math.ceil((n-v)/2) : n; }}); }
+}
+(function(){
+  const pass=passiveHTML;
+  passiveHTML=function(e){ let h=pass(e); const D=ENEMIES[e.id];
+    if(D.cap){ const left=Math.max(0,D.cap-(e.capTaken||0)); h+=`<span class="sti s-boss fw" ${tipAttr(`<b>Firewall</b><br>Takes at most ${D.cap} damage per turn. ${left} left this turn: reaching the cap ends your turn.`,["bp_filter"])}>${SI.firewall}<b>${left}</b></span>`; }
+    return h; };
+  const sc=startCombat;
+  startCombat=function(group,kind,opt){ const r=sc(group,kind,opt); if(C) C.es.forEach(e=>{ if(ENEMIES[e.id].tall) halveDebuffs(e); }); return r; };
+  const spt=startPlayerTurn;
+  startPlayerTurn=async function(){ if(C){ C.es.forEach(e=>e.capTaken=0); C.capHit=false; } return spt(); };
+  const firewallEnd=async()=>{ if(C&&!C.over&&C.capHit){ C.capHit=false; await sleep(T_(300)); banner("FIREWALL: TURN OVER",1200); snd("buzz"); log("Firewall: the damage cap is reached, your turn ends."); await sleep(T_(900)); if(C&&!C.over){ C.busy=false; await endTurn(); } } };
+  const ca=cast; cast=async function(){ await ca(); await firewallEnd(); };
+  const up=usePotion; usePotion=async function(i){ await up(i); await firewallEnd(); };
 })();
 
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }

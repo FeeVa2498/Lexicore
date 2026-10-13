@@ -271,7 +271,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (potion).
 - **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
 - **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
-- **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **6 Poison** on the hero, and dies (no gold). Kill them early or cleanse the Poison.
+- **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **1 Poison per 3 HP it has left** (rounded up; 6 at full 18 HP) on the hero, and dies (no gold). Wounding it shrinks the burst.
 - **Layered Armor (now the Gargoyle boss's "Stone Skin", see §13.4)**: starts with 10 layers and Petrifies for 6 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
@@ -687,7 +687,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×3 tiles → Atk 12 |
 | **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → +3 Thorns + Atk 5 |
 | **Needle Hog** | 1 | normal | 36 | +2 Thorns + Block 6 → Atk 8 → Atk 5 + Poison×3 tiles |
-| **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → **Self-destruct: 6 Poison to you** |
+| **Sporeling** | 1 | minion | 18 | Atk 4 → Poison×2 tiles → **Self-destruct: 1 Poison per 3 HP left** |
 | **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×3 tiles → Atk 6 |
 | **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×3 tiles → Atk 6 |
 | **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Frustrate×3 tiles → Atk 6 |
@@ -750,13 +750,13 @@ Every boss has one signature mechanic, shown as a gold passive icon under its HP
 
 | Boss | Act | Gimmick | Rules | How to beat it |
 |---|---|---|---|---|
-| **Mother Mycelia** | 1 | **Regrowth** | At the end of each of her turns she heals 6 HP per living Sporeling (Sporelings also self-destruct for 6 Poison on their 3rd turn; when she dies they wither). | Kill Sporelings fast, then burst her. |
-| **The Titan** | 1 | **Too Tall** | Attack words shorter than 4 letters deal half damage (they only reach its ankle). | Long words. |
+| **Mother Mycelia** | 1 | **Regrowth** | At the end of each of her turns she heals 5 HP per living Sporeling. Sporelings (18 HP) burst on their 3rd turn for **1 Poison per 3 HP they have left** (6 at full HP); when she dies they wither. | Wound or kill Sporelings before they pop, then burst her. |
+| **The Titan** | 1 | **Too Tall** | Attack words shorter than **5 letters** deal half damage (they only reach its ankle). Its thick hide **halves every debuff it receives** (Poison, Broken, Stun; rounded up). | Long words; raw damage over debuffs. |
 | **Ancient Stone Gargoyle** | 2 | **Stone Skin** | Starts with 10 **Layered Armor**; *Petrify* adds 6 more. While it has layers every hit deals 1 damage and removes 1 layer. Poison ignores layers. | Many small hits (single letters, Paper Cut, Rubber Stamp), then big words; Poison. |
 | **Gemini Left & Right** | 2 | **Twin Bond** | The twin you're not targeting hits ×2. When one twin dies the other is ENRAGED (+6 Might). | Damage both evenly, finish them close together. |
 | **Prisoner Zero** | 3 | **Time Prison** | Each player turn has a **30-second hourglass** (shown above the Energy battery; pauses while animations, menus or modals are open; turns red under 8 s). When it runs out the turn ends automatically. Its move **Rewind** heals back 50% of the damage it took during the player's previous turn (the intent shows the exact amount). | Think fast; deal your biggest damage on the turn before an Attack move, not right before Rewind. |
 | **The Gatekeeper** | 3 | **Two Forms** | Alternates every 2 turns: **VAULT FORM** (blue glow, Lockdown/Purge) takes **50%** damage; **LASER FORM** (red glow, Laser Sweep/Overcharge) takes **150%** damage. A banner announces each switch. | Shield up in Vault Form, unload during Laser Form. |
-| **LEXICORE** | 4 | **Syntax Filter** | At the start of each player turn it filters one random letter present in the hand: those tiles are worth 0 Spell Power that turn (greyed out with a red slash; the letter is shown on its passive icon). | Build words around the filtered letter. |
+| **LEXICORE** | 4 | **Syntax Filter + Firewall** | At the start of each player turn it filters one random letter present in the hand: those tiles are worth 0 Spell Power that turn (greyed out with a red slash). Its **Firewall** lets through at most **70 damage per player turn** (Poison ticks ignore it); the moment the cap is reached the player's turn ends automatically. A red brick icon under its HP shows how much is left this turn. | Spread damage over turns: set up Shield, buffs and Poison first, finish the turn with the hit that caps it. |
 
 Junkyard Knight (Act 2 Elite) went back to its plain kit (Block 25 + Might 3 → Atk 23 → Condemn 5 + Atk 13 → Atk 31!).
 
