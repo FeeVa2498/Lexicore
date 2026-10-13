@@ -216,7 +216,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 - Damage to the hero: enemy attack value + enemy Might, `× 1.5` if the hero is Broken, then absorbed by Shield.
 - Shield from the hero's own effects is halved while Weakened.
 - **Thorns**: every enemy attack against the hero deals Thorns damage back (ignores enemy Shield). Enemies can have Thorns too (§4.10): each hit of an attack word on them hurts the hero.
-- When hero HP would hit 0, these are checked in order: **Undying** (Champion, once per Act: survive at 16 HP), then **Phoenix Feather** consumable (revive at 30% max HP). Otherwise the run ends.
+- When hero HP would hit 0, a **Phoenix Feather** consumable in a slot revives the hero at 30% max HP. Otherwise the run ends. (No hero has a built-in revive.)
 - Each enemy drops its share of gold the moment it dies (coins fly to the gold counter).
 
 ### 4.8 Statuses
@@ -290,9 +290,9 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 | **The Champion** (wolf, colour #e63946) | 88 | Greatsword, Dumbbell | Berserker's Blood | A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten. |
 | **The Mercenary** (rat2, colour #57cc4d) | 60 | Parrying Dagger, Utility Belt | Quick Gloves | A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect. |
 
-**The Champion's passives**
+**The Champion's passive**
 - **Adrenaline**: below 50% HP, every cast gets +0.5 Mult.
-- **Undying**: once per Act, when HP would reach 0, survive at 1 HP and heal 15.
+- (The former *Undying* revive passive was removed: not an approved design.)
 
 **Design intent**
 - *Scholar*: balanced, medium/long words, rewarded for re-using strong words (Journal).
@@ -980,10 +980,9 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 6. **Alt+1–3** consumable hotkeys don't cover slots 4–5 when Bottle Rack is owned.
 7. **Comma and Crit length**: commas are currently not counted. Confirm the design intent.
 8. **Journal** ignores single-tile casts on purpose (anti-exploit); document in the tooltip.
-9. **Undying + Phoenix Feather** order: Undying is checked first. Confirm.
-10. Spoiler audit before release (§2.1): run a text search for machine/AI/computer/nanobot outside Act 4 assets.
-11. Accessibility: colour-blind check on paints (red/blue/green/gold) and intent icons; font scaling.
-12. Localisation: the game depends on English words, but all UI text should be externalised for translation.
+9. Spoiler audit before release (§2.1): run a text search for machine/AI/computer/nanobot outside Act 4 assets.
+10. Accessibility: colour-blind check on paints (red/blue/green/gold) and intent icons; font scaling.
+11. Localisation: the game depends on English words, but all UI text should be externalised for translation.
 
 ---
 

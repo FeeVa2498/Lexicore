@@ -39,7 +39,7 @@
       ],
       "startingRelic": "blood",
       "charSelectText": "A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
-      "playstyle": "Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
+      "playstyle": "Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passive: <b>Adrenaline</b> (below 50% HP: +0.5 Mult).",
       "who": "A red wolf who has beaten every rival in the wastes and grown bored of winning.",
       "why": "Looking for a real challenge. Rumor says the master of The Tower has never lost.",
       "ending": {
@@ -54,11 +54,6 @@
           "id": "adrenaline",
           "name": "Adrenaline",
           "effect": "Below 50% HP: +0.5 Mult on every cast."
-        },
-        {
-          "id": "undying",
-          "name": "Undying",
-          "effect": "Once per Act, when HP would reach 0, survive at 1 HP and heal 15 (16 HP)."
         }
       ],
       "unlock": "reach the Act 1 boss"

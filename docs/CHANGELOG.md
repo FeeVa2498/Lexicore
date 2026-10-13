@@ -6,6 +6,10 @@ Shared copies live in the Google Drive folder *Lexicore / Doc / New Version* (up
 
 ---
 
+## 2026-10-13 · Champion: Undying removed
+- The Champion's **Undying** passive (once per Act, survive a killing blow at 16 HP) is removed from the game: it was never an approved design. Only the Phoenix Feather consumable can revive the hero now. Adrenaline stays.
+- GDD: §4.7, §5, §20 (open issue about the Undying/Phoenix order deleted). Data: `heroes.json` (passive and playstyle text).
+
 ## 2026-10-13 · Docs v1.4 – Dev handoff pack
 
 **New**

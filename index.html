@@ -4079,7 +4079,7 @@ const HEROES={
     ending:["LEXICORE's test is over. Its chamber now leads a million copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it.",""]},
   champion:{name:"The Champion",art:"wolf",color:"#e63946",hp:88,weapons:["greatsword","dumbbell"],relic:"blood",
     tag:"A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
-    play:"Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passives: <b>Adrenaline</b> (below 50% HP: +0.5 Mult) and <b>Undying</b> (once per Act, survive a killing blow at 1 HP and heal 15).",
+    play:"Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passive: <b>Adrenaline</b> (below 50% HP: +0.5 Mult).",
     who:"A red wolf who has beaten every rival in the wastes and grown bored of winning.",
     why:"Looking for a real challenge. Rumor says the master of The Tower has never lost.",
     ending:["LEXICORE's test is over. Its chamber now leads a million copies of The Champion on a one-way voyage to the alien headquarters on the Moon.","At the command deck, the original wolf watches the Moon grow larger and grins. For once, the next fight is bigger than the one who will fight it.",""]},
@@ -5276,16 +5276,10 @@ function spinWheel(){
 /* ================= END SCREENS ================= */
 function undying(){
   if(!G||G.hp>0) return false;
-  if(G.hero!=="champion"||G.undyingAct===(G.act||1)){
-    const pi=G.potions.indexOf("phoenix"); if(pi<0) return false;
-    G.potions.splice(pi,1); G.hp=Math.max(1,Math.floor(G.maxHp*.3)); log(`The Phoenix Feather burns! Back up with ${G.hp} HP.`);
-    try{ const pc=center("p"); stamp(pc.x,pc.top-40,"REBORN!"); numPop(pc.x,pc.top+20,`+${G.hp}`,12,"#ff7b00"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
-    return true;
-  }
-  const a=G.act||1;
-  G.undyingAct=a; G.hp=Math.min(G.maxHp,1+15);
-  log("Undying! The Champion refuses to fall: back up with 16 HP.");
-  try{ const pc=center("p"); stamp(pc.x,pc.top-40,"UNDYING!"); numPop(pc.x,pc.top+20,"+15",12,"#7ae582"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
+  // only the Phoenix Feather can save you (the Champion's Undying passive was removed)
+  const pi=G.potions.indexOf("phoenix"); if(pi<0) return false;
+  G.potions.splice(pi,1); G.hp=Math.max(1,Math.floor(G.maxHp*.3)); log(`The Phoenix Feather burns! Back up with ${G.hp} HP.`);
+  try{ const pc=center("p"); stamp(pc.x,pc.top-40,"REBORN!"); numPop(pc.x,pc.top+20,`+${G.hp}`,12,"#ff7b00"); snd("crit"); updateBar("p"); renderCombat(); }catch(e){}
   return true;
 }
 function gameOver(cause){
