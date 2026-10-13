@@ -852,6 +852,7 @@ Splash/menu → character select → map → combat → reward → shop → rest
 - **Hidden truth of the hero weapons (twist foreshadowing, never stated before Act 4)**: they are nanobot controllers in disguise. The Spellbook is a **tablet** (the gold seal is its camera, the glowing pages its screen), the Greatsword is a giant **keyboard** (the square runes are keys), and the daggers' grips are **smartphones**. Art must read first as fantasy weapons; the tech should only click in hindsight.
 - **Palette per Act**: Act 1 bright sky and greens; Act 2 sunset oranges and greys; Act 3 dark violet with teal accents; Act 4 deep space violet with a Moon window.
 - **Event NPCs**: Lucky the Fox, Professor Hoot, Croaky the frog and the Painter Bot, plus Act 4 robot versions (§11.6).
+- **Potion icons** each have their own silhouette and emblem (heart bottle, round flask, square bottle, test tube, jar, bomb, scroll, soda can, milk carton, microchip, feather, apple…) so they read apart at a glance, not just by liquid colour.
 - Icons: every relic, potion and weapon has a hand-drawn icon; the Energy counter is a **battery**; the Lexicore relics and items were renamed and redrawn so nothing copies *Slay the Spire*.
 
 ---

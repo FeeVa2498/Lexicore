@@ -4469,6 +4469,50 @@ function predictRelics(R,w,wid){
   if(((C.turnCasts||0)+1)%3===0){ if(hasR("shuriken")) out.push("shuriken"); if(hasR("opener")) out.push("opener"); }
   return out;
 }
+/* ================= POTION ICONS: a distinct shape + emblem for every potion ================= */
+const PGLASS="#e8f4ff";
+const PB={
+  cork:(sh,x=15,y=2,w=10,h=6)=>sh("rect",`x="${x}" y="${y}" width="${w}" height="${h}" rx="2"`,CC.wood),
+  round:(sh,c)=>{ sh("rect",`x="16" y="5" width="8" height="10" rx="2"`,PGLASS); sh("circle",`cx="20" cy="25" r="12"`,PGLASS); sh("path",`d="M8.5 26 Q20 22 31.5 26 A12 12 0 0 1 8.5 26 Z"`,c); PB.cork(sh,15,2,10,5); },
+  tall:(sh,c)=>{ sh("rect",`x="13" y="7" width="14" height="30" rx="6"`,PGLASS); sh("rect",`x="13" y="19" width="14" height="18" rx="6"`,c); PB.cork(sh,12,2,16,6); },
+  square:(sh,c)=>{ sh("rect",`x="16" y="5" width="8" height="8" rx="1"`,PGLASS); sh("rect",`x="7" y="12" width="26" height="25" rx="4"`,PGLASS); sh("rect",`x="7" y="21" width="26" height="16" rx="4"`,c); PB.cork(sh,14,2,12,5); },
+  cone:(sh,c)=>{ sh("path",`d="M15 6 L15 15 L7 30 Q6 35 11 35 L29 35 Q34 35 33 30 L25 15 L25 6 Z"`,PGLASS); sh("path",`d="M11 25 L29 25 L33 30 Q34 35 29 35 L11 35 Q6 35 7 30 Z"`,c); PB.cork(sh,13,2,14,6); },
+  heart:(sh,c)=>{ sh("rect",`x="16" y="5" width="8" height="8" rx="2"`,PGLASS); sh("path",`d="M20 37 C6 28 3 20 7 14 C11 9 17 11 20 15 C23 11 29 9 33 14 C37 20 34 28 20 37 Z"`,c); PB.cork(sh,15,2,10,5); },
+  jar:(sh,c,lid=CC.wood)=>{ sh("rect",`x="7" y="11" width="26" height="26" rx="6"`,PGLASS); sh("rect",`x="7" y="20" width="26" height="17" rx="6"`,c); sh("rect",`x="6" y="6" width="28" height="7" rx="2"`,lid); },
+};
+const POT_ART={
+  heal:(sh,ink)=>{ PB.heart(sh,CC.red); sh("path",`d="M18 19 L22 19 L22 22 L25 22 L25 26 L22 26 L22 29 L18 29 L18 26 L15 26 L15 22 L18 22 Z"`,"#ffffff"); },
+  bigheal:(sh,ink)=>{ PB.round(sh,"#c1272d"); sh("path",`d="M20 32 C12 27 11 23 13 20 C15 17 18 18 20 21 C22 18 25 17 27 20 C29 23 28 27 20 32 Z"`,"#ff8fab"); ink(`<path class="thin" style="stroke:#fff" d="M12 18 Q14 14 18 13"/>`); },
+  fire:(sh,ink)=>{ PB.round(sh,CC.orange); sh("path",`d="M20 18 Q27 24 25 29 Q23 34 20 34 Q15 34 15 29 Q15 25 18 23 Q18 27 20 27 Q19 22 20 18 Z"`,"#ffd000"); },
+  iron:(sh,ink)=>{ PB.square(sh,"#9fb0c6"); sh("path",`d="M20 16 L28 19 Q28 28 20 33 Q12 28 12 19 Z"`,CC.blue); },
+  might:(sh,ink)=>{ PB.tall(sh,"#ff5d8f"); sh("path",`d="M20 11 L26 18 L23 18 L23 26 L17 26 L17 18 L14 18 Z"`,"#ffffff"); },
+  purge:(sh,ink)=>{ PB.jar(sh,"#eaffd0","#57cc4d"); for(const [x,y] of [[12,24],[18,29],[25,25],[28,31],[14,33],[22,21]]) sh("path",`d="M${x} ${y-3} L${x+3} ${y} L${x} ${y+3} L${x-3} ${y} Z"`,"#ffffff"); },
+  ink:(sh,ink)=>{ sh("path",`d="M9 22 Q9 16 15 16 L25 16 Q31 16 31 22 L31 32 Q31 36 27 36 L13 36 Q9 36 9 32 Z"`,"#3a2b5e"); sh("rect",`x="15" y="11" width="10" height="6" rx="1"`,"#3a2b5e"); sh("path",`d="M22 14 Q30 2 37 2 Q34 10 24 16 Z"`,"#f6e7c4"); ink(`<path class="thin" d="M24 16 L34 4"/>`); sh("circle",`cx="16" cy="28" r="3"`,CC.violet); },
+  phoenix:(sh,ink)=>{ sh("path",`d="M10 36 Q8 22 20 12 Q28 6 34 4 Q32 14 26 22 Q20 30 10 36 Z"`,CC.orange); sh("path",`d="M14 32 Q16 22 26 14 Q24 22 18 28 Z"`,"#ffd000"); ink(`<path class="thin" d="M10 36 Q20 22 32 6"/>`); sh("path",`d="M28 4 L31 1 L32 5 Z"`,CC.red); },
+  tonic:(sh,ink)=>{ sh("rect",`x="12" y="7" width="16" height="30" rx="4"`,"#2e3b33"); sh("rect",`x="16" y="3" width="8" height="5" rx="1"`,"#9aa6b4"); sh("rect",`x="15" y="11" width="10" height="23" rx="2"`,"#ffd166"); sh("path",`d="M22 13 L16 23 L20 23 L18 32 L25 20 L21 20 Z"`,"#ffffff"); },
+  pages:(sh,ink)=>{ sh("rect",`x="8" y="8" width="24" height="26" rx="3"`,"#f6e7c4"); sh("rect",`x="5" y="5" width="30" height="6" rx="3"`,CC.wood); sh("rect",`x="5" y="31" width="30" height="6" rx="3"`,CC.wood); ink(`<path class="thin" d="M12 16 L28 16 M12 21 L28 21 M12 26 L22 26"/>`); sh("path",`d="M26 24 L32 30 L28 32 Z"`,CC.red); },
+  venom:(sh,ink)=>{ PB.round(sh,"#7fd34a"); sh("circle",`cx="20" cy="23" r="7"`,"#ffffff"); sh("rect",`x="16" y="27" width="8" height="6" rx="2"`,"#ffffff"); ink(`<circle cx="17.5" cy="23" r="2" class="dark"/><circle cx="22.5" cy="23" r="2" class="dark"/>`); },
+  bomb:(sh,ink)=>{ sh("circle",`cx="19" cy="25" r="12"`,"#3d3a44"); sh("rect",`x="15" y="10" width="8" height="5" rx="1"`,"#76706a"); ink(`<path class="thin" d="M19 10 Q22 4 28 5"/><path class="thin" style="stroke:#fff" d="M12 20 Q14 16 18 15"/>`); sh("path",`d="M29 1 L31 5 L35 5 L32 8 L33 12 L29 9 L26 12 L27 8 L24 5 L28 5 Z"`,"#ffbe0b"); },
+  brittle:(sh,ink)=>{ sh("path",`d="M20 3 L30 14 L26 36 L14 36 L10 14 Z"`,"#bfe0ff"); ink(`<path class="thin" d="M20 3 L20 36 M10 14 L30 14 M16 20 L20 26 L24 21 L22 30"/>`); },
+  jester:(sh,ink)=>{ PB.round(sh,CC.violet); for(const [x,y,c] of [[14,24,"#ffbe0b"],[26,24,"#ffbe0b"],[20,30,"#e63946"]]) sh("path",`d="M${x} ${y-4} L${x+4} ${y} L${x} ${y+4} L${x-4} ${y} Z"`,c); ink(`<text x="20" y="24" text-anchor="middle" style="font:800 9px var(--f-tile);fill:#fff;stroke:none">?</text>`); },
+  shout:(sh,ink)=>{ sh("path",`d="M6 14 L22 8 L36 2 L36 34 L22 26 L6 22 Z"`,CC.red); sh("rect",`x="3" y="13" width="6" height="10" rx="2"`,"#ffbe0b"); ink(`<text x="25" y="23" text-anchor="middle" style="font:800 13px var(--f-tile);fill:#fff;stroke:none">!</text>`); },
+  smoke:(sh,ink)=>{ sh("path",`d="M10 20 Q8 36 20 37 Q32 36 30 20 Q26 14 20 16 Q14 14 10 20 Z"`,"#9aa6b4"); sh("rect",`x="14" y="13" width="12" height="4" rx="2"`,CC.wood); for(const [x,y,r] of [[14,8,4],[20,5,5],[27,8,4]]) sh("circle",`cx="${x}" cy="${y}" r="${r}"`,"#e6e9ef"); },
+  fruit:(sh,ink)=>{ sh("path",`d="M20 12 Q30 8 33 18 Q35 32 24 36 Q20 34 16 36 Q5 32 7 18 Q10 8 20 12 Z"`,"#ffbe0b"); sh("path",`d="M20 12 Q22 4 28 3 Q26 9 20 12 Z"`,CC.green); ink(`<path class="thin" style="stroke:#fff" d="M12 18 Q13 14 17 14"/>`); },
+  echo:(sh,ink)=>{ sh("rect",`x="5" y="12" width="13" height="24" rx="5"`,PGLASS); sh("rect",`x="5" y="22" width="13" height="14" rx="5"`,"#5fd4c4"); sh("rect",`x="22" y="8" width="13" height="28" rx="5"`,PGLASS); sh("rect",`x="22" y="18" width="13" height="18" rx="5"`,"#5fd4c4"); PB.cork(sh,6,8,11,5); PB.cork(sh,23,4,11,5); },
+  clarity:(sh,ink)=>{ sh("path",`d="M20 8 L32 22 L20 37 L8 22 Z"`,"#fff8df"); sh("path",`d="M20 24 L26 30 L20 37 L14 30 Z"`,"#ffe66d"); PB.cork(sh,16,3,8,6); sh("path",`d="M30 4 L31.5 8 L35 9 L31.5 10.5 L30 14 L28.5 10.5 L25 9 L28.5 8 Z"`,"#ffbe0b"); },
+  temper:(sh,ink)=>{ sh("path",`d="M8 18 L28 18 L28 36 L8 36 Z"`,"#9aa6b4"); sh("path",`d="M28 22 L37 10 L38 13 L31 26 Z"`,"#76706a"); sh("rect",`x="12" y="12" width="12" height="6" rx="1"`,"#76706a"); sh("rect",`x="11" y="24" width="14" height="8"`,"#ffbe0b"); },
+  titan:(sh,ink)=>{ PB.square(sh,"#c1272d"); ink(`<text x="20" y="32" text-anchor="middle" style="font:800 11px var(--f-tile);fill:#fff;stroke:none">×5</text>`); sh("path",`d="M20 13 L24 18 L16 18 Z"`,"#ffffff"); },
+  bastion:(sh,ink)=>{ PB.square(sh,"#1d4fb8"); sh("path",`d="M14 34 L14 22 L16 22 L16 19 L19 19 L19 22 L21 22 L21 19 L24 19 L24 22 L26 22 L26 34 Z"`,"#dfe7ef"); },
+  ragesoda:(sh,ink)=>{ sh("rect",`x="10" y="6" width="20" height="31" rx="4"`,"#ff5d8f"); sh("rect",`x="10" y="6" width="20" height="5" rx="2"`,"#c7d0db"); sh("path",`d="M20 15 L26 22 L23 22 L23 31 L17 31 L17 22 L14 22 Z"`,"#ffffff"); for(const [x,y] of [[14,4],[24,2]]) sh("circle",`cx="${x}" cy="${y}" r="1.8"`,"#ffc2d4"); },
+  brickmilk:(sh,ink)=>{ sh("path",`d="M9 14 L20 7 L31 14 L31 37 L9 37 Z"`,"#ffffff"); sh("path",`d="M9 14 L31 14 L31 21 L9 21 Z"`,"#bfe0ff"); ink(`<path class="thin" d="M9 26 L31 26 M9 31 L31 31 M16 21 L16 26 M24 26 L24 31 M16 31 L16 37"/>`); },
+  cluster:(sh,ink)=>{ for(const [x,y,r] of [[13,27,8],[27,27,8],[20,16,8]]){ sh("circle",`cx="${x}" cy="${y}" r="${r}"`,"#5b6472"); } ink(`<path class="thin" d="M20 8 Q22 3 26 4"/>`); sh("circle",`cx="27" cy="4" r="2.5"`,"#ff7b00"); },
+  rocket:(sh,ink)=>{ sh("path",`d="M20 2 Q29 10 28 26 L12 26 Q11 10 20 2 Z"`,CC.orange); sh("path",`d="M12 20 L6 28 L12 26 Z M28 20 L34 28 L28 26 Z"`,CC.red); sh("circle",`cx="20" cy="14" r="4"`,"#bfe0ff"); sh("rect",`x="18" y="26" width="4" height="11" rx="2"`,"#e9d3a8"); },
+  flashbang:(sh,ink)=>{ sh("rect",`x="11" y="12" width="18" height="25" rx="7"`,"#ffe66d"); sh("rect",`x="15" y="6" width="10" height="7" rx="2"`,"#76706a"); ink(`<path class="thin" d="M25 9 Q32 8 32 15"/>`); sh("path",`d="M20 18 L22 23 L27 24 L22 26 L20 31 L18 26 L13 24 L18 23 Z"`,"#ffffff"); },
+  overclock:(sh,ink)=>{ sh("rect",`x="8" y="8" width="24" height="24" rx="3"`,"#2f7d3e"); ink(`<path class="thin" d="M12 8 L12 4 M20 8 L20 4 M28 8 L28 4 M12 32 L12 36 M20 32 L20 36 M28 32 L28 36 M8 14 L4 14 M8 26 L4 26 M32 14 L36 14 M32 26 L36 26"/>`); sh("path",`d="M20 12 L26 19 L23 19 L23 28 L17 28 L17 19 L14 19 Z"`,"#3ddc84"); },
+  panacea:(sh,ink)=>{ sh("path",`d="M16 6 L24 6 L24 13 Q31 17 31 26 Q31 37 20 37 Q9 37 9 26 Q9 17 16 13 Z"`,"#fff8df"); sh("path",`d="M18 18 L22 18 L22 22 L26 22 L26 26 L22 26 L22 30 L18 30 L18 26 L14 26 L14 22 L18 22 Z"`,CC.green); PB.cork(sh,15,2,10,5); ink(`<path class="thin" style="stroke:#c8a24a" d="M10 30 Q20 33 30 30"/>`); },
+};
+function potionIcon(id){ const f=POT_ART[id]; return iconSVG("0 0 40 40",f?f:(sh,ink)=>PB.cone(sh,POTION_COLOR[id]||CC.violet)); }
+
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){
   const flag=t=>(t.deb||t.paint||t.fort||t.lvl===2||t.fragile)?0:1, sym=t=>/[A-Z]/.test(t.ch)?0:1;
