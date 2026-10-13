@@ -189,7 +189,7 @@ Spell Power = Σ tile Spell Power (wildcards = 0, Slimy tiles = 0)
 Mult        = weapon Mult (×1) + Σ relic Mult bonuses, checked word by word (+0.5 Adrenaline for The Champion below 50% HP)
 
 Output      = floor(Spell Power × Mult)
-            × 2 if Journal applies (2nd cast of this exact word this run)
+            × 2 if Journal applies (2nd cast of this exact word this combat)
             × 2 if Echo Draught is active
             + Midas Touch gold bonus (floor(gold/10), ×2 on Critical)
             + Berserker's Blood (attacks: +1 per 4 missing HP)
@@ -467,7 +467,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Rubber Stamp** | Every 3rd word you cast in a turn deals 5 damage to ALL enemies. |
 | **Metronome** | Every 3rd word you cast in a turn gives +1 Might. |
 | **Canned Peaches** | Raise your Max HP by 7 when you pick it up. |
-| **Bottle Rack** | Gain 2 extra potion slots. |
+| **Bottle Rack** | Gain 2 extra consumable slots. |
 | **Bendy Straw** | Heal 5 HP whenever you use a consumable. |
 | **Wind-up Key** | Every 3rd turn of a combat, gain 1 extra Energy. |
 | **Thermos** | Heal 8 HP at the end of every combat. |
@@ -491,7 +491,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 |---|---|
 | **Hollow Coin** | Boss relic. Gain 1 extra Energy every turn. Enemies no longer drop gold. |
 | **Insomnia Lamp** | Boss relic. Gain 1 extra Energy every turn. Resting at a Rest Site heals only 15% of your Max HP (instead of 30%). |
-| **Cracked Flask** | Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP (can't drop you below 1). |
+| **Cracked Flask** | Boss relic. Gain 1 extra Energy every turn. Using a consumable costs you 10 HP (can't drop you below 1). |
 | **Dry Palette** | Boss relic. Gain 1 extra Energy every turn. Tile rewards offer only 1 tile. |
 | **Rival's Banner** | Boss relic. Gain 1 extra Energy every turn. You start every combat with 1 Broken. |
 | **Hoarder's Satchel** | Boss relic. Unused tiles stay in your hand at the end of your turn. You draw back up to 16. |
@@ -500,43 +500,43 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 
 ## 9. Consumables (formerly Potions)
 
-- 3 slots by default (+2 with Bottle Rack). Potions cost no Energy and can be used at any point in the player's turn.
-- Clicking a potion opens a small menu: **Use** or **Discard** (to free the slot). Hovering shows a tooltip with its effect.
-- Sources: Elites always drop one, normal fights 50%, shop (3 for sale), wordle consolation, wheel.
-- With Cracked Flask (boss relic) every potion you drink costs 10 HP.
-- **Using a potion**: click it and a small menu opens right next to the cursor with **Use** and **Discard** (like Slay the Spire). Click elsewhere or press Esc to close it.
+- UI name is **Consumable** everywhere (code ids and `potions.json` keep the old "potion" naming).
+- 3 slots by default (+2 with Bottle Rack). Consumables cost no Energy and can be used at any point in the player's turn.
+- **Using one**: click it and a small menu opens right next to the cursor with **Use** and **Discard** (like Slay the Spire). Click elsewhere or press Esc to close it. Hovering shows a tooltip with its effect.
+- Sources: Elites always drop one, normal fights 50%, shop (3 for sale), wordle consolation, wheel (slot "Item"). Only unlocked consumables can appear (§14.6).
+- With Cracked Flask (boss relic) every consumable you use costs 10 HP.
 
-| Potion | Effect | Outside combat |
-|---|---|---|
-| **Healing Draught** | Heal 20 HP (+10 per Act after the first). Usable anywhere. | Yes |
-| **Volatile Flask** | Deal 20 damage to the target (×Act number). | No |
-| **Iron Tonic** | Gain 15 Shield (×Act number). | No |
-| **Mighty Brew** | Gain 3 Might (+2 per Act after the first). | No |
-| **Purge Salts** | Cleanse every debuff from the tiles **in your hand** (not your own Poison). | No |
-| **Ink of Plenty** | Draw 5 tiles. | No |
-| **Phoenix Feather** | Keep it in a slot. When you would die, it burns and brings you back with 30% HP. It can't be drunk. | Passive |
-| **Energy Tonic** | Gain 2 Energy. | No |
-| **Fresh Pages** | Discard your whole hand and draw a fresh 16 tiles. | No |
-| **Venom Vial** | Inflict 8 Poison on the target (+4 per Act after the first). | No |
-| **Blast Jar** | Deal 12 damage to ALL enemies (+6 per Act after the first). | No |
-| **Shatter Draught** | Inflict Broken 3 on ALL enemies (+50% damage taken). | No |
-| **Jester's Brew** | Add 2 Fragile [ ? ] Wildcard tiles to your hand (or your discard pile if your hand is full). | No |
-| **Battle Cry** | Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full). | No |
-| **Vanishing Powder** | Escape a normal or Elite fight. You get no reward. Doesn't work on bosses. | No |
-| **Ancient Fruit** | Raise your Max HP by 5 and heal 5. Usable anywhere. | Yes |
-| **Echo Draught** | The next word you cast this turn has its output doubled. | No |
-| **Clarity Draught** | Every tile in your hand becomes Level 2 for this combat. | No |
-| **Tempering Oil** | Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them. | No |
-| **Titan Serum** | Multiply your current Might by 5. | No |
-| **Bastion Serum** | Multiply your current Robust by 5. | No |
-| **Rage Soda** | Gain 10 Might for this turn only (removed when you end the turn). | No |
-| **Brick Milk** | Gain 10 Robust for this turn only. | No |
-| **Cluster Bomb** | Deal 25 damage to ALL enemies. | No |
-| **Rocket Pop** | Deal 50 damage to the target. | No |
-| **Full Flask** | Heal 50% of your Max HP. | Yes |
-| **Flashbang** | Stun the target: it skips its next turn (its intent shows "✦ Stunned"; its move cycle doesn't advance; Poison still ticks). | No |
-| **Panacea** | Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated. | No |
-| **Overclock Chip** | Your selected weapon costs **0 Energy** for the rest of this turn (its cost badge turns green). | No |
+| Consumable | Effect | Outside combat | Unlock level |
+|---|---|---|---|
+| **Healing Draught** | Heal 20 HP (+10 per Act after the first). Usable anywhere. | Yes | start |
+| **Volatile Flask** | Deal 20 damage to the target (×Act number). | No | start |
+| **Iron Tonic** | Gain 15 Shield (×Act number). | No | start |
+| **Mighty Brew** | Gain 3 Might (+2 per Act after the first). | No | start |
+| **Purge Salts** | Cleanse every debuff from the tiles in your hand. | No | start |
+| **Ink of Plenty** | Draw 5 tiles. | No | start |
+| **Phoenix Feather** | Keep it in a slot. When you would die, it burns and brings you back with 30% HP. It can't be drunk. | Passive | start |
+| **Energy Tonic** | Gain 2 Energy. | No | start |
+| **Fresh Pages** | Discard your whole hand and draw a fresh 16 tiles. | No | start |
+| **Venom Vial** | Inflict 8 Poison on the target (+4 per Act after the first). | No | start |
+| **Blast Jar** | Deal 12 damage to ALL enemies (+6 per Act after the first). | No | start |
+| **Shatter Draught** | Inflict Broken 3 on ALL enemies (+50% damage taken). | No | start |
+| **Jester's Brew** | Add 2 Fragile [ ? ] Wildcard tiles to your hand (or your discard pile if your hand is full). | No | start |
+| **Battle Cry** | Add 5 Fragile [ ! ] tiles to your hand (or your discard pile if your hand is full). | No | start |
+| **Vanishing Powder** | Escape a normal or Elite fight. You get no reward. Doesn't work on bosses. | No | start |
+| **Ancient Fruit** | Raise your Max HP by 5 and heal 5. Usable anywhere. | Yes | start |
+| **Echo Draught** | The next word you cast this turn has its output doubled. | No | start |
+| **Clarity Draught** | Every tile in your hand becomes Level 2 for this combat. | No | start |
+| **Tempering Oil** | Fortify up to 4 tiles in your hand for this combat (they stay in your hand and can't be debuffed). Also cleanses them. | No | start |
+| **Titan Serum** | Multiply your current Might by 5. | No | 8 |
+| **Bastion Serum** | Multiply your current Robust by 5. | No | 9 |
+| **Rage Soda** | Gain 10 Might for this turn only. | No | 1 |
+| **Brick Milk** | Gain 10 Robust for this turn only. | No | 2 |
+| **Cluster Bomb** | Deal 25 damage to ALL enemies. | No | 4 |
+| **Rocket Pop** | Deal 50 damage to the target. | No | 3 |
+| **Full Flask** | Heal 50% of your Max HP. Usable anywhere. | Yes | 5 |
+| **Flashbang** | Stun the target: it skips its next turn. | No | 7 |
+| **Overclock Chip** | Your selected weapon costs 0 Energy for the rest of this turn. | No | 10 |
+| **Panacea** | Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated. | No | 6 |
 
 Note: the "+1 Energy on turn 1" relic is **Spark Plug** and the "+Energy on turn 3" relic is **Wind-up Key** (every 3rd turn).
 
@@ -804,7 +804,7 @@ A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4)
 
 ### 14.3 Glossary
 
-Tabs: Monsters, Weapons, Relics, Potions, Keywords. Every entry shows the art/icon and full rules. LEXICORE is hidden as "???" until defeated.
+Tabs: Monsters, Weapons, Relics, Consumables, Keywords. Every entry shows the art/icon and full rules. LEXICORE is hidden as "???" until defeated.
 
 ### 14.4 Saving
 
@@ -842,6 +842,7 @@ Everything else (the original relics and consumables, Mult relics, word-type rel
 - **Glossary discovery**: monsters, weapons, relics and consumables show as **???** until the player has seen them in a run (fought, offered in a shop/chest/altar, or obtained). Locked items say which unlock level brings them. Starter relics are listed first in the Relics tab.
 - **Testing**: the Glossary has a **Cheat: unlock all** button (every hero, all unlock levels, whole Glossary revealed) and **Reset progress**. Remove both before release.
 - Storage: `localStorage["lexicore-progress"] = {xp, level, heroes[], seen:{e,w,r,p}}`.
+- Dev reference: **`docs/Lexicore_Unlocks.xlsx`** (unlock levels with XP formulas, XP per fight, run estimates, hero unlocks, always-available pools) and `data/progression.json`.
 
 ## 15. UI, UX and controls
 
@@ -990,14 +991,18 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 
 | File | Contents |
 |---|---|
-| `weapons.json` | All 19 weapons (source, kind, cost, crit length, effects, formulas) |
-| `enemies.json` | All 32 enemies (incl. minions) with full move cycles, summons/splits and lore |
+| `weapons.json` | All 21 weapons (source, kind, cost, crit length, effects, formulas) |
+| `enemies.json` | All 43 enemies (incl. minions) with full move cycles (move names), boss gimmicks, summons/splits and lore |
 | `encounters.json` | Encounter pools per Act, elites, boss options |
-| `relics.json` | All 47 relics with category and Mult formulas |
-| `potions.json` | All 18 potions |
+| `relics.json` | All 71 relics with category, Mult formulas, word lists and unlock level |
+| `potions.json` | All 29 consumables (ids keep the "potion" name) with unlock level |
 | `heroes.json` | The 3 heroes (stats, starting kit, texts, endings) |
+| `progression.json` | Meta progression: XP per fight, XP thresholds, hero unlocks, relic/consumable unlock levels |
 | `tiles.json` | Letter values, starting deck, special tiles, paints, debuffs, reward rules |
-| `statuses.json` | Statuses and glossary keywords |
+| `statuses.json` | Statuses, glossary keywords and boss passives |
 | `balance.json` | Combat constants, map rules, gold, rewards, shop prices, events, scaling |
 | `achievements.json` | Achievements and easter-egg words |
 | `story.json` | Tutorial steps, liftoff and ending slides, ending dialogue, closing quotes, shopkeepers |
+| `words/lexicon.tsv` | The full playable dictionary (2–10 letters, ~193k words) with length, base Spell Power, part-of-speech flags (noun/verb/adjective) and theme tags (animal/job/color/swear) |
+| `words/tags.json` | Theme word lists used by relics (animals, jobs, colors, swears), easter-egg spellings and how the POS tags are built |
+| `docs/Lexicore_Unlocks.xlsx` | Unlock spreadsheet for devs (levels, XP, heroes, pools) |

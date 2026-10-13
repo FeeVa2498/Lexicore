@@ -143,70 +143,80 @@
       "name": "Titan Serum",
       "description": "Multiply your current Might by 5.",
       "usableOutsideCombat": false,
-      "unlockLevel": 8
+      "unlockLevel": 8,
+      "passive": false
     },
     {
       "id": "bastion",
       "name": "Bastion Serum",
       "description": "Multiply your current Robust by 5.",
       "usableOutsideCombat": false,
-      "unlockLevel": 9
+      "unlockLevel": 9,
+      "passive": false
     },
     {
       "id": "ragesoda",
       "name": "Rage Soda",
       "description": "Gain 10 Might for this turn only.",
       "usableOutsideCombat": false,
-      "unlockLevel": 1
+      "unlockLevel": 1,
+      "passive": false
     },
     {
       "id": "brickmilk",
       "name": "Brick Milk",
       "description": "Gain 10 Robust for this turn only.",
       "usableOutsideCombat": false,
-      "unlockLevel": 2
+      "unlockLevel": 2,
+      "passive": false
     },
     {
       "id": "cluster",
       "name": "Cluster Bomb",
       "description": "Deal 25 damage to ALL enemies.",
       "usableOutsideCombat": false,
-      "unlockLevel": 4
+      "unlockLevel": 4,
+      "passive": false
     },
     {
       "id": "rocket",
       "name": "Rocket Pop",
       "description": "Deal 50 damage to the target.",
       "usableOutsideCombat": false,
-      "unlockLevel": 3
+      "unlockLevel": 3,
+      "passive": false
     },
     {
       "id": "bigheal",
       "name": "Full Flask",
       "description": "Heal 50% of your Max HP. Usable anywhere.",
       "usableOutsideCombat": true,
-      "unlockLevel": 5
+      "unlockLevel": 5,
+      "passive": false
     },
     {
       "id": "flashbang",
       "name": "Flashbang",
       "description": "Stun the target: it skips its next turn.",
       "usableOutsideCombat": false,
-      "unlockLevel": 7
+      "unlockLevel": 7,
+      "passive": false
     },
     {
       "id": "overclock",
       "name": "Overclock Chip",
       "description": "Your selected weapon costs 0 Energy for the rest of this turn.",
       "usableOutsideCombat": false,
-      "unlockLevel": 10
+      "unlockLevel": 10,
+      "passive": false
     },
     {
       "id": "panacea",
       "name": "Panacea",
       "description": "Remove every debuff on you: Poison, Weaken, Broken, Curse and Frustrated.",
       "usableOutsideCombat": false,
-      "unlockLevel": 6
+      "unlockLevel": 6,
+      "passive": false
     }
   ]
 }

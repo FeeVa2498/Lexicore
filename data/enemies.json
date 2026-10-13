@@ -410,7 +410,11 @@
         }
       ],
       "lore": "A stone guardian that once watched the city gates. When hurt it turns back into a spiked statue; when it wakes, the spikes burst out of it.",
-      "bossGimmick": "Living Statue: Normal Form (attacks) -> Petrify: Statue Form (+30 Shield, +8 Thorns) -> Awaken: back to Normal, heavy hit 14 + 2 per Thorn, then Thorns cleared."
+      "bossGimmick": {
+        "id": "statue",
+        "name": "Living Statue",
+        "description": "NORMAL FORM: it attacks and curses. Then it Petrifies into STATUE FORM: +30 Shield and 8 Thorns (every hit you land on it costs you 8 HP). After 3 turns it Awakens: back to Normal Form with a heavy hit that grows with its Thorns (14 + 2 per Thorn), then the Thorns are gone."
+      }
     },
     {
       "id": "rat",
@@ -724,7 +728,11 @@
         "giant"
       ],
       "lore": "Something enormous walks the outskirts. All you can see is its foot.",
-      "bossGimmick": "Too Tall: attack words under 5 letters deal half damage; debuffs it receives (poison, broken, stun) are halved, rounded up."
+      "bossGimmick": {
+        "id": "tall",
+        "name": "Too Tall",
+        "description": "Words shorter than 5 letters only reach its ankle: they deal half damage. Its thick hide also halves every debuff it receives (Poison, Broken, Stun, rounded up)."
+      }
     },
     {
       "id": "twinA",
@@ -775,7 +783,11 @@
         "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
       ],
       "lore": "One half of the Gemini brutes. They fight back to back… or front to back.",
-      "bossGimmick": "Twin Bond: off-target twin hits x2; when one dies the other gains +6 Might."
+      "bossGimmick": {
+        "id": "bond",
+        "name": "Twin Bond",
+        "description": "The twin you are not facing hits you twice as hard. When one twin falls, the other is ENRAGED: +6 Might."
+      }
     },
     {
       "id": "twinB",
@@ -825,7 +837,11 @@
         "twin: attacks from the twin you are NOT targeting deal x2 ('hit from behind')"
       ],
       "lore": "The other half. Whichever twin you turn your back on hits twice as hard.",
-      "bossGimmick": "Twin Bond: off-target twin hits x2; when one dies the other gains +6 Might."
+      "bossGimmick": {
+        "id": "bond",
+        "name": "Twin Bond",
+        "description": "The twin you are not facing hits you twice as hard. When one twin falls, the other is ENRAGED: +6 Might."
+      }
     },
     {
       "id": "prisoner",
@@ -1142,7 +1158,14 @@
       ],
       "lore": "The oldest thing in the outskirts. Every mushroom you have ever stepped on was one of her children.",
       "minionsDieWithIt": true,
-      "bossGimmick": "Regrowth: heals 5 per living Sporeling at the end of her turn."
+      "bossGimmick": {
+        "id": "regrow",
+        "name": "Regrowth",
+        "description": "At the end of each of her turns she heals 5 HP for every living Sporeling. Sporelings burst on their 3rd turn for 1 Poison per 3 HP they have left."
+      },
+      "startingStatus": {
+        "regrowth": 5
+      }
     },
     {
       "id": "zero",
@@ -1210,7 +1233,11 @@
         }
       ],
       "lore": "The first alien ever caught. Its mind bends time inside its cell: it speeds up and acts twice, then the time it borrowed runs out and it freezes in place.",
-      "bossGimmick": "Time Haste / Time Slow: 3-turn loop. Haste (2 turns): acts twice per turn. Slow (1 turn): does nothing and takes double damage. No real-time limit."
+      "bossGimmick": {
+        "id": "timeflux",
+        "name": "Time Haste / Time Slow",
+        "description": "Zero bends time in a 3-turn loop. TIME HASTE (2 turns): it acts twice per turn (both moves are shown in its intent). TIME SLOW (1 turn): it is frozen, does nothing, and takes DOUBLE damage. Shield up during Haste, unload during Slow."
+      }
     },
     {
       "id": "gatekeeper",
@@ -1278,7 +1305,11 @@
         }
       ],
       "lore": "A walking vault door wrapped in a humming force field. Every hit only knocks out one field cell, and it keeps recharging them.",
-      "bossGimmick": "Force Field: starts with 12 cells, Recharge Field +8; while > 0 every hit deals 1 damage and removes 1 cell; poison ignores it.",
+      "bossGimmick": {
+        "id": "forcefield",
+        "name": "Force Field",
+        "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+      },
       "startingStatus": {
         "field": 12
       }
@@ -1349,7 +1380,11 @@
       ],
       "lore": "The supercomputer that waited above The Tower. Its test is over.",
       "glossaryHiddenUntil": "achievement act4",
-      "bossGimmick": "Syntax Filter: each player turn one random letter in hand is worth 0 Spell Power. Firewall: takes at most 70 damage per player turn (poison ignores); reaching the cap ends the player's turn.",
+      "bossGimmick": {
+        "id": "filter",
+        "name": "Syntax Filter + Firewall",
+        "description": "Each of your turns it filters one letter in your hand (those tiles are worth 0 Spell Power). Its Firewall lets through at most 70 damage per turn: once you hit the cap, your turn ends immediately."
+      },
       "damageCapPerTurn": 70
     },
     {
@@ -1494,12 +1529,12 @@
               "type": "selfDestruct",
               "status": "poison",
               "perHpLeft": 3,
-              "note": "poison = ceil(current HP / 3), then this enemy dies"
+              "note": "Dies; gives the player 1 poison per 3 HP it had left."
             }
           ]
         }
       ],
-      "lore": "One of Mother Mycelia's children. Small, angry, and poisonous. If you leave it alone too long it bursts into a cloud of spores.",
+      "lore": "One of Mother Mycelia's children. On its 3rd turn it bursts into spores: the more HP it has left, the more Poison you take (1 per 3 HP). Wound it before it pops.",
       "minion": true
     },
     {

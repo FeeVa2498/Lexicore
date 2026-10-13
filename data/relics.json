@@ -269,13 +269,13 @@
       "id": "potbelt",
       "name": "Bottle Rack",
       "category": "common",
-      "description": "Gain 2 extra potion slots."
+      "description": "Gain 2 extra consumable slots."
     },
     {
       "id": "bird",
       "name": "Bendy Straw",
       "category": "common",
-      "description": "Heal 5 HP whenever you use a potion."
+      "description": "Heal 5 HP whenever you use a consumable."
     },
     {
       "id": "flower",
@@ -301,7 +301,7 @@
       "id": "sozu",
       "name": "Cracked Flask",
       "category": "boss",
-      "description": "Boss relic. Gain 1 extra Energy every turn. Drinking a potion costs you 10 HP.",
+      "description": "Boss relic. Gain 1 extra Energy every turn. Using a consumable costs you 10 HP.",
       "extraEnergyPerTurn": 1
     },
     {
@@ -423,7 +423,7 @@
       "id": "lens",
       "name": "Cracked Lens",
       "category": "mult",
-      "description": "+0.7 Arcana for every debuffed tile in the word.",
+      "description": "+0.7 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",
       "multFormulaJS": "c=>.7*(c.deb||0)"
     },
     {
