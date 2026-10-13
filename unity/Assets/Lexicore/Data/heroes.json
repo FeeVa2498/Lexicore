@@ -1,0 +1,86 @@
+{
+  "_notes": [
+    "All heroes start with 99 gold, 1 Healing Draught (consumable), and the shared 34-tile starting deck (see tiles.json)."
+  ],
+  "heroes": [
+    {
+      "id": "scholar",
+      "name": "The Scholar",
+      "art": "cat",
+      "color": "#3a86ff",
+      "maxHp": 70,
+      "startingWeapons": [
+        "sword",
+        "shield"
+      ],
+      "startingRelic": "journal",
+      "charSelectText": "A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
+      "playstyle": "Balanced spell-caster. The Spellbook crits on 2-letter words for +1 Energy next turn, the Barrier crits at 4 letters and draws 3 tiles. The Journal doubles the second cast of the same word in a fight.",
+      "who": "A curious wizard cat who found the ancient Tablet and never put it down.",
+      "why": "Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Its chamber now leads a million copies of The Scholar on a one-way voyage to the alien headquarters on the Moon.",
+          "At the command deck, the original cat opens the Tablet one last time. There is still so much left to learn, and so little time to learn it."
+        ],
+        "finalQuote": "…and so they rose, a million copies of one curious mind, eager to read the stars like the pages of a book no one had ever finished."
+      },
+      "unlock": "available from the start"
+    },
+    {
+      "id": "champion",
+      "name": "The Champion",
+      "art": "wolf",
+      "color": "#e63946",
+      "maxHp": 88,
+      "startingWeapons": [
+        "greatsword",
+        "dumbbell"
+      ],
+      "startingRelic": "blood",
+      "charSelectText": "A grey wolf in a tattered red cape who has won every fight in the wastes, and lost the joy of winning. Somewhere above the clouds waits the one opponent no one has ever beaten.",
+      "playstyle": "Berserker with no shield. Berserker's Blood adds damage the more HP you are missing. A 3-letter Greatsword crit Breaks the enemy (Broken 3) but costs you HP. The Dumbbell builds Might fast, and a 5-letter crit heals 2 × Might. Passive: <b>Adrenaline</b> (below 50% HP: +0.5 Mult).",
+      "who": "A red wolf who has beaten every rival in the wastes and grown bored of winning.",
+      "why": "Looking for a real challenge. Rumor says the master of The Tower has never lost.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Its chamber now leads a million copies of The Champion on a one-way voyage to the alien headquarters on the Moon.",
+          "At the command deck, the original wolf watches the Moon grow larger and grins. For once, the next fight is bigger than the one who will fight it."
+        ],
+        "finalQuote": "…and so they rose, a legion of one restless heart, unsure of victory for the very first time, and never more alive."
+      },
+      "passives": [
+        {
+          "id": "adrenaline",
+          "name": "Adrenaline",
+          "effect": "Below 50% HP: +0.5 Mult on every cast."
+        }
+      ],
+      "unlock": "reach the Act 1 boss"
+    },
+    {
+      "id": "mercenary",
+      "name": "The Mercenary",
+      "art": "rat2",
+      "color": "#57cc4d",
+      "maxHp": 60,
+      "startingWeapons": [
+        "dagger",
+        "belt"
+      ],
+      "startingRelic": "gloves",
+      "charSelectText": "A hooded rat who never asks why, only how much. The contract is simple: climb The Tower and remove whatever sits at the top. Nobody who took it has ever come back to collect.",
+      "playstyle": "Tempo assassin who chains many small casts. The Parrying Dagger crits at 3 letters and turns the hit into Shield too. The Utility Belt forges Fragile [ ! ] tiles (1 per 8 output); stack them at the end of a short dagger word for bonus Spell Power, and a 4-letter Belt crit refunds its Energy.",
+      "who": "A hooded rat thief with a belt full of tricks and a very expensive contract.",
+      "why": "Loot and riches. Somebody paid a fortune to have \"the master of The Tower\" removed. Nobody said what it was.",
+      "ending": {
+        "summary": [
+          "LEXICORE's test is over. Its chamber now leads a million copies of The Mercenary on a one-way voyage to the alien headquarters on the Moon.",
+          "At the command deck, the original rat quietly rewrites the contract. Payment on delivery. Destination: the Moon."
+        ],
+        "finalQuote": "…and so they rose, a million thieves sharing a single contract, off to steal back the only treasure ever worth taking: tomorrow."
+      },
+      "unlock": "reach the Act 2 boss"
+    }
+  ]
+}

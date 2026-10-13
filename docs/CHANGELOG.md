@@ -6,6 +6,12 @@ Shared copies live in the Google Drive folder *Lexicore / Doc / New Version* (up
 
 ---
 
+## 2026-10-13 · Unity port kit (Unity 6.3 LTS · UI Toolkit)
+- New **Unity porting guide** (`docs/UNITY_PORTING.md`, Drive: *Lexicore Unity Porting Guide*): architecture (pure C# Core + UI Toolkit), data loading, the exact rules the prototype runs (cast order, weapon effects, damage pipeline, end/start of turn, enemy phase, relic hooks, consumables, boss gimmicks, rewards), UI Toolkit screen plan, art, tests, dead code to skip.
+- New **C# Core** in `unity/Assets/Lexicore/Core/`: scoring (`Scoring.Evaluate`), the 25 Mult relics, word list loader, tiles, weapons, MiniJson. Copy `unity/Assets/Lexicore` into the Unity project.
+- New **golden tests** recorded from the prototype: `golden_scoring.json` (1,816 cases, the C# scoring passes all of them) and `golden_combat.json` (103 combat scenarios for the combat port). Generators in `tools/golden/`.
+- Found while testing: normal-fight **HP scaling** in the prototype is `[1,1,.75,.62,.55,.5][group size]` (2 enemies ×0.75, 3 ×0.62…) while the GDD says 1–2 ×1, 3 ×0.75. Design decision pending; the golden tests follow the prototype.
+
 ## 2026-10-13 · Word validity: swears always valid, easter eggs invalid
 - **Swear words** (`SWEARS`, 64) are now always valid words; Swear Jar no longer unlocks them and only gives +2 Arcana per swear word. 3 of them (e.g. DUMBASS) are not in the base dictionary and were added to the valid list.
 - **Easter-egg spellings** (FVCK, SH!T, NIGERIA…) are **not** valid casts any more: the bar shakes, nothing is spent, and the attempt unlocks the secret achievement (That Was Close / Close Enough).

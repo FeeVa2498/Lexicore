@@ -1,0 +1,53 @@
+{
+  "_notes": [
+    "Persistent meta progression (GDD 14.6)."
+  ],
+  "xpPerFight": {
+    "normal": "9 + 2*(act-1)",
+    "elite": "22 + 5*(act-1)",
+    "boss": "45 + 10*(act-1)"
+  },
+  "xpToNextLevel": "80 + 15*level",
+  "maxLevel": 10,
+  "heroUnlocks": {
+    "scholar": "start",
+    "champion": "reach the Act 1 boss",
+    "mercenary": "reach the Act 2 boss"
+  },
+  "relicUnlocks": {
+    "bounty": 1,
+    "piggy": 2,
+    "laminator": 3,
+    "papercut": 4,
+    "nail": 5,
+    "barbed": 6,
+    "trophy": 7,
+    "megaphone": 8,
+    "magnet": 9,
+    "swearjar": 10
+  },
+  "consumableUnlocks": {
+    "ragesoda": 1,
+    "brickmilk": 2,
+    "rocket": 3,
+    "cluster": 4,
+    "bigheal": 5,
+    "panacea": 6,
+    "flashbang": 7,
+    "titan": 8,
+    "bastion": 9,
+    "overclock": 10
+  },
+  "xpThresholds": [
+    80,
+    95,
+    110,
+    125,
+    140,
+    155,
+    170,
+    185,
+    200,
+    215
+  ]
+}

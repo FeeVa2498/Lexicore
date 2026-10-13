@@ -1,0 +1,228 @@
+{
+  "statuses": {
+    "block": {
+      "n": "Shield",
+      "d": "Blocks incoming damage. Clears at the start of the owner's turn."
+    },
+    "might": {
+      "n": "Might",
+      "d": "+1 Spell Power to attack weapons per stack. Resets after combat."
+    },
+    "robust": {
+      "n": "Robust",
+      "d": "+1 Spell Power to defense weapons per stack. Resets after combat."
+    },
+    "poison": {
+      "n": "Poisoned",
+      "d": "Takes damage equal to its Poison at the end of its turn, then loses 1 stack."
+    },
+    "weaken": {
+      "n": "Weaken",
+      "d": "All Shield gained is halved. Loses 1 stack each turn."
+    },
+    "broken": {
+      "n": "Broken",
+      "d": "Takes 50% more damage from all sources. Loses 1 stack each turn."
+    },
+    "curse": {
+      "n": "Cursed",
+      "d": "At the end of turn, if HP is at or below the Curse stacks, it dies instantly. Lasts the whole fight."
+    },
+    "thorns": {
+      "n": "Thorns",
+      "d": "When an enemy attacks you, it takes this much damage. Clears at the start of your turn."
+    },
+    "frustrated": {
+      "n": "Frustrated",
+      "d": "Casting a word shorter than (stacks + 1) letters deals 1 damage to yourself. Loses 1 stack each turn."
+    },
+    "stun": {
+      "n": "Stunned",
+      "d": "Skips its next turn."
+    },
+    "field": {
+      "n": "Force Field",
+      "d": "Every hit deals only 1 damage and knocks out 1 cell. Poison ignores it."
+    }
+  },
+  "keywords": {
+    "block": {
+      "name": "Shield",
+      "description": "Blocks incoming damage. Lost at the start of the owner's next turn."
+    },
+    "might": {
+      "name": "Might",
+      "description": "Each stack adds +1 Spell Power to attack words (for enemies: +1 damage per attack). Lasts this combat."
+    },
+    "robust": {
+      "name": "Robust",
+      "description": "Each stack adds +1 Spell Power to shield words. Lasts this combat."
+    },
+    "thorns": {
+      "name": "Thorns",
+      "description": "Whoever attacks a target with Thorns takes that much damage back. Your Thorns clear at the start of your turn; enemies keep theirs for the whole fight."
+    },
+    "poison": {
+      "name": "Poison",
+      "description": "Deals damage at the end of its owner's turn equal to its stacks, then loses 1 stack. Example: 3 Poison deals 3, then 2, then 1."
+    },
+    "weaken": {
+      "name": "Weaken",
+      "description": "Halves all Shield the owner gains. Loses 1 stack at the end of each turn."
+    },
+    "broken": {
+      "name": "Broken",
+      "description": "The owner takes 50% more damage from every source. Loses 1 stack at the end of each turn."
+    },
+    "curse": {
+      "name": "Cursed",
+      "description": "Instant death: at the end of turn, if the owner's HP is at or below its Curse stacks, it dies. Curse never wears off during the fight."
+    },
+    "frustrated": {
+      "name": "Frustrated",
+      "description": "Short words hurt: casting a word shorter than (stacks + 1) letters deals 1 damage to you. Loses 1 stack at the end of each turn."
+    },
+    "slimy": {
+      "name": "Slimy tile",
+      "description": "The tile is worth 0 Spell Power the first time you cast it. The slime washes off after that."
+    },
+    "ptile": {
+      "name": "Poisoned tile",
+      "description": "Casting it poisons you: +1 Poison, which deals damage equal to your Poison at the end of your turn, then loses 1 stack."
+    },
+    "lock": {
+      "name": "Locked tile",
+      "description": "The tile is frozen in place: it can't be cast until the lock counts down to 0 (1 per turn)."
+    },
+    "condemn": {
+      "name": "Condemned tile",
+      "description": "If it is still in your hand at the end of turn, it is banished for the rest of this combat."
+    },
+    "ctile": {
+      "name": "Cursed tile",
+      "description": "Casting it curses you: +1 Curse. If your HP is at or below your Curse at the end of a turn, you die instantly. Curse lasts the whole fight."
+    },
+    "ftile": {
+      "name": "Frustrated tile",
+      "description": "Casting it frustrates you: +1 Frustrated. While Frustrated, words shorter than (stacks + 1) letters deal 1 damage to you."
+    },
+    "burn": {
+      "name": "Smoldering tile",
+      "description": "A tile on fire. If it is still in your hand at the end of your turn, you lose 1 HP. Casting it puts the fire out."
+    },
+    "fortified": {
+      "name": "Fortified tile",
+      "description": "A tile cast in iron. It is never discarded at the end of your turn (it stays in your hand) and enemies can't put debuffs on it."
+    },
+    "crit": {
+      "name": "Critical",
+      "description": "Cast a word whose length exactly matches the weapon's sigil to trigger its bonus effect. [ ! ] tiles count as letters for this: with a 3-sigil weapon, SAW crits but SAW! does not, and HI! does."
+    },
+    "energy": {
+      "name": "Energy",
+      "description": "You get 3 each turn. Every weapon costs Energy to cast. Cast any weapon as many times as you like while you have the Energy."
+    },
+    "wild": {
+      "name": "Wildcard ?",
+      "description": "Turns into whatever letter makes a real word, so it helps you reach a word or a sigil length. It is worth 0 Spell Power and can never be upgraded."
+    },
+    "bang": {
+      "name": "Exclamation !",
+      "description": "Must go at the end of a word, or after a single letter (U!, U!!!!). It can never be cast on its own. Each ! adds bonus Spell Power: +2, +4, +6, +10, +16… (consecutive ! stack)."
+    },
+    "comma": {
+      "name": "Comma ,",
+      "description": "Put it between two words to cast both in one action."
+    },
+    "red": {
+      "name": "Red Paint",
+      "description": "Casting it gives you +1 Might (+1 Spell Power on attack words for the rest of the fight)."
+    },
+    "blue": {
+      "name": "Blue Paint",
+      "description": "Casting it gives you +1 Robust (+1 Spell Power on shield words for the rest of the fight)."
+    },
+    "green": {
+      "name": "Green Paint",
+      "description": "Draw 1 extra tile when the word is cast."
+    },
+    "gold": {
+      "name": "Gold Paint",
+      "description": "+1 Gold each time the tile is played."
+    },
+    "reform": {
+      "name": "Reassemble",
+      "description": "When a segment is destroyed it falls apart, and it rebuilds itself with 25% HP at the start of your next turn, as long as another segment is still standing. Destroy every segment in the same turn to win."
+    },
+    "ally": {
+      "name": "Support",
+      "description": "This enemy spends its turn helping its allies: Shield, healing or Might for the whole group. When it is alone, it helps itself."
+    },
+    "stun": {
+      "name": "Stunned",
+      "description": "The enemy skips its next turn. Its move cycle doesn't advance."
+    },
+    "bp_tall": {
+      "name": "Too Tall (boss)",
+      "description": "Words shorter than 5 letters only reach its ankle: they deal half damage. Its thick hide also halves every debuff it receives (Poison, Broken, Stun, rounded up)."
+    },
+    "bp_regrow": {
+      "name": "Regrowth (boss)",
+      "description": "At the end of each of her turns she heals 5 HP for every living Sporeling. Sporelings burst on their 3rd turn for 1 Poison per 3 HP they have left."
+    },
+    "bp_bond": {
+      "name": "Twin Bond (boss)",
+      "description": "The twin you are not facing hits you twice as hard. When one twin falls, the other is ENRAGED: +6 Might."
+    },
+    "bp_filter": {
+      "name": "Syntax Filter + Firewall (boss)",
+      "description": "Each of your turns it filters one letter in your hand (those tiles are worth 0 Spell Power). Its Firewall lets through at most 70 damage per turn: once you hit the cap, your turn ends immediately."
+    },
+    "bp_timeflux": {
+      "name": "Time Haste / Time Slow (boss)",
+      "description": "Zero bends time in a 3-turn loop. TIME HASTE (2 turns): it acts twice per turn (both moves are shown in its intent). TIME SLOW (1 turn): it is frozen, does nothing, and takes DOUBLE damage. Shield up during Haste, unload during Slow."
+    },
+    "bp_forcefield": {
+      "name": "Force Field (boss)",
+      "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+    },
+    "bp_statue": {
+      "name": "Living Statue (boss)",
+      "description": "NORMAL FORM: it attacks and curses. Then it Petrifies into STATUE FORM: +30 Shield and 8 Thorns (every hit you land on it costs you 8 HP). After 3 turns it Awakens: back to Normal Form with a heavy hit that grows with its Thorns (14 + 2 per Thorn), then the Thorns are gone."
+    },
+    "fragile": {
+      "name": "Fragile",
+      "description": "This tile disappears for the rest of the combat after its first use (like Exhaust)."
+    }
+  },
+  "bossPassives": {
+    "tall": {
+      "name": "Too Tall",
+      "description": "Words shorter than 5 letters only reach its ankle: they deal half damage. Its thick hide also halves every debuff it receives (Poison, Broken, Stun, rounded up)."
+    },
+    "regrow": {
+      "name": "Regrowth",
+      "description": "At the end of each of her turns she heals 5 HP for every living Sporeling. Sporelings burst on their 3rd turn for 1 Poison per 3 HP they have left."
+    },
+    "bond": {
+      "name": "Twin Bond",
+      "description": "The twin you are not facing hits you twice as hard. When one twin falls, the other is ENRAGED: +6 Might."
+    },
+    "filter": {
+      "name": "Syntax Filter + Firewall",
+      "description": "Each of your turns it filters one letter in your hand (those tiles are worth 0 Spell Power). Its Firewall lets through at most 70 damage per turn: once you hit the cap, your turn ends immediately."
+    },
+    "timeflux": {
+      "name": "Time Haste / Time Slow",
+      "description": "Zero bends time in a 3-turn loop. TIME HASTE (2 turns): it acts twice per turn (both moves are shown in its intent). TIME SLOW (1 turn): it is frozen, does nothing, and takes DOUBLE damage. Shield up during Haste, unload during Slow."
+    },
+    "forcefield": {
+      "name": "Force Field",
+      "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+    },
+    "statue": {
+      "name": "Living Statue",
+      "description": "NORMAL FORM: it attacks and curses. Then it Petrifies into STATUE FORM: +30 Shield and 8 Thorns (every hit you land on it costs you 8 HP). After 3 turns it Awakens: back to Normal Form with a heavy hit that grows with its Thorns (14 + 2 per Thorn), then the Thorns are gone."
+    }
+  }
+}
