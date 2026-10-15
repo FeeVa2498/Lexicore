@@ -889,7 +889,7 @@ Splash/menu → character select → map → combat → reward → shop → rest
 
 ### 15.3 Combat UI details (latest)
 
-- **Sigil pedestal** (where the word is built): a carved grey stone pedestal on a stone base, with a dark carved trough outlined in glowing teal and a line of glowing runes along its foot. **Almost no text**: the weapon name, a row of **sigil sockets** (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), the tiles, then `Spell Power × Mult = output` (+ a small "CRIT!" stamp), and two buttons (✕ clear, Cast). The full breakdown (Might, relic names, ! bonus…) is in the tooltip on the score line.
+- **Sigil pedestal** (where the word is built): a small, minimal grey stone holder right of the hero (≈430 px wide; no rune strip). **Row 1**: the tiles in a dark trough outlined in glowing teal (tiles shrink when the word passes 10 letters, so it never grows wider). **Row 2**: the weapon name, the **sigil sockets** as small dots (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), `Spell Power × Mult = output` (+ a small "CRIT!" stamp), and two buttons (✕ clear, Cast). It never covers the front enemy or its intent. The full breakdown (Might, relic names, ! bonus…) is in the tooltip on the score line.
 - **Relic preview**: while a word is on the pedestal, every relic it would trigger **glows and drops below the relic row**; Mult relics also show their bonus as a small red badge (+0.7). Non-Mult relics are predicted too (Sandbag, Umbrella, Snake Charm, Protein Bar, Rusty Nail, Megaphone, Chalk Tally on the 10th attack, Quick Gloves on the first cast, Metronome / Rubber Stamp on the 3rd cast).
 - **Hand sort button** (top-right corner of the hand): 1st click sorts by Spell Power (high → low), 2nd click A–Z (letters before symbols); clicking again toggles. Buffed or debuffed tiles (painted, Level 2, Fortified, Fragile, any tile debuff) always come first. The order stays sorted as new tiles are drawn.
 - **Consumable menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
@@ -1003,7 +1003,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 |---|---|
 | `weapons.json` | All 21 weapons (source, kind, cost, crit length, effects, formulas) |
 | `enemies.json` | All 43 enemies (incl. minions) with full move cycles (move names), boss gimmicks, summons/splits and lore |
-| `encounters.json` | Encounter pools per Act, elites, boss options |
+| `encounters.json` | Encounter pacing rules (`encounterRules`: group size by normal-fight number per Act), encounter pools per Act, elites, boss options |
 | `relics.json` | All 71 relics with category, Mult formulas, word lists and unlock level |
 | `potions.json` | All 29 consumables (ids keep the "potion" name) with unlock level |
 | `heroes.json` | The 3 heroes (stats, starting kit, texts, endings) |
