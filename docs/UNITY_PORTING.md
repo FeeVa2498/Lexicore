@@ -441,7 +441,7 @@ Layout zones (1600 × 900):
 - top-right: gold / map / deck / settings;
 - left: hero + HP bar + Energy battery;
 - right: enemies (slot positions per group size in the prototype `SLOTS` table) with intents over their heads and statuses under the HP bar;
-- centre: the sigil pedestal;
+- centre-left (right of the hero): the compact sigil pedestal, ≈430 px wide, tiles row on top and weapon/score/buttons below; it must never cover the front enemy or any intent;
 - bottom: 5 weapon slots, consumable shelf, 16-tile hand grid, draw/discard piles, log, End Turn.
 
 Custom controls (Unity 6 `[UxmlElement]` + `[UxmlAttribute]`):
@@ -464,7 +464,7 @@ Animations:
 - `VisualElement.experimental.animation` or a tween library for paths.
 - Camera "focus" = scale + translate the stage element.
 - Damage numbers = short-lived Labels.
-- Coins and tiles flying to piles = absolutely positioned elements animated between `worldBound` rects.
+- Coins and tiles flying to piles = absolutely positioned elements animated between `worldBound` rects. Tiles: cast and End-Turn discards fly to the Discard pile; drawn tiles fly from the Draw pile into their hand slot (~0.4 s each, ~35 ms stagger).
 
 Input:
 - Clicks on tiles, plus **typing letters** places a matching hand tile (Input System `Keyboard.onTextInput`).
