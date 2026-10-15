@@ -6,6 +6,13 @@ Shared copies live in the Google Drive folder *Lexicore / Doc / New Version* (up
 
 ---
 
+## 2026-10-15 · Encounter pacing, Act 1 boss nerf, tile motion, compact sigil box
+- **Encounter pacing** is now configurable per Act and per normal-fight number (`encounterRules` in `encounters.json`). Act 1: 1st fight always one enemy, then mostly pairs, **never 3 enemies**. Acts 2–3: trios only from the 4th (Act 2) / 3rd (Act 3) normal fight. Quads are no longer used by normal fights. Replaces the old floor-based pools.
+- **HP nerfs**: Mother Mycelia 165 → **140**, Sporeling 18 → **14** (full-HP burst 6 → 5 Poison), The Titan 180 → **155**.
+- **Tile motion**: cast tiles and End-Turn discards fly into the Discard pile; drawn tiles fly from the Draw pile into the hand.
+- **Sigil box** redesigned: smaller, two rows (tiles / weapon + score + buttons), no rune strip; it no longer covers the front enemy's intent in 3–5 enemy fights.
+- GDD v1.5: §4.1, §10.1 (pacing table), §13 (HP), §13.4 (Regrowth text). Data: `encounters.json`, `enemies.json`. Porting guide §4.16. Golden combat tests regenerated.
+
 ## 2026-10-13 · Unity port kit (Unity 6.3 LTS · UI Toolkit)
 - New **Unity porting guide** (`docs/UNITY_PORTING.md`, Drive: *Lexicore Unity Porting Guide*): architecture (pure C# Core + UI Toolkit), data loading, the exact rules the prototype runs (cast order, weapon effects, damage pipeline, end/start of turn, enemy phase, relic hooks, consumables, boss gimmicks, rewards), UI Toolkit screen plan, art, tests, dead code to skip.
 - New **C# Core** in `unity/Assets/Lexicore/Core/`: scoring (`Scoring.Evaluate`), the 25 Mult relics, word list loader, tiles, weapons, MiniJson. Copy `unity/Assets/Lexicore` into the Unity project.

@@ -669,7 +669,7 @@
       "name": "The Titan",
       "act": 1,
       "tier": "boss",
-      "hp": 180,
+      "hp": 155,
       "art": "titan",
       "moveCycle": [
         {
@@ -1090,7 +1090,7 @@
       "name": "Mother Mycelia",
       "act": 1,
       "tier": "boss",
-      "hp": 165,
+      "hp": 140,
       "art": "shroom",
       "moveCycle": [
         {
@@ -1500,7 +1500,7 @@
       "name": "Sporeling",
       "act": 1,
       "tier": "minion",
-      "hp": 18,
+      "hp": 14,
       "art": "sporeling",
       "moveCycle": [
         {

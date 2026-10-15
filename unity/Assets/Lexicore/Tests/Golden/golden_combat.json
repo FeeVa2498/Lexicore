@@ -5637,8 +5637,8 @@
     "enemies": [
      {
       "id": "titan",
-      "hp": 167,
-      "max": 180,
+      "hp": 142,
+      "max": 155,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -5746,8 +5746,8 @@
     "enemies": [
      {
       "id": "titan",
-      "hp": 159,
-      "max": 180,
+      "hp": 134,
+      "max": 155,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -5848,8 +5848,8 @@
     "enemies": [
      {
       "id": "titan",
-      "hp": 180,
-      "max": 180,
+      "hp": 155,
+      "max": 155,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -7872,7 +7872,7 @@
      {
       "id": "sporeling",
       "hp": 0,
-      "max": 14,
+      "max": 11,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -7969,8 +7969,8 @@
     "enemies": [
      {
       "id": "shroom",
-      "hp": 165,
-      "max": 165,
+      "hp": 140,
+      "max": 140,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -7996,17 +7996,17 @@
     "enemiesNow": [
      {
       "id": "shroom",
-      "hp": 165,
+      "hp": 140,
       "dead": false
      },
      {
       "id": "sporeling",
-      "hp": 18,
+      "hp": 14,
       "dead": false
      },
      {
       "id": "sporeling",
-      "hp": 18,
+      "hp": 14,
       "dead": false
      }
     ],
@@ -8090,7 +8090,7 @@
      {
       "id": "shroom",
       "hp": 110,
-      "max": 165,
+      "max": 140,
       "block": 10,
       "might": 0,
       "thorns": 0,
@@ -8104,8 +8104,8 @@
      },
      {
       "id": "sporeling",
-      "hp": 18,
-      "max": 18,
+      "hp": 14,
+      "max": 14,
       "block": 0,
       "might": 0,
       "thorns": 0,
@@ -8119,8 +8119,8 @@
      },
      {
       "id": "sporeling",
-      "hp": 18,
-      "max": 18,
+      "hp": 14,
+      "max": 14,
       "block": 0,
       "might": 0,
       "thorns": 0,

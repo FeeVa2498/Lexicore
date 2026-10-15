@@ -407,7 +407,7 @@ Weaken halves Shield **you** gain (floor). Broken ×1.5 damage taken (floor). Po
 | System | Prototype function | Notes |
 |---|---|---|
 | Map | `genMap()` | 7 columns × 8 floors, 6 non-crossing random paths, floor types in GDD §10.1, boss after floor 8, Weapon Altar start. Act 4: rest → shop → event → LEXICORE. |
-| Encounters | `pickEncounter()` | Pools by floor (G.floor = map floor + 1): ≤1 singles+pairs, ≤3 pairs+trios, ≤5 pairs+trios×2+quads, else trios+quads×2; never the same group twice in a row; elites never repeat in an Act; boss chosen once per Act. |
+| Encounters | `pickEncounter()` | Group size from `encounterRules` in encounters.json: counter `G.encN[act]` +1 per normal fight; take the last tier with `from` ≤ counter; weighted pick of a size among sizes that have a pool; then a random group of that size, never the same group twice in a row; elites never repeat in an Act; boss chosen once per Act. |
 | Shop | `showShop()` | 3 relics (130–179) × (1 + 0.15(act−1)); 3 tiles (30 + 3 × value + 30 if Lv2) × act scale, 10 % special, 22 % Lv2, 15 % Fortified, random paint; 3 consumables 45–64 × act scale; tile removal 10 gold +5 each time (run-wide). |
 | Rest | `restHeal()` / `restUpgrade()` | heal floor(30 % max) (+15 Sleeping Bag; 15 % with Insomnia Lamp) or upgrade 1 letter to Lv2 |
 | Treasure | `showTreasure()` | pick 1 of 3 relics or skip |

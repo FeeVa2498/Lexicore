@@ -1,6 +1,6 @@
 # LEXICORE — Game Design Document
 
-> Version 1.4 (based on the playable prototype, 13 October 2026). Changes: see CHANGELOG.
+> Version 1.5 (based on the playable prototype, 15 October 2026). Changes: see CHANGELOG.
 > Playable prototype: https://feeva2498.github.io/Lexicore/
 > Data files: `../data/*.json` (generated from the prototype; treat them as the source of truth for numbers)
 
@@ -127,7 +127,9 @@ Main menu → Choose hero → [Act 1] → Boss → boss relic → [Act 2] → Bo
 
 ### 4.1 Layout
 
-The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre: the **sigil box** (the word being built). Bottom: weapon slots (5), consumable shelf, hand grid, draw/discard piles, combat log, End Turn button.
+The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre-left, just right of the hero: the **sigil box** (the word being built), a compact two-row holder: the tiles on top, then weapon name, crit-length dots, Spell Power × Mult = output, Clear and Cast. It is kept narrow (≈430 px, tiles shrink when the word passes 10 letters) so it never covers the front enemy or any intent bubble, even in 5-enemy fights. Bottom: weapon slots (5), consumable shelf, hand grid, draw/discard piles, combat log, End Turn button.
+
+**Tile motion**: tiles used in a cast and tiles discarded at End Turn fly (arc, shrink, spin) into the **Discard pile**, which bumps when they land; tiles drawn into the hand fly out of the **Draw pile** into their hand slots, one after the other (~35 ms apart, ~0.4 s each). Reduced-motion turns the flights off.
 
 ### 4.2 Turn structure
 
@@ -272,7 +274,7 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (consumable).
 - **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
 - **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
-- **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **1 Poison per 3 HP it has left** (rounded up; 6 at full 18 HP) on the hero, and dies (no gold). Wounding it shrinks the burst.
+- **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **1 Poison per 3 HP it has left** (rounded up; 5 at full 14 HP) on the hero, and dies (no gold). Wounding it shrinks the burst.
 - **Layered Armor / Force Field (now the Gatekeeper boss, see §13.4)**: 12 cells, Recharge Field adds 8 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
 - **Glossary → Keywords** lists only live mechanics, each with its icon (boss mechanics are tagged "(boss)"); retired ones (Layered Armor, Time Prison, Two Forms, Stone Skin) were removed.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
@@ -564,7 +566,16 @@ Note: "upgrade every tile in hand" is **Clarity Draught** and "cleanse the tiles
 | 9 | Boss |
 
 - Elites appear **only on floors 5 and 7**, so a path meets at most 2 Elites, and the two Elites of an Act are never repeated within that Act.
-- Encounter pools (designed groups, most fights are multi-enemy): floors 1–2 singles or pairs; floors 3–4 pairs or trios; floors 5–6 pairs, trios (double weight) or quads; floors 7+ trios or quads (double weight). Roughly 10% of normal fights are single enemies, ~35% pairs, ~37% trios, ~18% quads. The same group never appears twice in a row. Full pools in `../data/encounters.json`.
+- **Encounter pacing** (configurable, `encounterRules` in `../data/encounters.json`): the group size of a normal fight depends on **which normal fight of the Act it is** (1st, 2nd, 3rd, 4th+; elites and bosses do not count). A group of that size is then picked from the Act's designed pool; the same group never appears twice in a row.
+
+| Normal fight # | Act 1 | Act 2 | Act 3 |
+|---|---|---|---|
+| 1st | 1 enemy | 1 (60%) · 2 (40%) | 1 (40%) · 2 (60%) |
+| 2nd | 1 (50%) · 2 (50%) | 1 (20%) · 2 (80%) | 2 |
+| 3rd | 1 (20%) · 2 (80%) | 2 | 2 (75%) · 3 (25%) |
+| 4th+ | 2 | 2 (65%) · **3 (35%)** | 2 (50%) · **3 (50%)** |
+
+  Act 1 never has 3-enemy normal fights; in Acts 2–3 trios only appear at high nodes. Quads are not used by normal fights (multi-enemy elites and boss summons can still fill up to 5 spots).
 - In normal fights, enemy **damage** also scales with group size: 1–2 enemies ×1, 3 ×0.85, 4 ×0.72, 5+ ×0.62 (HP scaling in §12.4).
 
 ### 10.2 Act 4: The Lexicore Chamber
@@ -690,7 +701,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Thorn Goblin** | 1 | normal | 46 | Block 10 + Might +2 → Atk 9 + Burn×3 tiles → Atk 12 |
 | **Thornbloom** | 1 | normal | 38 | Atk 8 → Poison×4 tiles + Block 6 → +3 Thorns + Atk 5 |
 | **Needle Hog** | 1 | normal | 36 | +2 Thorns + Block 6 → Atk 8 → Atk 5 + Poison×3 tiles |
-| **Sporeling** | 1 | minion | 18 | Atk 4 → Poison×2 tiles → **Self-destruct: 1 Poison per 3 HP left** |
+| **Sporeling** | 1 | minion | 14 | Atk 4 → Poison×2 tiles → **Self-destruct: 1 Poison per 3 HP left** |
 | **Green Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Poison×3 tiles → Atk 6 |
 | **Blue Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Lock×3 tiles → Atk 6 |
 | **Pink Slimelet** | 1 | minion | 16 | Atk 4 + Block 3 → Frustrate×3 tiles → Atk 6 |
@@ -699,8 +710,8 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Arachne Matriarch** | 1 | elite | 85 | Poison×6 tiles + Block 10 → Atk 16 → Weaken 2 + Atk 8 → Atk 12 |
 | **Quartz Punisher** | 1 | elite | 100 | Broken 2 → Atk 16 → Block 15 + Lock×5 tiles → Atk 22! |
 | **Great Slime** | 1 | elite | 95 | Atk 13 → Slimy×6 tiles + Block 10 → Atk 10 → Atk 18! |
-| **The Titan** | 1 | boss | 180 | **Stomp**: Atk 14 → **Rumble**: Lock×5 tiles + Block 14 → **Mega Kick**: Atk 22! → **Earthquake**: Broken 2 + Atk 8 |
-| **Mother Mycelia** | 1 | boss | 165 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×6 tiles → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
+| **The Titan** | 1 | boss | 155 | **Stomp**: Atk 14 → **Rumble**: Lock×5 tiles + Block 14 → **Mega Kick**: Atk 22! → **Earthquake**: Broken 2 + Atk 8 |
+| **Mother Mycelia** | 1 | boss | 140 | **Spore Brood**: Summon 2 Sporelings → **Spore Cloud**: Poison×6 tiles → **Cap Slam**: Atk 14 + Block 10 → **Mycelium**: +2 Might + Block 14 → **Fungal Burst**: Atk 22! |
 | **Scrap Rat** | 2 | normal | 65 | Atk 14 → Block 13 + Atk 8 → Lock×4 tiles + Atk 7 |
 | **Riot Hound** | 2 | normal | 70 | Atk 16 → +3 Might + Block 9 → Atk 10 + Condemn×3 tiles |
 | **Wrench Crow** | 2 | normal | 55 | Atk 10 + Frustrate×4 tiles → Atk 5×3 → Atk 7 + Frustrate×3 tiles |
@@ -753,7 +764,7 @@ Every boss has one signature mechanic, shown as a gold passive icon under its HP
 
 | Boss | Act | Gimmick | Rules | How to beat it |
 |---|---|---|---|---|
-| **Mother Mycelia** | 1 | **Regrowth** | At the end of each of her turns she heals 5 HP per living Sporeling. Sporelings (18 HP) burst on their 3rd turn for **1 Poison per 3 HP they have left** (6 at full HP); when she dies they wither. | Wound or kill Sporelings before they pop, then burst her. |
+| **Mother Mycelia** | 1 | **Regrowth** | At the end of each of her turns she heals 5 HP per living Sporeling. Sporelings (14 HP) burst on their 3rd turn for **1 Poison per 3 HP they have left** (5 at full HP); when she dies they wither. | Wound or kill Sporelings before they pop, then burst her. |
 | **The Titan** | 1 | **Too Tall** | Attack words shorter than **5 letters** deal half damage (they only reach its ankle). Its thick hide **halves every debuff it receives** (Poison, Broken, Stun; rounded up). | Long words; raw damage over debuffs. |
 | **Ancient Stone Gargoyle** | 2 | **Living Statue** (two forms) | **Normal Form** (attack): Chant of Decay → Stone Gaze → Execute (34). Then **Petrify** → **Statue Form** (defence, greyed stone look): gains **30 Shield + 8 Thorns** (every hit you land costs you 8), Stone Watch (+18 Shield), Cursed Glare. Then **Awaken** → Normal Form: a heavy hit of **14 + 2 per Thorn** (30 with 8 Thorns), and all its Thorns crumble away. | Hit hard in Normal Form; in Statue Form defend, Poison it, or use few big hits instead of many small ones; Shield up for Awaken. |
 | **Gemini Left & Right** | 2 | **Twin Bond** | The twin you're not targeting hits ×2. When one twin dies the other is ENRAGED (+6 Might). | Damage both evenly, finish them close together. |

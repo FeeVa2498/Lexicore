@@ -92,6 +92,24 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+/* compact sigil pedestal (kept clear of the enemy row and their intents) */
+#sigilbox{left:448px!important;bottom:296px!important;width:432px!important;padding:8px 10px 9px!important;gap:6px!important;border-width:3px!important;border-radius:16px!important;
+  background:linear-gradient(180deg,#7d808c,#5d6170)!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.1),4px 5px 0 rgba(29,27,34,.85),0 0 16px rgba(95,212,196,.18)!important}
+#sigilbox:after{display:none}
+#sigilbox .sg-tiles{min-height:50px;flex-wrap:nowrap;gap:5px;padding:5px 6px;border-radius:10px}
+#sigilbox .sg-tiles .tile,#sigilbox .sg-tiles .slot{width:38px;height:42px;flex:0 0 auto;border-radius:9px}
+#sigilbox .sg-tiles .tile b{font-size:23px}#sigilbox .sg-tiles .tile .val{font-size:11px;min-width:15px;height:15px;line-height:13px}
+#sigilbox.many .sg-tiles{gap:3px}#sigilbox.many .sg-tiles .tile,#sigilbox.many .sg-tiles .slot{width:29px;height:34px}#sigilbox.many .sg-tiles .tile b{font-size:18px}
+.sg-row{display:flex;align-items:center;gap:8px;min-height:34px}
+.sg-row .sg-wname{font-size:17px;-webkit-text-stroke:4px var(--ink);white-space:nowrap}
+.sg-row .sg-dots{gap:3px}.sg-row .sg-dots i{width:11px;height:11px;border-width:2px}
+#sigilbox .sg-row .calc{flex:1;min-height:0;gap:4px;font-size:17px;justify-content:center;flex-wrap:nowrap}
+#sigilbox .sg-row .calc .tot{font-size:26px;-webkit-text-stroke:5px var(--ink)}
+#sigilbox .sg-row .calc .x{font-size:18px}
+#sigilbox .sg-row .crit-tag{font-size:14px;padding:0 5px}
+#sigilbox .sg-btns{gap:6px}#sigilbox .cbtn{font-size:18px;padding:2px 12px;border-width:3px;box-shadow:2px 3px 0 var(--ink)}
+.tghost{position:absolute;pointer-events:none;z-index:60}.tghost .tile{width:100%!important;height:100%!important}
+#handgrid .tile.pop-in{animation:none}
 .ubox{background:#fffdf7;border:3px solid #1d1b22;border-radius:14px;padding:10px 16px;width:min(520px,92vw);display:grid;gap:8px;box-shadow:4px 5px 0 #1d1b22}
 .uhead{display:flex;justify-content:space-between;font:20px var(--f-display)}
 .ubar{height:22px;border:3px solid #1d1b22;border-radius:12px;background:#3d3a44;overflow:hidden}.ubar i{display:block;height:100%;background:linear-gradient(90deg,#ffbe0b,#ffd166);box-shadow:inset 0 -4px 0 rgba(0,0,0,.15)}
@@ -1848,7 +1866,7 @@ function tileHTML(t, opts={}){
   const tag = opts.click ? "button" : "div";
   const kws=[]; if(t.fort) kws.push("fortified"); if(t.fragile) kws.push("fragile"); if(t.paint) kws.push(t.paint); if(t.deb) kws.push(DEB_KW[t.deb.t]); if(t.ch==="?") kws.push("wild"); if(t.ch==="!") kws.push("bang"); if(t.ch===",") kws.push("comma");
   const tipTxt = `<b>${t.lvl===2?"Level 2 ":""}${t.ch} tile</b>${sym?"":` · Spell Power ${tileChip(t)}`}${t.deb&&t.deb.t==="lock"?`<br>Locked for ${t.deb.n} more turn(s).`:""}`;
-  return `<${tag} class="${cls}${opts.as?" wild-on":""}" ${on} ${opts.noTip?"":tipAttr(opts.as?`<b>Wildcard ?</b> → ${opts.as}`:tipTxt,kws)} aria-label="${esc(tileTitle(t))}"><b>${opts.as||t.ch}</b>${chip}${t.lvl===2?`<span class="lv">II</span>`:""}${db}</${tag}>`;
+  return `<${tag} class="${cls}${opts.as?" wild-on":""}" ${t.uid>0?`data-u="${t.uid}"`:""} ${on} ${opts.noTip?"":tipAttr(opts.as?`<b>Wildcard ?</b> → ${opts.as}`:tipTxt,kws)} aria-label="${esc(tileTitle(t))}"><b>${opts.as||t.ch}</b>${chip}${t.lvl===2?`<span class="lv">II</span>`:""}${db}</${tag}>`;
 }
 
 /* ================= MODALS ================= */
@@ -2448,14 +2466,14 @@ function renderCombat(){
   const slots = Math.max(w.sigil - C.bar.length, 0);
   { const lit=barTiles.length, full=prev&&(prev.L.length+(prev.bang||0))===w.sigil;
     const tipNotes=prev?`<b>${prev.chips} × ${prev.mult} = ${prev.total}</b>${prev.notes.length?"<br>"+prev.notes.join("<br>"):""}`:"";
+    $("#sigilbox").classList.toggle("many",C.bar.length+slots>10);
     $("#sigilbox").innerHTML = `
-    <div class="sg-top"><span class="sg-wname">${w.name}</span>
-      <span class="sg-dots ${full?"crit":""}" ${tipAttr(`<b>Sigil ${w.sigil}</b><br>Cast exactly ${w.sigil} letters ( [ ! ] count too ) for a Critical: ${w.crit}`,["crit"])}>${Array.from({length:w.sigil},(_,k)=>`<i class="${k<lit?"on":""}"></i>`).join("")}</span></div>
     <div class="sg-tiles" id="sgtiles">${barTiles.map(t=>tileHTML(t,{click:`tapTile(${t.uid})`,as:wres[t.uid]})).join("")}${"<span class='slot'></span>".repeat(slots)}</div>
+    <div class="sg-row"><span class="sg-wname">${w.name}</span>
+      <span class="sg-dots ${full?"crit":""}" ${tipAttr(`<b>Sigil ${w.sigil}</b><br>Cast exactly ${w.sigil} letters ( [ ! ] count too ) for a Critical: ${w.crit}`,["crit"])}>${Array.from({length:w.sigil},(_,k)=>`<i class="${k<lit?"on":""}"></i>`).join("")}</span>
     <div class="calc" ${prev?tipAttr(tipNotes):""}>${prev?`<span class="chip-n">${prev.chips}</span><span class="x">×</span><span class="mult-n">${prev.mult}</span><span class="x">=</span><b class="tot">${prev.total}</b>${prev.crit&&!prev.fallback?`<span class="crit-tag">CRIT!</span>`:""}`:""}</div>
     <div class="sg-btns"><button class="cbtn" onclick="clearBar()" ${C.bar.length&&!C.busy?"":"disabled"} aria-label="Clear" title="Clear (Backspace)">✕</button>
-      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""} title="Cast (Enter)">Cast</button></div>
-    <div class="sg-runes" aria-hidden="true">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ</div>`;
+      <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""} title="Cast (Enter)">Cast</button></div></div>`;
     // relics that this word would trigger glow and drop below the relic row
     const will=new Set(prev?[...prev.fired,...predictRelics(prev,w,G.weapons[C.wi])]:[]);
     document.querySelectorAll("#topbar .rel[data-r]").forEach(el=>{ const r=el.dataset.r, on=will.has(r); el.classList.toggle("will",on);
@@ -4868,6 +4886,82 @@ function showGlossary(tab="monsters"){
       <button class="btn small" onclick="cheatResetProgress()" title="Testing only">Reset progress</button></div>`);
   $("#modal .box").classList.add("wide");
 }
+
+/* ================= PACING: encounter size by fight number, Act 1 boss HP, tile flights ================= */
+// ENCOUNTER_RULES[act] = list of tiers. For the N-th normal fight of the act (1 = first), the last tier with from <= N is used.
+// weights = chance of each group size (1 = single enemy, 2 = pair, 3 = trio, 4 = quad). A size with no designed group falls back to the others.
+const ENCOUNTER_RULES={
+  1:[{from:1,weights:{1:100}},             // first fight of the run: one enemy
+     {from:2,weights:{1:50,2:50}},
+     {from:3,weights:{1:20,2:80}},
+     {from:4,weights:{2:100}}],            // Act 1 never has 3+ enemies in normal fights
+  2:[{from:1,weights:{1:60,2:40}},
+     {from:2,weights:{1:20,2:80}},
+     {from:3,weights:{2:100}},
+     {from:4,weights:{2:65,3:35}}],        // trios only from the 4th fight
+  3:[{from:1,weights:{1:40,2:60}},
+     {from:2,weights:{2:100}},
+     {from:3,weights:{2:75,3:25}},
+     {from:4,weights:{2:50,3:50}}],
+  4:[{from:1,weights:{1:100}}],
+};
+const ENC_SIZE_KEY={1:"singles",2:"pairs",3:"trios",4:"quads"};
+function encounterTier(act,n){ const T=ENCOUNTER_RULES[act]||ENCOUNTER_RULES[1]; let t=T[0]; for(const x of T) if(n>=x.from) t=x; return t; }
+function pickEncounter(kind){
+  const A=ACTS[G.act||1];
+  if(kind==="elite"){ G.eliteSeen=G.eliteSeen||[]; const K=x=>[].concat(x).join(); const fresh=A.elites.filter(e=>!G.eliteSeen.includes(K(e))); const e=pick(fresh.length?fresh:A.elites); G.eliteSeen.push(K(e)); return [].concat(e); }
+  if(kind==="boss"){ if(!G.bossPick) G.bossPick=pick(A.bosses); return G.bossPick; }
+  G.encN=G.encN||{}; const act=G.act||1; const n=(G.encN[act]||0)+1; G.encN[act]=n;
+  const tier=encounterTier(act,n);
+  const sizes=Object.keys(tier.weights).map(Number).filter(s=>(A[ENC_SIZE_KEY[s]]||[]).length&&tier.weights[s]>0);
+  let size=sizes[0]||1;
+  { const tot=sizes.reduce((a,s)=>a+tier.weights[s],0); let r=Math.random()*tot; for(const s of sizes){ r-=tier.weights[s]; if(r<0){ size=s; break; } } }
+  const pool=A[ENC_SIZE_KEY[size]]||A.singles;
+  const opts=pool.filter(g=>g.join()!==G.lastEnemy); const g=pick(opts.length?opts:pool); G.lastEnemy=g.join(); return g;
+}
+// ---- Act 1 bosses: a bit less HP ----
+ENEMIES.shroom.hp=140; ENEMIES.sporeling.hp=14; ENEMIES.titan.hp=155;
+BOSS_PASSIVES.regrow.d="At the end of each of her turns she heals 5 HP for every living Sporeling. Sporelings burst on their 3rd turn for 1 Poison per 3 HP they have left.";
+KW.bp_regrow=[BOSS_PASSIVES.regrow.n+" (boss)",BOSS_PASSIVES.regrow.d];
+
+// ---- tile flights: hand -> discard, bar -> discard/hand, draw pile -> hand ----
+function stageXY(r){ const st=$("#stage"); const s=parseFloat(st.style.getPropertyValue("--s"))||1, sr=st.getBoundingClientRect(); return {x:(r.left-sr.left)/s,y:(r.top-sr.top)/s,w:r.width/s,h:r.height/s}; }
+function snapTiles(uids,scope){ const st=$("#stage"); if(!st||RM) return []; const out=[];
+  for(const u of uids){ const el=(scope?document.querySelector(scope):st).querySelector(`.tile[data-u="${u}"]`); if(!el) continue; out.push({u,html:el.outerHTML,r:stageXY(el.getBoundingClientRect())}); }
+  return out; }
+function flyTiles(snaps,where){ const st=$("#stage"); if(!st||!snaps.length) return;
+  const pile=document.querySelectorAll(".pilebtn")[where==="draw"?0:1]; const pr=pile?stageXY(pile.getBoundingClientRect()):{x:1300,y:800,w:100,h:100};
+  const layer=document.createElement("div"); layer.className="tflylayer"; st.appendChild(layer);
+  snaps.forEach((s,i)=>{ const d=document.createElement("div"); d.className="tghost"; d.innerHTML=s.html; d.style.cssText=`left:${s.r.x}px;top:${s.r.y}px;width:${s.r.w}px;height:${s.r.h}px`;
+    const t=d.firstElementChild; if(t){ t.classList.remove("ghost","pop-in"); t.removeAttribute("onclick"); }
+    layer.appendChild(d);
+    const dx=pr.x+pr.w/2-(s.r.x+s.r.w/2), dy=pr.y+pr.h/2-(s.r.y+s.r.h/2);
+    d.animate([{transform:"translate(0,0) scale(1) rotate(0)",opacity:1},{transform:`translate(${dx*.55}px,${dy*.55-50}px) scale(.75) rotate(${i%2?12:-12}deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.3) rotate(${i%2?24:-24}deg)`,opacity:.2}],
+      {duration:T_(430),delay:i*35,easing:"ease-in",fill:"both"}); });
+  setTimeout(()=>{ layer.remove(); if(pile) pile.animate([{transform:"scale(1.14)"},{transform:"none"}],{duration:220}); },T_(430)+snaps.length*35+40);
+}
+function flyInDrawn(){ const st=$("#stage"); if(!st||RM||!C) return;
+  // a tile keeps flying across re-renders: its start time is remembered by uid and the animation resumes where it was
+  const now=performance.now(), D=T_(380); C._flyIn=C._flyIn||{};
+  const fresh=[...document.querySelectorAll("#handgrid .tile.pop-in")]; fresh.forEach((el,i)=>{ el.classList.remove("pop-in"); const u=+el.dataset.u; if(u) C._flyIn[u]=now+i*32; });
+  const pile=document.querySelectorAll(".pilebtn")[0]; if(!pile) return; const pr=pile.getBoundingClientRect(); const s=parseFloat(st.style.getPropertyValue("--s"))||1;
+  for(const [u,t0] of Object.entries(C._flyIn)){ const el=document.querySelector(`#handgrid .tile[data-u="${u}"]`); const el_t=now-t0;
+    if(!el||el_t>D){ if(el_t>D) delete C._flyIn[u]; continue; }
+    if(el.classList.contains("ghost")) continue;
+    const r=el.getBoundingClientRect(), k=+u%2; const dx=(pr.left+pr.width/2-(r.left+r.width/2))/s, dy=(pr.top+pr.height/2-(r.top+r.height/2))/s;
+    const an=el.animate([{transform:`translate(${dx}px,${dy}px) scale(.35) rotate(${k?-20:20}deg)`,opacity:0},{transform:`translate(${dx*.4}px,${dy*.4-40}px) scale(.8)`,opacity:1,offset:.5},{transform:"none",opacity:1}],
+      {duration:D,easing:"cubic-bezier(.2,.8,.3,1)",fill:"backwards"});
+    an.currentTime=el_t; }
+}
+(function(){
+  // after every render: tiles that just left the hand/bar for the discard pile fly there; freshly drawn tiles fly in from the draw pile
+  const rc=renderCombat; renderCombat=function(){ const r=rc.apply(this,arguments);
+    try{ for(const k of ["_castSnaps","_endSnaps"]){ const sn=C&&C[k]; if(!sn) continue; const gone=sn.filter(x=>C.disc.includes(x.u)); if(gone.length||!sn.some(x=>C.hand.includes(x.u)||C.bar.includes(x.u))){ C[k]=null; flyTiles(gone,"disc"); } }
+      flyInDrawn(); }catch(e){}
+    return r; };
+  const ca=cast; cast=async function(){ if(C&&!C.busy&&!C.over&&C.bar.length) C._castSnaps=snapTiles(C.bar,"#sigilbox"); const r=await ca.apply(this,arguments); if(C) C._castSnaps=null; return r; };
+  const et=endTurn; endTurn=async function(){ if(C&&!C.busy&&!C.over) C._endSnaps=snapTiles(C.hand,"#handgrid"); const r=await et.apply(this,arguments); if(C) C._endSnaps=null; return r; };
+})();
 
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
 function sortHand(){
