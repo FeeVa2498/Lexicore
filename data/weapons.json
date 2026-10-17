@@ -12,7 +12,7 @@
       "source": "starter:scholar",
       "kind": "attack",
       "energyCost": 2,
-      "critLength": 2,
+      "critLength": 5,
       "mult": 1,
       "effect": "Deal damage.",
       "critEffect": "Gain +1 Energy next turn.",

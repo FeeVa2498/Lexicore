@@ -152,7 +152,7 @@
     },
     "reform": {
       "name": "Reassemble",
-      "description": "When a segment is destroyed it falls apart, and it rebuilds itself with 25% HP at the start of your next turn, as long as another segment is still standing. Destroy every segment in the same turn to win."
+      "description": "When a segment is destroyed it falls apart, and it rebuilds itself with 25% HP at the start of your turn after next (2 turns), as long as another segment is still standing. Destroy every segment before that to win."
     },
     "ally": {
       "name": "Support",
@@ -184,7 +184,7 @@
     },
     "bp_forcefield": {
       "name": "Force Field (boss)",
-      "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+      "description": "Starts with 6 Force Field cells and Recharges 2 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
     },
     "bp_statue": {
       "name": "Living Statue (boss)",
@@ -218,7 +218,7 @@
     },
     "forcefield": {
       "name": "Force Field",
-      "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+      "description": "Starts with 6 Force Field cells and Recharges 2 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
     },
     "statue": {
       "name": "Living Statue",

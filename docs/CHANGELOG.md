@@ -6,6 +6,17 @@ Shared copies live in the Google Drive folder *Lexicore / Doc / New Version* (up
 
 ---
 
+## 2026-10-17 · v1.6 – Scholar crit 5, Woodpecker Beak, relics +1, centre score board
+- **Spellbook** (Scholar): Critical length 2 → **5**. Tutorial Critical lesson is now MAGIC (5 letters). Journal unchanged (already ignores single-tile casts).
+- **Journal**: click it to open a log of this combat's words, grouped Cast once / Cast twice / 3+ times.
+- **New common relic: Woodpecker Beak**: an attack with even damage becomes (damage ÷ 2) pecks of 2, with an accelerating peck animation. Thorns, Rusty Nail and Chalk Tally count it as one attack.
+- **All Mult relics +1** (counting relics +1 per unit): e.g. Twin Moons 0.7 → 1.7, Vowel Prism 0.45 → 1.45 per vowel, Long Scroll 2 → 3; Monocle +3 → +4, Parrot +2 → +3.
+- **Scrapipede**: a fallen segment reassembles after **2 turns** (was next turn); a gold link aura joins the segments.
+- **The Gatekeeper**: Force Field 12 → **6** cells, Recharge Field +8 → **+2**.
+- **Map**: more "?" event nodes (floors 2–3 event 30 → 45%, floor 5 24 → 33%, floor 7 16 → 26%).
+- **Score board**: `Spell Power × Arcana = output` moved from the pedestal to a big board in the middle of the screen, 3 size tiers with crayon starbursts and sparks. Pedestal slimmer (≈400 px). Fixed: the pedestal was stretched over the hero in the Gemini fight.
+- GDD v1.6: §4.1, §4.5 (score board tiers), §4.8, §4.10, §6.1, §8.1, §8.2, §8.4, §10.1, §13, §13.4, §14.1, §15.3, §20. Data: `weapons.json`, `relics.json` (+ woodpecker), `enemies.json`, `balance.json`, `story.json`, `heroes.json`. Unlocks sheet (always-available list). Porting guide §4.1, §4.4, §4.8, §4.9, §4.11, §4.13, §5.3. C# `MultRelics.cs` / `Scoring.cs` updated; both golden files regenerated (C# scoring 1,816/1,816).
+
 ## 2026-10-15 · Encounter pacing, Act 1 boss nerf, tile motion, compact sigil box
 - **Encounter pacing** is now configurable per Act and per normal-fight number (`encounterRules` in `encounters.json`). Act 1: 1st fight always one enemy, then mostly pairs, **never 3 enemies**. Acts 2–3: trios only from the 4th (Act 2) / 3rd (Act 3) normal fight. Quads are no longer used by normal fights. Replaces the old floor-based pools.
 - **HP nerfs**: Mother Mycelia 165 → **140**, Sporeling 18 → **14** (full-HP burst 6 → 5 Poison), The Titan 180 → **155**.

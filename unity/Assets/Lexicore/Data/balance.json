@@ -26,8 +26,8 @@
       {
         "floor": "2-3",
         "weights": {
-          "combat": 60,
-          "event": 30,
+          "combat": 45,
+          "event": 45,
           "shop": 10
         }
       },
@@ -41,9 +41,9 @@
       {
         "floor": 5,
         "weights": {
-          "combat": 42,
+          "combat": 33,
           "elite": 34,
-          "event": 24
+          "event": 33
         }
       },
       {
@@ -53,9 +53,9 @@
       {
         "floor": 7,
         "weights": {
-          "combat": 40,
+          "combat": 30,
           "elite": 34,
-          "event": 16,
+          "event": 26,
           "shop": 10
         }
       },

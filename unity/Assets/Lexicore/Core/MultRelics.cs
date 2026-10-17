@@ -29,31 +29,31 @@ namespace Lexicore.Core
             string L = c.L; int n = L.Length;
             switch (id)
             {
-                case "r1": return n % 2 == 0 ? .7 : 0;                                              // Twin Moons
-                case "r2": return n % 2 == 1 ? .7 : 0;                                              // Odd Fang
-                case "r3": return n > 1 && L[0] == L[n - 1] ? 1.5 : 0;                               // Ouroboros Loop
-                case "r4": return .45 * L.Where(Letters.IsVowel).Distinct().Count();                // Vowel Prism
-                case "r5": return .4 * L.Where(ch => !Letters.IsVowel(ch)).Distinct().Count();      // Consonant Coil
-                case "r6": { int k = 0; for (int i = 1; i < n; i++) if (L[i] == L[i - 1]) k++; return 1 * k; } // Mirror Shard
-                case "r7": return n > 1 && L.Distinct().Count() == n ? .7 : 0;                       // Lone Wolf Seal
-                case "r8": return L.GroupBy(ch => ch).Any(g => g.Count() >= 3) ? 2.5 : 0;            // Triad Totem
-                case "r9": return .6 * c.Sp.Count(v => v >= 5);                                      // Heavy Ink
-                case "r10": return c.Sp.Count > 0 && c.Sp.All(v => v <= 4) ? 1 : 0;                  // Pebble Charm
-                case "r11": return n >= 7 ? 2 : 0;                                                   // Long Scroll
-                case "r12": return c.Sp.Sum() >= 15 ? .95 : 0;                                       // Ledger Stone
-                case "r13": return n % 2 == 1 && Letters.IsVowel(L[(n - 1) / 2]) ? .95 : 0;          // Heart Vowel
-                case "r14": return n > 0 && L[0] >= 'A' && L[0] <= 'F' ? .7 : 0;                    // Dawn Glyph
-                case "r15": return n > 0 && L[n - 1] >= 'T' && L[n - 1] <= 'Z' ? .7 : 0;            // Dusk Glyph
-                case "r16": return n > 1 && Letters.IsVowel(L[0]) && Letters.IsVowel(L[n - 1]) ? 1.5 : 0; // Open Mouth
-                case "r17": { int v = L.Count(Letters.IsVowel); return v > n - v ? 1.5 : 0; }        // Choir Bell
-                case "nametag": return (c.Tags & WordTags.Noun) != 0 ? .7 : 0;
-                case "actionfig": return (c.Tags & WordTags.Verb) != 0 ? .95 : 0;
-                case "moodring": return (c.Tags & WordTags.Adjective) != 0 ? 1 : 0;
-                case "swearjar": return (c.Tags & WordTags.Swear) != 0 ? 2 : 0;
-                case "lens": return .7 * c.Debuffed;                                                 // Cracked Lens
-                case "fieldguide": return (c.Tags & WordTags.Animal) != 0 ? 1 : 0;
-                case "jobboard": return (c.Tags & WordTags.Job) != 0 ? 1 : 0;
-                case "paintchart": return (c.Tags & WordTags.Color) != 0 ? 1.5 : 0;
+                case "r1": return n % 2 == 0 ? 1.7 : 0;                                              // Twin Moons
+                case "r2": return n % 2 == 1 ? 1.7 : 0;                                              // Odd Fang
+                case "r3": return n > 1 && L[0] == L[n - 1] ? 2.5 : 0;                               // Ouroboros Loop
+                case "r4": return 1.45 * L.Where(Letters.IsVowel).Distinct().Count();                // Vowel Prism
+                case "r5": return 1.4 * L.Where(ch => !Letters.IsVowel(ch)).Distinct().Count();      // Consonant Coil
+                case "r6": { int k = 0; for (int i = 1; i < n; i++) if (L[i] == L[i - 1]) k++; return 2 * k; } // Mirror Shard
+                case "r7": return n > 1 && L.Distinct().Count() == n ? 1.7 : 0;                       // Lone Wolf Seal
+                case "r8": return L.GroupBy(ch => ch).Any(g => g.Count() >= 3) ? 3.5 : 0;            // Triad Totem
+                case "r9": return 1.6 * c.Sp.Count(v => v >= 5);                                      // Heavy Ink
+                case "r10": return c.Sp.Count > 0 && c.Sp.All(v => v <= 4) ? 2 : 0;                  // Pebble Charm
+                case "r11": return n >= 7 ? 3 : 0;                                                   // Long Scroll
+                case "r12": return c.Sp.Sum() >= 15 ? 1.95 : 0;                                       // Ledger Stone
+                case "r13": return n % 2 == 1 && Letters.IsVowel(L[(n - 1) / 2]) ? 1.95 : 0;          // Heart Vowel
+                case "r14": return n > 0 && L[0] >= 'A' && L[0] <= 'F' ? 1.7 : 0;                    // Dawn Glyph
+                case "r15": return n > 0 && L[n - 1] >= 'T' && L[n - 1] <= 'Z' ? 1.7 : 0;            // Dusk Glyph
+                case "r16": return n > 1 && Letters.IsVowel(L[0]) && Letters.IsVowel(L[n - 1]) ? 2.5 : 0; // Open Mouth
+                case "r17": { int v = L.Count(Letters.IsVowel); return v > n - v ? 2.5 : 0; }        // Choir Bell
+                case "nametag": return (c.Tags & WordTags.Noun) != 0 ? 1.7 : 0;
+                case "actionfig": return (c.Tags & WordTags.Verb) != 0 ? 1.95 : 0;
+                case "moodring": return (c.Tags & WordTags.Adjective) != 0 ? 2 : 0;
+                case "swearjar": return (c.Tags & WordTags.Swear) != 0 ? 3 : 0;
+                case "lens": return 1.7 * c.Debuffed;                                                 // Cracked Lens
+                case "fieldguide": return (c.Tags & WordTags.Animal) != 0 ? 2 : 0;
+                case "jobboard": return (c.Tags & WordTags.Job) != 0 ? 2 : 0;
+                case "paintchart": return (c.Tags & WordTags.Color) != 0 ? 2.5 : 0;
                 default: return 0;
             }
         }

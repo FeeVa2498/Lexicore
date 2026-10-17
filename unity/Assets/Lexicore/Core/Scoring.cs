@@ -82,7 +82,7 @@ namespace Lexicore.Core
                 R.Mult = 1;
                 if (k > 0) { R.SpellPower += bangBonus; R.Exclamations = k; }
                 R.Output = R.SpellPower;
-                if (parts.Count == 1 && ctx.Has("monocle")) { R.Mult += 3; R.Fired.Add("monocle"); R.Output = (int)Math.Floor(R.SpellPower * R.Mult); }
+                if (parts.Count == 1 && ctx.Has("monocle")) { R.Mult += 4; R.Fired.Add("monocle"); R.Output = (int)Math.Floor(R.SpellPower * R.Mult); }
                 R.Crit = R.Letters.Length + k == w.Sigil;
                 AddFlatBonuses(R, w, ctx);
                 return R;
@@ -140,7 +140,7 @@ namespace Lexicore.Core
                 if (v != 0) { R.Mult += v; R.Fired.Add(rid); R.RelicMult[rid] = Round2(v); }
             }
             string key = string.Join(",", words);
-            if (ctx.Has("parrot") && ctx.LastWord != null && ctx.LastWord == key) { R.Mult += 2; R.Fired.Add("parrot"); }
+            if (ctx.Has("parrot") && ctx.LastWord != null && ctx.LastWord == key) { R.Mult += 3; R.Fired.Add("parrot"); }
             if (k > 0) { R.SpellPower += bangBonus; R.Exclamations = k; }
             if (ctx.Hero == "champion" && ctx.Hp < ctx.MaxHp / 2.0) R.Mult += 0.5;      // Adrenaline
             R.Crit = R.Letters.Length + k == w.Sigil;                                   // '!' tiles count toward the sigil

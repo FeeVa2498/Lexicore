@@ -15,7 +15,7 @@
       ],
       "startingRelic": "journal",
       "charSelectText": "A wise cat with a thirst for knowledge that no library could ever quench. Every book in the wastes has been read. Only The Tower, which no one has ever conquered, still keeps its secrets.",
-      "playstyle": "Balanced spell-caster. The Spellbook crits on 2-letter words for +1 Energy next turn, the Barrier crits at 4 letters and draws 3 tiles. The Journal doubles the second cast of the same word in a fight.",
+      "playstyle": "Balanced spell-caster. The Spellbook crits on 5-letter words for +1 Energy next turn, the Barrier crits at 4 letters and draws 3 tiles. The Journal doubles the second cast of the same word in a fight.",
       "who": "A curious wizard cat who found the ancient Tablet and never put it down.",
       "why": "Hungry for knowledge. The great sorcerer at the top of The Tower is said to know every word ever spoken.",
       "ending": {

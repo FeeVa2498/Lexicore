@@ -1,6 +1,6 @@
 # Lexicore – Unity porting guide (Unity 6.3 LTS · UI Toolkit)
 
-> For the dev team. Written from the playable prototype (13 Oct 2026). The prototype is the reference: when this guide, the GDD and the prototype disagree, **the golden tests (taken from the prototype) win**, except for the open decisions listed in §9.
+> For the dev team. Written from the playable prototype (updated 17 Oct 2026, v1.6). The prototype is the reference: when this guide, the GDD and the prototype disagree, **the golden tests (taken from the prototype) win**, except for the open decisions listed in §9.
 > Target: Unity **6.3 LTS (6000.3.x)**, **UI Toolkit** for all UI, C# 9.
 > Code, tests and golden files: GitHub repo FeeVa2498/Lexicore, folder `unity/Assets/Lexicore/` (https://github.com/FeeVa2498/Lexicore/tree/main/unity/Assets/Lexicore).
 
@@ -160,7 +160,7 @@ Output pipeline (in this order):
 
 ```
 SpellPower = Σ tile SP + Might (attack weapons) / Robust (defense weapons)      [single-tile casts: no Might/Robust]
-Mult       = weapon Mult + Σ over relics (Σ over words of length ≥ 2: relic bonus) + Parrot 2 + Adrenaline 0.5
+Mult       = weapon Mult + Σ over relics (Σ over words of length ≥ 2: relic bonus) + Parrot 3 + Adrenaline 0.5   [single tile: Monocle +4]
 SpellPower += ! bonus (2,4,6,10,16,26,42 per extra ! in a run)
 Crit       = letters + ! count == sigil
 Mult       = round(Mult, 2)
@@ -231,6 +231,8 @@ Output     = floor(SpellPower × Mult)
 
 Poison ticks do **not** go through this function. They bypass Shield, Field and the cap.
 
+**Woodpecker Beak** (relic): in `cast()` the main attack hit becomes `peckFlurry` when the attack damage `dmg` (after Too Tall, Hammer, Chalk Tally) is even and ≥ 2: call `dealToEnemy(ti, 2, opts)` up to `dmg/2` times, stopping when the target's HP reaches 0 or `capHit` is set. So Broken, Shield, Force Field (1 cell per peck), Time Slow and the Firewall apply per peck. Afterwards Thorns, Rusty Nail and the crit effects run once, as for a normal hit. The big `strikeAnim` is skipped (the flurry has its own animation: hit *i* at D·√(i/n) ms, D = min(2600, 520 + 42n)).
+
 ### 4.5 Thorns
 
 - **Enemy Thorns**: after each attack hit *you* land on that enemy, you take its Thorns. Your Shield absorbs it. It can kill you mid-cast.
@@ -282,7 +284,7 @@ Poison ticks do **not** go through this function. They bypass Shield, Field and 
 
 1. Reset `capTaken`/`capHit` (Firewall) and `dmgTaken`.
 2. `turn++`. Your Shield → 0.
-3. Reassemble: downed Scrapipede segments come back with ceil(25 % max HP), Shield 0, if any segment still stands.
+3. Reassemble: downed Scrapipede segments with `turn ≥ reviveTurn` (reviveTurn = the turn it fell + **2**) come back with ceil(25 % max HP), Shield 0, if any segment still stands.
 4. Energy = 3 + boss-relic Energy (Hollow Coin, Insomnia Lamp, Cracked Flask, Dry Palette, Rival's Banner: +1 each) + stored `nextEnergy`. Big Game Trophy: +1 in Elite/Boss fights.
 5. Turn 1 only:
    - Spark Plug +1 Energy;
@@ -300,7 +302,7 @@ Poison ticks do **not** go through this function. They bypass Shield, Field and 
 ### 4.9 Deaths (`resolveDeaths()`)
 
 - An enemy at HP ≤ 0:
-  - If it has `reform` (Scrapipede) and another segment stands, it is **down**: no gold, revives next turn.
+  - If it has `reform` (Scrapipede) and another segment stands, it is **down**: no gold, revives 2 turns later (`reviveTurn = turn + 2`).
   - Otherwise it is dead: gold drop, split (Great Slime → 5 Slimelets), and if it was the leader (Mother Mycelia), every minion withers.
 - When no segment stands, downed segments die for good.
 - Gemini Twin Bond: when one twin dies and the other lives, the living twin gets +6 Might (once).
@@ -314,10 +316,10 @@ Weaken halves Shield **you** gain (floor). Broken ×1.5 damage taken (floor). Po
 
 | Trigger | Relics |
 |---|---|
-| Score (in `Evaluate`) | the 25 Mult relics, Parrot, Monocle (single tile +3), Journal ×2, Berserker's Blood |
+| Score (in `Evaluate`) | the 25 Mult relics (values +1 in v1.6, see `relics.json` / `MultRelics.cs`), Parrot +3, Monocle (single tile +4), Journal ×2, Berserker's Blood |
 | Combat start | Rival's Banner: you Broken +1. Bounty Poster: Elite max HP ×0.75 (ceil). |
 | Turn start | Spark Plug, Scrap Plating, Iron Knuckles, Potted Cactus (turn 1); Wind-up Key; Big Game Trophy; Static Coil; boss-relic Energy |
-| On attack | Chalk Tally (every 10th attack ×2, counter `G.nib` lasts the run), Rusty Nail, Megaphone |
+| On attack | Chalk Tally (every 10th attack ×2, counter `G.nib` lasts the run), Rusty Nail, Megaphone, Woodpecker Beak (even damage → pecks of 2, §4.4) |
 | After cast (each word ≥ 2 letters) | Sandbag 6+ letters → +10 Shield; Umbrella starts with a vowel → +8 Shield (both halved by Weaken, feed Barbed Wire); Snake Charm S or Z → +2 Poison on target; Protein Bar double letter → +1 Might |
 | 3rd cast in a turn | Metronome +1 Might, Rubber Stamp 5 to all |
 | First cast of a combat | Quick Gloves draw = tiles cast |
@@ -365,7 +367,7 @@ Weaken halves Shield **you** gain (floor). Broken ×1.5 damage taken (floor). Po
   - Haste: it acts twice in a row (two moves).
   - Slow: no move, and it takes ×2 damage (during your turn before it).
   - The intent shows both moves when hasted.
-- **Force Field (Gatekeeper)**: starts with 12 cells. `buff field 8` adds cells. See §4.4 step 4.
+- **Force Field (Gatekeeper)**: starts with 6 cells. `buff field 2` adds cells (every 4th turn). See §4.4 step 4.
 - **Syntax Filter + Firewall (LEXICORE)**:
   - Filter at turn start (§4.8).
   - Cap 70 per player turn (§4.4). When reached, finish the current action, then end the turn automatically.
@@ -441,7 +443,8 @@ Layout zones (1600 × 900):
 - top-right: gold / map / deck / settings;
 - left: hero + HP bar + Energy battery;
 - right: enemies (slot positions per group size in the prototype `SLOTS` table) with intents over their heads and statuses under the HP bar;
-- centre-left (right of the hero): the compact sigil pedestal, ≈430 px wide, tiles row on top and weapon/score/buttons below; it must never cover the front enemy or any intent;
+- centre-left (right of the hero): the compact sigil pedestal, ≈400 px wide, tiles row on top and weapon/sockets/buttons below; it must never cover the front enemy or any intent;
+- just above the pedestal (below it in the Gemini fight): the **score board** `Spell Power × Arcana = output`, each number in 3 size tiers (SP 0–20 / 21–50 / 51+, Arcana 0–10 / 11–20 / 21+) with spinning crayon starbursts at tier 2 and 3 and rising glyph sparks at tier 3 (GDD §4.5);
 - bottom: 5 weapon slots, consumable shelf, 16-tile hand grid, draw/discard piles, log, End Turn.
 
 Custom controls (Unity 6 `[UxmlElement]` + `[UxmlAttribute]`):
@@ -457,6 +460,8 @@ Custom controls (Unity 6 `[UxmlElement]` + `[UxmlAttribute]`):
   - Bosses show the move name as a banner.
   - A hasted Zero shows two moves.
   - A slowed Zero shows "×2 dmg".
+- **Journal panel**: clicking the Journal relic opens a panel listing `CombatState.WordUses` grouped 1× / 2× / 3+×.
+- **Scrapipede link**: an aura layer behind the fighters draws beams between the segments' centres and a ring under each; beams to a downed segment flicker.
 - **Relic bar**: while a word is on the pedestal, run `Scoring.Evaluate(check:false)` to preview. Relics that would fire glow and drop below the bar with a Mult badge (`RelicMult`).
 
 Animations:

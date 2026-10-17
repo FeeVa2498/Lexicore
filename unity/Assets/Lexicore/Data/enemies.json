@@ -1269,7 +1269,7 @@
             {
               "type": "buff",
               "status": "field",
-              "value": 8
+              "value": 2
             },
             {
               "type": "attack",
@@ -1308,10 +1308,10 @@
       "bossGimmick": {
         "id": "forcefield",
         "name": "Force Field",
-        "description": "Starts with 12 Force Field cells and Recharges 8 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
+        "description": "Starts with 6 Force Field cells and Recharges 2 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field."
       },
       "startingStatus": {
-        "field": 12
+        "field": 6
       }
     },
     {
@@ -2042,10 +2042,11 @@
           ]
         }
       ],
-      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls before it is rebuilt.",
       "special": [
-        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
-      ]
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) 2 turns later (at the start of the player's turn after next). Destroy every segment before that to win. No gold until destroyed for good."
+      ],
+      "reviveAfterTurns": 2
     },
     {
       "id": "pede_b",
@@ -2092,10 +2093,11 @@
           ]
         }
       ],
-      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls before it is rebuilt.",
       "special": [
-        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
-      ]
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) 2 turns later (at the start of the player's turn after next). Destroy every segment before that to win. No gold until destroyed for good."
+      ],
+      "reviveAfterTurns": 2
     },
     {
       "id": "pede_t",
@@ -2146,10 +2148,11 @@
           ]
         }
       ],
-      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.",
+      "lore": "A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls before it is rebuilt.",
       "special": [
-        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) at the start of the player's next turn. Destroy every segment in the same turn to win. No gold until destroyed for good."
-      ]
+        "reassemble: when destroyed while another Scrapipede segment still stands, it falls apart and comes back with 25% max HP (rounded up) 2 turns later (at the start of the player's turn after next). Destroy every segment before that to win. No gold until destroyed for good."
+      ],
+      "reviveAfterTurns": 2
     },
     {
       "id": "jar_r",

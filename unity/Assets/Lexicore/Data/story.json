@@ -11,8 +11,8 @@
     "Spell another word and cast it. Shield soaks up damage until the start of your next turn.",
     "You're out of Energy. Press End turn and watch the slime hit your shield.",
     "Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.",
-    "Turn 3: time for a Critical. See the 2 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook gives you +1 Energy next turn.",
-    "Select the Spellbook and spell a 2-letter word, like GO. The sockets turn gold when the length is right.",
+    "Turn 3: time for a Critical. See the 5 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook gives you +1 Energy next turn.",
+    "Select the Spellbook and spell a 5-letter word, like MAGIC. The sockets turn gold when the length is right.",
     "Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!"
   ],
   "liftoffSlides": [

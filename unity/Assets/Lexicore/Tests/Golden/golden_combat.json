@@ -159,7 +159,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 1,
+     "nextEnergy": 0,
      "nextDraw": 0,
      "turn": 1
     },
@@ -191,8 +191,7 @@
     },
     "enemyCount": 1,
     "log": [
-     "GO: 5 × 1 = 5 · CRIT",
-     "Critical! +1 Energy next turn."
+     "GO: 5 × 1 = 5"
     ]
    }
   },
@@ -269,7 +268,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -301,7 +300,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -379,7 +379,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -411,7 +411,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -3508,7 +3509,7 @@
      "frustrated": 1,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -3544,7 +3545,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -3626,7 +3628,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -3658,7 +3660,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -3842,7 +3845,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -3875,7 +3878,8 @@
     "enemyCount": 1,
     "log": [
      "Echo Draught doubles this word.",
-     "ZEBRA: 21 × 1 = 42"
+     "ZEBRA: 21 × 1 = 42 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -3958,7 +3962,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -3990,7 +3994,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 42"
+     "ZEBRA: 21 × 1 = 42 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -4268,7 +4273,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -4300,7 +4305,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "CAT: 14 × 1 = 14",
+     "CAT: 14 × 1 = 14 · CRIT",
+     "Critical! +1 Energy next turn.",
      "Rusty Nail: 3 Poison."
     ]
    }
@@ -4382,7 +4388,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -4414,8 +4420,9 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21",
-     "Chalk Tally: the 10th mark! Double damage."
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Chalk Tally: the 10th mark! Double damage.",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -5335,7 +5342,7 @@
     "enemies": [
      {
       "id": "warden",
-      "hp": 168,
+      "hp": 149,
       "max": 225,
       "block": 0,
       "might": 0,
@@ -5360,7 +5367,7 @@
     },
     "enemyCount": 1,
     "log": [
-     "DUMBASS: 19 × 3 = 57"
+     "DUMBASS: 19 × 4 = 76"
     ]
    }
   },
@@ -5739,7 +5746,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -5771,7 +5778,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -5953,7 +5961,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -5985,7 +5993,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21",
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn.",
      "Ancient Stone Gargoyle's Thorns hit you for 8."
     ]
    }
@@ -6063,7 +6072,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -6095,7 +6104,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -6171,7 +6181,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -6186,7 +6196,7 @@
       "poison": 0,
       "broken": 0,
       "stun": 0,
-      "field": 11,
+      "field": 5,
       "form": null,
       "moveIndex": 0,
       "dead": false
@@ -6203,8 +6213,9 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21",
-     "Force Field: one cell knocked out (11 left)."
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Force Field: one cell knocked out (5 left).",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -6281,7 +6292,7 @@
      "frustrated": 0,
      "thorns": 0,
      "energy": 8,
-     "nextEnergy": 0,
+     "nextEnergy": 1,
      "nextDraw": 0,
      "turn": 1
     },
@@ -6313,7 +6324,8 @@
     },
     "enemyCount": 1,
     "log": [
-     "ZEBRA: 21 × 1 = 21"
+     "ZEBRA: 21 × 1 = 21 · CRIT",
+     "Critical! +1 Energy next turn."
     ]
    }
   },
@@ -6423,9 +6435,9 @@
      "JAZZ: 113 × 1 = 113",
      "Firewall: the damage cap is reached, your turn ends.",
      "LEXICORE uses Parse.",
-     "4 tile(s) became Cursed: C F W E",
+     "4 tile(s) became Cursed: Z E Q A",
      "LEXICORE gains 26 Block.",
-     "Syntax Filter: K tiles are worth 0 this turn."
+     "Syntax Filter: S tiles are worth 0 this turn."
     ]
    }
   },
@@ -6625,7 +6637,7 @@
     "enemyCount": 1,
     "log": [
      "Poison deals 4 at the end of your turn.",
-     "4 tile(s) became Slimy: T J U S"
+     "4 tile(s) became Slimy: H P S E"
     ]
    }
   },
@@ -6921,7 +6933,7 @@
     "enemyCount": 1,
     "log": [
      "Smoldering tiles burn you for 2.",
-     "4 tile(s) became Slimy: B N E I"
+     "4 tile(s) became Slimy: Z G V U"
     ]
    }
   },
@@ -7024,7 +7036,7 @@
     "enemyCount": 1,
     "log": [
      "Condemned C is banished until this fight ends.",
-     "4 tile(s) became Slimy: F I N C"
+     "4 tile(s) became Slimy: P A ? K"
     ]
    }
   },
@@ -7436,7 +7448,7 @@
     "log": [
      "Gemini Left uses Brace.",
      "Gemini Left gains 16 Block.",
-     "4 tile(s) became Locked: F Y ? L",
+     "4 tile(s) became Locked: ? F Z X",
      "Gemini Right uses Pinch.",
      "Gemini Right attacks for 34."
     ]
@@ -7898,7 +7910,7 @@
     },
     "enemyCount": 2,
     "log": [
-     "4 tile(s) became Slimy: S Q L O",
+     "4 tile(s) became Slimy: ? O S N",
      "Sporeling bursts! You are hit by 4 Poisoned.",
      "Sporeling is defeated!"
     ]
@@ -8447,7 +8459,7 @@
      "Prisoner Zero gains 18 Block.",
      "Prisoner Zero gains 2 Might.",
      "Prisoner Zero uses Scream.",
-     "3 tile(s) became Cursed: O V O",
+     "3 tile(s) became Cursed: G F I",
      "Prisoner Zero attacks for 12."
     ]
    }
@@ -8622,7 +8634,7 @@
       "poison": 0,
       "broken": 0,
       "stun": 0,
-      "field": 11,
+      "field": 5,
       "form": null,
       "moveIndex": 2,
       "dead": false
@@ -8640,7 +8652,7 @@
     "enemyCount": 1,
     "log": [
      "The Gatekeeper uses Recharge Field.",
-     "The Gatekeeper gains 8 Force Field.",
+     "The Gatekeeper gains 2 Force Field.",
      "The Gatekeeper attacks for 14."
     ]
    }
@@ -8789,9 +8801,9 @@
     "player": {
      "hp": 70,
      "maxHp": 70,
-     "gold": 50,
+     "gold": 47,
      "potions": [
-      "echo"
+      "heal"
      ]
     },
     "enemies": [
@@ -8812,7 +8824,7 @@
      }
     ],
     "log": [
-     "4 tile(s) became Slimy: I S K Y",
+     "4 tile(s) became Slimy: F I O Q",
      "Green Slime takes 5 Poison.",
      "Green Slime is defeated!"
     ]
@@ -9255,7 +9267,7 @@
     },
     "enemyCount": 1,
     "log": [
-     "4 tile(s) became Slimy: P Z N L",
+     "4 tile(s) became Slimy: S ? J H",
      "Wind-up Key: +1 Energy."
     ]
    }
@@ -9360,7 +9372,7 @@
     },
     "enemyCount": 1,
     "log": [
-     "4 tile(s) became Slimy: Q C E X"
+     "4 tile(s) became Slimy: A Q W T"
     ]
    }
   },
@@ -10307,7 +10319,7 @@
     "player": {
      "hp": 70,
      "maxHp": 70,
-     "gold": 14,
+     "gold": 10,
      "potions": [],
      "block": 0,
      "might": 0,

@@ -95,6 +95,81 @@ body.f1 .art .fr.i1{display:inline}
 
 /* ================= COMBAT STAGE ================= */
 #combat-root{position:fixed;inset:0;z-index:10;background:#26222e;overflow:hidden}
+/* slimmer pedestal: tiles + weapon/sockets/buttons; the score lives on the centre board */
+#stage #sigilbox{width:400px!important}
+#stage #sigilbox .sg-tiles .tile,#stage #sigilbox .sg-tiles .slot{width:35px;height:40px}
+#stage #sigilbox.many .sg-tiles .tile,#stage #sigilbox.many .sg-tiles .slot{width:27px;height:32px}
+#sigilbox .sg-row{justify-content:space-between}
+#stage.twin #sigilbox{top:100px!important;bottom:auto!important}
+/* centre score board */
+#scoreboard{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;opacity:0;transition:opacity .18s;z-index:6}
+#scoreboard.below{transform:translate(-50%,0)}
+#scoreboard.on{opacity:1;pointer-events:auto}
+#stage.zoomed #scoreboard:not(.fire){opacity:0}
+body.jopen #tipbox{display:none!important}
+.sb-eq{display:flex;align-items:center;gap:12px}
+.sb-x{position:relative;z-index:5;font:400 36px var(--f-display);color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill}
+.sb-n{position:relative;display:grid;place-items:center;min-width:76px;--fs:40px;transition:transform .2s}
+.sb-n b{position:relative;z-index:2;font:400 var(--fs) var(--f-display);line-height:1.15;color:#fff;padding:0 14px;border:4px solid var(--ink);border-radius:14px;box-shadow:3px 4px 0 rgba(29,27,34,.85);transition:font-size .28s cubic-bezier(.3,1.6,.5,1)}
+.sb-n.chip b{background:var(--blue)} .sb-n.mult b{background:#e63946}
+.sb-n .lb{position:relative;z-index:2;margin-top:3px;font:400 13px var(--f-display);color:#fff;-webkit-text-stroke:4px var(--ink);paint-order:stroke fill;letter-spacing:.5px}
+.sb-n.chip{--c:#7fc0ff;--c2:#3a86ff} .sb-n.mult{--c:#ff8a80;--c2:#e63946}
+.sb-n.t2{--fs:54px} .sb-n.t3{--fs:70px}
+.sb-n .halo{position:absolute;left:50%;top:42%;width:calc(var(--fs) * 2.7);height:calc(var(--fs) * 2.7);transform:translate(-50%,-50%) scale(0);opacity:0;z-index:1;overflow:visible;transition:transform .3s,opacity .3s}
+.sb-n .halo path{fill:none;stroke:var(--c);stroke-width:5;stroke-linecap:round;filter:url(#wobA)}
+.sb-n .halo.h2 path{stroke:#fff;stroke-width:3;opacity:.75}
+.sb-n.t2 .halo.h1{opacity:.9;transform:translate(-50%,-50%) scale(1);animation:sbspin 7s linear infinite}
+.sb-n.t3 .halo.h1{opacity:1;transform:translate(-50%,-50%) scale(1.25);animation:sbspin 2.6s linear infinite}
+.sb-n.t3 .halo.h2{opacity:1;transform:translate(-50%,-50%) scale(1.05);animation:sbspin2 1.7s linear infinite}
+@keyframes sbspin{from{transform:translate(-50%,-50%) scale(var(--hs,1)) rotate(0)}to{transform:translate(-50%,-50%) scale(var(--hs,1)) rotate(360deg)}}
+@keyframes sbspin2{0%{transform:translate(-50%,-50%) scale(1) rotate(0)}50%{transform:translate(-50%,-50%) scale(1.14) rotate(-180deg)}100%{transform:translate(-50%,-50%) scale(1) rotate(-360deg)}}
+.sb-n.t2 .halo.h1{--hs:1} .sb-n.t3 .halo.h1{--hs:1.25}
+.sb-n .sparks{position:absolute;inset:0;z-index:3;pointer-events:none;display:none}
+.sb-n.t3 .sparks{display:block}
+.sb-n .sparks i{position:absolute;left:calc(50% + var(--x));bottom:30%;font:700 26px var(--f-tile);font-style:normal;color:var(--c);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;filter:drop-shadow(0 0 6px var(--c2));animation:sbrise 1.6s ease-out infinite;animation-delay:calc(var(--d) * -1)}
+@keyframes sbrise{0%{transform:translate(-50%,0) scale(1.2);opacity:0}15%{opacity:1}100%{transform:translate(-50%,calc(var(--h) * -1)) scale(.4) rotate(90deg);opacity:0}}
+.sb-n.t3 b{animation:sbjit .18s steps(2) infinite;box-shadow:3px 4px 0 rgba(29,27,34,.85),0 0 18px var(--c2),0 0 36px var(--c)}
+.sb-n.t2 b{box-shadow:3px 4px 0 rgba(29,27,34,.85),0 0 12px var(--c2)}
+@keyframes sbjit{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(1px,-1px) rotate(-1deg)}100%{transform:translate(-1px,1px) rotate(1deg)}}
+.sb-n.bump{animation:sbbump .42s cubic-bezier(.3,1.8,.5,1)}
+@keyframes sbbump{0%{transform:scale(1.45)}100%{transform:scale(1)}}
+.sb-tot{position:relative;z-index:5;display:flex;align-items:center;gap:8px;margin-top:-2px;text-shadow:0 0 10px rgba(29,27,34,.9);font:400 34px var(--f-display);color:#fff;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill}
+.sb-tot b{font-weight:400;font-size:40px}
+#scoreboard:has(.t3) .sb-tot{margin-top:12px} #scoreboard:has(.t3) .sb-eq{margin-bottom:4px}
+.sb-crit{display:none;font:400 18px var(--f-display);font-style:normal;color:#1d1b22;background:#ffd166;-webkit-text-stroke:0;border:3px solid var(--ink);border-radius:8px;padding:0 8px;transform:rotate(-6deg)}
+#scoreboard.crit .sb-crit{display:inline-block}
+#scoreboard.fire{animation:sbfire .76s ease-in forwards}
+@keyframes sbfire{0%{transform:translate(-50%,-100%) scale(1)}22%{transform:translate(-50%,-100%) scale(1.22)}60%{transform:translate(-50%,-100%) scale(1.1);opacity:1}100%{transform:translate(-50%,-125%) scale(.9);opacity:0}}
+#scoreboard.below.fire{animation-name:sbfireb}
+@keyframes sbfireb{0%{transform:translate(-50%,0) scale(1)}22%{transform:translate(-50%,0) scale(1.22)}60%{transform:translate(-50%,0) scale(1.1);opacity:1}100%{transform:translate(-50%,10%) scale(.9);opacity:0}}
+/* Journal word log */
+.jpanel{position:absolute;z-index:40;min-width:380px;max-width:620px;background:#f3ead8;color:#1d1b22;border:4px solid var(--ink);border-radius:14px;box-shadow:5px 6px 0 rgba(29,27,34,.85);padding:10px 14px 10px;font-family:var(--f-body,inherit)}
+.jhead{display:flex;align-items:center;gap:10px;margin-bottom:8px} .jhead svg{width:34px;height:34px} .jhead b{font:400 24px var(--f-display)} .jhead span{color:#6b6070;font-size:16px;flex:1}
+.jx{border:3px solid var(--ink);background:#fff;border-radius:8px;font-size:16px;cursor:pointer;padding:0 8px}
+.jcols{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr));gap:10px}
+.jcol{background:#fff;border:3px solid var(--ink);border-radius:10px;padding:6px 8px 8px;display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start;min-height:60px}
+.jcol h4{width:100%;margin:0 0 2px;font:400 17px var(--f-display)} .jcol h4 small{display:block;font:13px var(--f-body,inherit);color:#6b6070}
+.jcol.j1{background:#fff4cf} .jcol.j1 h4{color:#a86b00} .jcol.j2{background:#e2f0ff} .jcol.j3{background:#eee9f2}
+.jword{font:700 15px var(--f-tile);background:#ffbe5c;border:2px solid var(--ink);border-radius:6px;padding:1px 6px} .jcol.j2 .jword{background:#9fd0ff} .jcol.j3 .jword{background:#d7d0de}
+.jword i{font-style:normal;margin-left:4px;color:#6b2f8f} .jnone{color:#9a909f} .jempty{font-size:17px;max-width:46ch;padding:4px 2px 8px}
+.jfoot{margin-top:8px;font-size:13px;color:#6b6070}
+/* Scrapipede link */
+.pedelink{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
+.pl-glow{fill:none;stroke:rgba(255,170,0,.5);stroke-width:26;stroke-linecap:round;filter:blur(4px);animation:plpulse 1.6s ease-in-out infinite}
+.pl-core{fill:none;stroke:#ffbe0b;stroke-width:7;stroke-linecap:round;stroke-dasharray:14 10;animation:plflow 1.1s linear infinite;filter:url(#wobA)}
+.pl-spark{fill:none;stroke:#fff6c8;stroke-width:3;stroke-linecap:round;stroke-dasharray:3 60;animation:plflow 0.9s linear infinite}
+.pl-beam.loop{opacity:.55}
+.pl-beam.weak{opacity:.32} .pl-beam.weak .pl-core{animation-duration:3s;stroke-dasharray:6 16} .pl-beam.weak .pl-glow{animation:plflick .5s steps(2) infinite}
+.pl-ground{fill:rgba(255,190,11,.28);stroke:#ffbe0b;stroke-width:4;stroke-dasharray:10 7;animation:plpulse 1.6s ease-in-out infinite}
+.pl-halo{fill:rgba(255,190,11,.12);stroke:rgba(255,190,11,.7);stroke-width:4;stroke-dasharray:6 6;animation:plspin 3s linear infinite;transform-box:fill-box;transform-origin:center}
+.pl-dot{fill:#fff3b0;stroke:#1d1b22;stroke-width:3;animation:plpulse 1.6s ease-in-out infinite}
+.pl-node.weak{opacity:.45}
+@keyframes plflow{to{stroke-dashoffset:-48}} @keyframes plpulse{50%{opacity:.55}} @keyframes plflick{50%{opacity:.25}} @keyframes plspin{to{transform:rotate(360deg)}}
+/* Woodpecker pecks */
+.peckfx{position:absolute;width:34px;height:8px;margin:-4px 0 0 -17px;background:#fff;border:3px solid var(--ink);border-radius:6px;transform:rotate(var(--r));animation:peck .26s ease-out forwards;pointer-events:none}
+@keyframes peck{0%{transform:rotate(var(--r)) scale(.3);opacity:1}60%{transform:rotate(var(--r)) scale(1.2);opacity:1}100%{transform:rotate(var(--r)) scale(1.4);opacity:0}}
+.peckctr{position:absolute;transform:translate(-50%,-50%);font:400 44px var(--f-display);color:#ffd23f;-webkit-text-stroke:8px var(--ink);paint-order:stroke fill;pointer-events:none;z-index:9}
+.peckctr.hit{animation:pkc .12s ease-out} @keyframes pkc{0%{transform:translate(-50%,-50%) scale(1.3)}100%{transform:translate(-50%,-50%) scale(1)}}
 /* compact sigil pedestal (kept clear of the enemy row and their intents) */
 #sigilbox{left:448px!important;bottom:296px!important;width:432px!important;padding:8px 10px 9px!important;gap:6px!important;border-width:3px!important;border-radius:16px!important;
   background:linear-gradient(180deg,#7d808c,#5d6170)!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.1),4px 5px 0 rgba(29,27,34,.85),0 0 16px rgba(95,212,196,.18)!important}
@@ -1710,11 +1785,11 @@ function genMap(){
     const n=nodes[f][c]; if(!n) continue;
     // elites only on floors 5 and 7, so a path meets at most the act's 2 elites
     if(f===0) n.type="combat";
-    else if(f<=2) n.type=weighted([["combat",60],["event",30],["shop",10]]);
+    else if(f<=2) n.type=weighted([["combat",45],["event",45],["shop",10]]);
     else if(f===3) n.type=Math.random()<.5?"rest":"shop";
-    else if(f===4) n.type=weighted([["combat",42],["elite",34],["event",24]]);
+    else if(f===4) n.type=weighted([["combat",33],["elite",34],["event",33]]);
     else if(f===5) n.type="treasure";
-    else if(f===6) n.type=weighted([["combat",40],["elite",34],["event",16],["shop",10]]);
+    else if(f===6) n.type=weighted([["combat",30],["elite",34],["event",26],["shop",10]]);
     else n.type="rest";
   }
   for(let c=0;c<W;c++) if(nodes[F-1][c]) nodes[F-1][c].next=[3];
@@ -2011,7 +2086,7 @@ async function startPlayerTurn(){
   C.p.thorns=C.baseThorns||0;
   C.filling=true; draw(HAND_SIZE - C.hand.length + extra); C.filling=false;
   if(C.tut&&C.turn===1) ensureLetters("CATDOG");
-  if(C.tut&&C.turn===3) ensureLetters("GO");
+  if(C.tut&&C.turn===3) ensureLetters("MAGIC");
   C.wi = C.tut&&C.turn===1?1:0;
   renderCombat(); if(fired.length) flashRelics(fired);
   banner(`Turn ${C.turn}`, 700);
@@ -2045,7 +2120,7 @@ function evaluate(tiles, w, check){
     R.valid=true; R.fallback=true; R.L=letters.join(""); R.words=letters.map((L,i)=>L+"!".repeat(runs[i]));
     R.chips=parts.reduce((s,p,i)=>s+tileChip(p[0],letters[i]),0); R.mult=1; R.notes.push(parts.length>1?"Single letters: Mult 1, no relics":"Single tile: Mult 1, no relics");
     if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
-    R.total=R.chips; if(parts.length===1&&G.relics.includes("monocle")){ R.mult+=3; R.fired.push("monocle"); R.notes=R.notes.map(n=>n.replace(": Mult 1, no relics","")); R.notes.push("Monocle +3"); R.total=Math.floor(R.chips*R.mult); }
+    R.total=R.chips; if(parts.length===1&&G.relics.includes("monocle")){ R.mult+=4; R.fired.push("monocle"); R.notes=R.notes.map(n=>n.replace(": Mult 1, no relics","")); R.notes.push("Monocle +4"); R.total=Math.floor(R.chips*R.mult); }
     R.crit=(R.L.length+k)===w.sigil; midasBonus(R,w);
     return R;
   }
@@ -2082,7 +2157,7 @@ function evaluate(tiles, w, check){
   const ctxs = parts.map((p,i)=>({L:words[i].replace(/\?/g,"_"), sp:p.map(t=>t.ch==="?"?(R.resolved[t.uid]?tileChip(t,R.resolved[t.uid]):0):tileChip(t)), deb:p.filter(t=>t.deb).length})).filter(c=>c.L.length>1);
   R.relicVals={};
   for(const rid of G.relics){ const rel=RELICS[rid]; if(!rel.f) continue; let v=0,n=0; for(const c of ctxs){ const x=rel.f(c); if(x){ v+=x; n++; } } if(v){ R.mult+=v; R.fired.push(rid); R.relicVals[rid]=+v.toFixed(2); R.notes.push(`${rel.name} +${+v.toFixed(2)}${n>1?` (${n} words)`:""}`);} }
-  if(G.relics.includes("parrot")&&G.lastWord&&G.lastWord===words.join(",")){ R.mult+=2; R.fired.push("parrot"); R.notes.push("Parrot +2"); }
+  if(G.relics.includes("parrot")&&G.lastWord&&G.lastWord===words.join(",")){ R.mult+=3; R.fired.push("parrot"); R.notes.push("Parrot +3"); }
   if(k){ R.chips+=bangBonus; R.bang=k; R.notes.push(`${"!".repeat(k)} +${bangBonus} Spell Power`); }
   if(typeof G!=="undefined"&&G&&G.hero==="champion"&&G.hp<G.maxHp/2){ R.mult+=0.5; R.notes.push("Adrenaline +0.5"); }
   R.crit = (R.L.length+k)===w.sigil;  // [ ! ] tiles count toward the sigil
@@ -2161,7 +2236,7 @@ async function cast(){
     const hits=1+(hasR("megaphone")?(R.bang||0):0); if(hits>1) flashRelics(["megaphone"]);
     if(hasR("nib")){ const nb0=G.nib||0; G.nib=nb0+hits; if(Math.floor(G.nib/10)>Math.floor(nb0/10)){ dmg*=2; log("Chalk Tally: the 10th mark! Double damage."); flashRelics(["nib"]); } }
     const wasFull=C.es[ti].hp===C.es[ti].max;
-    const res=dealToEnemy(ti,dmg,opts);
+    const res=(hasR("woodpecker")&&dmg>=2&&dmg%2===0)?await peckFlurry(ti,dmg,opts,label):dealToEnemy(ti,dmg,opts);
     if(wasFull&&C.es[ti].hp<=0) achOneShot();
     if(res.dmg>=100) achHit("big100");
     if(R.crit){
@@ -2172,7 +2247,7 @@ async function cast(){
       if(wid==="hammer"){ log("Critical! The hammer smashes through block."); }
       if(wid==="slam"&&C.es[ti].hp>0){ C.es[ti].stun=(C.es[ti].stun||0)+1; log("Critical! The target is Stunned."); }
     }
-    await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label});
+    if(!res.flurry) await strikeAnim("p","e"+ti,res,{crit:R.crit,word:label}); else if(R.crit){ const cc=center("e"+ti); stamp(cc.x,cc.top-100,"CRITICAL!"); await sleep(T_(500)); }
     if(await thornsBack(ti)) return;
     if(hasR("nail")&&C.es[ti].hp>0){ C.es[ti].poison+=hits; log(`Rusty Nail: ${hits} Poison.`); flashRelics(["nail"]); renderCombat(); }
     let dealt=res.dmg;
@@ -2275,7 +2350,7 @@ async function resolveDeaths(){
   for(let pass=0;pass<2;pass++){ let leaderFell=false;
     for(let i=0;i<C.es.length;i++){ const e=C.es[i];
       if(!e.dead && e.hp<=0){ const D=ENEMIES[e.id]; any=true;
-        if(D.reform && standing()){ e.dead=true; e.down=true; e.reviveTurn=C.turn+1; e.block=0; e.poison=0; e.broken=0; log(`${D.name} falls apart! It will reassemble at the start of your next turn.`); await downAnim(i); continue; }
+        if(D.reform && standing()){ e.dead=true; e.down=true; e.reviveTurn=C.turn+2; e.block=0; e.poison=0; e.broken=0; log(`${D.name} falls apart! It will reassemble in 2 turns.`); await downAnim(i); continue; }
         e.dead=true; G.stats.kills++; log(`${D.name} is defeated!`); await deathAnim(i); e.gone=true;
         if(D.split) splits.push(...D.split); if(D.leader) leaderFell=true; } }
     if(!standing()) for(let i=0;i<C.es.length;i++){ const e=C.es[i]; if(e.down){ e.down=false; any=true; G.stats.kills++; log(`${ENEMIES[e.id].name} is scrapped for good!`); await deathAnim(i); e.gone=true; } }
@@ -2436,7 +2511,7 @@ function fighterHTML(key){
   const hp=isP?[G.hp,G.maxHp]:[e.hp,e.max]; const block=isP?C.p.block:e.block;
   const multi=C.es.filter(x=>!x.dead).length>1, tgt=!isP&&!e.dead&&!C.over&&C.target===i;
   const over = isP ? `<div class="stats">${statusHTML(C.p,["might","robust","thorns","poison","weaken","broken","curse","frustrated"],true)}</div>`
-    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles unless every segment is destroyed in the same turn.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP at the start of your next turn, unless you destroy every other segment first.",["reform"])}>⚙ Reassembling…</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","field","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
+    : `<div class="ename" ${def.reform?tipAttr(`<b>${def.name}</b><br>Reassembles 2 turns after it falls, unless every segment is destroyed before that.`,["reform"]):""}>${def.name}${def.reform?" ⚙":""}</div>${e.down?`<div class="intent reformtag" ${tipAttr("<b>Reassembling</b><br>Comes back with 25% HP in "+Math.max(1,(e.reviveTurn||0)-C.turn)+" turn(s), unless you destroy every other segment first.",["reform"])}>⚙ Reassembling · ${Math.max(1,(e.reviveTurn||0)-C.turn)}</div>`:C.over||e.dead?"":intentHTML(e)}<div class="stats">${statusHTML(e,["might","thorns","field","stun","broken","poison"],false)}${passiveHTML(e)}</div>`;
   const flip = isP ? (C.twin&&C.target===0) : (L.x<C.lay.p.x);
   const inover = !isP && (L.y-L.h<230);
   return `<div class="fighter ${isP?"pl":"en"} ${tgt?"tgt":""} ${e&&e.down?"down":""} ${e&&def.forms?"form-"+curForm(e):""} ${e&&def.statue?"form-"+(e.form||"normal"):""} ${e&&def.haste?"time-"+hastePhase(e):""} ${flip?"flip":""} ${def&&def.giant||inover?"giant":""} ${def&&def.huge?"huge":""}" id="f-${key}" style="left:${L.x-L.w/2}px;top:${L.y-L.h}px;width:${L.w}px;height:${L.h}px;z-index:${Math.round(L.y/100)}"
@@ -2451,7 +2526,7 @@ function renderCombat(){
   $("#fighters").innerHTML = keys.map(fighterHTML).join("");
   for(const k of keys){ const e=k==="p"?null:C.es[+k.slice(1)]; if(e&&e.gone) continue; if(trailOf(k)>hpOf(k)[0]) scheduleTrail(k); }
   // top bar
-  const rel = G.relics.length ? G.relics.map(r=>`<button class="rel" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)} onclick="toast('${RELICS[r].name}: ${RELICS[r].d.replace(/'/g,"")}')">${relicIcon(r)}</button>`).join("")
+  const rel = G.relics.length ? G.relics.map(r=>`<button class="rel" data-r="${r}" ${tipAttr(`<b>${RELICS[r].name}</b><br>${RELICS[r].d}`)} onclick="${r==="journal"?"showJournal(event)":`toast('${RELICS[r].name}: ${RELICS[r].d.replace(/'/g,"")}')`}">${relicIcon(r)}</button>`).join("")
     : `<span class="rslot"></span>`;
   $("#topbar").innerHTML = `<div class="relicbox"><div class="relicrow ${G.relics.length>16?"tiny":G.relics.length>8?"small":""}">${rel}</div><span class="lbl">Relics</span></div>
     <div class="topr">
@@ -2466,6 +2541,7 @@ function renderCombat(){
   const barTiles=C.bar.map(u=>C.t[u]);
   let prev = barTiles.length ? evaluate(barTiles,w,false) : null, wres={};
   if(barTiles.some(t=>t.ch==="?")){ const Rv=evaluate(barTiles,w,true); if(Rv.valid){ prev=Rv; wres=Rv.resolved; } }
+  C._prev=prev;
   const slots = Math.max(w.sigil - C.bar.length, 0);
   { const lit=barTiles.length, full=prev&&(prev.L.length+(prev.bang||0))===w.sigil;
     const tipNotes=prev?`<b>${prev.chips} × ${prev.mult} = ${prev.total}</b>${prev.notes.length?"<br>"+prev.notes.join("<br>"):""}`:"";
@@ -2474,7 +2550,6 @@ function renderCombat(){
     <div class="sg-tiles" id="sgtiles">${barTiles.map(t=>tileHTML(t,{click:`tapTile(${t.uid})`,as:wres[t.uid]})).join("")}${"<span class='slot'></span>".repeat(slots)}</div>
     <div class="sg-row"><span class="sg-wname">${w.name}</span>
       <span class="sg-dots ${full?"crit":""}" ${tipAttr(`<b>Sigil ${w.sigil}</b><br>Cast exactly ${w.sigil} letters ( [ ! ] count too ) for a Critical: ${w.crit}`,["crit"])}>${Array.from({length:w.sigil},(_,k)=>`<i class="${k<lit?"on":""}"></i>`).join("")}</span>
-    <div class="calc" ${prev?tipAttr(tipNotes):""}>${prev?`<span class="chip-n">${prev.chips}</span><span class="x">×</span><span class="mult-n">${prev.mult}</span><span class="x">=</span><b class="tot">${prev.total}</b>${prev.crit&&!prev.fallback?`<span class="crit-tag">CRIT!</span>`:""}`:""}</div>
     <div class="sg-btns"><button class="cbtn" onclick="clearBar()" ${C.bar.length&&!C.busy?"":"disabled"} aria-label="Clear" title="Clear (Backspace)">✕</button>
       <button class="cbtn go" onclick="cast()" ${C.busy||!C.bar.length?"disabled":""} title="Cast (Enter)">Cast</button></div></div>`;
     // relics that this word would trigger glow and drop below the relic row
@@ -3204,7 +3279,7 @@ function eDef(id,name,hp,art,moves,extra={}){ ENEMIES[id]={name,hp,art,moves,...
   eDef("jar_b","Ward Jar",86,"brainjar",[[AB(14)],[A(11)],[AB(10),P("weaken",2)]],{...jar,artO:{tint:"#3a86ff"}});
   eDef("jar_g","Mind Jar",86,"brainjar",[[AU("might",2)],[A(9),T("frustrate",4)],[AU("might",2),B(10)]],{...jar,artO:{tint:"#57cc4d"}});
   Object.assign(ENC_W,{needlehog:210,baboon:225,turtle:235,jelly:200,repairbot:205,pede_h:240,pede_b:240,pede_t:240,jar_r:190,jar_b:190,jar_g:190});
-  const PEDE="A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls in the same turn.";
+  const PEDE="A centipede of old tires and car parts that crawls through the ruined city. Break one piece and the others bolt it back on, unless every piece falls before it is rebuilt.";
   const HIVE="Three alien brains from the Tower's interrogation lab, wired into a single mind. Each one makes the others stronger.";
   Object.assign(MON_LORE,{needlehog:"A hedgehog that rolled through a leaking reactor. Every time it curls up, its quills grow longer. Hitting it hurts.",
     baboon:"Carries a pre-war boombox on its shoulder. When the beat drops, every monster around it hits harder.",
@@ -3262,7 +3337,7 @@ async function downAnim(i){
 async function reformRevive(){
   if(!C) return;
   const back=C.es.filter(e=>e.down&&C.turn>=e.reviveTurn&&C.es.some(o=>ENEMIES[o.id].reform&&!o.dead));
-  if(C.turn===1&&C.es.some(e=>ENEMIES[e.id].reform)) banner("Destroy every segment in the same turn!",1800);
+  if(C.turn===1&&C.es.some(e=>ENEMIES[e.id].reform)) banner("Destroy all segments before they reassemble!",1800);
   if(!back.length) return;
   for(const e of back){ e.down=false; e.dead=false; e.gone=false; e.hp=Math.max(1,Math.ceil(e.max*.25)); e.block=0; log(`${ENEMIES[e.id].name} bolts itself back together (${e.hp} HP).`); }
   renderCombat(); banner("Reassembled!",1000); snd("shield");
@@ -4439,7 +4514,7 @@ WICON.mirror=()=>iconSVG("0 0 100 100",(sh,ink)=>{
   ink(`<path class="thin" style="stroke:#fff" d="M36 42 Q40 34 48 32"/>`); });
 function passiveHTML(e){
   const D=ENEMIES[e.id], out=[];
-  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP next turn unless every segment is destroyed in the same turn.",["reform"])}>${SI.reform}</span>`);
+  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP 2 turns after it falls, unless every segment is destroyed before that.",["reform"])}>${SI.reform}</span>`);
   if(D.moves.some(m=>m.some(a=>a.k==="ablk"||a.k==="abuff"||a.k==="aheal"))) out.push(`<span class="sti s-ally" ${tipAttr("<b>Support</b><br>Spends some turns shielding, healing or buffing its allies.",["ally"])}>${SI.ally}</span>`);
   return out.join("");
 }
@@ -4529,6 +4604,7 @@ function predictRelics(R,w,wid){
   if(atk&&hasR("megaphone")&&R.bang) out.push("megaphone");
   if(atk&&hasR("nib")){ const h=1+(hasR("megaphone")?(R.bang||0):0), n0=G.nib||0; if(Math.floor((n0+h)/10)>Math.floor(n0/10)) out.push("nib"); }
   if(hasR("gloves")&&!C.firstCast) out.push("gloves");
+  if(atk&&hasR("woodpecker")&&R.total>=2&&R.total%2===0) out.push("woodpecker");
   if(((C.turnCasts||0)+1)%3===0){ if(hasR("shuriken")) out.push("shuriken"); if(hasR("opener")) out.push("opener"); }
   return out;
 }
@@ -4630,7 +4706,7 @@ function passiveHTML(e){
     if(D.forms) extra=`<br>Now: <b>${curForm(e)==="vault"?"VAULT FORM · takes 50%":"LASER FORM · takes 150%"}</b>`;
     if(D.filter&&C&&C.banLetter) extra=`<br>Filtered this turn: <b>${C.banLetter}</b>`;
     out.push(`<span class="sti s-boss ${D.forms?"f-"+curForm(e):""}" ${tipAttr(`<b>${P.n}</b><br>${P.d}${extra}`,["bp_"+D.bossPassive])}>${BP_ICON[D.bossPassive]}${D.filter&&C&&C.banLetter?`<b>${C.banLetter}</b>`:""}</span>`); }
-  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP next turn unless every segment is destroyed in the same turn.",["reform"])}>${SI.reform}</span>`);
+  if(D.reform) out.push(`<span class="sti s-reform" ${tipAttr("<b>Reassemble</b><br>Comes back with 25% HP 2 turns after it falls, unless every segment is destroyed before that.",["reform"])}>${SI.reform}</span>`);
   if(D.moves.some(m=>m.some(a=>a.k==="ablk"||a.k==="abuff"||a.k==="aheal"))) out.push(`<span class="sti s-ally" ${tipAttr("<b>Support</b><br>Spends some turns shielding, healing or buffing its allies.",["ally"])}>${SI.ally}</span>`);
   return out.join("");
 }
@@ -4964,6 +5040,174 @@ function flyInDrawn(){ const st=$("#stage"); if(!st||RM||!C) return;
     return r; };
   const ca=cast; cast=async function(){ if(C&&!C.busy&&!C.over&&C.bar.length) C._castSnaps=snapTiles(C.bar,"#sigilbox"); const r=await ca.apply(this,arguments); if(C) C._castSnaps=null; return r; };
   const et=endTurn; endTurn=async function(){ if(C&&!C.busy&&!C.over) C._endSnaps=snapTiles(C.hand,"#handgrid"); const r=await et.apply(this,arguments); if(C) C._endSnaps=null; return r; };
+})();
+
+/* ================= BATCH 7: Scholar crit 5, Woodpecker Beak, Scrapipede link, Gatekeeper nerf, relics +1, Journal log, centre score board ================= */
+
+// ---- Spellbook: Critical now at 5 letters ----
+Object.assign(WEAPONS.sword,{sigil:5});
+if(HEROES.scholar) HEROES.scholar.play="Balanced spell-caster. The Spellbook crits on 5-letter words for +1 Energy next turn, the Barrier crits at 4 letters and draws 3 tiles. The Journal doubles the second cast of the same word in a fight.";
+
+// ---- every Mult (Arcana) relic +1 (per-unit relics: +1 per unit) ----
+(function(){
+  const up=(id,d,f)=>{ if(RELICS[id]) Object.assign(RELICS[id],{d,f}); };
+  up("r1","+1.7 Arcana if word length is even.",c=>c.L.length%2===0?1.7:0);
+  up("r2","+1.7 Arcana if word length is odd.",c=>c.L.length%2===1?1.7:0);
+  up("r3","+2.5 Arcana if first letter matches last letter.",c=>c.L.length>1&&c.L[0]===c.L[c.L.length-1]?2.5:0);
+  up("r4","+1.45 Arcana per unique vowel.",c=>1.45*new Set(vowelsOf(c.L)).size);
+  up("r5","+1.4 Arcana per unique consonant.",c=>1.4*new Set(consOf(c.L)).size);
+  up("r6","+2 Arcana per pair of adjacent identical letters.",c=>{let n=0;for(let i=1;i<c.L.length;i++)if(c.L[i]===c.L[i-1])n++;return 2*n});
+  up("r7","+1.7 Arcana if no letter repeats.",c=>c.L.length>1&&new Set(c.L).size===c.L.length?1.7:0);
+  up("r8","+3.5 Arcana if one letter appears 3+ times.",c=>{const m={};for(const ch of c.L)m[ch]=(m[ch]||0)+1;return Object.values(m).some(v=>v>=3)?3.5:0});
+  up("r9","+1.6 Arcana per played tile with Spell Power ≥ 5.",c=>1.6*c.sp.filter(v=>v>=5).length);
+  up("r10","+2 Arcana if ALL played tiles have Spell Power ≤ 4.",c=>c.sp.length&&c.sp.every(v=>v<=4)?2:0);
+  up("r11","+3 Arcana if word is 7+ letters.",c=>c.L.length>=7?3:0);
+  up("r12","+1.95 Arcana if total base Spell Power ≥ 15.",c=>c.sp.reduce((a,b)=>a+b,0)>=15?1.95:0);
+  up("r13","+1.95 Arcana if the exact middle letter is a vowel.",c=>c.L.length%2===1&&VOWELS.has(c.L[(c.L.length-1)/2])?1.95:0);
+  up("r14","+1.7 Arcana if word starts with A–F.",c=>/^[A-F]/.test(c.L)?1.7:0);
+  up("r15","+1.7 Arcana if word ends with T–Z.",c=>/[T-Z]$/.test(c.L)?1.7:0);
+  up("r16","+2.5 Arcana if word starts and ends with vowels.",c=>c.L.length>1&&VOWELS.has(c.L[0])&&VOWELS.has(c.L[c.L.length-1])?2.5:0);
+  up("r17","+2.5 Arcana if vowels outnumber consonants.",c=>vowelsOf(c.L).length>consOf(c.L).length?2.5:0);
+  up("nametag","+1.7 Arcana for every noun you cast.",c=>posOf(c.L)&1?1.7:0);
+  up("actionfig","+1.95 Arcana for every verb you cast.",c=>posOf(c.L)&2?1.95:0);
+  up("moodring","+2 Arcana for every adjective you cast.",c=>posOf(c.L)&4?2:0);
+  up("swearjar","Every swear word you cast gives +3 Arcana.",c=>SWEARS.has(c.L.toLowerCase())?3:0);
+  up("lens","+1.7 Arcana for every debuffed tile in the word (Slimy, Poisoned, Cursed…). More debuffs, more Arcana.",c=>1.7*(c.deb||0));
+  up("fieldguide","+2 Arcana for every word that is an animal (CAT, WOLVES, OCTOPUS…).",c=>inSet(ANIMALS,c.L)?2:0);
+  up("jobboard","+2 Arcana for every word that is a job (BAKER, PILOTS, WIZARD…).",c=>inSet(JOBS,c.L)?2:0);
+  up("paintchart","+2.5 Arcana for every word that is a color (RED, TEAL, CRIMSON…).",c=>inSet(COLORS,c.L)?2.5:0);
+  RELICS.monocle.d="Casting a single tile (U, A!, Z!!) gets +4 Arcana.";
+  RELICS.parrot.d="+3 Arcana if you cast exactly the same word(s) as your previous cast.";
+})();
+
+// ---- Gatekeeper: smaller Force Field, small recharge ----
+(function(){
+  const g=ENEMIES.gatekeeper; if(!g) return;
+  g.field=6;
+  g.moves=g.moves.map(m=>m.map(a=>a.k==="buff"&&a.s==="field"?{...a,v:2}:a));
+  BOSS_PASSIVES.forcefield.d="Starts with 6 Force Field cells and Recharges 2 more every 4th turn. While the field is up, every hit deals only 1 damage and knocks out 1 cell. Poison ignores the field.";
+  KW.bp_forcefield=[BOSS_PASSIVES.forcefield.n+" (boss)",BOSS_PASSIVES.forcefield.d];
+})();
+
+// ---- Scrapipede: a fallen segment needs 2 turns to reassemble ----
+KW.reform=["Reassemble","When a segment is destroyed it falls apart, and it rebuilds itself with 25% HP at the start of your turn after next (2 turns), as long as another segment is still standing. Destroy every segment before that to win."];
+function pedeLinkSVG(){
+  if(!C||!C.es.some(e=>ENEMIES[e.id].reform)) return "";
+  const segs=C.es.map((e,i)=>({e,i,L:C.lay["e"+i]})).filter(s=>ENEMIES[s.e.id].reform&&!s.e.gone&&s.L);
+  if(segs.length<2) return "";
+  segs.sort((a,b)=>a.L.x-b.L.x);
+  const P=s=>({x:s.L.x,y:s.L.y-s.L.h*.45});
+  let beams="",nodes="";
+  for(let k=0;k<segs.length;k++){
+    const a=segs[k], b=segs[(k+1)%segs.length]; if(segs.length===2&&k===1) break;
+    const pa=P(a),pb=P(b), loop=k===segs.length-1, mx=(pa.x+pb.x)/2, my=(pa.y+pb.y)/2+(loop?150:-40);
+    const weak=a.e.down||b.e.down, d=`M${pa.x} ${pa.y} Q${mx} ${my} ${pb.x} ${pb.y}`;
+    beams+=`<g class="pl-beam ${weak?"weak":""} ${loop?"loop":""}"><path d="${d}" class="pl-glow"/><path d="${d}" class="pl-core"/><path d="${d}" class="pl-spark"/></g>`;
+  }
+  for(const s of segs){ const p=P(s); nodes+=`<g class="pl-node ${s.e.down?"weak":""}"><ellipse cx="${s.L.x}" cy="${s.L.y-6}" rx="${s.L.w*.42}" ry="16" class="pl-ground"/><g transform="translate(${p.x} ${p.y})"><circle r="${s.L.w*.42}" class="pl-halo"/></g></g>`; }
+  return `<svg class="pedelink" viewBox="0 0 1600 900" width="1600" height="900" aria-hidden="true">${nodes}${beams}</svg>`;
+}
+
+// ---- Woodpecker Beak: even attack damage becomes a flurry of 2-damage pecks ----
+RELICS.woodpecker={name:"Woodpecker Beak",sym:"⋮",d:"If an attack would deal an even amount of damage, it becomes a flurry instead: (damage ÷ 2) pecks of 2 damage each. Thorns, Rusty Nail and Chalk Tally still count it as one attack."};
+RELIC_DRAW.woodpecker=(sh,ink)=>{ sh("path",`d="M6 30 Q4 14 16 9 Q26 6 30 14 L38 17 L30 21 Q28 30 18 34 Z"`,"#e63946"); sh("path",`d="M16 9 Q22 4 28 8 Q24 10 20 12 Z"`,"#1d1b22"); sh("path",`d="M30 14 L39 17 L30 20 Z"`,"#ffd166"); ink(`<circle cx="23" cy="15" r="2" class="dark"/><path class="thin" d="M10 24 Q14 27 18 26 M9 29 Q13 31 17 30"/>`); };
+async function peckFlurry(ti,dmg,opts,word){
+  const n=Math.floor(dmg/2), e=C.es[ti]; let total=0, absorbed=0, done=0;
+  log(`Woodpecker Beak: ${dmg} damage becomes ${n} pecks of 2.`); flashRelics(["woodpecker"]);
+  const A=fEl("p"), La=C.lay.p, Lt=C.lay["e"+ti], c=center("e"+ti);
+  if(La&&Lt){ focusOn(["p","e"+ti],Math.min(1.25,1250/Math.max(1,Math.abs(Lt.x-La.x)+Math.max(La.w,Lt.w))),(La.x+Lt.x)/2,(La.y+Lt.y)/2-Math.max(La.h,Lt.h)*.45); }
+  if(word&&La) wordPop(La.x+120,La.y-La.h-30,word);
+  await sleep(T_(260));
+  const peck=()=>{ const r=dealToEnemy(ti,2,opts); total+=r.dmg; absorbed+=r.absorbed; done++; return r; };
+  if(RM||!$("#stage")){ while(done<n&&e.hp>0&&!C.capHit) peck(); updateBar("e"+ti); numPop(c.x,c.top+10,`-${total}`,total,"#ffd23f"); }
+  else {
+    // pecks speed up: hit i lands at D·sqrt(i/n), so the gaps shrink until the frames blur together
+    const D=Math.min(2600,520+n*42), T=fEl("e"+ti), dir=Lt&&La&&Lt.x>La.x?1:-1, t0=performance.now();
+    const ctr=fxEl("div","peckctr"); ctr.style.cssText=`left:${c.x+Lt.w*.55}px;top:${c.top-10}px`;
+    if(A) A.dataset.pose="atk";
+    await new Promise(res=>{ const step=now=>{
+      const el=now-t0; let k=0;
+      while(done<n&&e.hp>0&&!C.capHit&&D*Math.sqrt(done/n)<=el){ const r=peck(); k++;
+        if(k<=3){ const jx=(Math.random()-.5)*Lt.w*.6, jy=(Math.random()-.5)*Lt.h*.5;
+          const s=fxEl("div","peckfx"); s.style.cssText=`left:${c.x+jx}px;top:${c.y+jy}px;--r:${Math.random()*360}deg`; setTimeout(()=>s.remove(),T_(260));
+          if(done<=6||done%Math.ceil(n/6)===0) numPop(c.x+jx*1.4,c.y+jy,r.dmg?`-${r.dmg}`:"·",2,"#ffd23f"); } }
+      if(k){ ctr.innerHTML=`<b>×${done}</b>`; ctr.classList.remove("hit"); void ctr.offsetWidth; ctr.classList.add("hit");
+        updateBar("e"+ti); if(done%2) snd("tap"); else snd("hit");
+        if(A) A.style.transform=`translateX(${dir*(Math.abs(Lt.x-La.x)*.3+(done%2?18:-6))}px)`;
+        if(T){ T.dataset.pose="hurt"; T.classList.toggle("flash"); T.style.transform=`translateX(${dir*(done%2?7:-3)}px)`; }
+        if(done%6===0) shake(4+Math.min(done,40)/4); }
+      if(done<n&&e.hp>0&&!C.capHit) requestAnimationFrame(step); else res(); };
+      requestAnimationFrame(step); });
+    stamp(c.x,c.top-40,`${done} PECKS!`); numPop(c.x,c.top+10,`-${total}`,Math.min(total,90),"#ffd23f"); shake(Math.min(total,60));
+    await sleep(T_(650)); ctr.remove();
+    if(A){ delete A.dataset.pose; A.style.transform=""; } if(T){ delete T.dataset.pose; T.style.transform=""; T.classList.remove("flash"); }
+    unfocus(); await sleep(T_(260));
+  }
+  return {dmg:total,absorbed,flurry:true,pecks:done};
+}
+
+// ---- Journal: click it to see every word cast in this combat ----
+function closeJournal(){ document.querySelector(".jpanel")?.remove(); document.body.classList.remove("jopen"); }
+function showJournal(ev){
+  if(ev) ev.stopPropagation();
+  if(document.querySelector(".jpanel")){ closeJournal(); return; }
+  const st=$("#stage"); if(!st||!C){ toast(`${RELICS.journal.name}: ${RELICS.journal.d}`); return; }
+  const uses=Object.entries(C.wordUses||{}), grp=[[1,"Cast once","next cast is doubled ×2"],[2,"Cast twice","already doubled"],[3,"3+ times","scores normally"]];
+  const col=([k,t,s])=>{ const ws=uses.filter(([w,n])=>k===3?n>=3:n===k).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+    return `<div class="jcol j${k}"><h4>${t} <small>${s}</small></h4>${ws.length?ws.map(([w,n])=>`<span class="jword">${w}${k===3?`<i>×${n}</i>`:""}</span>`).join(""):`<span class="jnone">—</span>`}</div>`; };
+  const d=document.createElement("div"); d.className="jpanel";
+  d.innerHTML=`<div class="jhead">${relicIcon("journal")}<b>Journal</b><span>Words cast this combat</span><button class="jx" onclick="closeJournal()" aria-label="Close">✕</button></div>
+    ${uses.length?`<div class="jcols">${grp.map(col).join("")}</div>`:`<div class="jempty">No words yet. Cast the same word twice in this fight and the second cast is doubled.</div>`}
+    <div class="jfoot">Single-tile casts don't count. The log resets every combat.</div>`;
+  st.appendChild(d); if(typeof hideTip==="function") hideTip(); document.body.classList.add("jopen");
+  const b=document.querySelector('#topbar .rel[data-r="journal"]'); if(b&&typeof stageXY==="function"){ const r=stageXY(b.getBoundingClientRect()); d.style.left=Math.max(12,r.x)+"px"; d.style.top=(r.y+r.h+10)+"px"; }
+  setTimeout(()=>document.addEventListener("pointerdown",function off(e){ if(!e.target.closest(".jpanel")&&!e.target.closest('.rel[data-r="journal"]')){ closeJournal(); document.removeEventListener("pointerdown",off,true); } },true),0);
+}
+addEventListener("keydown",e=>{ if(e.key==="Escape"&&document.querySelector(".jpanel")){ e.stopPropagation(); closeJournal(); } },true);
+
+// ---- centre score board: Spell Power × Arcana = output, grows in 3 tiers ----
+const SB_TIER={sp:v=>v>50?3:v>20?2:1, mult:v=>v>20?3:v>10?2:1};
+function sbHalo(cls){ let p=""; for(let i=0;i<16;i++){ const a=i/16*Math.PI*2+(i%2)*.09, r0=31+(i%3)*2, r1=44+((i*7)%5)*2.2;
+    p+=`M${(Math.cos(a)*r0).toFixed(1)} ${(Math.sin(a)*r0).toFixed(1)} L${(Math.cos(a+.05)*r1).toFixed(1)} ${(Math.sin(a+.05)*r1).toFixed(1)} `; }
+  return `<svg class="halo ${cls}" viewBox="-50 -50 100 100" aria-hidden="true"><path d="${p}"/></svg>`; }
+function sbSparks(){ let s=""; for(let i=0;i<9;i++) s+=`<i style="--x:${(i/8*100-50).toFixed(0)}%;--d:${(i*.23)%1.6}s;--h:${60+(i*13)%40}px">${"✦✧·+✦"[i%5]}</i>`; return `<span class="sparks">${s}</span>`; }
+function renderScoreBoard(prev){
+  const st=$("#stage"); if(!st) return;
+  let b=$("#scoreboard");
+  if(!b){ b=document.createElement("div"); b.className="ui"; b.id="scoreboard";
+    b.innerHTML=`<div class="sb-eq"><div class="sb-n chip">${sbHalo("h1")}${sbHalo("h2")}${sbSparks()}<b></b><span class="lb">Spell Power</span></div><span class="sb-x">×</span>
+      <div class="sb-n mult">${sbHalo("h1")}${sbHalo("h2")}${sbSparks()}<b></b><span class="lb">Arcana</span></div></div><div class="sb-tot"><span>=</span><b></b><em class="sb-crit">CRIT!</em></div>`;
+    st.appendChild(b); }
+  if(C&&C._sbHold&&performance.now()<C._sbHold) return;
+  const show=!!(prev&&prev.valid!==false&&prev.chips!=null);
+  b.classList.toggle("on",show);
+  const sb=$("#sigilbox"); if(sb){ const twin=st.classList.contains("twin");
+    b.style.left=(sb.offsetLeft+sb.offsetWidth/2)+"px";
+    b.style.top=(twin?sb.offsetTop+sb.offsetHeight+10:sb.offsetTop-10)+"px"; b.classList.toggle("below",twin); }
+  if(!show) return;
+  const set=(sel,val,tier)=>{ const n=b.querySelector(sel), bb=n.querySelector("b"), old=+(n.dataset.t||1);
+    bb.textContent=val; n.dataset.t=tier; n.className=n.className.replace(/\bt\d\b/g,"").trim()+" t"+tier;
+    if(tier>old){ n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); } };
+  set(".sb-n.chip",prev.chips,SB_TIER.sp(prev.chips));
+  set(".sb-n.mult",prev.mult,SB_TIER.mult(prev.mult));
+  b.querySelector(".sb-tot b").textContent=prev.total;
+  b.classList.toggle("crit",!!(prev.crit&&!prev.fallback));
+  b.classList.toggle("bad",prev.valid===false);
+  if(typeof tipAttr==="function"){ const tip=`<b>${prev.chips} × ${prev.mult} = ${prev.total}</b>${prev.notes&&prev.notes.length?"<br>"+prev.notes.join("<br>"):""}`; b.setAttribute("data-tip",tip); }
+}
+
+(function(){
+  // render hooks: Scrapipede link + score board
+  const rc=renderCombat; renderCombat=function(){ const r=rc.apply(this,arguments);
+    try{ const f=$("#fighters"); if(f&&C){ f.querySelector(".pedelink")?.remove(); const s=pedeLinkSVG(); if(s) f.insertAdjacentHTML("afterbegin",s); } }catch(e){}
+    try{ if(C) renderScoreBoard(C._prev); }catch(e){}
+    return r; };
+  // cast: the board slams, holds the numbers for a moment, then clears
+  const ca=cast; cast=async function(){
+    const b=$("#scoreboard"), p=C&&C._prev;
+    if(b&&p&&p.valid!==false&&C&&!C.busy&&!C.over&&C.bar.length){ C._sbHold=performance.now()+T_(750); b.classList.remove("fire"); void b.offsetWidth; b.classList.add("fire");
+      setTimeout(()=>{ b.classList.remove("fire"); if(C){ C._sbHold=0; renderScoreBoard(C.bar.length?C._prev:null); } },T_(760)); }
+    return ca.apply(this,arguments); };
 })();
 
 function cycleSort(){ if(!C) return; C.sortMode=C.sortMode===1?2:1; snd("tap"); renderCombat(); toast(C.sortMode===1?"Hand sorted by Spell Power":"Hand sorted A–Z"); }
@@ -5903,8 +6147,8 @@ const TUT=[
   {t:"Spell another word and cast it. Shield soaks up damage until the start of your next turn.", sel:["#handgrid","#sigilbox"], allow:{tapTile:true,clearBar:true,cast:true}, done:(ev,a)=>ev==="cast"&&a.kind==="def"},
   {t:"You're out of Energy. Press <b>End turn</b> and watch the slime hit your shield.", sel:[".endbtn"], allow:{endTurn:true}, done:ev=>ev==="endTurn"},
   {t:"Turn 2. Your Energy refills and you draw a fresh hand of 16 tiles. Unused tiles are discarded at the end of each turn. Play this turn your way, then end it.", wait:2, next:"Play", done:ev=>ev==="endTurn"},
-  {t:"Turn 3: time for a <b>Critical</b>. See the 2 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook gives you <b>+1 Energy next turn</b>.", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
-  {word:"GO",t:"Select the Spellbook and spell a <b>2-letter</b> word, like <b>GO</b>. The sockets turn gold when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
+  {t:"Turn 3: time for a <b>Critical</b>. See the 5 boxes on the Spellbook? Cast a word with exactly that many letters and the Spellbook gives you <b>+1 Energy next turn</b>.", wait:3, sel:['.wslot[data-i="0"]'], next:"Show me"},
+  {word:"MAGIC",t:"Select the Spellbook and spell a <b>5-letter</b> word, like <b>MAGIC</b>. The sockets turn gold when the length is right.", sel:['.wslot[data-i="0"]',"#handgrid","#sigilbox"], allow:{selWeapon:true,tapTile:true,clearBar:true,cast:"crit5"}, done:(ev,a)=>ev==="cast"&&a.kind==="atk"&&a.crit},
   {t:"Critical! The Barrier has one too: a 4-letter word draws 3 extra tiles. The slime is all yours now. Finish it!", next:"Fight!", final:true},
 ];
 function startTutorial(){
@@ -5940,7 +6184,7 @@ function tg(act,arg){
   if(al==="crit5"){
     if(C.wi!==0){ toast("Select the Spellbook first."); return false; }
     const n=C.bar.map(u=>C.t[u].ch).filter(c=>/[A-Z?]/.test(c)).length;
-    if(n!==2){ toast(`That's ${n} letters. Use exactly 2 for this lesson.`); sigilShake(); snd("buzz"); return false; }
+    if(n!==5){ toast(`That's ${n} letters. Use exactly 5 for this lesson.`); sigilShake(); snd("buzz"); return false; }
     return true;
   }
   toast(st.next&&!st.allow?"Read the tip and press the button first.":"Follow the highlighted step.");
@@ -5968,7 +6212,7 @@ function tutAdvance(){
   C.tut.i++; C.tut.phase=null;
   const st=TUT[C.tut.i];
   C.tut.ready = !st.wait || C.turn>=st.wait;
-  if(st.wait===3&&C.turn>=3) ensureLetters("GO");
+  if(st.wait===3&&C.turn>=3) ensureLetters("MAGIC");
   tutRender();
 }
 function tutNext(){

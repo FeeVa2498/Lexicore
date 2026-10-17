@@ -1,6 +1,6 @@
 # LEXICORE — Game Design Document
 
-> Version 1.5 (based on the playable prototype, 15 October 2026). Changes: see CHANGELOG.
+> Version 1.6 (based on the playable prototype, 17 October 2026). Changes: see CHANGELOG.
 > Playable prototype: https://feeva2498.github.io/Lexicore/
 > Data files: `../data/*.json` (generated from the prototype; treat them as the source of truth for numbers)
 
@@ -127,7 +127,7 @@ Main menu → Choose hero → [Act 1] → Boss → boss relic → [Act 2] → Bo
 
 ### 4.1 Layout
 
-The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre-left, just right of the hero: the **sigil box** (the word being built), a compact two-row holder: the tiles on top, then weapon name, crit-length dots, Spell Power × Mult = output, Clear and Cast. It is kept narrow (≈430 px, tiles shrink when the word passes 10 letters) so it never covers the front enemy or any intent bubble, even in 5-enemy fights. Bottom: weapon slots (5), consumable shelf, hand grid, draw/discard piles, combat log, End Turn button.
+The combat stage is a fixed **1600 × 900** scene scaled to the window. Top-left: relics. Top-right: gold, map, deck, settings. Left: hero, HP bar, Energy **battery** (old-world tech: a battery with three green charge cells and a lightning bolt). Right: enemies with intent bubbles and HP bars. Centre-left, just right of the hero: the **sigil box** (the word being built), a compact two-row holder: the tiles on top, then weapon name, crit-length dots, Clear and Cast. It is kept narrow (≈400 px, tiles shrink when the word passes 10 letters) so it never covers the front enemy or any intent bubble, even in 5-enemy fights. Right above it floats the **score board** (§4.5): `Spell Power × Arcana = output`, shown big in the middle of the screen while a word is on the bar. Bottom: weapon slots (5), consumable shelf, hand grid, draw/discard piles, combat log, End Turn button.
 
 **Tile motion**: tiles used in a cast and tiles discarded at End Turn fly (arc, shrink, spin) into the **Discard pile**, which bumps when they land; tiles drawn into the hand fly out of the **Draw pile** into their hand slots, one after the other (~35 ms apart, ~0.4 s each). Reduced-motion turns the flights off.
 
@@ -201,7 +201,15 @@ Output      = floor(Spell Power × Mult)
 - **Comma casts and relics**: every word of a comma cast is checked by the Mult relics **on its own**, and the bonuses add up. CAT,CAT with Dusk Glyph (ends with T–Z) gets +0.5 twice = +1. Single letters inside a comma cast (CAT,A) don't trigger word relics.
 
 - **Letter values** (Level 1): A2 B4 C4 D3 E2 F5 G3 H5 I2 J9 K6 L2 M4 N2 O2 P4 Q11 R2 S2 T2 U2 V5 W5 X9 Y5 Z11. **Level 2** tiles add +3.
-- The sigil box previews Spell Power, Mult, output and every bonus that fired, *before* casting.
+- The **score board** previews Spell Power, Mult (Arcana), output and every bonus that fired (tooltip), *before* casting. It sits above the sigil box (below it in the Gemini fight, where the sigil box is at the top). Each number grows in **3 tiers**:
+
+| Tier | Spell Power | Arcana | Look |
+|---|---|---|---|
+| 1 | 0–20 | 0–10 | Plain crayon chip (blue / red) |
+| 2 | 21–50 | 11–20 | Bigger; a crayon starburst spins slowly behind it and the chip glows |
+| 3 | 51+ | 21+ | Biggest; two starbursts spin fast in opposite directions, the chip shakes and glyph sparks (✦ ✧) rise off it |
+
+  A number that climbs a tier pops (scale bump). On Cast the board slams (scales up), holds the numbers for ~0.75 s and fades upward. Deliberately not flames, so it doesn't read as *Balatro*.
 
 ### 4.6 Critical
 
@@ -233,7 +241,7 @@ A cast is **Critical** when its character count **exactly equals** the weapon's 
 | Broken | Both | Takes +50% damage. | −1 per turn. |
 | Curse | Hero | End of turn: if HP ≤ Curse, the hero dies. | Permanent in combat. |
 | Frustrated | Hero | Casting a word with fewer than (stacks + 1) letters deals 1 self-damage. | −1 per turn. |
-| Force Field | Gatekeeper (boss) | Each hit deals only 1 damage and knocks out 1 cell. Poison ignores it. | Until knocked out; Recharge Field adds 8. |
+| Force Field | Gatekeeper (boss) | Each hit deals only 1 damage and knocks out 1 cell. Poison ignores it. | Until knocked out; Recharge Field adds 2. |
 | Stunned | Enemies | Skips its next turn (Flashbang). | 1 turn. |
 | Thorns | Hero, enemies | Attackers take this much damage (enemy Thorns: each hit of an attack word on it). | Hero: resets each turn (to base Thorns). Enemies: lasts the whole fight. |
 
@@ -271,11 +279,11 @@ Cleansing: Cleansing Bell (weapon), Purge Salts (consumable).
 - **Enemy Thorns (Needle Hog, Tesla Jelly)**: an enemy with Thorns hurts the hero for its Thorns value on **every hit of an attack word** on it (Boomerang's second hit and Fire Lance's spread count too). The hero's Shield absorbs it. Enemy Thorns stack and last the whole fight, so these enemies punish slow fights.
 - **Support enemies**: some enemies spend turns on their allies. *Riot Turtle* and *Ward Jar* give Shield to every other enemy, *Boombox Baboon* and *Mind Jar* give +Might to themselves and every ally, *Patch Bot* repairs injured allies and shields them. With no ally left, a support enemy helps itself. Designed pairs: **attacker + defender** (Riot Hound + Riot Turtle, Prisoner 0451 + Patch Bot), **buffer + hitters** (Boombox Baboon + Scrap Rat / Riot Hound). Teach target priority: kill the supporter first, or race the attacker.
 - **Enemy Shield timing**: every enemy's Shield clears at the start of the enemy phase (not at the start of each enemy's own move), so Shield given by an ally always protects through the player's next turn.
-- **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** at the start of the player's next turn. The fight is won only when **every segment is destroyed in the same turn**. A banner tells the player this on turn 1. Strategy: spread damage so all three are low, then finish them in one turn (multi-hit tools like Fire Lance crit and Rubber Stamp help).
+- **Reassemble (Scrapipede, Act 2 Elite)**: three segments (Head: Lock + big hits; Body: shields the others, Condemn; Tail: Weaken and Broken). A destroyed segment falls apart ("⚙ Reassembling…", untargetable, no gold) while another segment still stands, and rebuilds itself with **25% of its max HP** **2 turns later** (at the start of the player's turn after next; its tag shows the turns left: "⚙ Reassembling · 2"). The fight is won only when **every segment is destroyed before a fallen one rebuilds**. A banner tells the player this on turn 1. The three segments are joined by a pulsing gold **link aura** (beams between them and a ring under each one; a fallen segment's beams flicker until it rebuilds or dies for good). Strategy: knock one down, then finish the other two within the next turn.
 - **Hive Mind (Act 3 Elite)**: three brain jars wired together. Mind Jar gives +2 Might to all three, Ward Jar shields the other two, Rage Jar does the hitting. Each Jar has its own HP; killing the support Jars first stops the snowball.
 - **Multi-hit attacks**: some attacks hit several times (intent "5×2"). Every hit is a separate attack: Shield absorbs per hit, the hero's Thorns trigger per hit, "hit from behind" doubles each hit, Duct Tape checks after each. Users: Gloom Bat 5×2, Wrench Crow 5×3, Hazmat Mantis 7×3, Sentry Drone 9×3, Rage Jar 6×3.
 - **Self-destruct (Sporeling)**: on its 3rd turn a Sporeling bursts, inflicting **1 Poison per 3 HP it has left** (rounded up; 5 at full 14 HP) on the hero, and dies (no gold). Wounding it shrinks the burst.
-- **Layered Armor / Force Field (now the Gatekeeper boss, see §13.4)**: 12 cells, Recharge Field adds 8 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
+- **Layered Armor / Force Field (now the Gatekeeper boss, see §13.4)**: 6 cells, Recharge Field adds 2 more every 4th turn. While it has layers, **every hit deals only 1 damage and removes 1 layer** (after Shield; also attack relics, Thorns, Paper Cut, Static Coil). At 0 layers hits deal full damage again. **Poison ignores the layers**. Counterplay: many small hits (comma casts are still one hit), Paper Cut, Rubber Stamp, Poison. The layer count shows under its HP bar.
 - **Glossary → Keywords** lists only live mechanics, each with its icon (boss mechanics are tagged "(boss)"); retired ones (Layered Armor, Time Prison, Two Forms, Stone Skin) were removed.
 - **Passive icons under the HP bar**: Reassemble (gear) on Scrapipede segments, Support (shield with a green +) on support enemies, Stunned (yellow stars) after a Flashbang.
 - **Debuff design rule**: each enemy has a clear identity built on **1–2 themed debuffs** (e.g. slimes = Slimy, spiders/plants/hazmat = Poison, torches/lasers = Smoldering, jailers/vaults = Lock, police/knights = Condemn, psychics = Frustrate, ancient stone/AI = Curse). Debuffs are rarer per enemy but hit **more tiles per use**: 3–4 for normal enemies, 5–6 for Elites and bosses.
@@ -312,7 +320,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 
 | Weapon | Hero | Kind | Energy | Crit length | Effect | Critical |
 |---|---|---|---|---|---|---|
-| **Spellbook** | Scholar | attack | 2 | 2 | Deal damage. | Gain **+1 Energy next turn**. |
+| **Spellbook** | Scholar | attack | 2 | 5 | Deal damage. | Gain **+1 Energy next turn**. |
 | **Barrier** | Scholar | defense | 1 | 4 | Gain Shield. | Draw 3 tiles. |
 | **Greatsword** | Champion | attack | 2 | 3 | Deal damage. | Inflict **3 Broken** on the target, but you lose HP equal to 20% of the output (min 2). |
 | **Dumbbell** | Champion | buff | 1 | 5 | Gain Might equal to output ÷ 5 (min 1). | Heal HP equal to 2 × your Might. |
@@ -390,7 +398,7 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 - Categories:
   - **Mult relics** (25: 17 letter-pattern + 8 word-type/special, §8.2): add Mult when a condition on the cast is met. Never apply to single-tile casts (except Monocle).
   - **Tile-grant relics** (3): add special tiles to the deck.
-  - **Common relics** (34): utility and economy effects.
+  - **Common relics** (35): utility and economy effects.
   - **Starter relics** (3): one per hero; never found elsewhere.
   - **Boss relics** (6): offered after each Act 1–3 boss; 5 of them give +1 Energy every turn with a real downside.
 - Sources: Elite fights (1 random), Treasure nodes (pick 1 of 3), shop (3 for sale), events (wordle, claw, wheel), boss rewards (boss relics only). Only unlocked relics can appear (§14.6).
@@ -401,44 +409,46 @@ All heroes start with 99 gold, 1 Healing Draught and the 34-tile deck. They shar
 |---|---|---|
 | **Berserker's Blood** | The Champion | Your attacks deal **+1 damage for every 4 HP you are missing** (added after Mult; shown in the score tooltip). |
 | **Quick Gloves** | The Mercenary | After the first word you cast in each combat, draw as many tiles as it used. |
-| **Journal** | The Scholar | The **second time you cast the same word in a combat**, its output is doubled (third time on: normal). The count resets every fight. |
+| **Journal** | The Scholar | The **second time you cast the same word in a combat**, its output is doubled (third time on: normal). The count resets every fight. **Click the Journal** (relic bar) to open its log: every word cast this combat, grouped *Cast once* (next cast doubles), *Cast twice* (already doubled) and *3+ times* (with the count). |
 
 ### 8.2 Mult relics
 
+All Mult values were raised by **+1** in v1.6 (relics that count units, like Vowel Prism, got +1 **per unit**).
+
 | Relic | Effect |
 |---|---|
-| **Twin Moons** | +0.7 Mult if word length is even. |
-| **Odd Fang** | +0.7 Mult if word length is odd. |
-| **Ouroboros Loop** | +1.5 Mult if first letter matches last letter. |
-| **Vowel Prism** | +0.45 Mult per unique vowel. |
-| **Consonant Coil** | +0.4 Mult per unique consonant. |
-| **Mirror Shard** | +1 Mult per pair of adjacent identical letters. |
-| **Lone Wolf Seal** | +0.7 Mult if no letter repeats. |
-| **Triad Totem** | +2.5 Mult if one letter appears 3+ times. |
-| **Heavy Ink** | +0.6 Mult per played tile with Spell Power ≥ 5. |
-| **Pebble Charm** | +1 Mult if ALL played tiles have Spell Power ≤ 4. |
-| **Long Scroll** | +2 Mult if word is 7+ letters. |
-| **Ledger Stone** | +0.95 Mult if total base Spell Power ≥ 15. |
-| **Heart Vowel** | +0.95 Mult if the exact middle letter is a vowel. |
-| **Dawn Glyph** | +0.7 Mult if word starts with A–F. |
-| **Dusk Glyph** | +0.7 Mult if word ends with T–Z. |
-| **Open Mouth** | +1.5 Mult if word starts and ends with vowels. |
-| **Choir Bell** | +1.5 Mult if vowels outnumber consonants. |
+| **Twin Moons** | +1.7 Mult if word length is even. |
+| **Odd Fang** | +1.7 Mult if word length is odd. |
+| **Ouroboros Loop** | +2.5 Mult if first letter matches last letter. |
+| **Vowel Prism** | +1.45 Mult per unique vowel. |
+| **Consonant Coil** | +1.4 Mult per unique consonant. |
+| **Mirror Shard** | +2 Mult per pair of adjacent identical letters. |
+| **Lone Wolf Seal** | +1.7 Mult if no letter repeats. |
+| **Triad Totem** | +3.5 Mult if one letter appears 3+ times. |
+| **Heavy Ink** | +1.6 Mult per played tile with Spell Power ≥ 5. |
+| **Pebble Charm** | +2 Mult if ALL played tiles have Spell Power ≤ 4. |
+| **Long Scroll** | +3 Mult if word is 7+ letters. |
+| **Ledger Stone** | +1.95 Mult if total base Spell Power ≥ 15. |
+| **Heart Vowel** | +1.95 Mult if the exact middle letter is a vowel. |
+| **Dawn Glyph** | +1.7 Mult if word starts with A–F. |
+| **Dusk Glyph** | +1.7 Mult if word ends with T–Z. |
+| **Open Mouth** | +2.5 Mult if word starts and ends with vowels. |
+| **Choir Bell** | +2.5 Mult if vowels outnumber consonants. |
 
 **Word-type and special Mult relics** (same rules as above):
 
 | Relic | Arcana |
 |---|---|
-| **Name Tag** | +0.7 for every noun you cast |
-| **Action Figure** | +0.95 for every verb you cast |
-| **Mood Ring** | +1 for every adjective you cast |
-| **Swear Jar** | Every swear word you cast gives +2. Swear words are always valid words (even ones missing from the dictionary, e.g. DUMBASS) with or without the relic. Censored easter-egg spellings (FVCK, SH!T…) are not valid casts. The list is `SWEARS` in code: profanity only, no slurs. |
-| **Field Guide** | +1 for every word that is an animal (`ANIMALS` list, ~260 words; plurals like WOLVES, MICE count). |
-| **Job Board** | +1 for every word that is a job (`JOBS` list, ~240 words). |
-| **Paint Chart** | +1.5 for every word that is a colour (`COLORS` list, ~80 words). |
-| **Monocle** | Casting a **single tile** (U, A!, Z!!) gets +3 Mult (normally single tiles get no relics). |
-| **Parrot** | +2 if you cast exactly the same word(s) as your previous cast (`G.lastWord`). |
-| **Cracked Lens** | +0.7 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
+| **Name Tag** | +1.7 for every noun you cast |
+| **Action Figure** | +1.95 for every verb you cast |
+| **Mood Ring** | +2 for every adjective you cast |
+| **Swear Jar** | Every swear word you cast gives +3. Swear words are always valid words (even ones missing from the dictionary, e.g. DUMBASS) with or without the relic. Censored easter-egg spellings (FVCK, SH!T…) are not valid casts. The list is `SWEARS` in code: profanity only, no slurs. |
+| **Field Guide** | +2 for every word that is an animal (`ANIMALS` list, ~260 words; plurals like WOLVES, MICE count). |
+| **Job Board** | +2 for every word that is a job (`JOBS` list, ~240 words). |
+| **Paint Chart** | +2.5 for every word that is a colour (`COLORS` list, ~80 words). |
+| **Monocle** | Casting a **single tile** (U, A!, Z!!) gets +4 Mult (normally single tiles get no relics). |
+| **Parrot** | +3 if you cast exactly the same word(s) as your previous cast (`G.lastWord`). |
+| **Cracked Lens** | +1.7 for every debuffed tile in the word (Slimy, Poisoned, Cursed, Frustrated, Smoldering, Condemned…). |
 
 Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as one character per dictionary word (bit mask: 1 noun, 2 verb, 4 adjective; inflections like CATS, RUNNING, HAPPIER, STOPPED are matched to their base word). A word can be several types at once (RUN = noun + verb), and then every matching relic fires.
 
@@ -486,6 +496,7 @@ Word types come from **WordNet 3.1** (npm `wordnet-db`), baked into the build as
 | **Big Game Trophy** | +1 Energy every turn in Elite and Boss fights. |
 | **Arcade Token** | Every "?" node becomes a Claw Machine with 2 tries and a magnet claw (§11.6). |
 | **Piggy Bank** | At the end of each combat (bosses too), gain 10 gold for every full 100 gold you hold: `floor(gold/100) × 10` (125 → +10, 230 → +20). |
+| **Woodpecker Beak** | If an attack would deal an **even** amount of damage, it becomes a flurry: (damage ÷ 2) **pecks of 2 damage**. Each peck is a separate hit for Shield, Broken (3 per peck), Force Field (1 cell per peck), Time Slow and the Firewall cap; it stops when the target dies. Thorns, Rusty Nail, Megaphone and Chalk Tally still count the cast as **one** attack. Animation: the pecks speed up (hit *i* lands at D·√(i/n), D ≤ 2.6 s) until the hero's frames blur, with a ×N hit counter and "N PECKS!" at the end. Main target only (not Flame Lance's spread or Boomerang's 2nd hit). Available from the start. |
 
 ### 8.5 Boss relics
 
@@ -557,14 +568,15 @@ Note: "upgrade every tile in hand" is **Clarity Draught** and "cleanse the tiles
 |---|---|
 | 0 | Weapon Altar (start) |
 | 1 | Combat |
-| 2–3 | Combat 60% · Event 30% · Shop 10% |
+| 2–3 | Combat 45% · Event 45% · Shop 10% |
 | 4 | Rest 50% · Shop 50% |
-| 5 | Combat 42% · **Elite 34%** · Event 24% |
+| 5 | Combat 33% · **Elite 34%** · Event 33% |
 | 6 | Treasure |
-| 7 | Combat 40% · **Elite 34%** · Event 16% · Shop 10% |
+| 7 | Combat 30% · **Elite 34%** · Event 26% · Shop 10% |
 | 8 | Rest Site |
 | 9 | Boss |
 
+- "?" Event nodes were made more common in v1.6 (about 50% more per map) so players get more chances at event relics (Word Stone, Claw Machine, Wheel).
 - Elites appear **only on floors 5 and 7**, so a path meets at most 2 Elites, and the two Elites of an Act are never repeated within that Act.
 - **Encounter pacing** (configurable, `encounterRules` in `../data/encounters.json`): the group size of a normal fight depends on **which normal fight of the Act it is** (1st, 2nd, 3rd, 4th+; elites and bosses do not count). A group of that size is then picked from the Act's designed pool; the same group never appears twice in a row.
 
@@ -736,7 +748,7 @@ Legend: "Atk 51!" = heavy attack; "Poison×2 tiles" = applies the tile debuff to
 | **Rage Jar** | 3 | elite | 86 | Atk 6×3 → Atk 10 + Frustrate×5 tiles → Atk 22! |
 | **Ward Jar** | 3 | elite | 86 | **Shield allies 14** → Atk 11 → **Shield allies 10** + Weaken 2 |
 | **Prisoner Zero** | 3 | boss | 400 | *Time Haste/Slow*: Haste, Haste, Slow loop · **Mind Spike**: Frustrate×5 tiles + Atk 14 → **Psychic Shell**: Block 18 + +2 Might → **Scream**: Curse×3 tiles + Atk 10 → **Annihilate**: Atk 28! |
-| **The Gatekeeper** | 3 | boss | 430 | *Force Field*: starts with 12 cells · **Lockdown**: Lock×6 tiles + Block 20 → **Recharge Field**: +8 Force Field + Atk 14 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Overcharge**: Atk 40! |
+| **The Gatekeeper** | 3 | boss | 430 | *Force Field*: starts with 6 cells · **Lockdown**: Lock×6 tiles + Block 20 → **Recharge Field**: +2 Force Field + Atk 14 → **Laser Sweep**: Atk 26 + Burn×4 tiles → **Overcharge**: Atk 40! |
 | **LEXICORE** | 4 | boss | 480 | **Parse**: Curse×4 tiles + Block 26 → **Compile**: Atk 38 + Block 34 → **Overwrite**: Condemn×5 tiles + Atk 12 → **Delete**: Atk 51! |
 
 Full move cycles (with move names): `../data/enemies.json`.
@@ -769,7 +781,7 @@ Every boss has one signature mechanic, shown as a gold passive icon under its HP
 | **Ancient Stone Gargoyle** | 2 | **Living Statue** (two forms) | **Normal Form** (attack): Chant of Decay → Stone Gaze → Execute (34). Then **Petrify** → **Statue Form** (defence, greyed stone look): gains **30 Shield + 8 Thorns** (every hit you land costs you 8), Stone Watch (+18 Shield), Cursed Glare. Then **Awaken** → Normal Form: a heavy hit of **14 + 2 per Thorn** (30 with 8 Thorns), and all its Thorns crumble away. | Hit hard in Normal Form; in Statue Form defend, Poison it, or use few big hits instead of many small ones; Shield up for Awaken. |
 | **Gemini Left & Right** | 2 | **Twin Bond** | The twin you're not targeting hits ×2. When one twin dies the other is ENRAGED (+6 Might). | Damage both evenly, finish them close together. |
 | **Prisoner Zero** | 3 | **Time Haste / Time Slow** | A 3-turn loop. **TIME HASTE** (turns 1–2 of the loop): it acts **twice** per turn; its intent shows both moves side by side with a ⏩ marker and its sprite gets a teal speed blur. **TIME SLOW** (turn 3): it is frozen (does nothing) and **takes double damage** during the player's turn before it (intent "×2 dmg", sprite turns icy blue). No real-time limit. | Shield up and cleanse during Haste; save the big words for Slow. |
-| **The Gatekeeper** | 3 | **Force Field** | Starts with **12 Force Field cells**; **Recharge Field** adds 8 more every 4th turn. While the field is up every hit deals only 1 damage and knocks out 1 cell (same rule as Layered Armor). Poison ignores it. | Many small hits (single letters, comma casts of letters, Paper Cut, Rubber Stamp), Poison, then big words once the field is down. |
+| **The Gatekeeper** | 3 | **Force Field** | Starts with **6 Force Field cells**; **Recharge Field** adds 2 more every 4th turn. While the field is up every hit deals only 1 damage and knocks out 1 cell (same rule as Layered Armor). Poison ignores it. | Many small hits (single letters, comma casts of letters, Paper Cut, Rubber Stamp), Poison, then big words once the field is down. |
 | **LEXICORE** | 4 | **Syntax Filter + Firewall** | At the start of each player turn it filters one random letter present in the hand: those tiles are worth 0 Spell Power that turn (greyed out with a red slash). Its **Firewall** lets through at most **70 damage per player turn** (Poison ticks ignore it); the moment the cap is reached the player's turn ends automatically. A red brick icon under its HP shows how much is left this turn. | Spread damage over turns: set up Shield, buffs and Poison first, finish the turn with the hit that caps it. |
 
 Junkyard Knight (Act 2 Elite) went back to its plain kit (Block 25 + Might 3 → Atk 23 → Condemn 5 + Atk 13 → Atk 31!).
@@ -784,9 +796,9 @@ A mechanical AI core: an armoured octagonal shell with red glowing circuitry, a 
 
 ### 14.1 Tutorial (first launch; can be replayed from the menu)
 
-A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 2-letter Spellbook Critical (GO → +1 Energy next turn). The UI only allows the highlighted action at each step.
+A scripted fight as The Scholar against a **Training Slime** (30 HP, hits 3/3/4). 14 steps teach: selecting a weapon, spelling (CAT), casting, Chips × Mult, Energy, reading intents, blocking with the Barrier, ending the turn, a free turn, and a 5-letter Spellbook Critical (MAGIC → +1 Energy next turn). The UI only allows the highlighted action at each step.
 
-- **Rebel popup**: if the player casts a different word than the one suggested (CAT / GO), a popup says *"Rebellious, aren't we? … Too cool to follow the instructions."* (a second, different line for the second time). The word still counts.
+- **Rebel popup**: if the player casts a different word than the one suggested (CAT / MAGIC), a popup says *"Rebellious, aren't we? … Too cool to follow the instructions."* (a second, different line for the second time). The word still counts.
 - "Skip tutorial" is always available.
 
 ### 14.2 Achievements (19, 2 secret)
@@ -889,7 +901,8 @@ Splash/menu → character select → map → combat → reward → shop → rest
 
 ### 15.3 Combat UI details (latest)
 
-- **Sigil pedestal** (where the word is built): a small, minimal grey stone holder right of the hero (≈430 px wide; no rune strip). **Row 1**: the tiles in a dark trough outlined in glowing teal (tiles shrink when the word passes 10 letters, so it never grows wider). **Row 2**: the weapon name, the **sigil sockets** as small dots (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), `Spell Power × Mult = output` (+ a small "CRIT!" stamp), and two buttons (✕ clear, Cast). It never covers the front enemy or its intent. The full breakdown (Might, relic names, ! bonus…) is in the tooltip on the score line.
+- **Sigil pedestal** (where the word is built): a small, minimal grey stone holder right of the hero (≈400 px wide; no rune strip). **Row 1**: the tiles in a dark trough outlined in glowing teal (tiles shrink when the word passes 10 letters, so it never grows wider). **Row 2**: the weapon name, the **sigil sockets** as small dots (one per crit letter; they light teal as you add tiles and turn gold when the length is exactly a Critical), and two buttons (✕ clear, Cast). It never covers the front enemy or its intent. The score itself is on the **centre score board** (§4.5) with a "CRIT!" stamp; the full breakdown (Might, relic names, ! bonus…) is in its tooltip.
+- **Journal log**: clicking the Journal relic opens a small panel under the relic bar listing this combat's words in three groups (1×, 2×, 3+×). Esc or a click elsewhere closes it.
 - **Relic preview**: while a word is on the pedestal, every relic it would trigger **glows and drops below the relic row**; Mult relics also show their bonus as a small red badge (+0.7). Non-Mult relics are predicted too (Sandbag, Umbrella, Snake Charm, Protein Bar, Rusty Nail, Megaphone, Chalk Tally on the 10th attack, Quick Gloves on the first cast, Metronome / Rubber Stamp on the 3rd cast).
 - **Hand sort button** (top-right corner of the hand): 1st click sorts by Spell Power (high → low), 2nd click A–Z (letters before symbols); clicking again toggles. Buffed or debuffed tiles (painted, Level 2, Fortified, Fragile, any tile debuff) always come first. The order stays sorted as new tiles are drawn.
 - **Consumable menu**: a small Use / Discard menu beside the cursor (no full-screen popup).
@@ -987,7 +1000,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 2. **Robust is weak for heroes without defense weapons**: blue paint (+1 Robust) does nothing for The Champion and for The Mercenary without Spike Shield. Options: Robust also adds to every Shield gain (incl. Parrying Dagger crits), or blue paint gives +2 Shield directly.
 3. **Unused weapons**: Needle, Bulwark, Hammer exist but can't be obtained (Bulwark's crit gives Robust, so it would need a rework under pillar 4).
 4. **Unused content**: a list of 28 riddles exists from an earlier event design; not used.
-5. **Balance is unverified** for the new content pack (Boomerang + Journal, Sand Hourglass, energy boss relics, Hoarder's Satchel). Run simulations/playtests.
+5. **Balance is unverified** for the new content pack (Boomerang + Journal, Sand Hourglass, energy boss relics, Hoarder's Satchel). Run simulations/playtests. v1.6 raised every Mult relic by +1 (per unit for counting relics), which makes stacked Consonant Coil / Vowel Prism / Heavy Ink builds very strong; Woodpecker Beak shreds the Gatekeeper's Force Field (one cell per peck). Watch both in playtests.
 6. **Alt+1–3** consumable hotkeys don't cover slots 4–5 when Bottle Rack is owned.
 7. **Comma and Crit length**: commas are currently not counted. Confirm the design intent.
 8. **Journal** ignores single-tile casts on purpose (anti-exploit); document in the tooltip.
@@ -1004,7 +1017,7 @@ Prefer an **event/trigger system** for relics (turnStart, combatStart, afterCast
 | `weapons.json` | All 21 weapons (source, kind, cost, crit length, effects, formulas) |
 | `enemies.json` | All 43 enemies (incl. minions) with full move cycles (move names), boss gimmicks, summons/splits and lore |
 | `encounters.json` | Encounter pacing rules (`encounterRules`: group size by normal-fight number per Act), encounter pools per Act, elites, boss options |
-| `relics.json` | All 71 relics with category, Mult formulas, word lists and unlock level |
+| `relics.json` | All 72 relics with category, Mult formulas, word lists and unlock level |
 | `potions.json` | All 29 consumables (ids keep the "potion" name) with unlock level |
 | `heroes.json` | The 3 heroes (stats, starting kit, texts, endings) |
 | `progression.json` | Meta progression: XP per fight, XP thresholds, hero unlocks, relic/consumable unlock levels |
