@@ -454,7 +454,8 @@ Custom controls (Unity 6 `[UxmlElement]` + `[UxmlAttribute]`):
   - `.deb-slimy|poison|lock|condemn|curse|frustrate|burn`;
   - `.fragile`, `.fortified`, `.filtered`.
   Each state has a distinct look (GDD §4.9).
-- **`SigilPedestal`**: one socket per sigil letter. Sockets light up as tiles are added and turn gold on an exact Critical. Shows the `SP × Mult = Output` line with a tooltip breakdown (`ScoreResult.Notes` / `Fired`).
+- **`SigilPedestal`**: one socket per sigil letter. Sockets light up as tiles are added and turn gold on an exact Critical.
+- **`ScoreBoard`**: the `SP × Arcana = Output` board with a tooltip breakdown (`ScoreResult.Notes` / `Fired`); a USS class per tier (`.t1/.t2/.t3`) per number.
 - **`FighterView`**: art (2-frame idle via `schedule.Execute(...).Every(420)`), HP bar with a trailing damage bar, Shield badge, status icons, intent bubble.
 - **`IntentView`**: icons + numbers for the current move.
   - Bosses show the move name as a banner.

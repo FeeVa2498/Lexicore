@@ -1055,7 +1055,7 @@
       "name": "Monocle",
       "category": "common",
       "description": "Casting a single tile (U, A!, Z!!) gets +4 Arcana.",
-      "note": "Applies only to a cast of exactly one tile (+ optional [!] tiles): Mult 1 + 3."
+      "note": "Applies only to a cast of exactly one tile (+ optional [!] tiles): Mult 1 + 4."
     },
     {
       "id": "parrot",
